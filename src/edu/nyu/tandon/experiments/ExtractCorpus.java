@@ -2,24 +2,16 @@ package edu.nyu.tandon.experiments;
 
 
 import com.martiansoftware.jsap.*;
-import edu.nyu.tandon.utils.languageModel;
 import it.unimi.di.big.mg4j.document.*;
 import it.unimi.di.big.mg4j.index.DowncaseTermProcessor;
 import it.unimi.di.big.mg4j.index.NullTermProcessor;
 import it.unimi.di.big.mg4j.index.TermProcessor;
-import it.unimi.di.big.mg4j.index.payload.DatePayload;
-import it.unimi.di.big.mg4j.index.payload.IntegerPayload;
-import it.unimi.di.big.mg4j.io.ByteArrayPostingList;
-import it.unimi.di.big.mg4j.io.IOFactories;
 import it.unimi.di.big.mg4j.io.IOFactory;
 import it.unimi.di.big.mg4j.tool.Scan;
 import it.unimi.di.big.mg4j.tool.VirtualDocumentResolver;
 import it.unimi.di.big.mg4j.util.MG4JClassParser;
 import it.unimi.dsi.Util;
-import it.unimi.dsi.fastutil.ints.IntBigArrays;
 import it.unimi.dsi.fastutil.io.BinIO;
-import it.unimi.dsi.io.FastBufferedReader;
-import it.unimi.dsi.io.OutputBitStream;
 import it.unimi.dsi.io.WordReader;
 import it.unimi.dsi.lang.MutableString;
 import it.unimi.dsi.lang.ObjectParser;
@@ -28,13 +20,14 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import static com.sun.jna.Native.getNativeSize;
 
 /**
  * Created by Juan on 7/20/2015.
