@@ -72,52 +72,28 @@ import java.util.Comparator;
  */
 public class Query {
 
+    public final static int MAX_STEMMING = 2048;
     private static final Logger LOGGER = LoggerFactory.getLogger(Query.class);
-
     /** A formatter for TREC results. */
     private static final java.text.NumberFormat FORMATTER = new java.text.DecimalFormat( "0.0000000000" );
-
-    public final static int MAX_STEMMING = 2048;
-
-    public static enum Command {
-        MODE,
-        LIMIT,
-        SELECT,
-        SCORE,
-        MPLEX,
-        EXPAND,
-        DIVERT,
-        WEIGHT,
-        EQUALIZE,
-        QUIT
-    }
-
-    public static enum OutputType {
-        /** Display just timings. */
-        TIME,
-        /** Display document pointers, but not intervals. */
-        SHORT,
-        /** Display document pointers and not intervals (requires an index with positions). */
-        LONG,
-        /** Display document pointers and snippets (requires an index with positions and a collection). */
-        SNIPPET,
-        /** Display results in TREC format. */
-        TREC;
-    }
-
+    /**
+     * The current query engine.
+     */
+    public final QueryEngine<Reference2ObjectMap<Index, SelectedInterval[]>> queryEngine;
     /** The maximum number of items output to the console. */
     public int maxOutput = 10000;
+    /**
+     * The current display mode.
+     */
+    public OutputType displayMode = OutputType.SHORT;
+    /**
+     * The current output stream, changeable with <samp>$divert</samp>.
+     */
+    public PrintStream output = System.out;
     /** Current topic number, for {@link OutputType#TREC} only. */
     private int trecTopicNumber;
     /** Current run tag, for {@link OutputType#TREC} only. */
     private String trecRunTag;
-    /** The current display mode. */
-    public OutputType displayMode = OutputType.SHORT;
-    /** The current output stream, changeable with <samp>$divert</samp>. */
-    public PrintStream output = System.out;
-    /** The current query engine. */
-    public final QueryEngine<Reference2ObjectMap<Index,SelectedInterval[]>> queryEngine;
-
     public Query( final QueryEngine queryEngine ) {
         this.queryEngine = queryEngine;
     }
@@ -132,32 +108,32 @@ public class Query {
      * @param name2Index an empty, writable map that will be filled with pairs given by an index basename (or field name, if available) and an {@link Index}.
      * @param index2Weight an empty, writable map that will be filled with a map from indices to respective weights.
      */
-    public static void loadIndicesFromSpec(final String[] basenameWeight, boolean loadSizes, final DocumentCollection documentCollection, final Object2ReferenceMap<String,Index> name2Index, final Reference2DoubleMap<Index> index2Weight ) throws IOException, ConfigurationException, URISyntaxException, ClassNotFoundException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        for ( int i = 0; i < basenameWeight.length; i++ ) {
+    public static void loadIndicesFromSpec(final String[] basenameWeight, boolean loadSizes, final DocumentCollection documentCollection, final Object2ReferenceMap<String, Index> name2Index, final Reference2DoubleMap<Index> index2Weight) throws IOException, ConfigurationException, URISyntaxException, ClassNotFoundException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        for (int i = 0; i < basenameWeight.length; i++) {
 
             // We must be careful, as ":" is used by Windows to separate the device from the path.
-            final int split = basenameWeight[ i ].lastIndexOf( ':' );
+            final int split = basenameWeight[i].lastIndexOf(':');
             double weight = 1;
 
-            if ( split != -1 ) {
+            if (split != -1) {
                 try {
-                    weight = Double.parseDouble( basenameWeight[ i ].substring( split + 1 ) );
+                    weight = Double.parseDouble(basenameWeight[i].substring(split + 1));
+                } catch (NumberFormatException e) {
                 }
-                catch( NumberFormatException e ) {}
             }
 
             final Index index;
 
-            if ( split == -1 || basenameWeight[ i ].startsWith("mg4j://") ) {
-                index = Index.getInstance( basenameWeight[ i ], true, loadSizes );
-                index2Weight.put( index, 1 );
+            if (split == -1 || basenameWeight[i].startsWith("mg4j://")) {
+                index = Index.getInstance(basenameWeight[i], true, loadSizes);
+                index2Weight.put(index, 1);
+            } else {
+                index = Index.getInstance(basenameWeight[i].substring(0, split));
+                index2Weight.put(index, weight);
             }
-            else {
-                index = Index.getInstance( basenameWeight[ i ].substring( 0, split ) );
-                index2Weight.put( index, weight );
-            }
-            if ( documentCollection != null && index.numberOfDocuments != documentCollection.size() ) LOGGER.warn( "Index " + index + " has " + index.numberOfDocuments + " documents, but the document collection has size " + documentCollection.size() );
-            name2Index.put( index.field != null ? index.field : basenameWeight[ i ], index );
+            if (documentCollection != null && index.numberOfDocuments != documentCollection.size())
+                LOGGER.warn("Index " + index + " has " + index.numberOfDocuments + " documents, but the document collection has size " + documentCollection.size());
+            name2Index.put(index.field != null ? index.field : basenameWeight[i], index);
         }
     }
 
@@ -171,20 +147,145 @@ public class Query {
      * @return the weight (1 if missing).
      */
     @SuppressWarnings("unchecked")
-    private static <S> double loadClassFromSpec( String spec, final S[] array, final int index ) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IOException {
-        int pos = spec.indexOf( ':' );
-        Class<S> klass = (Class<S>)array.getClass().getComponentType();
+    private static <S> double loadClassFromSpec(String spec, final S[] array, final int index) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IOException {
+        int pos = spec.indexOf(':');
+        Class<S> klass = (Class<S>) array.getClass().getComponentType();
         double weightSpec = 1;
-        if ( pos >= 0 ) {
+        if (pos >= 0) {
             try {
-                weightSpec = Double.parseDouble ( spec.substring( pos + 1 ) );
-            } catch ( NumberFormatException e ) {
-                throw new IllegalArgumentException( "Malformed weight " + spec.substring( 0, pos ) );
+                weightSpec = Double.parseDouble(spec.substring(pos + 1));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Malformed weight " + spec.substring(0, pos));
             }
-            spec = spec.substring( 0, pos );
+            spec = spec.substring(0, pos);
         }
-        array[ index ] = ObjectParser.fromSpec( spec, klass, new String[] { "it.unimi.di.big.mg4j.search.score", "it.unimi.di.big.mg4j.query.nodes" } );
+        array[index] = ObjectParser.fromSpec(spec, klass, new String[]{"it.unimi.di.big.mg4j.search.score", "it.unimi.di.big.mg4j.query.nodes"});
         return weightSpec;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void main(final String[] arg) throws Exception {
+
+        SimpleJSAP jsap = new SimpleJSAP(Query.class.getName(), "Loads indices relative to a collection, possibly loads the collection, and answers to queries.",
+                new Parameter[]{
+                        new FlaggedOption("collection", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'c', "collection", "The collection of documents indexed by the given indices."),
+                        new FlaggedOption("objectCollection", new ObjectParser(DocumentCollection.class, MG4JClassParser.PACKAGE), JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'o', "object-collection", "An object specification describing a document collection."),
+                        new FlaggedOption("titleList", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 't', "title-list", "A serialized big list of titles (will override collection titles if specified)."),
+                        new FlaggedOption("titleFile", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'T', "title-file", "A file of newline-separated, UTF-8 titles (will override collection titles if specified)."),
+                        new FlaggedOption("input", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'I', "input", "A file containing the input."),
+                        new Switch("noSizes", 'n', "no-sizes", "Disable loading document sizes (they are necessary for BM25 scoring)."),
+                        new Switch("http", 'h', "http", "Starts an HTTP query server."),
+                        new Switch("verbose", 'v', "verbose", "Print full exception stack traces."),
+                        new FlaggedOption("itemClass", MG4JClassParser.getParser(), JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'i', "item-class", "The class that will handle item display in the HTTP server."),
+                        new FlaggedOption("itemMimeType", JSAP.STRING_PARSER, "text/html", JSAP.NOT_REQUIRED, 'm', "item-mime-type", "A MIME type suggested to the class handling item display in the HTTP server."),
+                        new FlaggedOption("port", JSAP.INTEGER_PARSER, "4242", JSAP.NOT_REQUIRED, 'p', "port", "The port on localhost where the server will appear."),
+                        new UnflaggedOption("basenameWeight", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.GREEDY, "The indices that the servlet will use. Indices are specified using their basename, optionally followed by a colon and a double representing the weight used to score results from that index. Indices without a specified weight are weighted 1."),
+
+                        new Switch("noMplex", 'P', "noMplex", "Starts with multiplex disabled."),
+                        new FlaggedOption("results", JSAP.INTEGER_PARSER, "1000", JSAP.NOT_REQUIRED, 'r', "results", "The # of results to display"),
+                        new FlaggedOption("mode", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'M', "time", "The results display mode"),
+                        new FlaggedOption("earlyTermination", JSAP.DOUBLE_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'E', "early-termination", "The early termination threshold")
+                });
+
+
+        final JSAPResult jsapResult = jsap.parse(arg);
+        if (jsap.messagePrinted()) return;
+
+        final DocumentCollection documentCollection = (DocumentCollection) (jsapResult.userSpecified("collection") ? AbstractDocumentSequence.load(jsapResult.getString("collection")) :
+                jsapResult.userSpecified("objectCollection") ? jsapResult.getObject("objectCollection") : null);
+        final BigList<? extends CharSequence> titleList = (BigList<? extends CharSequence>) (
+                jsapResult.userSpecified("titleList") ? BinIO.loadObject(jsapResult.getString("titleList")) :
+                        jsapResult.userSpecified("titleFile") ? new FileLinesBigList(jsapResult.getString("titleFile"), "UTF-8") :
+                                null);
+        final String[] basenameWeight = jsapResult.getStringArray("basenameWeight");
+        final Object2ReferenceLinkedOpenHashMap<String, Index> indexMap = new Object2ReferenceLinkedOpenHashMap<String, Index>(Hash.DEFAULT_INITIAL_SIZE, .5f);
+        final Reference2DoubleOpenHashMap<Index> index2Weight = new Reference2DoubleOpenHashMap<Index>();
+        final boolean verbose = jsapResult.getBoolean("verbose");
+        final boolean loadSizes = !jsapResult.getBoolean("noSizes");
+        Query.loadIndicesFromSpec(basenameWeight, loadSizes, documentCollection, indexMap, index2Weight);
+
+        final long numberOfDocuments = indexMap.values().iterator().next().numberOfDocuments;
+        if (titleList != null && titleList.size64() != numberOfDocuments)
+            throw new IllegalArgumentException("The number of titles (" + titleList.size64() + " and the number of documents (" + numberOfDocuments + ") do not match");
+
+        final Object2ObjectOpenHashMap<String, TermProcessor> termProcessors = new Object2ObjectOpenHashMap<String, TermProcessor>(indexMap.size());
+        for (String alias : indexMap.keySet()) termProcessors.put(alias, indexMap.get(alias).termProcessor);
+
+        final SimpleParser simpleParser = new SimpleParser(indexMap.keySet(), indexMap.firstKey(), termProcessors);
+
+        final Reference2ReferenceMap<Index, Object> index2Parser = new Reference2ReferenceOpenHashMap<Index, Object>();
+        /*
+        // Fetch parsers for payload-based fields.
+		for( Index index: indexMap.values() ) if ( index.hasPayloads ) {
+			if ( index.payload.getClass() == DatePayload.class ) index2Parser.put( index, DateFormat.getDateInstance( DateFormat.SHORT, Locale.UK ) );
+		}
+		*/
+
+        final TerminatingQueryEngine queryEngine = new TerminatingQueryEngine(simpleParser, new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING), indexMap);
+        queryEngine.setEarlyTerminationThreshold(jsapResult.userSpecified("earlyTermination") ? jsapResult.getDouble("earlyTermination") : null);
+        queryEngine.setWeights(index2Weight);
+        queryEngine.score(new Scorer[]{new BM25Scorer(), new VignaScorer()}, new double[]{1, 1});
+        // We set up an interval selector only if there is a collection for snippeting
+        queryEngine.intervalSelector = documentCollection != null ? new IntervalSelector(4, 40) : new IntervalSelector();
+
+        queryEngine.multiplex = jsapResult.userSpecified("moPlex") ? jsapResult.getBoolean("noMplex") : true;
+
+        queryEngine.equalize(1000);
+
+        Query query = new Query(queryEngine);
+        query.displayMode = OutputType.TIME;
+
+        query.maxOutput = jsapResult.getInt("results", 1000);
+
+        query.interpretCommand("$score BM25Scorer");
+
+        String q;
+
+        System.err.println("Welcome to the MG4J query class (setup with $mode snippet, $score BM25Scorer VignaScorer, $mplex on, $equalize 1000, $select " + (documentCollection != null ? "4 40" : "all") + ")");
+        System.err.println("Please type $ for help.");
+
+        String prompt = indexMap.keySet().toString() + ">";
+        int n;
+
+        try {
+            final BufferedReader br = new BufferedReader(new InputStreamReader(jsapResult.userSpecified("input") ? new FileInputStream(jsapResult.getString("input")) : System.in));
+            final ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> results = new ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>>();
+
+            for (; ; ) {
+                System.out.print(prompt);
+                q = br.readLine();
+                if (q == null) {
+                    System.err.println();
+                    break; // CTRL-D
+                }
+                if (q.length() == 0) continue;
+                if (q.charAt(0) == '$') {
+                    if (!query.interpretCommand(q)) break;
+                    continue;
+                }
+
+                long time = -System.nanoTime();
+
+                try {
+                    n = queryEngine.process(q, 0, query.maxOutput, results);
+                } catch (QueryParserException e) {
+                    if (verbose) e.getCause().printStackTrace(System.err);
+                    else System.err.println(e.getCause());
+                    continue;
+                } catch (Exception e) {
+                    if (verbose) e.printStackTrace(System.err);
+                    else System.err.println(e);
+                    continue;
+                }
+
+                time += System.nanoTime();
+                query.output(results, documentCollection, titleList, TextMarker.TEXT_BOLDFACE);
+                System.err.println(results.size() + " results; " + n + " documents examined; " + time / 1000000. + " ms; " + Util.format((n * 1000000000.0) / time) + " documents/s, " + Util.format(time / (double) n) + " ns/document");
+            }
+
+        } finally {
+            if (query.output != System.out) query.output.close();
+        }
     }
 
     /** Interpret the given command, changing the static variables.
@@ -467,129 +568,39 @@ public class Query {
         return i;
     }
 
-    @SuppressWarnings("unchecked")
-    public static void main( final String[] arg ) throws Exception {
+    public static enum Command {
+        MODE,
+        LIMIT,
+        SELECT,
+        SCORE,
+        MPLEX,
+        EXPAND,
+        DIVERT,
+        WEIGHT,
+        EQUALIZE,
+        QUIT
+    }
 
-        SimpleJSAP jsap = new SimpleJSAP( Query.class.getName(), "Loads indices relative to a collection, possibly loads the collection, and answers to queries.",
-                new Parameter[] {
-                        new FlaggedOption( "collection", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'c', "collection", "The collection of documents indexed by the given indices." ),
-                        new FlaggedOption( "objectCollection", new ObjectParser( DocumentCollection.class, MG4JClassParser.PACKAGE ), JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'o', "object-collection", "An object specification describing a document collection." ),
-                        new FlaggedOption( "titleList", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 't', "title-list", "A serialized big list of titles (will override collection titles if specified)." ),
-                        new FlaggedOption( "titleFile", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'T', "title-file", "A file of newline-separated, UTF-8 titles (will override collection titles if specified)." ),
-                        new FlaggedOption( "input", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'I', "input", "A file containing the input." ),
-                        new Switch( "noSizes", 'n', "no-sizes", "Disable loading document sizes (they are necessary for BM25 scoring)." ),
-                        new Switch( "http", 'h', "http", "Starts an HTTP query server." ),
-                        new Switch( "verbose", 'v', "verbose", "Print full exception stack traces." ),
-                        new FlaggedOption( "itemClass", MG4JClassParser.getParser(), JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'i', "item-class", "The class that will handle item display in the HTTP server." ),
-                        new FlaggedOption( "itemMimeType", JSAP.STRING_PARSER, "text/html", JSAP.NOT_REQUIRED, 'm', "item-mime-type", "A MIME type suggested to the class handling item display in the HTTP server." ),
-                        new FlaggedOption( "port", JSAP.INTEGER_PARSER, "4242", JSAP.NOT_REQUIRED, 'p', "port", "The port on localhost where the server will appear." ),
-                        new UnflaggedOption( "basenameWeight", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.GREEDY, "The indices that the servlet will use. Indices are specified using their basename, optionally followed by a colon and a double representing the weight used to score results from that index. Indices without a specified weight are weighted 1." ),
-
-                        new Switch( "noMplex", 'P', "noMplex", "Starts with multiplex disabled." ),
-                        new FlaggedOption( "results", JSAP.INTEGER_PARSER, "1000", JSAP.NOT_REQUIRED, 'r', "results", "The # of results to display" ),
-                        new FlaggedOption( "mode", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'M', "time", "The results display mode" )
-                });
-
-
-        final JSAPResult jsapResult = jsap.parse( arg );
-        if ( jsap.messagePrinted() ) return;
-
-        final DocumentCollection documentCollection = (DocumentCollection)(jsapResult.userSpecified( "collection" ) ? AbstractDocumentSequence.load( jsapResult.getString( "collection" ) ) :
-                jsapResult.userSpecified( "objectCollection" ) ? jsapResult.getObject( "objectCollection" ): null );
-        final BigList<? extends CharSequence> titleList = (BigList<? extends CharSequence>) (
-                jsapResult.userSpecified( "titleList" ) ? BinIO.loadObject( jsapResult.getString( "titleList" ) ) :
-                        jsapResult.userSpecified( "titleFile" ) ? new FileLinesBigList( jsapResult.getString( "titleFile" ), "UTF-8" ) :
-                                null );
-        final String[] basenameWeight = jsapResult.getStringArray( "basenameWeight" );
-        final Object2ReferenceLinkedOpenHashMap<String,Index> indexMap = new Object2ReferenceLinkedOpenHashMap<String,Index>( Hash.DEFAULT_INITIAL_SIZE, .5f );
-        final Reference2DoubleOpenHashMap<Index> index2Weight = new Reference2DoubleOpenHashMap<Index>();
-        final boolean verbose = jsapResult.getBoolean( "verbose" );
-        final boolean loadSizes = ! jsapResult.getBoolean( "noSizes" );
-        Query.loadIndicesFromSpec( basenameWeight, loadSizes, documentCollection, indexMap, index2Weight );
-
-        final long numberOfDocuments = indexMap.values().iterator().next().numberOfDocuments;
-        if ( titleList != null && titleList.size64() != numberOfDocuments )
-            throw new IllegalArgumentException( "The number of titles (" + titleList.size64() + " and the number of documents (" + numberOfDocuments + ") do not match" );
-
-        final Object2ObjectOpenHashMap<String,TermProcessor> termProcessors = new Object2ObjectOpenHashMap<String,TermProcessor>( indexMap.size() );
-        for( String alias: indexMap.keySet() ) termProcessors.put( alias, indexMap.get( alias ).termProcessor );
-
-        final SimpleParser simpleParser = new SimpleParser( indexMap.keySet(), indexMap.firstKey(), termProcessors );
-
-        final Reference2ReferenceMap<Index, Object> index2Parser = new Reference2ReferenceOpenHashMap<Index, Object>();
-		/*
-		// Fetch parsers for payload-based fields.
-		for( Index index: indexMap.values() ) if ( index.hasPayloads ) {
-			if ( index.payload.getClass() == DatePayload.class ) index2Parser.put( index, DateFormat.getDateInstance( DateFormat.SHORT, Locale.UK ) );
-		}
-		*/
-
-        final QueryEngine queryEngine = new QueryEngine( simpleParser, new DocumentIteratorBuilderVisitor( indexMap, index2Parser, indexMap.get( indexMap.firstKey() ), MAX_STEMMING ), indexMap );
-        queryEngine.setWeights( index2Weight );
-        queryEngine.score( new Scorer[] { new BM25Scorer(), new VignaScorer() }, new double[] { 1, 1 } );
-        // We set up an interval selector only if there is a collection for snippeting
-        queryEngine.intervalSelector = documentCollection != null ? new IntervalSelector( 4, 40 ) : new IntervalSelector();
-
-        queryEngine.multiplex = jsapResult.userSpecified("moPlex") ? jsapResult.getBoolean( "noMplex" ) : true;
-
-        queryEngine.equalize( 1000 );
-
-        Query query = new Query( queryEngine );
-        query.displayMode = OutputType.TIME;
-
-        query.maxOutput = jsapResult.getInt("results", 1000);
-
-        query.interpretCommand("$score BM25Scorer");
-
-        String q;
-
-        System.err.println( "Welcome to the MG4J query class (setup with $mode snippet, $score BM25Scorer VignaScorer, $mplex on, $equalize 1000, $select " + ( documentCollection != null ?  "4 40" : "all" ) + ")" );
-        System.err.println( "Please type $ for help." );
-
-        String prompt = indexMap.keySet().toString() + ">";
-        int n;
-
-        try {
-            final BufferedReader br = new BufferedReader( new InputStreamReader( jsapResult.userSpecified( "input" ) ? new FileInputStream( jsapResult.getString( "input") ) : System.in ) );
-            final ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index,SelectedInterval[]>>> results = new ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index,SelectedInterval[]>>>();
-
-            for ( ;; ) {
-                System.out.print( prompt );
-                q = br.readLine();
-                if ( q == null ) {
-                    System.err.println();
-                    break; // CTRL-D
-                }
-                if ( q.length() == 0 ) continue;
-                if ( q.charAt( 0 ) == '$' ) {
-                    if ( ! query.interpretCommand( q ) ) break;
-                    continue;
-                }
-
-                long time = -System.nanoTime();
-
-                try {
-                    n = queryEngine.process( q, 0, query.maxOutput, results );
-                }
-                catch( QueryParserException e ) {
-                    if ( verbose ) e.getCause().printStackTrace( System.err );
-                    else System.err.println( e.getCause() );
-                    continue;
-                }
-                catch( Exception e ) {
-                    if ( verbose ) e.printStackTrace( System.err );
-                    else System.err.println( e );
-                    continue;
-                }
-
-                time += System.nanoTime();
-                query.output( results, documentCollection, titleList, TextMarker.TEXT_BOLDFACE );
-                System.err.println( results.size() + " results; " + n + " documents examined; " + time / 1000000. + " ms; " + Util.format( ( n * 1000000000.0 ) / time ) + " documents/s, " + Util.format( time / (double)n ) + " ns/document" );
-            }
-
-        }
-        finally {
-            if ( query.output != System.out ) query.output.close();
-        }
+    public static enum OutputType {
+        /**
+         * Display just timings.
+         */
+        TIME,
+        /**
+         * Display document pointers, but not intervals.
+         */
+        SHORT,
+        /**
+         * Display document pointers and not intervals (requires an index with positions).
+         */
+        LONG,
+        /**
+         * Display document pointers and snippets (requires an index with positions and a collection).
+         */
+        SNIPPET,
+        /**
+         * Display results in TREC format.
+         */
+        TREC;
     }
 }
