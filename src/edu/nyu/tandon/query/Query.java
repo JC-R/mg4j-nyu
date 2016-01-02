@@ -184,7 +184,8 @@ public class Query {
                         new Switch("noMplex", 'P', "noMplex", "Starts with multiplex disabled."),
                         new FlaggedOption("results", JSAP.INTEGER_PARSER, "1000", JSAP.NOT_REQUIRED, 'r', "results", "The # of results to display"),
                         new FlaggedOption("mode", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'M', "time", "The results display mode"),
-                        new FlaggedOption("earlyTermination", JSAP.DOUBLE_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'E', "early-termination", "The early termination threshold")
+                        new FlaggedOption("earlyTermination", JSAP.DOUBLE_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'E', "early-termination", "The early termination threshold"),
+                        new FlaggedOption("lowerBound", JSAP.DOUBLE_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'L', "lower-bound", "The document ID lower bound (n-th tier)")
                 });
 
 
@@ -223,6 +224,7 @@ public class Query {
 
         final TerminatingQueryEngine queryEngine = new TerminatingQueryEngine(simpleParser, new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING), indexMap);
         queryEngine.setEarlyTerminationThreshold(jsapResult.userSpecified("earlyTermination") ? jsapResult.getDouble("earlyTermination") : null);
+        queryEngine.setDocumentLowerBound(jsapResult.userSpecified("lowerBound") ? jsapResult.getDouble("lowerBound") : null);
         queryEngine.setWeights(index2Weight);
         queryEngine.score(new Scorer[]{new BM25Scorer(), new VignaScorer()}, new double[]{1, 1});
         // We set up an interval selector only if there is a collection for snippeting
