@@ -15,11 +15,13 @@ rm -f $WORK_DIR/gov2-*.titles $WORK_DIR/gov2-*-text.* $WORK_DIR/gov2-*-split-* *
 
 TMP=$(mktemp)
 find $GOV2_LOCATION -type f -iname \*.gz | sort >$TMP
-split -n l/8 $TMP split-
+RAM=2048
+CPU=2
+split -n l/$CPU $TMP split-
 
 (for split in split-*; do
 (
-        java -Xmx7512M -server \
+        java -Xmx$(($RAM/$CPU))M -server \
                 it.unimi.di.big.mg4j.document.TRECDocumentCollection \
                         -z -f HtmlDocumentFactory -p encoding=iso-8859-1 $WORK_DIR/gov2-$split.collection $(cat $split)
 
@@ -37,7 +39,7 @@ wait)
 
 # Check that all instances have completed
 
-if (( $(find $WORK_DIR -iname gov2-\*-text.cluster.properties | wc -l) != 8 * $(ls $CLUSTER_DIR | wc -l) )); then
+if (( $(find $WORK_DIR -iname gov2-\*-text.cluster.properties | wc -l) != $CPU * $(ls $CLUSTER_DIR | wc -l) )); then
         echo "ERROR: Some instance did not complete correctly" 1>&2
         exit 1
 fi
