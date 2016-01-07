@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#
+# Create an ordering ${OUTPUT} for a cluster,
+# based on a global ordering ${ORDER} and cluster's ${TITLES}.
+#
+
 TITLES=$1
 ORDER=$2
 OUTPUT=$3
@@ -7,9 +12,6 @@ OUTPUT=$3
 if [ -z "${TITLES}" ]; then echo "Variable TITLE is not defined."; exit 1; fi;
 if [ -z "${ORDER}" ]; then echo "Variable ORDER is not defined."; exit 1; fi;
 if [ -z "${OUTPUT}" ]; then echo "Variable OUTPUT is not defined."; exit 1; fi;
-#TITLES=/mnt/eldysk/web/gov2c/gov2-33.titles
-#ORDER=/mnt/eldysk/web/gov2c/ordering
-#OUTPUT=/mnt/eldysk/web/gov2c/map33
 
 export LC_ALL=C
 

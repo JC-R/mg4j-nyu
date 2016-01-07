@@ -1,6 +1,9 @@
 #!/bin/bash
 
-##### DEFINE PARAMETERS #####
+#
+# Copy ${INPUT_INDEX} to ${OUTPUT_INDEX} (with field ${FIELD})
+# and renumber its documents according to ${MAP}.
+#
 
 # Input index basename.
 INPUT_INDEX=$1
@@ -18,8 +21,6 @@ if [ -z "${FIELD}" ]; then echo "Variable FIELD is not defined."; exit 1; fi;
 # Titles need to be mapped manually.
 INPUT_TITLES=${INPUT_INDEX}.titles
 OUTPUT_TITLES=${OUTPUT_INDEX}.titles
-
-#############################
 
 starttime=$(date +%s)
 
