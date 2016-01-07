@@ -33,6 +33,8 @@ import static it.unimi.di.big.mg4j.index.IndexIterator.END_OF_LIST;
  */
 public class Renumber {
 
+    public static final String MWHC_EXTENSION = ".mwhc";
+
     protected long writtenCounts = 0;
     protected String inputBasename;
     protected String outputBasename;
@@ -110,6 +112,7 @@ public class Renumber {
     public void copyTerms() throws IOException {
         FileUtils.copyFile(new File(inputBasename + TERMS_EXTENSION), new File(outputBasename + TERMS_EXTENSION));
         FileUtils.copyFile(new File(inputBasename + TERMMAP_EXTENSION), new File(outputBasename + TERMMAP_EXTENSION));
+        FileUtils.copyFile(new File(inputBasename + MWHC_EXTENSION), new File(outputBasename + MWHC_EXTENSION));
     }
 
     public void writeSizes() throws IOException {
