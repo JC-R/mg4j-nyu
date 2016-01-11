@@ -17,6 +17,7 @@ MAP=$4
 if [ -z "${INPUT_INDEX}" ]; then echo "Variable INPUT_INDEX is not defined."; exit 1; fi;
 if [ -z "${OUTPUT_INDEX}" ]; then echo "Variable OUTPUT_INDEX is not defined."; exit 1; fi;
 if [ -z "${FIELD}" ]; then echo "Variable FIELD is not defined."; exit 1; fi;
+if [ -z "${MAP}" ]; then echo "Variable MAP is not defined."; exit 1; fi;
 
 # Titles need to be mapped manually.
 INPUT_TITLES=${INPUT_INDEX}.titles
