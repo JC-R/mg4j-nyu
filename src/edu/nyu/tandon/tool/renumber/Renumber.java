@@ -12,6 +12,8 @@ import it.unimi.dsi.io.OutputBitStream;
 import it.unimi.dsi.util.Properties;
 import org.apache.commons.configuration.ConfigurationException;
 import org.codehaus.plexus.util.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,6 +34,8 @@ import static it.unimi.di.big.mg4j.index.IndexIterator.END_OF_LIST;
  *         NOTE: So far, this works only for QuasiSuccinctIndex without positions.
  */
 public class Renumber {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(Renumber.class);
 
     public static final String MWHC_EXTENSION = ".mwhc";
 
@@ -69,6 +73,8 @@ public class Renumber {
         JSAPResult jsapResult = jsap.parse(args);
         if (jsap.messagePrinted()) return;
 
+        LOGGER.info(String.format("Renumbering %s to %s", jsapResult.getString("inputBasename"), jsapResult.getString("outputBasename")));
+
         Renumber renumber = new Renumber(jsapResult.getString("inputBasename"), jsapResult.getString("outputBasename"));
         renumber.readMapping(jsapResult.getString("mapFile"), jsapResult.userSpecified("binaryMapping"));
         renumber.run();
@@ -97,13 +103,18 @@ public class Renumber {
 
         if (mapping == null) throw new IllegalStateException("Mapping file is undefined.");
 
+        LOGGER.info(String.format("Copying inverted lists"));
+
         IndexIterator indexIterator;
         while ((indexIterator = indexReader.nextIterator()) != null) {
             writeReorderedList(indexIterator);
         }
 
+        LOGGER.info(String.format("Copying sizes"));
         writeSizes();
+        LOGGER.info(String.format("Copying properties"));
         writeProperties();
+        LOGGER.info(String.format("Copying terms"));
         copyTerms();
         indexWriter.close();
 
