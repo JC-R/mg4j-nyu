@@ -11,6 +11,7 @@ import it.unimi.dsi.io.InputBitStream;
 import it.unimi.dsi.io.OutputBitStream;
 import it.unimi.dsi.util.Properties;
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.lang.time.DurationFormatUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static it.unimi.di.big.mg4j.index.DiskBasedIndex.*;
 import static it.unimi.di.big.mg4j.index.IndexIterator.END_OF_LIST;
@@ -105,9 +108,18 @@ public class Renumber {
 
         LOGGER.info(String.format("Copying inverted lists"));
 
+        long start = System.currentTimeMillis();
+        int i = 0;
         IndexIterator indexIterator;
         while ((indexIterator = indexReader.nextIterator()) != null) {
             writeReorderedList(indexIterator);
+            if (++i % 1000 == 0) {
+                long elapsed = System.currentTimeMillis() - start;
+                long left = (index.numberOfTerms - i) / i * elapsed;
+                LOGGER.debug(String.format("Copied %d terms. Elapsed time: %s. Estimated time left: %s.", i,
+                        DurationFormatUtils.formatDurationHMS(elapsed),
+                        DurationFormatUtils.formatDurationHMS(left)));
+            }
         }
 
         LOGGER.info(String.format("Copying sizes"));
@@ -171,7 +183,8 @@ public class Renumber {
         long frequency = indexIterator.frequency();
 
         int[] documents = new int[(int) frequency];
-        Posting[] postings = new Posting[(int) index.numberOfDocuments];
+//        Posting[] postings = new Posting[(int) index.numberOfDocuments];
+        Map<Integer, Posting> postings = new HashMap<>();
         long sumMaxPos = 0, occurrency = 0;
 
         long doc;
@@ -193,7 +206,8 @@ public class Renumber {
                 posting.documentSize = -1;
             }
 
-            postings[mappedId] = posting;
+//            postings[mappedId] = posting;
+            postings.put(mappedId, posting);
         }
         Arrays.sort(documents);
 
@@ -214,7 +228,8 @@ public class Renumber {
 
     public void writeRecords(InvertedList invertedList) throws IOException {
         for (int document : invertedList.documents) {
-            Posting p = invertedList.postings[document];
+//            Posting p = invertedList.postings[document];
+            Posting p = invertedList.postings.get(document);
             OutputBitStream out = indexWriter.newDocumentRecord();
             indexWriter.writeDocumentPointer(out, document);
             if (index.hasPayloads) indexWriter.writePayload(out, p.payload);
@@ -261,9 +276,9 @@ public class Renumber {
         public long occurrency;
         public long sumMaxPos;
         public int[] documents;
-        public Posting[] postings;
+        public Map<Integer, Posting> postings;
 
-        public InvertedList(int[] documents, Posting[] postings, long frequency, long occurrency, long sumMaxPos) {
+        public InvertedList(int[] documents, Map<Integer, Posting> postings, long frequency, long occurrency, long sumMaxPos) {
             this.documents = documents;
             this.postings = postings;
             this.frequency = frequency;
