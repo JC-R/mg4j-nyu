@@ -1,11 +1,11 @@
-package edu.nyu.tandon.tool;
+package edu.nyu.tandon.tool.xdoc;
 
 import it.unimi.dsi.io.InputBitStream;
-import it.unimi.dsi.io.OutputBitStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * Created by juan on 12/2/15.
