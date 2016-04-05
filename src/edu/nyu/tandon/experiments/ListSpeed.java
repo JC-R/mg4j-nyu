@@ -29,7 +29,7 @@ public class ListSpeed {
     @SuppressWarnings("unchecked")
     public static void main(final String[] arg) throws Exception {
 
-        SimpleJSAP jsap = new SimpleJSAP(ListSpeed.class.getName(), "Loads random list, primes, and measure random posting access times",
+        SimpleJSAP jsap = new SimpleJSAP(ListSpeed.class.getName(), "Loads random lists, primes the index, and measures random posting access times",
                 new Parameter[]{
                         new UnflaggedOption("basenameWeight", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.GREEDY, "The indices that the servlet will use. Indices are specified using their basename, optionally followed by a colon and a double representing the weight used to score results from that index. Indices without a specified weight are weighted 1."),
                         new FlaggedOption("random", JSAP.INTEGER_PARSER, "1000", JSAP.NOT_REQUIRED, 'r', "random", "The # of postings to measure"),
@@ -69,7 +69,7 @@ public class ListSpeed {
         query.maxOutput = jsapResult.getInt("results", (int) numberOfDocuments);
         query.interpretCommand("$mode time");
 
-        System.err.println("MG4J experiment - posting access times.");
+        System.err.println("MG4J NYU experiment - index access times.");
 
         // bootstrap the system
         long[] terms = new long[(int) numberOfSamples];
@@ -83,6 +83,7 @@ public class ListSpeed {
                 System.err.print("\rAdding random terms: " + i);
             }
         }
+
         System.err.println();
         double totSequential = 0;
         double totRandom = 0;
