@@ -1,3 +1,4 @@
 *.orig
 .idea/workspace.xml
-.idea/workspace.xml
+*.class
+
