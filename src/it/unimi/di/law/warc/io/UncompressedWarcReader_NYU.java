@@ -27,32 +27,32 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class UncompressedWarcReader_NYU extends AbstractWarcReader_NYU {
-	
-	private final RepositionableStream repositionableInput;
-	private boolean consecutive;
-	private boolean skip;
 
-	public UncompressedWarcReader_NYU(final InputStream input ) {
-		super();
-		this.repositionableInput = input instanceof RepositionableStream ? (RepositionableStream)input : null;
-		this.consecutive = true;
-		this.skip = false;
-		super.setInput( input );
-	}
+    private final RepositionableStream repositionableInput;
+    private boolean consecutive;
+    private boolean skip;
 
-	@Override
-	public WarcRecord read() throws IOException, WarcFormatException {
-		final WarcRecord record = super.read( this.consecutive );
-		this.consecutive = true;
-		return record;
-	}
+    public UncompressedWarcReader_NYU(final InputStream input) {
+        super();
+        this.repositionableInput = input instanceof RepositionableStream ? (RepositionableStream) input : null;
+        this.consecutive = true;
+        this.skip = false;
+        super.setInput(input);
+    }
+
+    @Override
+    public WarcRecord read() throws IOException {
+        final WarcRecord record = super.read(this.consecutive);
+        this.consecutive = true;
+        return record;
+    }
 
 
-	@Override
-	public void position( final long position ) throws IOException {
-		if ( this.repositionableInput == null ) throw new UnsupportedOperationException();
-		this.repositionableInput.position( position );
-		this.consecutive = false;
-	}
+    @Override
+    public void position(final long position) throws IOException {
+        if (this.repositionableInput == null) throw new UnsupportedOperationException();
+        this.repositionableInput.position(position);
+        this.consecutive = false;
+    }
 
 }

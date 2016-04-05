@@ -1,571 +1,575 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="mg4j-nyu" default="all">
-  
-  
-  <property file="build.properties"/>
-  <!-- Uncomment the following property if no tests compilation is needed -->
-  <!-- 
-  <property name="skip.tests" value="true"/>
-   -->
-  
-  <!-- Compiler options -->
-  
-  <property name="compiler.debug" value="on"/>
-  <property name="compiler.generate.no.warnings" value="off"/>
-  <property name="compiler.args" value=""/>
-  <property name="compiler.max.memory" value="700m"/>
-  <patternset id="ignored.files">
-    <exclude name="**/*.hprof/**"/>
-    <exclude name="**/*.pyc/**"/>
-    <exclude name="**/*.pyo/**"/>
-    <exclude name="**/*.rbc/**"/>
-    <exclude name="**/*~/**"/>
-    <exclude name="**/.DS_Store/**"/>
-    <exclude name="**/.git/**"/>
-    <exclude name="**/.hg/**"/>
-    <exclude name="**/.svn/**"/>
-    <exclude name="**/CVS/**"/>
-    <exclude name="**/RCS/**"/>
-    <exclude name="**/SCCS/**"/>
-    <exclude name="**/__pycache__/**"/>
-    <exclude name="**/_svn/**"/>
-    <exclude name="**/rcs/**"/>
-    <exclude name="**/vssver.scc/**"/>
-    <exclude name="**/vssver2.scc/**"/>
-  </patternset>
-  <patternset id="library.patterns">
-    <include name="*.war"/>
-    <include name="*.swc"/>
-    <include name="*.apk"/>
-    <include name="*.zip"/>
-    <include name="*.egg"/>
-    <include name="*.ane"/>
-    <include name="*.jar"/>
-    <include name="*.ear"/>
-  </patternset>
-  <patternset id="compiler.resources">
-    <exclude name="**/?*.java"/>
-    <exclude name="**/?*.form"/>
-    <exclude name="**/?*.class"/>
-    <exclude name="**/?*.groovy"/>
-    <exclude name="**/?*.scala"/>
-    <exclude name="**/?*.flex"/>
-    <exclude name="**/?*.kt"/>
-    <exclude name="**/?*.clj"/>
-    <exclude name="**/?*.aj"/>
-  </patternset>
-  
-  <!-- JDK definitions -->
-  
-  <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
-  <path id="jdk.classpath.1.8">
-    <fileset dir="${jdk.home.1.8}">
-      <include name="jre/lib/charsets.jar"/>
-      <include name="jre/lib/deploy.jar"/>
-      <include name="jre/lib/ext/cldrdata.jar"/>
-      <include name="jre/lib/ext/dnsns.jar"/>
-      <include name="jre/lib/ext/jaccess.jar"/>
-      <include name="jre/lib/ext/jfxrt.jar"/>
-      <include name="jre/lib/ext/localedata.jar"/>
-      <include name="jre/lib/ext/nashorn.jar"/>
-      <include name="jre/lib/ext/sunec.jar"/>
-      <include name="jre/lib/ext/sunjce_provider.jar"/>
-      <include name="jre/lib/ext/sunpkcs11.jar"/>
-      <include name="jre/lib/ext/zipfs.jar"/>
-      <include name="jre/lib/javaws.jar"/>
-      <include name="jre/lib/jce.jar"/>
-      <include name="jre/lib/jfr.jar"/>
-      <include name="jre/lib/jfxswt.jar"/>
-      <include name="jre/lib/jsse.jar"/>
-      <include name="jre/lib/management-agent.jar"/>
-      <include name="jre/lib/plugin.jar"/>
-      <include name="jre/lib/resources.jar"/>
-      <include name="jre/lib/rt.jar"/>
-    </fileset>
-  </path>
-  
-  <property name="project.jdk.home" value="${jdk.home.1.8}"/>
-  <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
-  <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
-  
-  
-  <!-- Project Libraries -->
-  
-  <path id="library.jars.classpath">
-    <fileset dir="${basedir}/lib">
-      <patternset refid="library.patterns"/>
-    </fileset>
-  </path>
-  
-  <!-- Modules -->
-  
-  
-  <!-- Module mg4j-nyu -->
-  
-  <dirname property="module.mg4j-nyu.basedir" file="${ant.file}"/>
-  
-  
-  <property name="module.jdk.home.mg4j-nyu" value="${project.jdk.home}"/>
-  <property name="module.jdk.bin.mg4j-nyu" value="${project.jdk.bin}"/>
-  <property name="module.jdk.classpath.mg4j-nyu" value="${project.jdk.classpath}"/>
-  
-  <property name="compiler.args.mg4j-nyu" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
-  
-  <property name="mg4j-nyu.output.dir" value="${module.mg4j-nyu.basedir}/classes/production/mg4j-nyu"/>
-  <property name="mg4j-nyu.testoutput.dir" value="${module.mg4j-nyu.basedir}/classes/test/mg4j-nyu"/>
-  
-  <path id="mg4j-nyu.module.bootclasspath">
-    <!-- Paths to be included in compilation bootclasspath -->
-  </path>
-  
-  <path id="mg4j-nyu.module.production.classpath">
-    <path refid="${module.jdk.classpath.mg4j-nyu}"/>
-    <path refid="library.jars.classpath"/>
-  </path>
-  
-  <path id="mg4j-nyu.runtime.production.module.classpath">
-    <pathelement location="${mg4j-nyu.output.dir}"/>
-    <path refid="library.jars.classpath"/>
-  </path>
-  
-  <path id="mg4j-nyu.module.classpath">
-    <path refid="${module.jdk.classpath.mg4j-nyu}"/>
-    <pathelement location="${mg4j-nyu.output.dir}"/>
-    <path refid="library.jars.classpath"/>
-  </path>
-  
-  <path id="mg4j-nyu.runtime.module.classpath">
-    <pathelement location="${mg4j-nyu.testoutput.dir}"/>
-    <pathelement location="${mg4j-nyu.output.dir}"/>
-    <path refid="library.jars.classpath"/>
-  </path>
-  
-  
-  <patternset id="excluded.from.module.mg4j-nyu">
-    <patternset refid="ignored.files"/>
-  </patternset>
-  
-  <patternset id="excluded.from.compilation.mg4j-nyu">
-    <patternset refid="excluded.from.module.mg4j-nyu"/>
-  </patternset>
-  
-  <path id="mg4j-nyu.module.sourcepath">
-    <dirset dir="${module.mg4j-nyu.basedir}">
-      <include name="src"/>
-    </dirset>
-  </path>
-  
-  
-  <target name="compile.module.mg4j-nyu" depends="compile.module.mg4j-nyu.production,compile.module.mg4j-nyu.tests" description="Compile module mg4j-nyu"/>
-  
-  <target name="compile.module.mg4j-nyu.production" description="Compile module mg4j-nyu; production classes">
-    <mkdir dir="${mg4j-nyu.output.dir}"/>
-    <javac destdir="${mg4j-nyu.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.mg4j-nyu}/javac">
-      <compilerarg line="${compiler.args.mg4j-nyu}"/>
-      <bootclasspath refid="mg4j-nyu.module.bootclasspath"/>
-      <classpath refid="mg4j-nyu.module.production.classpath"/>
-      <src refid="mg4j-nyu.module.sourcepath"/>
-      <patternset refid="excluded.from.compilation.mg4j-nyu"/>
-    </javac>
-    
-    <copy todir="${mg4j-nyu.output.dir}">
-      <fileset dir="${module.mg4j-nyu.basedir}/src">
-        <patternset refid="compiler.resources"/>
-        <type type="file"/>
-      </fileset>
-    </copy>
-  </target>
-  
-  <target name="compile.module.mg4j-nyu.tests" depends="compile.module.mg4j-nyu.production" description="compile module mg4j-nyu; test classes" unless="skip.tests"/>
-  
-  <target name="clean.module.mg4j-nyu" description="cleanup module">
-    <delete dir="${mg4j-nyu.output.dir}"/>
-    <delete dir="${mg4j-nyu.testoutput.dir}"/>
-  </target>
-  
-  <target name="init" description="Build initialization">
-    <!-- Perform any build initialization in this target -->
-  </target>
-  
-  <target name="clean" depends="clean.module.mg4j-nyu" description="cleanup all"/>
-  
-  <target name="build.modules" depends="init, clean, compile.module.mg4j-nyu" description="build all modules"/>
-  
-  <target name="init.artifacts">
-    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
-    <property name="artifact.output.mg4j-nyu-0.1" value="${basedir}"/>
-    <mkdir dir="${artifacts.temp.dir}"/>
-    <property name="temp.jar.path.mg4j-nyu-0.1.jar" value="${artifacts.temp.dir}/mg4j-nyu-0.1.jar"/>
-  </target>
-  
-  <target name="artifact.mg4j-nyu-0.1" depends="init.artifacts, compile.module.mg4j-nyu" description="Build &#39;mg4j-nyu-0.1&#39; artifact">
-    <property name="artifact.temp.output.mg4j-nyu-0.1" value="${artifacts.temp.dir}/mg4j_nyu_0_1"/>
-    <mkdir dir="${artifact.temp.output.mg4j-nyu-0.1}"/>
-    <jar destfile="${temp.jar.path.mg4j-nyu-0.1.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
-      <zipfileset dir="${mg4j-nyu.output.dir}"/>
-      <zipfileset file="${basedir}/lib/je.jar"/>
-      <zipfileset file="${basedir}/lib/xz.jar"/>
-      <zipfileset file="${basedir}/lib/asm.jar"/>
-      <zipfileset file="${basedir}/lib/cdm.jar"/>
-      <zipfileset file="${basedir}/lib/jna.jar"/>
-      <zipfileset file="${basedir}/lib/kfs.jar"/>
-      <zipfileset file="${basedir}/lib/oro.jar"/>
-      <zipfileset file="${basedir}/lib/poi.jar"/>
-      <zipfileset file="${basedir}/lib/avro.jar"/>
-      <zipfileset file="${basedir}/lib/c3p0.jar"/>
-      <zipfileset file="${basedir}/lib/colt.jar"/>
-      <zipfileset file="${basedir}/lib/core.jar"/>
-      <zipfileset file="${basedir}/lib/grib.jar"/>
-      <zipfileset file="${basedir}/lib/jdom.jar"/>
-      <zipfileset file="${basedir}/lib/jsap.jar"/>
-      <zipfileset file="${basedir}/lib/json.jar"/>
-      <zipfileset file="${basedir}/lib/jwnl.jar"/>
-      <zipfileset file="${basedir}/lib/mail.jar"/>
-      <zipfileset file="${basedir}/lib/mx4j.jar"/>
-      <zipfileset file="${basedir}/lib/rome.jar"/>
-      <zipfileset file="${basedir}/lib/antlr.jar"/>
-      <zipfileset file="${basedir}/lib/bzip2.jar"/>
-      <zipfileset file="${basedir}/lib/guava.jar"/>
-      <zipfileset file="${basedir}/lib/jai4j.jar"/>
-      <zipfileset file="${basedir}/lib/jdiff.jar"/>
-      <zipfileset file="${basedir}/lib/jdom2.jar"/>
-      <zipfileset file="${basedir}/lib/jetty.jar"/>
-      <zipfileset file="${basedir}/lib/jsoup.jar"/>
-      <zipfileset file="${basedir}/lib/junit.jar"/>
-      <zipfileset file="${basedir}/lib/netty.jar"/>
-      <zipfileset file="${basedir}/lib/sux4j.jar"/>
-      <zipfileset file="${basedir}/lib/xalan.jar"/>
-      <zipfileset file="${basedir}/lib/geoapi.jar"/>
-      <zipfileset file="${basedir}/lib/javacc.jar"/>
-      <zipfileset file="${basedir}/lib/jets3t.jar"/>
-      <zipfileset file="${basedir}/lib/jj2000.jar"/>
-      <zipfileset file="${basedir}/lib/jmatio.jar"/>
-      <zipfileset file="${basedir}/lib/junrar.jar"/>
-      <zipfileset file="${basedir}/lib/pdfbox.jar"/>
-      <zipfileset file="${basedir}/lib/quartz.jar"/>
-      <zipfileset file="${basedir}/lib/regexp.jar"/>
-      <zipfileset file="${basedir}/lib/sslext.jar"/>
-      <zipfileset file="${basedir}/lib/struts.jar"/>
-      <zipfileset file="${basedir}/lib/xmlenc.jar"/>
-      <zipfileset file="${basedir}/lib/dnsjava.jar"/>
-      <zipfileset file="${basedir}/lib/fontbox.jar"/>
-      <zipfileset file="${basedir}/lib/jempbox.jar"/>
-      <zipfileset file="${basedir}/lib/jgroups.jar"/>
-      <zipfileset file="${basedir}/lib/jsp-api.jar"/>
-      <zipfileset file="${basedir}/lib/jsr-275.jar"/>
-      <zipfileset file="${basedir}/lib/jung-io.jar"/>
-      <zipfileset file="${basedir}/lib/netcdf4.jar"/>
-      <zipfileset file="${basedir}/lib/tagsoup.jar"/>
-      <zipfileset file="${basedir}/lib/udunits.jar"/>
-      <zipfileset file="${basedir}/lib/xmpcore.jar"/>
-      <zipfileset file="${basedir}/lib/avro-ipc.jar"/>
-      <zipfileset file="${basedir}/lib/cxf-core.jar"/>
-      <zipfileset file="${basedir}/lib/dsiutils.jar"/>
-      <zipfileset file="${basedir}/lib/fastutil.jar"/>
-      <zipfileset file="${basedir}/lib/httpcore.jar"/>
-      <zipfileset file="${basedir}/lib/httpmime.jar"/>
-      <zipfileset file="${basedir}/lib/jackcess.jar"/>
-      <zipfileset file="${basedir}/lib/jaxb-api.jar"/>
-      <zipfileset file="${basedir}/lib/jettison.jar"/>
-      <zipfileset file="${basedir}/lib/jung-api.jar"/>
-      <zipfileset file="${basedir}/lib/mg4j-big.jar"/>
-      <zipfileset file="${basedir}/lib/stax-api.jar"/>
-      <zipfileset file="${basedir}/lib/umlgraph.jar"/>
-      <zipfileset file="${basedir}/lib/velocity.jar"/>
-      <zipfileset file="${basedir}/lib/webgraph.jar"/>
-      <zipfileset file="${basedir}/lib/wstx-asl.jar"/>
-      <zipfileset file="${basedir}/lib/xmlbeans.jar"/>
-      <zipfileset file="${basedir}/lib/aspectjrt.jar"/>
-      <zipfileset file="${basedir}/lib/isoparser.jar"/>
-      <zipfileset file="${basedir}/lib/jaxb-impl.jar"/>
-      <zipfileset file="${basedir}/lib/joda-time.jar"/>
-      <zipfileset file="${basedir}/lib/paranamer.jar"/>
-      <zipfileset file="${basedir}/lib/poi-ooxml.jar"/>
-      <zipfileset file="${basedir}/lib/slf4j-api.jar"/>
-      <zipfileset file="${basedir}/lib/stax2-api.jar"/>
-      <zipfileset file="${basedir}/lib/tika-core.jar"/>
-      <zipfileset file="${basedir}/lib/activation.jar"/>
-      <zipfileset file="${basedir}/lib/bliki-core.jar"/>
-      <zipfileset file="${basedir}/lib/boilerpipe.jar"/>
-      <zipfileset file="${basedir}/lib/commons-el.jar"/>
-      <zipfileset file="${basedir}/lib/commons-io.jar"/>
-      <zipfileset file="${basedir}/lib/concurrent.jar"/>
-      <zipfileset file="${basedir}/lib/httpclient.jar"/>
-      <zipfileset file="${basedir}/lib/jackson-xc.jar"/>
-      <zipfileset file="${basedir}/lib/jcommander.jar"/>
-      <zipfileset file="${basedir}/lib/jetty-util.jar"/>
-      <zipfileset file="${basedir}/lib/jhighlight.jar"/>
-      <zipfileset file="${basedir}/lib/mx4j-tools.jar"/>
-      <zipfileset file="${basedir}/lib/pojo-mbean.jar"/>
-      <zipfileset file="${basedir}/lib/sis-netcdf.jar"/>
-      <zipfileset file="${basedir}/lib/commons-cli.jar"/>
-      <zipfileset file="${basedir}/lib/commons-csv.jar"/>
-      <zipfileset file="${basedir}/lib/commons-net.jar"/>
-      <zipfileset file="${basedir}/lib/hadoop-auth.jar"/>
-      <zipfileset file="${basedir}/lib/java-libpst.jar"/>
-      <zipfileset file="${basedir}/lib/jersey-core.jar"/>
-      <zipfileset file="${basedir}/lib/jersey-json.jar"/>
-      <zipfileset file="${basedir}/lib/json-simple.jar"/>
-      <zipfileset file="${basedir}/lib/servlet-api.jar"/>
-      <zipfileset file="${basedir}/lib/sis-storage.jar"/>
-      <zipfileset file="${basedir}/lib/sis-utility.jar"/>
-      <zipfileset file="${basedir}/lib/snappy-java.jar"/>
-      <zipfileset file="${basedir}/lib/commons-exec.jar"/>
-      <zipfileset file="${basedir}/lib/commons-lang.jar"/>
-      <zipfileset file="${basedir}/lib/commons-math.jar"/>
-      <zipfileset file="${basedir}/lib/commons-vfs2.jar"/>
-      <zipfileset file="${basedir}/lib/ehcache-core.jar"/>
-      <zipfileset file="${basedir}/lib/httpservices.jar"/>
-      <zipfileset file="${basedir}/lib/logback-core.jar"/>
-      <zipfileset file="${basedir}/lib/plexus-utils.jar"/>
-      <zipfileset file="${basedir}/lib/sis-metadata.jar"/>
-      <zipfileset file="${basedir}/lib/tika-parsers.jar"/>
-      <zipfileset file="${basedir}/lib/velocity-dep.jar"/>
-      <zipfileset file="${basedir}/lib/webgraph-big.jar"/>
-      <zipfileset file="${basedir}/lib/bubing-0.9.11.jar"/>
-      <zipfileset file="${basedir}/lib/commons-codec.jar"/>
-      <zipfileset file="${basedir}/lib/commons-lang3.jar"/>
-      <zipfileset file="${basedir}/lib/commons-math3.jar"/>
-      <zipfileset file="${basedir}/lib/hadoop-common.jar"/>
-      <zipfileset file="${basedir}/lib/hamcrest-core.jar"/>
-      <zipfileset file="${basedir}/lib/jackson-jaxrs.jar"/>
-      <zipfileset file="${basedir}/lib/jersey-server.jar"/>
-      <zipfileset file="${basedir}/lib/maven-scm-api.jar"/>
-      <zipfileset file="${basedir}/lib/opennlp-tools.jar"/>
-      <zipfileset file="${basedir}/lib/protobuf-java.jar"/>
-      <zipfileset file="${basedir}/lib/bcmail-jdk15on.jar"/>
-      <zipfileset file="${basedir}/lib/bcpkix-jdk15on.jar"/>
-      <zipfileset file="${basedir}/lib/bcprov-jdk15on.jar"/>
-      <zipfileset file="${basedir}/lib/jasper-runtime.jar"/>
-      <zipfileset file="${basedir}/lib/jcl-over-slf4j.jar"/>
-      <zipfileset file="${basedir}/lib/mg4j-big-5.4.1.jar"/>
-      <zipfileset file="${basedir}/lib/opennlp-maxent.jar"/>
-      <zipfileset file="${basedir}/lib/poi-scratchpad.jar"/>
-      <zipfileset file="${basedir}/lib/velocity-tools.jar"/>
-      <zipfileset file="${basedir}/lib/xmlschema-core.jar"/>
-      <zipfileset file="${basedir}/lib/commons-logging.jar"/>
-      <zipfileset file="${basedir}/lib/jasper-compiler.jar"/>
-      <zipfileset file="${basedir}/lib/javax.ws.rs-api.jar"/>
-      <zipfileset file="${basedir}/lib/jung-algorithms.jar"/>
-      <zipfileset file="${basedir}/lib/logback-classic.jar"/>
-      <zipfileset file="${basedir}/lib/sis-referencing.jar"/>
-      <zipfileset file="${basedir}/lib/commons-compress.jar"/>
-      <zipfileset file="${basedir}/lib/commons-digester.jar"/>
-      <zipfileset file="${basedir}/lib/cxf-rt-rs-client.jar"/>
-      <zipfileset file="${basedir}/lib/jackcess-encrypt.jar"/>
-      <zipfileset file="${basedir}/lib/jackson-core-asl.jar"/>
-      <zipfileset file="${basedir}/lib/jcip-annotations.jar"/>
-      <zipfileset file="${basedir}/lib/jericho-html-dev.jar"/>
-      <zipfileset file="${basedir}/lib/log4j-over-slf4j.jar"/>
-      <zipfileset file="${basedir}/lib/vorbis-java-core.jar"/>
-      <zipfileset file="${basedir}/lib/vorbis-java-tika.jar"/>
-      <zipfileset file="${basedir}/lib/apache-mime4j-dom.jar"/>
-      <zipfileset file="${basedir}/lib/commons-beanutils.jar"/>
-      <zipfileset file="${basedir}/lib/commons-validator.jar"/>
-      <zipfileset file="${basedir}/lib/juniversalchardet.jar"/>
-      <zipfileset file="${basedir}/lib/poi-ooxml-schemas.jar"/>
-      <zipfileset file="${basedir}/lib/woodstox-core-asl.jar"/>
-      <zipfileset file="${basedir}/lib/apache-mime4j-core.jar"/>
-      <zipfileset file="${basedir}/lib/commons-fileupload.jar"/>
-      <zipfileset file="${basedir}/lib/commons-httpclient.jar"/>
-      <zipfileset file="${basedir}/lib/hadoop-annotations.jar"/>
-      <zipfileset file="${basedir}/lib/jackson-mapper-asl.jar"/>
-      <zipfileset file="${basedir}/lib/metadata-extractor.jar"/>
-      <zipfileset file="${basedir}/lib/collections-generic.jar"/>
-      <zipfileset file="${basedir}/lib/commons-collections.jar"/>
-      <zipfileset file="${basedir}/lib/commons-logging-api.jar"/>
-      <zipfileset file="${basedir}/lib/javax.annotation-api.jar"/>
-      <zipfileset file="${basedir}/lib/mysql-connector-java.jar"/>
-      <zipfileset file="${basedir}/lib/commons-configuration.jar"/>
-      <zipfileset file="${basedir}/lib/cxf-rt-frontend-jaxrs.jar"/>
-      <zipfileset file="${basedir}/lib/cxf-rt-transports-http.jar"/>
-      <zipfileset file="${basedir}/lib/maven-scm-provider-svnexe.jar"/>
-      <zipfileset file="${basedir}/lib/maven-scm-provider-svn-commons.jar"/>
-      <zipfileset file="${basedir}/lib/je.jar"/>
-      <zipfileset file="${basedir}/lib/xz.jar"/>
-      <zipfileset file="${basedir}/lib/asm.jar"/>
-      <zipfileset file="${basedir}/lib/cdm.jar"/>
-      <zipfileset file="${basedir}/lib/jna.jar"/>
-      <zipfileset file="${basedir}/lib/kfs.jar"/>
-      <zipfileset file="${basedir}/lib/oro.jar"/>
-      <zipfileset file="${basedir}/lib/poi.jar"/>
-      <zipfileset file="${basedir}/lib/avro.jar"/>
-      <zipfileset file="${basedir}/lib/c3p0.jar"/>
-      <zipfileset file="${basedir}/lib/colt.jar"/>
-      <zipfileset file="${basedir}/lib/core.jar"/>
-      <zipfileset file="${basedir}/lib/grib.jar"/>
-      <zipfileset file="${basedir}/lib/jdom.jar"/>
-      <zipfileset file="${basedir}/lib/jsap.jar"/>
-      <zipfileset file="${basedir}/lib/json.jar"/>
-      <zipfileset file="${basedir}/lib/jwnl.jar"/>
-      <zipfileset file="${basedir}/lib/mail.jar"/>
-      <zipfileset file="${basedir}/lib/mx4j.jar"/>
-      <zipfileset file="${basedir}/lib/rome.jar"/>
-      <zipfileset file="${basedir}/lib/antlr.jar"/>
-      <zipfileset file="${basedir}/lib/bzip2.jar"/>
-      <zipfileset file="${basedir}/lib/guava.jar"/>
-      <zipfileset file="${basedir}/lib/jai4j.jar"/>
-      <zipfileset file="${basedir}/lib/jdiff.jar"/>
-      <zipfileset file="${basedir}/lib/jdom2.jar"/>
-      <zipfileset file="${basedir}/lib/jetty.jar"/>
-      <zipfileset file="${basedir}/lib/jsoup.jar"/>
-      <zipfileset file="${basedir}/lib/junit.jar"/>
-      <zipfileset file="${basedir}/lib/netty.jar"/>
-      <zipfileset file="${basedir}/lib/sux4j.jar"/>
-      <zipfileset file="${basedir}/lib/xalan.jar"/>
-      <zipfileset file="${basedir}/lib/geoapi.jar"/>
-      <zipfileset file="${basedir}/lib/javacc.jar"/>
-      <zipfileset file="${basedir}/lib/jets3t.jar"/>
-      <zipfileset file="${basedir}/lib/jj2000.jar"/>
-      <zipfileset file="${basedir}/lib/jmatio.jar"/>
-      <zipfileset file="${basedir}/lib/junrar.jar"/>
-      <zipfileset file="${basedir}/lib/pdfbox.jar"/>
-      <zipfileset file="${basedir}/lib/quartz.jar"/>
-      <zipfileset file="${basedir}/lib/regexp.jar"/>
-      <zipfileset file="${basedir}/lib/sslext.jar"/>
-      <zipfileset file="${basedir}/lib/struts.jar"/>
-      <zipfileset file="${basedir}/lib/xmlenc.jar"/>
-      <zipfileset file="${basedir}/lib/dnsjava.jar"/>
-      <zipfileset file="${basedir}/lib/fontbox.jar"/>
-      <zipfileset file="${basedir}/lib/jempbox.jar"/>
-      <zipfileset file="${basedir}/lib/jgroups.jar"/>
-      <zipfileset file="${basedir}/lib/jsp-api.jar"/>
-      <zipfileset file="${basedir}/lib/jsr-275.jar"/>
-      <zipfileset file="${basedir}/lib/jung-io.jar"/>
-      <zipfileset file="${basedir}/lib/netcdf4.jar"/>
-      <zipfileset file="${basedir}/lib/tagsoup.jar"/>
-      <zipfileset file="${basedir}/lib/udunits.jar"/>
-      <zipfileset file="${basedir}/lib/xmpcore.jar"/>
-      <zipfileset file="${basedir}/lib/avro-ipc.jar"/>
-      <zipfileset file="${basedir}/lib/cxf-core.jar"/>
-      <zipfileset file="${basedir}/lib/dsiutils.jar"/>
-      <zipfileset file="${basedir}/lib/fastutil.jar"/>
-      <zipfileset file="${basedir}/lib/httpcore.jar"/>
-      <zipfileset file="${basedir}/lib/httpmime.jar"/>
-      <zipfileset file="${basedir}/lib/jackcess.jar"/>
-      <zipfileset file="${basedir}/lib/jaxb-api.jar"/>
-      <zipfileset file="${basedir}/lib/jettison.jar"/>
-      <zipfileset file="${basedir}/lib/jung-api.jar"/>
-      <zipfileset file="${basedir}/lib/mg4j-big.jar"/>
-      <zipfileset file="${basedir}/lib/stax-api.jar"/>
-      <zipfileset file="${basedir}/lib/umlgraph.jar"/>
-      <zipfileset file="${basedir}/lib/velocity.jar"/>
-      <zipfileset file="${basedir}/lib/webgraph.jar"/>
-      <zipfileset file="${basedir}/lib/wstx-asl.jar"/>
-      <zipfileset file="${basedir}/lib/xmlbeans.jar"/>
-      <zipfileset file="${basedir}/lib/aspectjrt.jar"/>
-      <zipfileset file="${basedir}/lib/isoparser.jar"/>
-      <zipfileset file="${basedir}/lib/jaxb-impl.jar"/>
-      <zipfileset file="${basedir}/lib/joda-time.jar"/>
-      <zipfileset file="${basedir}/lib/paranamer.jar"/>
-      <zipfileset file="${basedir}/lib/poi-ooxml.jar"/>
-      <zipfileset file="${basedir}/lib/slf4j-api.jar"/>
-      <zipfileset file="${basedir}/lib/stax2-api.jar"/>
-      <zipfileset file="${basedir}/lib/tika-core.jar"/>
-      <zipfileset file="${basedir}/lib/activation.jar"/>
-      <zipfileset file="${basedir}/lib/bliki-core.jar"/>
-      <zipfileset file="${basedir}/lib/boilerpipe.jar"/>
-      <zipfileset file="${basedir}/lib/commons-el.jar"/>
-      <zipfileset file="${basedir}/lib/commons-io.jar"/>
-      <zipfileset file="${basedir}/lib/concurrent.jar"/>
-      <zipfileset file="${basedir}/lib/httpclient.jar"/>
-      <zipfileset file="${basedir}/lib/jackson-xc.jar"/>
-      <zipfileset file="${basedir}/lib/jcommander.jar"/>
-      <zipfileset file="${basedir}/lib/jetty-util.jar"/>
-      <zipfileset file="${basedir}/lib/jhighlight.jar"/>
-      <zipfileset file="${basedir}/lib/mx4j-tools.jar"/>
-      <zipfileset file="${basedir}/lib/pojo-mbean.jar"/>
-      <zipfileset file="${basedir}/lib/sis-netcdf.jar"/>
-      <zipfileset file="${basedir}/lib/commons-cli.jar"/>
-      <zipfileset file="${basedir}/lib/commons-csv.jar"/>
-      <zipfileset file="${basedir}/lib/commons-net.jar"/>
-      <zipfileset file="${basedir}/lib/hadoop-auth.jar"/>
-      <zipfileset file="${basedir}/lib/java-libpst.jar"/>
-      <zipfileset file="${basedir}/lib/jersey-core.jar"/>
-      <zipfileset file="${basedir}/lib/jersey-json.jar"/>
-      <zipfileset file="${basedir}/lib/json-simple.jar"/>
-      <zipfileset file="${basedir}/lib/servlet-api.jar"/>
-      <zipfileset file="${basedir}/lib/sis-storage.jar"/>
-      <zipfileset file="${basedir}/lib/sis-utility.jar"/>
-      <zipfileset file="${basedir}/lib/snappy-java.jar"/>
-      <zipfileset file="${basedir}/lib/commons-exec.jar"/>
-      <zipfileset file="${basedir}/lib/commons-lang.jar"/>
-      <zipfileset file="${basedir}/lib/commons-math.jar"/>
-      <zipfileset file="${basedir}/lib/commons-vfs2.jar"/>
-      <zipfileset file="${basedir}/lib/ehcache-core.jar"/>
-      <zipfileset file="${basedir}/lib/httpservices.jar"/>
-      <zipfileset file="${basedir}/lib/logback-core.jar"/>
-      <zipfileset file="${basedir}/lib/plexus-utils.jar"/>
-      <zipfileset file="${basedir}/lib/sis-metadata.jar"/>
-      <zipfileset file="${basedir}/lib/tika-parsers.jar"/>
-      <zipfileset file="${basedir}/lib/velocity-dep.jar"/>
-      <zipfileset file="${basedir}/lib/webgraph-big.jar"/>
-      <zipfileset file="${basedir}/lib/bubing-0.9.11.jar"/>
-      <zipfileset file="${basedir}/lib/commons-codec.jar"/>
-      <zipfileset file="${basedir}/lib/commons-lang3.jar"/>
-      <zipfileset file="${basedir}/lib/commons-math3.jar"/>
-      <zipfileset file="${basedir}/lib/hadoop-common.jar"/>
-      <zipfileset file="${basedir}/lib/hamcrest-core.jar"/>
-      <zipfileset file="${basedir}/lib/jackson-jaxrs.jar"/>
-      <zipfileset file="${basedir}/lib/jersey-server.jar"/>
-      <zipfileset file="${basedir}/lib/maven-scm-api.jar"/>
-      <zipfileset file="${basedir}/lib/opennlp-tools.jar"/>
-      <zipfileset file="${basedir}/lib/protobuf-java.jar"/>
-      <zipfileset file="${basedir}/lib/bcmail-jdk15on.jar"/>
-      <zipfileset file="${basedir}/lib/bcpkix-jdk15on.jar"/>
-      <zipfileset file="${basedir}/lib/bcprov-jdk15on.jar"/>
-      <zipfileset file="${basedir}/lib/jasper-runtime.jar"/>
-      <zipfileset file="${basedir}/lib/jcl-over-slf4j.jar"/>
-      <zipfileset file="${basedir}/lib/mg4j-big-5.4.1.jar"/>
-      <zipfileset file="${basedir}/lib/opennlp-maxent.jar"/>
-      <zipfileset file="${basedir}/lib/poi-scratchpad.jar"/>
-      <zipfileset file="${basedir}/lib/velocity-tools.jar"/>
-      <zipfileset file="${basedir}/lib/xmlschema-core.jar"/>
-      <zipfileset file="${basedir}/lib/commons-logging.jar"/>
-      <zipfileset file="${basedir}/lib/jasper-compiler.jar"/>
-      <zipfileset file="${basedir}/lib/javax.ws.rs-api.jar"/>
-      <zipfileset file="${basedir}/lib/jung-algorithms.jar"/>
-      <zipfileset file="${basedir}/lib/logback-classic.jar"/>
-      <zipfileset file="${basedir}/lib/sis-referencing.jar"/>
-      <zipfileset file="${basedir}/lib/commons-compress.jar"/>
-      <zipfileset file="${basedir}/lib/commons-digester.jar"/>
-      <zipfileset file="${basedir}/lib/cxf-rt-rs-client.jar"/>
-      <zipfileset file="${basedir}/lib/jackcess-encrypt.jar"/>
-      <zipfileset file="${basedir}/lib/jackson-core-asl.jar"/>
-      <zipfileset file="${basedir}/lib/jcip-annotations.jar"/>
-      <zipfileset file="${basedir}/lib/jericho-html-dev.jar"/>
-      <zipfileset file="${basedir}/lib/log4j-over-slf4j.jar"/>
-      <zipfileset file="${basedir}/lib/vorbis-java-core.jar"/>
-      <zipfileset file="${basedir}/lib/vorbis-java-tika.jar"/>
-      <zipfileset file="${basedir}/lib/apache-mime4j-dom.jar"/>
-      <zipfileset file="${basedir}/lib/commons-beanutils.jar"/>
-      <zipfileset file="${basedir}/lib/commons-validator.jar"/>
-      <zipfileset file="${basedir}/lib/juniversalchardet.jar"/>
-      <zipfileset file="${basedir}/lib/poi-ooxml-schemas.jar"/>
-      <zipfileset file="${basedir}/lib/woodstox-core-asl.jar"/>
-      <zipfileset file="${basedir}/lib/apache-mime4j-core.jar"/>
-      <zipfileset file="${basedir}/lib/commons-fileupload.jar"/>
-      <zipfileset file="${basedir}/lib/commons-httpclient.jar"/>
-      <zipfileset file="${basedir}/lib/hadoop-annotations.jar"/>
-      <zipfileset file="${basedir}/lib/jackson-mapper-asl.jar"/>
-      <zipfileset file="${basedir}/lib/metadata-extractor.jar"/>
-      <zipfileset file="${basedir}/lib/collections-generic.jar"/>
-      <zipfileset file="${basedir}/lib/commons-collections.jar"/>
-      <zipfileset file="${basedir}/lib/commons-logging-api.jar"/>
-      <zipfileset file="${basedir}/lib/javax.annotation-api.jar"/>
-      <zipfileset file="${basedir}/lib/mysql-connector-java.jar"/>
-      <zipfileset file="${basedir}/lib/commons-configuration.jar"/>
-      <zipfileset file="${basedir}/lib/cxf-rt-frontend-jaxrs.jar"/>
-      <zipfileset file="${basedir}/lib/cxf-rt-transports-http.jar"/>
-      <zipfileset file="${basedir}/lib/maven-scm-provider-svnexe.jar"/>
-      <zipfileset file="${basedir}/lib/maven-scm-provider-svn-commons.jar"/>
-    </jar>
-    <copy file="${temp.jar.path.mg4j-nyu-0.1.jar}" tofile="${artifact.output.mg4j-nyu-0.1}/mg4j-nyu-0.1.jar"/>
-    <delete dir="${artifacts.temp.dir}"/>
-  </target>
-  
-  <target name="build.all.artifacts" depends="artifact.mg4j-nyu-0.1" description="Build all artifacts">
-  </target>
 
-  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+
+    <property file="build.properties"/>
+    <!-- Uncomment the following property if no tests compilation is needed -->
+    <!--
+    <property name="skip.tests" value="true"/>
+     -->
+
+    <!-- Compiler options -->
+
+    <property name="compiler.debug" value="on"/>
+    <property name="compiler.generate.no.warnings" value="off"/>
+    <property name="compiler.args" value=""/>
+    <property name="compiler.max.memory" value="700m"/>
+    <patternset id="ignored.files">
+        <exclude name="**/*.hprof/**"/>
+        <exclude name="**/*.pyc/**"/>
+        <exclude name="**/*.pyo/**"/>
+        <exclude name="**/*.rbc/**"/>
+        <exclude name="**/*~/**"/>
+        <exclude name="**/.DS_Store/**"/>
+        <exclude name="**/.git/**"/>
+        <exclude name="**/.hg/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/RCS/**"/>
+        <exclude name="**/SCCS/**"/>
+        <exclude name="**/__pycache__/**"/>
+        <exclude name="**/_svn/**"/>
+        <exclude name="**/rcs/**"/>
+        <exclude name="**/vssver.scc/**"/>
+        <exclude name="**/vssver2.scc/**"/>
+    </patternset>
+    <patternset id="library.patterns">
+        <include name="*.war"/>
+        <include name="*.swc"/>
+        <include name="*.apk"/>
+        <include name="*.zip"/>
+        <include name="*.egg"/>
+        <include name="*.ane"/>
+        <include name="*.jar"/>
+        <include name="*.ear"/>
+    </patternset>
+    <patternset id="compiler.resources">
+        <exclude name="**/?*.java"/>
+        <exclude name="**/?*.form"/>
+        <exclude name="**/?*.class"/>
+        <exclude name="**/?*.groovy"/>
+        <exclude name="**/?*.scala"/>
+        <exclude name="**/?*.flex"/>
+        <exclude name="**/?*.kt"/>
+        <exclude name="**/?*.clj"/>
+        <exclude name="**/?*.aj"/>
+    </patternset>
+
+    <!-- JDK definitions -->
+
+    <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
+    <path id="jdk.classpath.1.8">
+        <fileset dir="${jdk.home.1.8}">
+            <include name="jre/lib/charsets.jar"/>
+            <include name="jre/lib/deploy.jar"/>
+            <include name="jre/lib/ext/cldrdata.jar"/>
+            <include name="jre/lib/ext/dnsns.jar"/>
+            <include name="jre/lib/ext/jaccess.jar"/>
+            <include name="jre/lib/ext/jfxrt.jar"/>
+            <include name="jre/lib/ext/localedata.jar"/>
+            <include name="jre/lib/ext/nashorn.jar"/>
+            <include name="jre/lib/ext/sunec.jar"/>
+            <include name="jre/lib/ext/sunjce_provider.jar"/>
+            <include name="jre/lib/ext/sunpkcs11.jar"/>
+            <include name="jre/lib/ext/zipfs.jar"/>
+            <include name="jre/lib/javaws.jar"/>
+            <include name="jre/lib/jce.jar"/>
+            <include name="jre/lib/jfr.jar"/>
+            <include name="jre/lib/jfxswt.jar"/>
+            <include name="jre/lib/jsse.jar"/>
+            <include name="jre/lib/management-agent.jar"/>
+            <include name="jre/lib/plugin.jar"/>
+            <include name="jre/lib/resources.jar"/>
+            <include name="jre/lib/rt.jar"/>
+        </fileset>
+    </path>
+
+    <property name="project.jdk.home" value="${jdk.home.1.8}"/>
+    <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
+    <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
+
+
+    <!-- Project Libraries -->
+
+    <path id="library.jars.classpath">
+        <fileset dir="${basedir}/lib">
+            <patternset refid="library.patterns"/>
+        </fileset>
+    </path>
+
+    <!-- Modules -->
+
+
+    <!-- Module mg4j-nyu -->
+
+    <dirname property="module.mg4j-nyu.basedir" file="${ant.file}"/>
+
+
+    <property name="module.jdk.home.mg4j-nyu" value="${project.jdk.home}"/>
+    <property name="module.jdk.bin.mg4j-nyu" value="${project.jdk.bin}"/>
+    <property name="module.jdk.classpath.mg4j-nyu" value="${project.jdk.classpath}"/>
+
+    <property name="compiler.args.mg4j-nyu" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+
+    <property name="mg4j-nyu.output.dir" value="${module.mg4j-nyu.basedir}/classes/production/mg4j-nyu"/>
+    <property name="mg4j-nyu.testoutput.dir" value="${module.mg4j-nyu.basedir}/classes/test/mg4j-nyu"/>
+
+    <path id="mg4j-nyu.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="mg4j-nyu.module.production.classpath">
+        <path refid="${module.jdk.classpath.mg4j-nyu}"/>
+        <path refid="library.jars.classpath"/>
+    </path>
+
+    <path id="mg4j-nyu.runtime.production.module.classpath">
+        <pathelement location="${mg4j-nyu.output.dir}"/>
+        <path refid="library.jars.classpath"/>
+    </path>
+
+    <path id="mg4j-nyu.module.classpath">
+        <path refid="${module.jdk.classpath.mg4j-nyu}"/>
+        <pathelement location="${mg4j-nyu.output.dir}"/>
+        <path refid="library.jars.classpath"/>
+    </path>
+
+    <path id="mg4j-nyu.runtime.module.classpath">
+        <pathelement location="${mg4j-nyu.testoutput.dir}"/>
+        <pathelement location="${mg4j-nyu.output.dir}"/>
+        <path refid="library.jars.classpath"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.mg4j-nyu">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.mg4j-nyu">
+        <patternset refid="excluded.from.module.mg4j-nyu"/>
+    </patternset>
+
+    <path id="mg4j-nyu.module.sourcepath">
+        <dirset dir="${module.mg4j-nyu.basedir}">
+            <include name="src"/>
+        </dirset>
+    </path>
+
+
+    <target name="compile.module.mg4j-nyu" depends="compile.module.mg4j-nyu.production,compile.module.mg4j-nyu.tests"
+            description="Compile module mg4j-nyu"/>
+
+    <target name="compile.module.mg4j-nyu.production" description="Compile module mg4j-nyu; production classes">
+        <mkdir dir="${mg4j-nyu.output.dir}"/>
+        <javac destdir="${mg4j-nyu.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+               memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.mg4j-nyu}/javac">
+            <compilerarg line="${compiler.args.mg4j-nyu}"/>
+            <bootclasspath refid="mg4j-nyu.module.bootclasspath"/>
+            <classpath refid="mg4j-nyu.module.production.classpath"/>
+            <src refid="mg4j-nyu.module.sourcepath"/>
+            <patternset refid="excluded.from.compilation.mg4j-nyu"/>
+        </javac>
+
+        <copy todir="${mg4j-nyu.output.dir}">
+            <fileset dir="${module.mg4j-nyu.basedir}/src">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile.module.mg4j-nyu.tests" depends="compile.module.mg4j-nyu.production"
+            description="compile module mg4j-nyu; test classes" unless="skip.tests"/>
+
+    <target name="clean.module.mg4j-nyu" description="cleanup module">
+        <delete dir="${mg4j-nyu.output.dir}"/>
+        <delete dir="${mg4j-nyu.testoutput.dir}"/>
+    </target>
+
+    <target name="init" description="Build initialization">
+        <!-- Perform any build initialization in this target -->
+    </target>
+
+    <target name="clean" depends="clean.module.mg4j-nyu" description="cleanup all"/>
+
+    <target name="build.modules" depends="init, clean, compile.module.mg4j-nyu" description="build all modules"/>
+
+    <target name="init.artifacts">
+        <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+        <property name="artifact.output.mg4j-nyu-0.1" value="${basedir}"/>
+        <mkdir dir="${artifacts.temp.dir}"/>
+        <property name="temp.jar.path.mg4j-nyu-0.1.jar" value="${artifacts.temp.dir}/mg4j-nyu-0.1.jar"/>
+    </target>
+
+    <target name="artifact.mg4j-nyu-0.1" depends="init.artifacts, compile.module.mg4j-nyu"
+            description="Build &#39;mg4j-nyu-0.1&#39; artifact">
+        <property name="artifact.temp.output.mg4j-nyu-0.1" value="${artifacts.temp.dir}/mg4j_nyu_0_1"/>
+        <mkdir dir="${artifact.temp.output.mg4j-nyu-0.1}"/>
+        <jar destfile="${temp.jar.path.mg4j-nyu-0.1.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+            <zipfileset dir="${mg4j-nyu.output.dir}"/>
+            <zipfileset file="${basedir}/lib/je.jar"/>
+            <zipfileset file="${basedir}/lib/xz.jar"/>
+            <zipfileset file="${basedir}/lib/asm.jar"/>
+            <zipfileset file="${basedir}/lib/cdm.jar"/>
+            <zipfileset file="${basedir}/lib/jna.jar"/>
+            <zipfileset file="${basedir}/lib/kfs.jar"/>
+            <zipfileset file="${basedir}/lib/oro.jar"/>
+            <zipfileset file="${basedir}/lib/poi.jar"/>
+            <zipfileset file="${basedir}/lib/avro.jar"/>
+            <zipfileset file="${basedir}/lib/c3p0.jar"/>
+            <zipfileset file="${basedir}/lib/colt.jar"/>
+            <zipfileset file="${basedir}/lib/core.jar"/>
+            <zipfileset file="${basedir}/lib/grib.jar"/>
+            <zipfileset file="${basedir}/lib/jdom.jar"/>
+            <zipfileset file="${basedir}/lib/jsap.jar"/>
+            <zipfileset file="${basedir}/lib/json.jar"/>
+            <zipfileset file="${basedir}/lib/jwnl.jar"/>
+            <zipfileset file="${basedir}/lib/mail.jar"/>
+            <zipfileset file="${basedir}/lib/mx4j.jar"/>
+            <zipfileset file="${basedir}/lib/rome.jar"/>
+            <zipfileset file="${basedir}/lib/antlr.jar"/>
+            <zipfileset file="${basedir}/lib/bzip2.jar"/>
+            <zipfileset file="${basedir}/lib/guava.jar"/>
+            <zipfileset file="${basedir}/lib/jai4j.jar"/>
+            <zipfileset file="${basedir}/lib/jdiff.jar"/>
+            <zipfileset file="${basedir}/lib/jdom2.jar"/>
+            <zipfileset file="${basedir}/lib/jetty.jar"/>
+            <zipfileset file="${basedir}/lib/jsoup.jar"/>
+            <zipfileset file="${basedir}/lib/junit.jar"/>
+            <zipfileset file="${basedir}/lib/netty.jar"/>
+            <zipfileset file="${basedir}/lib/sux4j.jar"/>
+            <zipfileset file="${basedir}/lib/xalan.jar"/>
+            <zipfileset file="${basedir}/lib/geoapi.jar"/>
+            <zipfileset file="${basedir}/lib/javacc.jar"/>
+            <zipfileset file="${basedir}/lib/jets3t.jar"/>
+            <zipfileset file="${basedir}/lib/jj2000.jar"/>
+            <zipfileset file="${basedir}/lib/jmatio.jar"/>
+            <zipfileset file="${basedir}/lib/junrar.jar"/>
+            <zipfileset file="${basedir}/lib/pdfbox.jar"/>
+            <zipfileset file="${basedir}/lib/quartz.jar"/>
+            <zipfileset file="${basedir}/lib/regexp.jar"/>
+            <zipfileset file="${basedir}/lib/sslext.jar"/>
+            <zipfileset file="${basedir}/lib/struts.jar"/>
+            <zipfileset file="${basedir}/lib/xmlenc.jar"/>
+            <zipfileset file="${basedir}/lib/dnsjava.jar"/>
+            <zipfileset file="${basedir}/lib/fontbox.jar"/>
+            <zipfileset file="${basedir}/lib/jempbox.jar"/>
+            <zipfileset file="${basedir}/lib/jgroups.jar"/>
+            <zipfileset file="${basedir}/lib/jsp-api.jar"/>
+            <zipfileset file="${basedir}/lib/jsr-275.jar"/>
+            <zipfileset file="${basedir}/lib/jung-io.jar"/>
+            <zipfileset file="${basedir}/lib/netcdf4.jar"/>
+            <zipfileset file="${basedir}/lib/tagsoup.jar"/>
+            <zipfileset file="${basedir}/lib/udunits.jar"/>
+            <zipfileset file="${basedir}/lib/xmpcore.jar"/>
+            <zipfileset file="${basedir}/lib/avro-ipc.jar"/>
+            <zipfileset file="${basedir}/lib/cxf-core.jar"/>
+            <zipfileset file="${basedir}/lib/dsiutils.jar"/>
+            <zipfileset file="${basedir}/lib/fastutil.jar"/>
+            <zipfileset file="${basedir}/lib/httpcore.jar"/>
+            <zipfileset file="${basedir}/lib/httpmime.jar"/>
+            <zipfileset file="${basedir}/lib/jackcess.jar"/>
+            <zipfileset file="${basedir}/lib/jaxb-api.jar"/>
+            <zipfileset file="${basedir}/lib/jettison.jar"/>
+            <zipfileset file="${basedir}/lib/jung-api.jar"/>
+            <zipfileset file="${basedir}/lib/mg4j-big.jar"/>
+            <zipfileset file="${basedir}/lib/stax-api.jar"/>
+            <zipfileset file="${basedir}/lib/umlgraph.jar"/>
+            <zipfileset file="${basedir}/lib/velocity.jar"/>
+            <zipfileset file="${basedir}/lib/webgraph.jar"/>
+            <zipfileset file="${basedir}/lib/wstx-asl.jar"/>
+            <zipfileset file="${basedir}/lib/xmlbeans.jar"/>
+            <zipfileset file="${basedir}/lib/aspectjrt.jar"/>
+            <zipfileset file="${basedir}/lib/isoparser.jar"/>
+            <zipfileset file="${basedir}/lib/jaxb-impl.jar"/>
+            <zipfileset file="${basedir}/lib/joda-time.jar"/>
+            <zipfileset file="${basedir}/lib/paranamer.jar"/>
+            <zipfileset file="${basedir}/lib/poi-ooxml.jar"/>
+            <zipfileset file="${basedir}/lib/slf4j-api.jar"/>
+            <zipfileset file="${basedir}/lib/stax2-api.jar"/>
+            <zipfileset file="${basedir}/lib/tika-core.jar"/>
+            <zipfileset file="${basedir}/lib/activation.jar"/>
+            <zipfileset file="${basedir}/lib/bliki-core.jar"/>
+            <zipfileset file="${basedir}/lib/boilerpipe.jar"/>
+            <zipfileset file="${basedir}/lib/commons-el.jar"/>
+            <zipfileset file="${basedir}/lib/commons-io.jar"/>
+            <zipfileset file="${basedir}/lib/concurrent.jar"/>
+            <zipfileset file="${basedir}/lib/httpclient.jar"/>
+            <zipfileset file="${basedir}/lib/jackson-xc.jar"/>
+            <zipfileset file="${basedir}/lib/jcommander.jar"/>
+            <zipfileset file="${basedir}/lib/jetty-util.jar"/>
+            <zipfileset file="${basedir}/lib/jhighlight.jar"/>
+            <zipfileset file="${basedir}/lib/mx4j-tools.jar"/>
+            <zipfileset file="${basedir}/lib/pojo-mbean.jar"/>
+            <zipfileset file="${basedir}/lib/sis-netcdf.jar"/>
+            <zipfileset file="${basedir}/lib/commons-cli.jar"/>
+            <zipfileset file="${basedir}/lib/commons-csv.jar"/>
+            <zipfileset file="${basedir}/lib/commons-net.jar"/>
+            <zipfileset file="${basedir}/lib/hadoop-auth.jar"/>
+            <zipfileset file="${basedir}/lib/java-libpst.jar"/>
+            <zipfileset file="${basedir}/lib/jersey-core.jar"/>
+            <zipfileset file="${basedir}/lib/jersey-json.jar"/>
+            <zipfileset file="${basedir}/lib/json-simple.jar"/>
+            <zipfileset file="${basedir}/lib/servlet-api.jar"/>
+            <zipfileset file="${basedir}/lib/sis-storage.jar"/>
+            <zipfileset file="${basedir}/lib/sis-utility.jar"/>
+            <zipfileset file="${basedir}/lib/snappy-java.jar"/>
+            <zipfileset file="${basedir}/lib/commons-exec.jar"/>
+            <zipfileset file="${basedir}/lib/commons-lang.jar"/>
+            <zipfileset file="${basedir}/lib/commons-math.jar"/>
+            <zipfileset file="${basedir}/lib/commons-vfs2.jar"/>
+            <zipfileset file="${basedir}/lib/ehcache-core.jar"/>
+            <zipfileset file="${basedir}/lib/httpservices.jar"/>
+            <zipfileset file="${basedir}/lib/logback-core.jar"/>
+            <zipfileset file="${basedir}/lib/plexus-utils.jar"/>
+            <zipfileset file="${basedir}/lib/sis-metadata.jar"/>
+            <zipfileset file="${basedir}/lib/tika-parsers.jar"/>
+            <zipfileset file="${basedir}/lib/velocity-dep.jar"/>
+            <zipfileset file="${basedir}/lib/webgraph-big.jar"/>
+            <zipfileset file="${basedir}/lib/bubing-0.9.11.jar"/>
+            <zipfileset file="${basedir}/lib/commons-codec.jar"/>
+            <zipfileset file="${basedir}/lib/commons-lang3.jar"/>
+            <zipfileset file="${basedir}/lib/commons-math3.jar"/>
+            <zipfileset file="${basedir}/lib/hadoop-common.jar"/>
+            <zipfileset file="${basedir}/lib/hamcrest-core.jar"/>
+            <zipfileset file="${basedir}/lib/jackson-jaxrs.jar"/>
+            <zipfileset file="${basedir}/lib/jersey-server.jar"/>
+            <zipfileset file="${basedir}/lib/maven-scm-api.jar"/>
+            <zipfileset file="${basedir}/lib/opennlp-tools.jar"/>
+            <zipfileset file="${basedir}/lib/protobuf-java.jar"/>
+            <zipfileset file="${basedir}/lib/bcmail-jdk15on.jar"/>
+            <zipfileset file="${basedir}/lib/bcpkix-jdk15on.jar"/>
+            <zipfileset file="${basedir}/lib/bcprov-jdk15on.jar"/>
+            <zipfileset file="${basedir}/lib/jasper-runtime.jar"/>
+            <zipfileset file="${basedir}/lib/jcl-over-slf4j.jar"/>
+            <zipfileset file="${basedir}/lib/mg4j-big-5.4.1.jar"/>
+            <zipfileset file="${basedir}/lib/opennlp-maxent.jar"/>
+            <zipfileset file="${basedir}/lib/poi-scratchpad.jar"/>
+            <zipfileset file="${basedir}/lib/velocity-tools.jar"/>
+            <zipfileset file="${basedir}/lib/xmlschema-core.jar"/>
+            <zipfileset file="${basedir}/lib/commons-logging.jar"/>
+            <zipfileset file="${basedir}/lib/jasper-compiler.jar"/>
+            <zipfileset file="${basedir}/lib/javax.ws.rs-api.jar"/>
+            <zipfileset file="${basedir}/lib/jung-algorithms.jar"/>
+            <zipfileset file="${basedir}/lib/logback-classic.jar"/>
+            <zipfileset file="${basedir}/lib/sis-referencing.jar"/>
+            <zipfileset file="${basedir}/lib/commons-compress.jar"/>
+            <zipfileset file="${basedir}/lib/commons-digester.jar"/>
+            <zipfileset file="${basedir}/lib/cxf-rt-rs-client.jar"/>
+            <zipfileset file="${basedir}/lib/jackcess-encrypt.jar"/>
+            <zipfileset file="${basedir}/lib/jackson-core-asl.jar"/>
+            <zipfileset file="${basedir}/lib/jcip-annotations.jar"/>
+            <zipfileset file="${basedir}/lib/jericho-html-dev.jar"/>
+            <zipfileset file="${basedir}/lib/log4j-over-slf4j.jar"/>
+            <zipfileset file="${basedir}/lib/vorbis-java-core.jar"/>
+            <zipfileset file="${basedir}/lib/vorbis-java-tika.jar"/>
+            <zipfileset file="${basedir}/lib/apache-mime4j-dom.jar"/>
+            <zipfileset file="${basedir}/lib/commons-beanutils.jar"/>
+            <zipfileset file="${basedir}/lib/commons-validator.jar"/>
+            <zipfileset file="${basedir}/lib/juniversalchardet.jar"/>
+            <zipfileset file="${basedir}/lib/poi-ooxml-schemas.jar"/>
+            <zipfileset file="${basedir}/lib/woodstox-core-asl.jar"/>
+            <zipfileset file="${basedir}/lib/apache-mime4j-core.jar"/>
+            <zipfileset file="${basedir}/lib/commons-fileupload.jar"/>
+            <zipfileset file="${basedir}/lib/commons-httpclient.jar"/>
+            <zipfileset file="${basedir}/lib/hadoop-annotations.jar"/>
+            <zipfileset file="${basedir}/lib/jackson-mapper-asl.jar"/>
+            <zipfileset file="${basedir}/lib/metadata-extractor.jar"/>
+            <zipfileset file="${basedir}/lib/collections-generic.jar"/>
+            <zipfileset file="${basedir}/lib/commons-collections.jar"/>
+            <zipfileset file="${basedir}/lib/commons-logging-api.jar"/>
+            <zipfileset file="${basedir}/lib/javax.annotation-api.jar"/>
+            <zipfileset file="${basedir}/lib/mysql-connector-java.jar"/>
+            <zipfileset file="${basedir}/lib/commons-configuration.jar"/>
+            <zipfileset file="${basedir}/lib/cxf-rt-frontend-jaxrs.jar"/>
+            <zipfileset file="${basedir}/lib/cxf-rt-transports-http.jar"/>
+            <zipfileset file="${basedir}/lib/maven-scm-provider-svnexe.jar"/>
+            <zipfileset file="${basedir}/lib/maven-scm-provider-svn-commons.jar"/>
+            <zipfileset file="${basedir}/lib/je.jar"/>
+            <zipfileset file="${basedir}/lib/xz.jar"/>
+            <zipfileset file="${basedir}/lib/asm.jar"/>
+            <zipfileset file="${basedir}/lib/cdm.jar"/>
+            <zipfileset file="${basedir}/lib/jna.jar"/>
+            <zipfileset file="${basedir}/lib/kfs.jar"/>
+            <zipfileset file="${basedir}/lib/oro.jar"/>
+            <zipfileset file="${basedir}/lib/poi.jar"/>
+            <zipfileset file="${basedir}/lib/avro.jar"/>
+            <zipfileset file="${basedir}/lib/c3p0.jar"/>
+            <zipfileset file="${basedir}/lib/colt.jar"/>
+            <zipfileset file="${basedir}/lib/core.jar"/>
+            <zipfileset file="${basedir}/lib/grib.jar"/>
+            <zipfileset file="${basedir}/lib/jdom.jar"/>
+            <zipfileset file="${basedir}/lib/jsap.jar"/>
+            <zipfileset file="${basedir}/lib/json.jar"/>
+            <zipfileset file="${basedir}/lib/jwnl.jar"/>
+            <zipfileset file="${basedir}/lib/mail.jar"/>
+            <zipfileset file="${basedir}/lib/mx4j.jar"/>
+            <zipfileset file="${basedir}/lib/rome.jar"/>
+            <zipfileset file="${basedir}/lib/antlr.jar"/>
+            <zipfileset file="${basedir}/lib/bzip2.jar"/>
+            <zipfileset file="${basedir}/lib/guava.jar"/>
+            <zipfileset file="${basedir}/lib/jai4j.jar"/>
+            <zipfileset file="${basedir}/lib/jdiff.jar"/>
+            <zipfileset file="${basedir}/lib/jdom2.jar"/>
+            <zipfileset file="${basedir}/lib/jetty.jar"/>
+            <zipfileset file="${basedir}/lib/jsoup.jar"/>
+            <zipfileset file="${basedir}/lib/junit.jar"/>
+            <zipfileset file="${basedir}/lib/netty.jar"/>
+            <zipfileset file="${basedir}/lib/sux4j.jar"/>
+            <zipfileset file="${basedir}/lib/xalan.jar"/>
+            <zipfileset file="${basedir}/lib/geoapi.jar"/>
+            <zipfileset file="${basedir}/lib/javacc.jar"/>
+            <zipfileset file="${basedir}/lib/jets3t.jar"/>
+            <zipfileset file="${basedir}/lib/jj2000.jar"/>
+            <zipfileset file="${basedir}/lib/jmatio.jar"/>
+            <zipfileset file="${basedir}/lib/junrar.jar"/>
+            <zipfileset file="${basedir}/lib/pdfbox.jar"/>
+            <zipfileset file="${basedir}/lib/quartz.jar"/>
+            <zipfileset file="${basedir}/lib/regexp.jar"/>
+            <zipfileset file="${basedir}/lib/sslext.jar"/>
+            <zipfileset file="${basedir}/lib/struts.jar"/>
+            <zipfileset file="${basedir}/lib/xmlenc.jar"/>
+            <zipfileset file="${basedir}/lib/dnsjava.jar"/>
+            <zipfileset file="${basedir}/lib/fontbox.jar"/>
+            <zipfileset file="${basedir}/lib/jempbox.jar"/>
+            <zipfileset file="${basedir}/lib/jgroups.jar"/>
+            <zipfileset file="${basedir}/lib/jsp-api.jar"/>
+            <zipfileset file="${basedir}/lib/jsr-275.jar"/>
+            <zipfileset file="${basedir}/lib/jung-io.jar"/>
+            <zipfileset file="${basedir}/lib/netcdf4.jar"/>
+            <zipfileset file="${basedir}/lib/tagsoup.jar"/>
+            <zipfileset file="${basedir}/lib/udunits.jar"/>
+            <zipfileset file="${basedir}/lib/xmpcore.jar"/>
+            <zipfileset file="${basedir}/lib/avro-ipc.jar"/>
+            <zipfileset file="${basedir}/lib/cxf-core.jar"/>
+            <zipfileset file="${basedir}/lib/dsiutils.jar"/>
+            <zipfileset file="${basedir}/lib/fastutil.jar"/>
+            <zipfileset file="${basedir}/lib/httpcore.jar"/>
+            <zipfileset file="${basedir}/lib/httpmime.jar"/>
+            <zipfileset file="${basedir}/lib/jackcess.jar"/>
+            <zipfileset file="${basedir}/lib/jaxb-api.jar"/>
+            <zipfileset file="${basedir}/lib/jettison.jar"/>
+            <zipfileset file="${basedir}/lib/jung-api.jar"/>
+            <zipfileset file="${basedir}/lib/mg4j-big.jar"/>
+            <zipfileset file="${basedir}/lib/stax-api.jar"/>
+            <zipfileset file="${basedir}/lib/umlgraph.jar"/>
+            <zipfileset file="${basedir}/lib/velocity.jar"/>
+            <zipfileset file="${basedir}/lib/webgraph.jar"/>
+            <zipfileset file="${basedir}/lib/wstx-asl.jar"/>
+            <zipfileset file="${basedir}/lib/xmlbeans.jar"/>
+            <zipfileset file="${basedir}/lib/aspectjrt.jar"/>
+            <zipfileset file="${basedir}/lib/isoparser.jar"/>
+            <zipfileset file="${basedir}/lib/jaxb-impl.jar"/>
+            <zipfileset file="${basedir}/lib/joda-time.jar"/>
+            <zipfileset file="${basedir}/lib/paranamer.jar"/>
+            <zipfileset file="${basedir}/lib/poi-ooxml.jar"/>
+            <zipfileset file="${basedir}/lib/slf4j-api.jar"/>
+            <zipfileset file="${basedir}/lib/stax2-api.jar"/>
+            <zipfileset file="${basedir}/lib/tika-core.jar"/>
+            <zipfileset file="${basedir}/lib/activation.jar"/>
+            <zipfileset file="${basedir}/lib/bliki-core.jar"/>
+            <zipfileset file="${basedir}/lib/boilerpipe.jar"/>
+            <zipfileset file="${basedir}/lib/commons-el.jar"/>
+            <zipfileset file="${basedir}/lib/commons-io.jar"/>
+            <zipfileset file="${basedir}/lib/concurrent.jar"/>
+            <zipfileset file="${basedir}/lib/httpclient.jar"/>
+            <zipfileset file="${basedir}/lib/jackson-xc.jar"/>
+            <zipfileset file="${basedir}/lib/jcommander.jar"/>
+            <zipfileset file="${basedir}/lib/jetty-util.jar"/>
+            <zipfileset file="${basedir}/lib/jhighlight.jar"/>
+            <zipfileset file="${basedir}/lib/mx4j-tools.jar"/>
+            <zipfileset file="${basedir}/lib/pojo-mbean.jar"/>
+            <zipfileset file="${basedir}/lib/sis-netcdf.jar"/>
+            <zipfileset file="${basedir}/lib/commons-cli.jar"/>
+            <zipfileset file="${basedir}/lib/commons-csv.jar"/>
+            <zipfileset file="${basedir}/lib/commons-net.jar"/>
+            <zipfileset file="${basedir}/lib/hadoop-auth.jar"/>
+            <zipfileset file="${basedir}/lib/java-libpst.jar"/>
+            <zipfileset file="${basedir}/lib/jersey-core.jar"/>
+            <zipfileset file="${basedir}/lib/jersey-json.jar"/>
+            <zipfileset file="${basedir}/lib/json-simple.jar"/>
+            <zipfileset file="${basedir}/lib/servlet-api.jar"/>
+            <zipfileset file="${basedir}/lib/sis-storage.jar"/>
+            <zipfileset file="${basedir}/lib/sis-utility.jar"/>
+            <zipfileset file="${basedir}/lib/snappy-java.jar"/>
+            <zipfileset file="${basedir}/lib/commons-exec.jar"/>
+            <zipfileset file="${basedir}/lib/commons-lang.jar"/>
+            <zipfileset file="${basedir}/lib/commons-math.jar"/>
+            <zipfileset file="${basedir}/lib/commons-vfs2.jar"/>
+            <zipfileset file="${basedir}/lib/ehcache-core.jar"/>
+            <zipfileset file="${basedir}/lib/httpservices.jar"/>
+            <zipfileset file="${basedir}/lib/logback-core.jar"/>
+            <zipfileset file="${basedir}/lib/plexus-utils.jar"/>
+            <zipfileset file="${basedir}/lib/sis-metadata.jar"/>
+            <zipfileset file="${basedir}/lib/tika-parsers.jar"/>
+            <zipfileset file="${basedir}/lib/velocity-dep.jar"/>
+            <zipfileset file="${basedir}/lib/webgraph-big.jar"/>
+            <zipfileset file="${basedir}/lib/bubing-0.9.11.jar"/>
+            <zipfileset file="${basedir}/lib/commons-codec.jar"/>
+            <zipfileset file="${basedir}/lib/commons-lang3.jar"/>
+            <zipfileset file="${basedir}/lib/commons-math3.jar"/>
+            <zipfileset file="${basedir}/lib/hadoop-common.jar"/>
+            <zipfileset file="${basedir}/lib/hamcrest-core.jar"/>
+            <zipfileset file="${basedir}/lib/jackson-jaxrs.jar"/>
+            <zipfileset file="${basedir}/lib/jersey-server.jar"/>
+            <zipfileset file="${basedir}/lib/maven-scm-api.jar"/>
+            <zipfileset file="${basedir}/lib/opennlp-tools.jar"/>
+            <zipfileset file="${basedir}/lib/protobuf-java.jar"/>
+            <zipfileset file="${basedir}/lib/bcmail-jdk15on.jar"/>
+            <zipfileset file="${basedir}/lib/bcpkix-jdk15on.jar"/>
+            <zipfileset file="${basedir}/lib/bcprov-jdk15on.jar"/>
+            <zipfileset file="${basedir}/lib/jasper-runtime.jar"/>
+            <zipfileset file="${basedir}/lib/jcl-over-slf4j.jar"/>
+            <zipfileset file="${basedir}/lib/mg4j-big-5.4.1.jar"/>
+            <zipfileset file="${basedir}/lib/opennlp-maxent.jar"/>
+            <zipfileset file="${basedir}/lib/poi-scratchpad.jar"/>
+            <zipfileset file="${basedir}/lib/velocity-tools.jar"/>
+            <zipfileset file="${basedir}/lib/xmlschema-core.jar"/>
+            <zipfileset file="${basedir}/lib/commons-logging.jar"/>
+            <zipfileset file="${basedir}/lib/jasper-compiler.jar"/>
+            <zipfileset file="${basedir}/lib/javax.ws.rs-api.jar"/>
+            <zipfileset file="${basedir}/lib/jung-algorithms.jar"/>
+            <zipfileset file="${basedir}/lib/logback-classic.jar"/>
+            <zipfileset file="${basedir}/lib/sis-referencing.jar"/>
+            <zipfileset file="${basedir}/lib/commons-compress.jar"/>
+            <zipfileset file="${basedir}/lib/commons-digester.jar"/>
+            <zipfileset file="${basedir}/lib/cxf-rt-rs-client.jar"/>
+            <zipfileset file="${basedir}/lib/jackcess-encrypt.jar"/>
+            <zipfileset file="${basedir}/lib/jackson-core-asl.jar"/>
+            <zipfileset file="${basedir}/lib/jcip-annotations.jar"/>
+            <zipfileset file="${basedir}/lib/jericho-html-dev.jar"/>
+            <zipfileset file="${basedir}/lib/log4j-over-slf4j.jar"/>
+            <zipfileset file="${basedir}/lib/vorbis-java-core.jar"/>
+            <zipfileset file="${basedir}/lib/vorbis-java-tika.jar"/>
+            <zipfileset file="${basedir}/lib/apache-mime4j-dom.jar"/>
+            <zipfileset file="${basedir}/lib/commons-beanutils.jar"/>
+            <zipfileset file="${basedir}/lib/commons-validator.jar"/>
+            <zipfileset file="${basedir}/lib/juniversalchardet.jar"/>
+            <zipfileset file="${basedir}/lib/poi-ooxml-schemas.jar"/>
+            <zipfileset file="${basedir}/lib/woodstox-core-asl.jar"/>
+            <zipfileset file="${basedir}/lib/apache-mime4j-core.jar"/>
+            <zipfileset file="${basedir}/lib/commons-fileupload.jar"/>
+            <zipfileset file="${basedir}/lib/commons-httpclient.jar"/>
+            <zipfileset file="${basedir}/lib/hadoop-annotations.jar"/>
+            <zipfileset file="${basedir}/lib/jackson-mapper-asl.jar"/>
+            <zipfileset file="${basedir}/lib/metadata-extractor.jar"/>
+            <zipfileset file="${basedir}/lib/collections-generic.jar"/>
+            <zipfileset file="${basedir}/lib/commons-collections.jar"/>
+            <zipfileset file="${basedir}/lib/commons-logging-api.jar"/>
+            <zipfileset file="${basedir}/lib/javax.annotation-api.jar"/>
+            <zipfileset file="${basedir}/lib/mysql-connector-java.jar"/>
+            <zipfileset file="${basedir}/lib/commons-configuration.jar"/>
+            <zipfileset file="${basedir}/lib/cxf-rt-frontend-jaxrs.jar"/>
+            <zipfileset file="${basedir}/lib/cxf-rt-transports-http.jar"/>
+            <zipfileset file="${basedir}/lib/maven-scm-provider-svnexe.jar"/>
+            <zipfileset file="${basedir}/lib/maven-scm-provider-svn-commons.jar"/>
+        </jar>
+        <copy file="${temp.jar.path.mg4j-nyu-0.1.jar}" tofile="${artifact.output.mg4j-nyu-0.1}/mg4j-nyu-0.1.jar"/>
+        <delete dir="${artifacts.temp.dir}"/>
+    </target>
+
+    <target name="build.all.artifacts" depends="artifact.mg4j-nyu-0.1" description="Build all artifacts">
+    </target>
+
+    <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
 </project>

@@ -26,26 +26,16 @@ import it.unimi.di.big.mg4j.query.nodes.Query;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitor;
 import it.unimi.di.big.mg4j.query.parser.QueryParser;
 import it.unimi.di.big.mg4j.search.DocumentIterator;
-import it.unimi.di.big.mg4j.search.score.AbstractAggregator;
-import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
-import it.unimi.di.big.mg4j.search.score.ScoredDocumentBoundedSizeQueue;
-import it.unimi.di.big.mg4j.search.score.Scorer;
+import it.unimi.di.big.mg4j.search.score.*;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.Reference2DoubleMap;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import it.unimi.dsi.lang.FlyweightPrototype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.util.HashSet;
-import java.util.Set;
 
 import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
 
@@ -100,61 +90,56 @@ import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
  * @since 1.0
  */
 
-public class PrunedQueryEngine<T> extends QueryEngine<T> {
+public class HitsQueryEngine<T> extends QueryEngine<T> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PrunedQueryEngine.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HitsQueryEngine.class);
 
-    public boolean prunning;
-    public Set<Long> PrunedIndex_Docs;
-    public Set<Long> PrunedIndex_Postings;
-
-    public PrunedQueryEngine(final QueryParser queryParser, final QueryBuilderVisitor<DocumentIterator> builderVisitor, final Object2ReferenceMap<String, Index> indexMap) {
+    /**
+     * Creates a new query engine.
+     *
+     * @param queryParser    a query parser, or <code>null</code> if this query engine will {@linkplain #process(Query[], int, int, ObjectArrayList) just process pre-parsed queries}.
+     * @param builderVisitor a builder visitor to transform {@linkplain Query queries} into {@linkplain DocumentIterator document iterators}.
+     * @param indexMap       a map from symbolic name to indices (used for multiplexing and default weight initialisation).
+     */
+    public HitsQueryEngine(QueryParser queryParser, QueryBuilderVisitor<DocumentIterator> builderVisitor, Object2ReferenceMap<String, Index> indexMap) {
         super(queryParser, builderVisitor, indexMap);
-        this.PrunedIndex_Docs = new HashSet<Long>();
-    }
-
-    public PrunedQueryEngine<T> loadPrunedIndex(final String basename, final int threshod) throws Exception {
-        PrunedIndex_Docs.clear();
-        String line;
-        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(basename), Charset.forName("UTF-8")));
-        int n = 0;
-        while ((line = br.readLine()) != null) {
-            PrunedIndex_Docs.add(Long.parseLong(line));
-            if (n++ > threshod) break;
-        }
-        return this;
-    }
-
-    protected boolean pruned(long docID) {
-        boolean res = false;
-        res = !this.prunning || this.PrunedIndex_Docs.contains(docID);
-        return res;
     }
 
     @Override
-    protected int getScoredResults(final DocumentIterator documentIterator, final int offset, final int length, final double lastMinScore, final ObjectArrayList<DocumentScoreInfo<T>> results, final LongSet alreadySeen) throws IOException {
+    protected int getScoredResults(final DocumentIterator documentIterator, final int offset, final int length,
+                                   final double lastMinScore, final ObjectArrayList<DocumentScoreInfo<T>> results, final LongSet alreadySeen) throws IOException {
 
-        final ScoredDocumentBoundedSizeQueue<Reference2ObjectMap<Index, SelectedInterval[]>> top = new ScoredDocumentBoundedSizeQueue<Reference2ObjectMap<Index, SelectedInterval[]>>(offset + length);
+        final ScoredDocumentBoundedSizeQueue<ObjectArrayList<Byte>> top = new ScoredDocumentBoundedSizeQueue<ObjectArrayList<Byte>>(offset + length);
+
         long document;
         int count = 0; // Number of not-already-seen documents
 
-        System.out.print(".");
-
         scorer.wrap(documentIterator);
-
         // TODO: we should avoid enqueueing until we really know we shall use the values
         if (alreadySeen != null)
             while ((document = scorer.nextDocument()) != END_OF_LIST) {
                 if (alreadySeen.add(document)) continue;
-                if (!pruned(document)) continue;
                 count++;
-                top.enqueue(document, scorer.score());
+                // find the terms involved in this score
+                ObjectArrayList<Byte> termList = new ObjectArrayList<Byte>();
+                for (int i = 0; i < ((BM25Scorer) scorer).flatIndexIterator.length; i++) {
+                    if (document == ((BM25Scorer) scorer).flatIndexIterator[i].document()) {
+                        termList.add((byte) i);
+                    }
+                }
+                top.enqueue(document, scorer.score(), termList);
             }
         else
             while ((document = scorer.nextDocument()) != END_OF_LIST) {
-                if (!pruned(document)) continue;
+                // find the terms involved in this score
+                ObjectArrayList<Byte> termList = new ObjectArrayList<Byte>();
+                for (int i = 0; i < ((BM25Scorer) scorer).flatIndexIterator.length; i++) {
+                    if (document == ((BM25Scorer) scorer).flatIndexIterator[i].document()) {
+                        termList.add((byte) i);
+                    }
+                }
                 count++;
-                top.enqueue(document, scorer.score());
+                top.enqueue(document, scorer.score(), termList);
             }
 
         final int n = Math.max(top.size() - offset, 0); // Number of actually useful documents, if any
@@ -170,32 +155,6 @@ public class PrunedQueryEngine<T> extends QueryEngine<T> {
             final double adjustment = lastMinScore / (s != 0 ? ((DocumentScoreInfo<?>) elements[s]).score : 1.0);
             for (int i = n; i-- != 0; ) ((DocumentScoreInfo<?>) elements[i + s]).score *= adjustment;
         }
-
-        return count;
-    }
-
-    @Override
-    protected int getResults(final DocumentIterator documentIterator, final int offset, final int length, final ObjectArrayList<DocumentScoreInfo<T>> results, final LongSet alreadySeen) throws IOException {
-        long document;
-        int count = 0; // Number of not-already-seen documents
-
-        System.out.print(".");
-
-        // Unfortunately, to provide the exact count of results we have to scan the whole iterator.
-        if (alreadySeen != null)
-            while ((document = documentIterator.nextDocument()) != END_OF_LIST) {
-                if (!alreadySeen.add(document)) continue;
-                if (!pruned(document)) continue;
-                if (count >= offset && count < offset + length) results.add(new DocumentScoreInfo<T>(document, -1));
-                count++;
-            }
-        else if (length != 0)
-            while ((document = documentIterator.nextDocument()) != END_OF_LIST) {
-                if (!pruned(document)) continue;
-                if (count < offset + length && count >= offset) results.add(new DocumentScoreInfo<T>(document, -1));
-                count++;
-            }
-        else while ((document = documentIterator.nextDocument()) != END_OF_LIST) count++;
 
         return count;
     }

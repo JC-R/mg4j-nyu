@@ -24,10 +24,6 @@ import it.unimi.di.law.warc.records.AbstractWarcRecord;
 import it.unimi.di.law.warc.records.WarcHeader;
 import it.unimi.di.law.warc.records.WarcRecord;
 import it.unimi.di.law.warc.util.BoundSessionInputBuffer;
-
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.http.Header;
 import org.apache.http.HttpException;
 import org.apache.http.ParseException;
@@ -44,92 +40,95 @@ import org.apache.http.util.CharArrayBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 public abstract class AbstractWarcReader_NYU implements WarcReader {
-	private static final boolean VERSION = Boolean.parseBoolean( System.getProperty( "it.unimi.di.law.warc.io.version", "true" ) );
-	private static final Logger LOGGER = LoggerFactory.getLogger( AbstractWarcReader_NYU.class );
-	
-	private static final int BUFFER_SIZE = 1024;
+    private static final boolean VERSION = Boolean.parseBoolean(System.getProperty("it.unimi.di.law.warc.io.version", "true"));
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractWarcReader_NYU.class);
 
-	private final CharArrayBuffer line = new CharArrayBuffer( BUFFER_SIZE );
-	private final HttpTransportMetricsImpl metrics = new HttpTransportMetricsImpl(); 
-	private final LineParser parser = new BasicLineParser( WarcRecord.PROTOCOL_VERSION );
-	
-	private SessionInputBuffer buffer;
-	private BoundSessionInputBuffer payload = null;
-	private ProtocolVersion version;
-	private boolean skip;
-	
-	protected void setInput( final InputStream input ) {
-		final SessionInputBufferImpl bufferImpl = new SessionInputBufferImpl( metrics, BUFFER_SIZE, 0, null, null );
-		bufferImpl.bind( input );
-		this.buffer = bufferImpl;
-		this.payload = null;
-		this.skip = false;
-	}
+    private static final int BUFFER_SIZE = 1024;
 
-	private ProtocolVersion parseHead() throws IOException  {
-		this.line.clear();
-		int read = this.buffer.readLine( this.line );
-		if ( LOGGER.isTraceEnabled() ) LOGGER.trace( "Protocol header '{}'.", new String( this.line.toCharArray() ) );
-		if ( read == -1 ) return null;
-		ParserCursor cursor = new ParserCursor( 0, this.line.length() );
-		try {
-			return parser.parseProtocolVersion( this.line, cursor );
-		} catch ( ParseException e ) {
-			throw new WarcFormatException( "Can't parse WARC version header.", e );
-		}
-	}
-	
-	protected WarcRecord read( final boolean consecutive ) throws IOException, WarcFormatException {
+    private final CharArrayBuffer line = new CharArrayBuffer(BUFFER_SIZE);
+    private final HttpTransportMetricsImpl metrics = new HttpTransportMetricsImpl();
+    private final LineParser parser = new BasicLineParser(WarcRecord.PROTOCOL_VERSION);
 
-		if ( consecutive && this.payload != null) {
-			this.payload.consume();
-			this.payload = null;
-			this.line.clear();
+    private SessionInputBuffer buffer;
+    private BoundSessionInputBuffer payload = null;
+    private ProtocolVersion version;
+    private boolean skip;
 
-			// check WARC version
-			if (!(this.version.getMajor() == 0 && this.version.getMinor() == 18)) {
-				this.buffer.readLine( this.line );
-				this.buffer.readLine( this.line );
-			}
-			else {
-				if (!this.skip) {
-					this.buffer.readLine( this.line );
-					this.skip = true;
-				}
-			}
-			if ( line.length() != 0 )
-				throw new WarcFormatException( "Missing CRLFs at WARC record end, got \"" + line + "\"" );
-			this.line.clear();
-		}
-		
-		// first header line
-		this.version = parseHead();
-		if ( this.version == null ) return null;
-		if ( VERSION && ( this.version.getMajor() != 1 || this.version.getMinor() != 0 ) ) throw new IllegalArgumentException( "Unsupported WARC version " + this.version );
+    protected void setInput(final InputStream input) {
+        final SessionInputBufferImpl bufferImpl = new SessionInputBufferImpl(metrics, BUFFER_SIZE, 0, null, null);
+        bufferImpl.bind(input);
+        this.buffer = bufferImpl;
+        this.payload = null;
+        this.skip = false;
+    }
 
-		// rest of headers
-		
-		final HeaderGroup warcHeaders = new HeaderGroup();
-		try {
-			warcHeaders.setHeaders( AbstractMessageParser.parseHeaders( this.buffer, -1, -1, null ) );
-		} catch ( HttpException e ) {
-			throw new WarcFormatException( "Can't parse WARC headers", e );
-		}
+    private ProtocolVersion parseHead() throws IOException {
+        this.line.clear();
+        int read = this.buffer.readLine(this.line);
+        if (LOGGER.isTraceEnabled()) LOGGER.trace("Protocol header '{}'.", new String(this.line.toCharArray()));
+        if (read == -1) return null;
+        ParserCursor cursor = new ParserCursor(0, this.line.length());
+        try {
+            return parser.parseProtocolVersion(this.line, cursor);
+        } catch (ParseException e) {
+            throw new WarcFormatException("Can't parse WARC version header.", e);
+        }
+    }
 
-		// payload
-		
-		final Header payloadLengthHeader = WarcHeader.getFirstHeader( warcHeaders, WarcHeader.Name.CONTENT_LENGTH );
-		if ( payloadLengthHeader == null ) throw new WarcFormatException( "Missing 'Content-Length' WARC header" );		
-		long payloadLength = -1;
-		try {
-			payloadLength = Long.parseLong( payloadLengthHeader.getValue() );
-		} catch ( NumberFormatException e ) {
-			throw new WarcFormatException( "Can't parse 'Content-Length' WARC header (is \"" + payloadLengthHeader.getValue() +"\")", e );
-		}
-		this.payload = new BoundSessionInputBuffer( this.buffer, payloadLength );
+    protected WarcRecord read(final boolean consecutive) throws IOException {
 
-		return AbstractWarcRecord.fromPayload( warcHeaders, this.payload );
-	}
+        if (consecutive && this.payload != null) {
+            this.payload.consume();
+            this.payload = null;
+            this.line.clear();
+
+            // check WARC version
+            if (!(this.version.getMajor() == 0 && this.version.getMinor() == 18)) {
+                this.buffer.readLine(this.line);
+                this.buffer.readLine(this.line);
+            } else {
+                if (!this.skip) {
+                    this.buffer.readLine(this.line);
+                    this.skip = true;
+                }
+            }
+            if (line.length() != 0)
+                throw new WarcFormatException("Missing CRLFs at WARC record end, got \"" + line + "\"");
+            this.line.clear();
+        }
+
+        // first header line
+        this.version = parseHead();
+        if (this.version == null) return null;
+        if (VERSION && (this.version.getMajor() != 1 || this.version.getMinor() != 0))
+            throw new IllegalArgumentException("Unsupported WARC version " + this.version);
+
+        // rest of headers
+
+        final HeaderGroup warcHeaders = new HeaderGroup();
+        try {
+            warcHeaders.setHeaders(AbstractMessageParser.parseHeaders(this.buffer, -1, -1, null));
+        } catch (HttpException e) {
+            throw new WarcFormatException("Can't parse WARC headers", e);
+        }
+
+        // payload
+
+        final Header payloadLengthHeader = WarcHeader.getFirstHeader(warcHeaders, WarcHeader.Name.CONTENT_LENGTH);
+        if (payloadLengthHeader == null) throw new WarcFormatException("Missing 'Content-Length' WARC header");
+        long payloadLength = -1;
+        try {
+            payloadLength = Long.parseLong(payloadLengthHeader.getValue());
+        } catch (NumberFormatException e) {
+            throw new WarcFormatException("Can't parse 'Content-Length' WARC header (is \"" + payloadLengthHeader.getValue() + "\")", e);
+        }
+        this.payload = new BoundSessionInputBuffer(this.buffer, payloadLength);
+
+        return AbstractWarcRecord.fromPayload(warcHeaders, this.payload);
+    }
 
 }

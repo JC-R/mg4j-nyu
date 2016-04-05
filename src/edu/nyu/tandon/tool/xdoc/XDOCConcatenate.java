@@ -5,7 +5,9 @@ import it.unimi.dsi.io.OutputBitStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Created by juan on 12/2/15.
@@ -26,7 +28,7 @@ public class XDOCConcatenate {
             long id = 0;
             try {
                 while (ibs.hasNext()) {
-                    id =  ibs.readLongGamma()+totalDocs;
+                    id = ibs.readLongGamma() + totalDocs;
                     obs.writeLongGamma(nextID++);  // id
                     obs.writeGamma(ibs.readGamma());    // len
                     obs.writeGamma(ibs.readGamma());    // unique terms

@@ -14,14 +14,16 @@ public class languageModel {
 
     public Object2FloatOpenHashMap<MutableString> Unigrams;
 
-    public languageModel() {}
+    public languageModel() {
+    }
 
     public languageModel(String fileName) throws Exception {
         Unigrams = new Object2FloatOpenHashMap<MutableString>(Scan.INITIAL_TERM_MAP_SIZE);
         loadArpa(fileName);
     }
+
     /**
-     // This is an ARPA format reader, tab delimited
+     * // This is an ARPA format reader, tab delimited
      * Loads the language model unigram file: first entry is assumed to be P(UNK)
      * Ignore line with < 3 tokens
      * First line is P(UNK), given by empty or
@@ -47,7 +49,7 @@ public class languageModel {
             if (tokens.length < 3) continue;
             if (tokens[1].compareTo("") == 0 || tokens[1].compareTo("<UNK>") == 0) {
                 pUnknown = tokens[0];
-                Unigrams.defaultReturnValue((float)Math.pow(10,Float.parseFloat(tokens[0])));   // null key = P(unk)
+                Unigrams.defaultReturnValue((float) Math.pow(10, Float.parseFloat(tokens[0])));   // null key = P(unk)
                 break;
             }
         }
@@ -59,7 +61,7 @@ public class languageModel {
                 break;
             if (tokens[0].compareTo(pUnknown) == 0)
                 continue;
-            Unigrams.put(new MutableString(tokens[1]), (float)Math.pow(10,Float.parseFloat(tokens[0])));
+            Unigrams.put(new MutableString(tokens[1]), (float) Math.pow(10, Float.parseFloat(tokens[0])));
         }
         uIn.close();
     }

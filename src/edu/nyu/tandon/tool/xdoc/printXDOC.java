@@ -4,7 +4,8 @@ import it.unimi.dsi.io.InputBitStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * Created by juan on 12/2/15.
