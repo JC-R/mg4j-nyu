@@ -7,289 +7,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="aafbeb68-406b-4123-9b37-3edda31a0b19" name="Default" comment="refactored to Maven project">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/law-2.3.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_classic_1_0_9.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_core_1_0_9.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_guava_guava_14_0_rc2.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_martiansoftware_jsap_2_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_collections_commons_collections_3_2_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_configuration_commons_configuration_1_8.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_io_commons_io_2_4.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_lang_commons_lang_2_6.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_logging_commons_logging_1_1_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__it_unimi_dsi_dsiutils_2_0_12.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__it_unimi_dsi_fastutil_6_5_14.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__log4j_log4j_1_2_17.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_java_dev_jna_jna_3_2_3.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_java_dev_jna_platform_3_4_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_lang3_3_3_2.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_math3_3_1_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpcore_4_3.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_codehaus_plexus_plexus_io_2_1_3.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_codehaus_plexus_plexus_utils_3_0_18.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_2.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/artifacts/mg4j_nyu_0_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/experiments/ListSpeed.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/experiments/PrunedQuery.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/experiments/RandomAccess.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/experiments/RawDocHits$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/experiments/RawDocHits$Command.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/experiments/RawDocHits$OutputType.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/experiments/RawDocHits.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/experiments/RawHits$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/experiments/RawHits$Command.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/experiments/RawHits$OutputType.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/experiments/RawHits.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/query/FeaturesQueryEngine.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/query/HitsQueryEngine.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/query/PrunedQueryEngine.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/query/Query$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/query/Query$2.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/query/Query$Command.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/query/Query$OutputType.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/query/Query.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/query/QueryEngine.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/tool/ExtractCorpus.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/tool/IndexFeatures.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/tool/xdoc/XDOCConcatenate.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/tool/xdoc/XDOCScan$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/tool/xdoc/XDOCScan.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/tool/xdoc/printXDOC.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/utils/languageModel.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/edu/nyu/tandon/utils/utils.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/it/unimi/di/big/mg4j/document/WarcDocumentSequence_NYU$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/it/unimi/di/big/mg4j/document/WarcDocumentSequence_NYU.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/it/unimi/di/big/mg4j/search/score/BM25Scorer$Visitor.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/it/unimi/di/big/mg4j/search/score/BM25Scorer.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/it/unimi/di/big/mg4j/tool/Scan$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/it/unimi/di/big/mg4j/tool/Scan$2.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/it/unimi/di/big/mg4j/tool/Scan$3.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/it/unimi/di/big/mg4j/tool/Scan$4.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/it/unimi/di/big/mg4j/tool/Scan$5.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/it/unimi/di/big/mg4j/tool/Scan$Completeness.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/it/unimi/di/big/mg4j/tool/Scan$IndexingType.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/it/unimi/di/big/mg4j/tool/Scan$PayloadAccumulator$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/it/unimi/di/big/mg4j/tool/Scan$PayloadAccumulator.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/it/unimi/di/big/mg4j/tool/Scan$VirtualDocumentFragment.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/it/unimi/di/big/mg4j/tool/Scan.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/it/unimi/di/law/warc/io/AbstractWarcReader_NYU.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classes/production/mg4j-nyu/it/unimi/di/law/warc/io/UncompressedWarcReader_NYU.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/activation.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/antlr.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/apache-mime4j-core.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/apache-mime4j-dom.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/asm.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/aspectjrt.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/avro-ipc.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/avro.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/bcmail-jdk15on.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/bcpkix-jdk15on.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/bcprov-jdk15on.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/bliki-core.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/boilerpipe.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/bzip2.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/c3p0.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/cdm.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/collections-generic.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/colt.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-beanutils.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-cli.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-codec.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-collections.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-compress.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-configuration.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-csv.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-digester.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-el.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-exec.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-fileupload.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-httpclient.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-io.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-lang.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-lang3.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-logging-api.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-logging.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-math.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-math3.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-net.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-validator.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-vfs2.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/concurrent.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/core.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/cxf-core.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/cxf-rt-frontend-jaxrs.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/cxf-rt-rs-client.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/cxf-rt-transports-http.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/dnsjava.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/dsiutils.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/ehcache-core.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/fastutil.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/fontbox.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/geoapi.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/grib.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/guava.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/hadoop-annotations.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/hadoop-auth.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/hadoop-common.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/hamcrest-core.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/httpclient.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/httpcore.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/httpmime.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/httpservices.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/isoparser.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jackcess-encrypt.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jackcess.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jackson-core-asl.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jackson-jaxrs.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jackson-mapper-asl.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jackson-xc.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jai4j.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jasper-compiler.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jasper-runtime.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/java-libpst.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/javacc.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/javax.annotation-api.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/javax.ws.rs-api.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jaxb-api.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jaxb-impl.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jcip-annotations.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jcl-over-slf4j.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jcommander.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jdiff.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jdom.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jdom2.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/je.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jempbox.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jericho-html-dev.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jersey-core.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jersey-json.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jersey-server.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jets3t.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jettison.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jetty-util.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jetty.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jgroups.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jhighlight.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jj2000.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jmatio.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jna.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/joda-time.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jsap.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/json-simple.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/json.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jsoup.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jsp-api.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jsr-275.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jung-algorithms.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jung-api.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jung-io.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/junit.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/juniversalchardet.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/junrar.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jwnl.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/kfs.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/log4j-over-slf4j.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/logback-classic.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/logback-core.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/mail.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/maven-scm-api.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/maven-scm-provider-svn-commons.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/maven-scm-provider-svnexe.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/metadata-extractor.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/mx4j-tools.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/mx4j.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/mysql-connector-java.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/netcdf4.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/netty.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/opennlp-maxent.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/opennlp-tools.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/oro.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/paranamer.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/pdfbox.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/plexus-utils.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/poi-ooxml-schemas.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/poi-ooxml.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/poi-scratchpad.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/poi.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/pojo-mbean.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/protobuf-java.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/quartz.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/regexp.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/rome.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/servlet-api.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/sis-metadata.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/sis-netcdf.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/sis-referencing.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/sis-storage.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/sis-utility.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/slf4j-api.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/snappy-java.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/sslext.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/stax-api.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/stax2-api.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/struts.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/tagsoup.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/tika-core.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/tika-parsers.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/udunits.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/umlgraph.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/velocity-dep.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/velocity-tools.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/velocity.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/vorbis-java-core.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/vorbis-java-tika.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/webgraph-big.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/webgraph.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/woodstox-core-asl.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/wstx-asl.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/xalan.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/xmlbeans.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/xmlenc.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/xmlschema-core.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/xmpcore.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/xz.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/mg4j-nyu-0.1.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/it/unimi/di/big/mg4j/document/WarcDocumentSequence_NYU.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/it/unimi/di/big/mg4j/search/score/BM25Scorer.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/it/unimi/di/big/mg4j/tool/Scan.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/it/unimi/di/law/warc/io/AbstractWarcReader_NYU.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/it/unimi/di/law/warc/io/UncompressedWarcReader_NYU.java" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/experiments/ListSpeed.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ListSpeed.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/experiments/PrunedQuery.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/PrunedQuery.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/experiments/RandomAccess.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/RandomAccess.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/experiments/RawDocHits.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/RawDocHits.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/experiments/RawHits.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/RawHits.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/index/cluster/DocumentalStrategies.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/DocumentalStrategies.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/index/cluster/PrunedDocumentalStrategy.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/PrunedDocumentalStrategy.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/index/cluster/PrunedLexicalStrategy.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/PrunedLexicalStrategy.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/query/FeaturesQueryEngine.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/FeaturesQueryEngine.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/query/HitsQueryEngine.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/HitsQueryEngine.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/query/PrunedQueryEngine.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedQueryEngine.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/query/Query.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/Query.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/query/QueryEngine.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/QueryEngine.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/query/TerminatingQueryEngine.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/TerminatingQueryEngine.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/tool/ExtractCorpus.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/ExtractCorpus.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/tool/IndexFeatures.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/IndexFeatures.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/tool/PrunedPartition.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/PrunedPartition.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/tool/renumber/Renumber.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/renumber/Renumber.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/tool/xdoc/XDOCConcatenate.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/xdoc/XDOCConcatenate.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/tool/xdoc/XDOCScan.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/xdoc/XDOCScan.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/tool/xdoc/printXDOC.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/xdoc/printXDOC.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/utils/languageModel.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/utils/languageModel.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/nyu/tandon/utils/utils.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/utils/utils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/bubing-0.9.11.jar" afterPath="$PROJECT_DIR$/lib/bubing-0.9.11.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/mg4j_nyu.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/mg4j_nyu.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/mg4j-nyu.iml" afterPath="$PROJECT_DIR$/.idea/mg4j-nyu.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+    </list>
+    <list id="ed85adb0-e99b-4e30-98e3-d0c136dff639" name="Rejected commit: Default" comment="refactored to Maven project">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/document/WarcDocumentSequence_NYU.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/search/score/BM25Scorer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/tool/Scan.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/it/unimi/di/law/warc/io/AbstractWarcReader_NYU.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/it/unimi/di/law/warc/io/UncompressedWarcReader_NYU.java" />
     </list>
     <ignored path="mg4j-nyu.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <file path="$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/tool/Scan.java" ignored="false" />
+    <file path="$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/search/score/BM25Scorer.java" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -329,7 +62,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PrunedQuery.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="PrunedQuery.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/PrunedQuery.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-2122">
@@ -337,6 +70,26 @@
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TerminatingQueryEngine.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/TerminatingQueryEngine.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="34">
+              <caret line="2" column="32" selection-start-line="2" selection-start-column="32" selection-end-line="2" selection-end-column="32" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BM25Scorer.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/search/score/BM25Scorer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="93">
+              <caret line="336" column="115" selection-start-line="336" selection-start-column="115" selection-end-line="336" selection-end-column="115" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -509,10 +262,10 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="358" />
-    <option name="y" value="117" />
+    <option name="x" value="202" />
+    <option name="y" value="127" />
     <option name="width" value="1920" />
-    <option name="height" value="1210" />
+    <option name="height" value="1102" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -602,18 +355,18 @@
     <property name="GenerateAntBuildDialog.enableUiFormCompile" value="true" />
     <property name="GenerateAntBuildDialog.backupFiles" value="true" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="settings.editor.selected.configurable" value="MavenSettings" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="SearchEverywhereHistoryKey" value="log2&#9;PSI&#9;JAVA://com.google.common.math.DoubleMath#log2&#10;DEFAULT_QUANTUM&#9;PSI&#9;JAVA://it.unimi.di.big.mg4j.index.QuasiSuccinctIndex#DEFAULT_QUANTUM&#10;quantum&#9;PSI&#9;JAVA://it.unimi.di.big.mg4j.index.QuasiSuccinctIndexWriter.Accumulator#quantum&#10;skipQuantum&#9;PSI&#9;JAVA://it.unimi.di.big.mg4j.index.BitStreamIndex.PropertyKeys#SKIPQUANTUM" />
     <property name="js-jscs-nodeInterpreter" value="C:\Program Files (x86)\nodejs\node.exe" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\work\sandbox\mg4j-nyu\src\main\java\edu\nyu" />
+      <recent name="C:\work\sandbox\mg4j-nyu\src" />
       <recent name="C:\work\sandbox\mg4j-nyu\src\main\java" />
       <recent name="C:\work\sandbox\mg4j-nyu\src\main\java\it\unimi" />
-      <recent name="C:\work\sandbox\mg4j-nyu\src" />
       <recent name="C:\work\sandbox\mg4j-nyu\lib" />
-      <recent name="$PROJECT_DIR$/jars" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="edu.nyu.tandon.experiments" />
@@ -1090,7 +843,7 @@
       <workItem from="1451843492861" duration="39736000" />
       <workItem from="1452037420059" duration="3772000" />
       <workItem from="1452103042191" duration="12829000" />
-      <workItem from="1459894924797" duration="3456000" />
+      <workItem from="1459894924797" duration="5307000" />
     </task>
     <task id="LOCAL-00001" summary="corpus">
       <created>1449100265931</created>
@@ -1134,29 +887,36 @@
       <option name="project" value="LOCAL" />
       <updated>1452123734172</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="refactored to Maven project">
+      <created>1459901771162</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1459901771162</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="158736000" />
+    <option name="totallyTimeSpent" value="160587000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="358" y="117" width="1920" height="1210" extended-state="0" />
+    <frame x="202" y="127" width="1920" height="1102" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32919955" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6736441" sideWeight="0.49746192" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.6733828" sideWeight="0.49746192" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32919955" sideWeight="0.5053305" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3295699" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.46812558" sideWeight="0.4946695" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45772266" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32343584" sideWeight="0.4946695" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45705196" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="IvyIDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32919955" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17258064" sideWeight="0.49411765" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4607527" sideWeight="0.49411765" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.47972974" sideWeight="0.4939759" order="1" side_tool="false" content_ui="tabs" />
@@ -1262,8 +1022,6 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$USER_HOME$/.ideaLibSources/mg4j-big-5.4.1-sources.jar!/src/it/unimi/di/big/mg4j/index/IndexIterators.java" />
-    <entry file="jar:///usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar!/java/nio/ByteOrder.class" />
     <entry file="jar://$USER_HOME$/.ideaLibSources/mg4j-big-5.4.1-sources.jar!/src/it/unimi/di/big/mg4j/tool/Merge.java" />
     <entry file="jar://$USER_HOME$/.ideaLibSources/mg4j-big-5.4.1-sources.jar!/src/it/unimi/di/big/mg4j/index/QuasiSuccinctIndexReader.java" />
     <entry file="jar://$USER_HOME$/.ideaLibSources/mg4j-big-5.4.1-sources.jar!/src/it/unimi/di/big/mg4j/index/IndexIterator.java" />
@@ -1485,6 +1243,22 @@
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/TerminatingQueryEngine.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="32" selection-start-line="2" selection-start-column="32" selection-end-line="2" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/search/score/BM25Scorer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="93">
+          <caret line="336" column="115" selection-start-line="336" selection-start-column="115" selection-end-line="336" selection-end-column="115" />
+          <folding />
         </state>
       </provider>
     </entry>
