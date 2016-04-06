@@ -27,6 +27,7 @@ import it.unimi.di.big.mg4j.document.AbstractDocumentSequence;
 import it.unimi.di.big.mg4j.document.DocumentCollection;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
+import it.unimi.di.big.mg4j.query.HttpQueryServer;
 import it.unimi.di.big.mg4j.query.IntervalSelector;
 import it.unimi.di.big.mg4j.query.SelectedInterval;
 import it.unimi.di.big.mg4j.query.TextMarker;
