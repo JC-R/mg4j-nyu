@@ -183,7 +183,7 @@ public class Renumber {
         long frequency = indexIterator.frequency();
 
         int[] documents = new int[(int) frequency];
-//        Posting[] postings = new Posting[(int) index.numberOfDocuments];
+//        Posting[] localPostings = new Posting[(int) index.numberOfDocuments];
         Map<Integer, Posting> postings = new HashMap<>();
         long sumMaxPos = 0, occurrency = 0;
 
@@ -206,7 +206,7 @@ public class Renumber {
                 posting.documentSize = -1;
             }
 
-//            postings[mappedId] = posting;
+//            localPostings[mappedId] = posting;
             postings.put(mappedId, posting);
         }
         Arrays.sort(documents);
@@ -228,7 +228,7 @@ public class Renumber {
 
     public void writeRecords(InvertedList invertedList) throws IOException {
         for (int document : invertedList.documents) {
-//            Posting p = invertedList.postings[document];
+//            Posting p = invertedList.localPostings[document];
             Posting p = invertedList.postings.get(document);
             OutputBitStream out = indexWriter.newDocumentRecord();
             indexWriter.writeDocumentPointer(out, document);

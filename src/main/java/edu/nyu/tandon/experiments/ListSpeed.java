@@ -32,7 +32,7 @@ public class ListSpeed {
         SimpleJSAP jsap = new SimpleJSAP(ListSpeed.class.getName(), "Loads random lists, primes the index, and measures random posting access times",
                 new Parameter[]{
                         new UnflaggedOption("basenameWeight", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.GREEDY, "The indices that the servlet will use. Indices are specified using their basename, optionally followed by a colon and a double representing the weight used to score results from that index. Indices without a specified weight are weighted 1."),
-                        new FlaggedOption("random", JSAP.INTEGER_PARSER, "1000", JSAP.NOT_REQUIRED, 'r', "random", "The # of postings to measure"),
+                        new FlaggedOption("random", JSAP.INTEGER_PARSER, "1000", JSAP.NOT_REQUIRED, 'r', "random", "The # of localPostings to measure"),
                         new FlaggedOption("samples", JSAP.INTEGER_PARSER, "10", JSAP.NOT_REQUIRED, 's', "samples", "The # of terms to measure")
                 });
 
@@ -118,7 +118,7 @@ public class ListSpeed {
                 total /= 100;
                 totSequential += total;
 //                System.err.println();
-                System.out.println("Sequential access - term: " + terms[nextTerm] + ", " + list.frequency() + " postings; " + total / 1000000. + " ms; " + Util.format((list.frequency() * 1000000000.0) / total) + " postings/s, " + Util.format(total / (double) list.frequency()) + " ns/posting");
+                System.out.println("Sequential access - term: " + terms[nextTerm] + ", " + list.frequency() + " localPostings; " + total / 1000000. + " ms; " + Util.format((list.frequency() * 1000000000.0) / total) + " localPostings/s, " + Util.format(total / (double) list.frequency()) + " ns/posting");
 
                 // random access metrics
                 list = indexMap.values().iterator().next().documents(terms[nextTerm]);
@@ -146,15 +146,15 @@ public class ListSpeed {
                 }
                 total /= 100;
                 totRandom += total;
-                System.out.println("Random access - term: " + terms[nextTerm] + " " + n + " postings; " + total / 1000000. + " ms; " + Util.format((n * 1000000000.0) / total) + " postings/s, " + Util.format(total / (double) n) + " ns/posting");
+                System.out.println("Random access - term: " + terms[nextTerm] + " " + n + " localPostings; " + total / 1000000. + " ms; " + Util.format((n * 1000000000.0) / total) + " localPostings/s, " + Util.format(total / (double) n) + " ns/posting");
 
             } catch (Exception e) {
                 System.err.println(e);
             }
         }
         System.out.println();
-        System.out.println("Global sequential access: " + totSeqPostings + " postings; " + totSequential / 1000000. + " ms; " + Util.format((totSeqPostings * 1000000000.0) / totSequential) + " postings/s, " + Util.format(totSequential / (double) totSeqPostings) + " ns/posting");
-        System.out.println("Global Random access: " + totRandPostings + " postings; " + totRandom / 1000000. + " ms; " + Util.format((totRandPostings * 1000000000.0) / totRandom) + " postings/s, " + Util.format(totRandom / (double) totRandPostings) + " ns/posting");
+        System.out.println("Global sequential access: " + totSeqPostings + " localPostings; " + totSequential / 1000000. + " ms; " + Util.format((totSeqPostings * 1000000000.0) / totSequential) + " localPostings/s, " + Util.format(totSequential / (double) totSeqPostings) + " ns/posting");
+        System.out.println("Global Random access: " + totRandPostings + " localPostings; " + totRandom / 1000000. + " ms; " + Util.format((totRandPostings * 1000000000.0) / totRandom) + " localPostings/s, " + Util.format(totRandom / (double) totRandPostings) + " ns/posting");
 
     }
 

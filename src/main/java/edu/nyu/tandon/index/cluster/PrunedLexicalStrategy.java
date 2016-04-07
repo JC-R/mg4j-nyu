@@ -73,7 +73,7 @@ public class PrunedLexicalStrategy implements LexicalPartitioningStrategy {
                 new Parameter[]{
                         new FlaggedOption("threshold", JSAP.DOUBLE_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 't', "threshold", "The prune threshold."),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index."),
-                        new UnflaggedOption("prunelist", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The ordered postings list"),
+                        new UnflaggedOption("prunelist", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The ordered localPostings list"),
                         new UnflaggedOption("strategy", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The filename for the strategy.")
                 });
 
@@ -112,7 +112,7 @@ public class PrunedLexicalStrategy implements LexicalPartitioningStrategy {
         prunelist.close();
 
         BinIO.storeObject(new PrunedLexicalStrategy(postings), jsapResult.getString("strategy"));
-        LOGGER.info("Strategy serialized: " + jsapResult.getString("strategy") + ": " + (int) n + " postings");
+        LOGGER.info("Strategy serialized: " + jsapResult.getString("strategy") + ": " + (int) n + " localPostings");
 
     }
 

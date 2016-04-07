@@ -364,7 +364,7 @@ public class Scan {
      */
     private long totOccurrences;
     /**
-     * The total number of postings (pairs term/document).
+     * The total number of localPostings (pairs term/document).
      */
     private long totPostings;
     /**
@@ -1260,7 +1260,7 @@ public class Scan {
 
                 indexWriter.close();
                 final Properties properties = indexWriter.properties();
-                totPostings += properties.getLong("postings");
+                totPostings += properties.getLong("localPostings");
                 properties.setProperty(Index.PropertyKeys.TERMPROCESSOR, ObjectParser.toSpec(termProcessor));
                 properties.setProperty(Index.PropertyKeys.OCCURRENCES, numOccurrences);
                 properties.setProperty(Index.PropertyKeys.MAXDOCSIZE, maxDocSize);
@@ -1578,7 +1578,7 @@ public class Scan {
          */
         private final Payload payload;
         /**
-         * The total number of postings (pairs term/document).
+         * The total number of localPostings (pairs term/document).
          */
         private long totPostings;
         /**
@@ -1692,7 +1692,7 @@ public class Scan {
                 indexWriter.close();
 
                 final Properties properties = indexWriter.properties();
-                totPostings += properties.getLong("postings");
+                totPostings += properties.getLong("localPostings");
                 properties.setProperty(Index.PropertyKeys.OCCURRENCES, -1);
                 properties.setProperty(Index.PropertyKeys.MAXDOCSIZE, -1);
                 properties.setProperty(Index.PropertyKeys.SIZE, indexWriter.writtenBits());

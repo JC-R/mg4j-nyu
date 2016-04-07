@@ -21,7 +21,7 @@ package edu.nyu.tandon.tool;
  */
 
 import com.martiansoftware.jsap.*;
-import edu.nyu.tandon.index.cluster.PrunedDocumentalStrategy;
+import edu.nyu.tandon.index.cluster.PostingPruningStrategy;
 import it.unimi.di.big.mg4j.index.*;
 import it.unimi.di.big.mg4j.index.CompressionFlags.Coding;
 import it.unimi.di.big.mg4j.index.CompressionFlags.Component;
@@ -59,7 +59,7 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * <p>A global index is partitioned documentally by providing a {@link DocumentalPartitioningStrategy}
  * that specifies a destination local index for each document, and a local document pointer. The global index
- * is scanned, and the postings are partitioned among the local indices using the provided strategy. For instance,
+ * is scanned, and the localPostings are partitioned among the local indices using the provided strategy. For instance,
  * a {@link ContiguousDocumentalStrategy} divides an index into blocks of contiguous documents.
  * <p>
  * <p>Since each local index contains a (proper) subset of the original set of documents, it contains in general a (proper)
@@ -198,7 +198,7 @@ public class PrunedPartition {
      */
     private final long[] numTerms;
     /**
-     * The number of postings in each local index.
+     * The number of localPostings in each local index.
      */
     private final long[] numPostings;
     /**
@@ -436,7 +436,7 @@ public class PrunedPartition {
         int localIndex, count = -1;
 
         pl.expectedUpdates = globalIndex.numberOfPostings;
-        pl.itemsName = "postings";
+        pl.itemsName = "localPostings";
         pl.logInterval = logInterval;
         pl.start("Partitioning index...");
 
@@ -452,7 +452,7 @@ public class PrunedPartition {
 
                 globalPointer = indexIterator.nextDocument();
 
-                localIndex = ((PrunedDocumentalStrategy) strategy).localIndex(termID, globalPointer);
+                localIndex = ((PostingPruningStrategy) strategy).localIndex(termID, globalPointer);
 
                 if (localFrequency[localIndex] == 0) {
                     // First time we see a document for this index.
