@@ -1,0 +1,5 @@
+#
+# @author Juan Rodrgiuez
+#
+# spark scala program to generate topk feautures from raw posthits
+#

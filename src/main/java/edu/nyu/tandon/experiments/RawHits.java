@@ -145,6 +145,7 @@ public class RawHits {
             t = query.postHits.get(i);
             if (t.compareTo(lastT) != 0) {
                 if (hits > 0) {
+                    // format: doc, term, , rank, #hits
                     query.outputPH.printf("%d,%d,%d,%d\n", lastT.getLeft(), lastT.getMiddle(), lastT.getRight(), hits);
                 }
                 hits = 0;

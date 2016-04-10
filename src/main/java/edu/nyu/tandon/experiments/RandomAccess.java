@@ -33,7 +33,7 @@ public class RandomAccess {
                 "Loads random list, primes, and measure random posting access times",
                 new Parameter[]{
                         new UnflaggedOption("basenameWeight", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.GREEDY, "The indices that the servlet will use. Indices are specified using their basename, optionally followed by a colon and a double representing the weight used to score results from that index. Indices without a specified weight are weighted 1."),
-                        new FlaggedOption("random", JSAP.INTEGER_PARSER, "1000", JSAP.NOT_REQUIRED, 'r', "random", "The # of localPostings to measure"),
+                        new FlaggedOption("random", JSAP.INTEGER_PARSER, "1000", JSAP.NOT_REQUIRED, 'r', "random", "The # of postings_Global to measure"),
                         new FlaggedOption("threshold", JSAP.INTEGER_PARSER, "100000", JSAP.NOT_REQUIRED, 't', "threshold", "The min # terms in a document"),
                         new FlaggedOption("samples", JSAP.INTEGER_PARSER, "1", JSAP.NOT_REQUIRED, 's', "samples", "The # of terms to measure")
                 });
@@ -79,11 +79,11 @@ public class RandomAccess {
         Set<Integer> set = new TreeSet<Integer>();
         for (int i = 0; i < numberOPostings; i++) {
             set.add(rand(0, (int) numberOfDocuments - 1));
-            System.err.print("\rAdding random localPostings: " + i);
+            System.err.print("\rAdding random postings_Global: " + i);
         }
         Integer[] docs = set.toArray(new Integer[0]);
 
-        // find 10 terms with at least t localPostings
+        // find 10 terms with at least t postings_Global
         long[] terms = new long[10];
         int numTerms = 0;
         for (int i = 0; i < numberOfTerms && numTerms < 10; i++) {
@@ -132,8 +132,8 @@ public class RandomAccess {
                 }
                 total /= 10;
                 totSequential += total;
-                System.out.println("Term " + k + ": " + list.frequency() + " localPostings");
-                System.out.println("Sequential access:  " + total / 1000000. + " ms,  " + Util.format((list.frequency() * 1000000000.0) / total) + " localPostings/s,   " + Util.format(total / (double) list.frequency()) + " ns/posting");
+                System.out.println("Term " + k + ": " + list.frequency() + " postings_Global");
+                System.out.println("Sequential access:  " + total / 1000000. + " ms,  " + Util.format((list.frequency() * 1000000000.0) / total) + " postings_Global/s,   " + Util.format(total / (double) list.frequency()) + " ns/posting");
 
                 // random access metrics
                 total = 0;
@@ -164,7 +164,7 @@ public class RandomAccess {
                 totHits += hits;
                 totMisses += misses;
 
-                System.out.println("Random access:  " + docs.length + " lookups,  " + hits + " hits,  " + misses + " misses,  " + total / 1000000. + " ms,  " + Util.format((docs.length * 1000000000.0) / total) + " localPostings/s, " + Util.format(total / (double) docs.length) + " ns/posting");
+                System.out.println("Random access:  " + docs.length + " lookups,  " + hits + " hits,  " + misses + " misses,  " + total / 1000000. + " ms,  " + Util.format((docs.length * 1000000000.0) / total) + " postings_Global/s, " + Util.format(total / (double) docs.length) + " ns/posting");
                 System.out.println();
             } catch (Exception e) {
                 System.err.println(e);
@@ -180,9 +180,9 @@ public class RandomAccess {
 
         System.out.println();
         System.out.println();
-        System.out.println("Average: " + +totSeqPostings + " localPostings");
-        System.out.println("Sequential access: " + totSequential / 1000000. + " ms; " + Util.format((totSeqPostings * 1000000000.0) / totSequential) + " localPostings/s, " + Util.format(totSequential / (double) totSeqPostings) + " ns/posting");
-        System.out.println("Random access: " + docs.length + " lookups,  " + totHits + " hits,  " + totMisses + " misses,  " + totRandom / 1000000. + " ms,  " + Util.format((totRandPostings * 1000000000.0) / totRandom) + " localPostings/s, " + Util.format(totRandom / (double) docs.length) + " ns/posting");
+        System.out.println("Average: " + +totSeqPostings + " postings_Global");
+        System.out.println("Sequential access: " + totSequential / 1000000. + " ms; " + Util.format((totSeqPostings * 1000000000.0) / totSequential) + " postings_Global/s, " + Util.format(totSequential / (double) totSeqPostings) + " ns/posting");
+        System.out.println("Random access: " + docs.length + " lookups,  " + totHits + " hits,  " + totMisses + " misses,  " + totRandom / 1000000. + " ms,  " + Util.format((totRandPostings * 1000000000.0) / totRandom) + " postings_Global/s, " + Util.format(totRandom / (double) docs.length) + " ns/posting");
 
     }
 

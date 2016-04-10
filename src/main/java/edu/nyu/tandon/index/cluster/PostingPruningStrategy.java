@@ -28,21 +28,21 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
      * The (cached) number of segments.
      */
     private static final int k = 2;
-    public final Long2ObjectOpenHashMap<LongOpenHashSet> localPostings;
-    public final Long2LongOpenHashMap localDocuments;
-    public final Long2LongOpenHashMap localTerms;
+    public final Long2ObjectOpenHashMap<LongOpenHashSet> postings_Global;
+    public final Long2LongOpenHashMap documents_Global;
+    public final Long2LongOpenHashMap terms_Global;
 
     /**
-     * Creates a pruned strategy with the given localPostings
+     * Creates a pruned strategy with the given postings_Global
      */
 
     public PostingPruningStrategy(final Long2LongOpenHashMap terms, final Long2ObjectOpenHashMap<LongOpenHashSet> postings, Long2LongOpenHashMap docs) {
 
         if (terms.size() == 0 || docs.size() == 0) throw new IllegalArgumentException("Empty prune list");
-        this.localTerms = terms.clone();
-        this.localDocuments = docs.clone();
-        this.localPostings = postings.clone();
 
+        this.documents_Global = docs.clone();
+        this.terms_Global = terms.clone();
+        this.postings_Global = postings.clone();
     }
 
     public static void main(final String[] arg) throws JSAPException, IOException, ConfigurationException, SecurityException,
@@ -53,7 +53,7 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
                 new Parameter[]{
                         new FlaggedOption("threshold", JSAP.DOUBLE_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 't', "threshold", "Prune threshold for the index (may be specified several times).").setAllowMultipleDeclarations(true),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index."),
-                        new UnflaggedOption("prunelist", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The ordered localPostings list"),
+                        new UnflaggedOption("prunelist", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The ordered postings_Global list"),
                         new UnflaggedOption("strategy", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The filename for the strategy.")
                 });
 
@@ -113,8 +113,8 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
             for (int i = 0; i < t_list.length - 1; i++) {
                 if (strategies[i] && n >= threshold[i]) {
                     strategies[i] = false;
-                    BinIO.storeObject(new PostingPruningStrategy(terms, postings, documents), jsapResult.getString("strategy") + "." + String.valueOf(t_list[i]) + ".strategy");
-                    LOGGER.info(String.valueOf(t_list[i]) + " strategy serialized : " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M localPostings");
+                    BinIO.storeObject(new PostingPruningStrategy(terms, postings, documents), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[i] * 100)) + ".strategy");
+                    LOGGER.info(String.valueOf(t_list[i]) + " strategy serialized : " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings_Global");
                 }
             }
             if (n++ >= threshold[threshold.length - 1]) break;
@@ -126,12 +126,12 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
         prunelist.close();
 
         // dump last one
-        BinIO.storeObject(new PostingPruningStrategy(terms, postings, documents), jsapResult.getString("strategy") + "." + String.valueOf(t_list[t_list.length - 1]) + ".strategy");
-        LOGGER.info(String.valueOf(t_list[t_list.length - 1]) + " strategy serialized : " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M localPostings");
+        BinIO.storeObject(new PostingPruningStrategy(terms, postings, documents), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[t_list.length - 1] * 100)) + ".strategy");
+        LOGGER.info(String.valueOf(t_list[t_list.length - 1]) + " strategy serialized : " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings_Global");
 
     }
 
-    /* pruned partitioning always creates 2 partitions: 0 and 1. 0 is the pruned one; all others are placed in partition 1 */
+    /* pruned partitioning always creates 2 partitions: 0 and 1. 0 is the pruned one; all others are directed to partition 1 */
     public int numberOfLocalIndices() {
         return 2;
     }
@@ -141,7 +141,7 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
      * @param globalPointer: global document ID
      */
     public int localIndex(final long globalPointer) {
-        return (localDocuments.get(globalPointer) == -1) ? 1 : 0;
+        return (documents_Global.get(globalPointer) == -1) ? 1 : 0;
     }
 
     /**
@@ -151,33 +151,43 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
      * @param doc:  global document ID
      */
     public int localIndex(final long term, final long doc) {
-        if (localTerms.get(term) == -1) return 1;
-        return (localPostings.get(term).contains(doc)) ? 0 : 1;
+        if (terms_Global.get(term) == -1) return 1;
+        return (postings_Global.get(term).contains(doc)) ? 0 : 1;
     }
 
     /**
      * return the local document ID
      *
-     * @param globalPointer
-     * @return
+     * @param globalPointer (docID)
+     * @return localPointer
      */
     public long localPointer(final long globalPointer) {
-        return localDocuments.get(globalPointer);
+        return documents_Global.get(globalPointer);
     }
 
     public long globalPointer(final int localIndex, final long localPointer) {
-        if (localIndex == 1 || !localDocuments.containsValue(localPointer)) return -1;
+        if (localIndex == 1 || !documents_Global.containsValue(localPointer)) return -1;
         // find this value
         long d;
-        for (long key : localDocuments.keySet()) {
-            if ((d = localDocuments.get(key)) != -1)
+        for (long key : documents_Global.keySet()) {
+            if ((d = documents_Global.get(key)) != -1)
                 return d;
         }
         return -1;
     }
 
+    /**
+     * return the local term ID of a global term ID
+     *
+     * @param globalTermId
+     * @return localId
+     */
+    public long localTermId(final long globalTermId) {
+        return terms_Global.get(globalTermId);
+    }
+
     public long numberOfDocuments(final int localIndex) {
-        return (localIndex == 0) ? localDocuments.size() : 0;
+        return (localIndex == 0) ? documents_Global.size() : 0;
     }
 
 //	public String toString() {

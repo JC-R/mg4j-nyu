@@ -35,6 +35,7 @@ import it.unimi.dsi.Util;
 import it.unimi.dsi.bits.Fast;
 import it.unimi.dsi.fastutil.ints.IntBigList;
 import it.unimi.dsi.fastutil.io.BinIO;
+import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import it.unimi.dsi.io.FastBufferedReader;
 import it.unimi.dsi.io.InputBitStream;
 import it.unimi.dsi.io.OutputBitStream;
@@ -50,6 +51,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -59,7 +61,7 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * <p>A global index is partitioned documentally by providing a {@link DocumentalPartitioningStrategy}
  * that specifies a destination local index for each document, and a local document pointer. The global index
- * is scanned, and the localPostings are partitioned among the local indices using the provided strategy. For instance,
+ * is scanned, and the postings_Global are partitioned among the local indices using the provided strategy. For instance,
  * a {@link ContiguousDocumentalStrategy} divides an index into blocks of contiguous documents.
  * <p>
  * <p>Since each local index contains a (proper) subset of the original set of documents, it contains in general a (proper)
@@ -198,7 +200,7 @@ public class PrunedPartition {
      */
     private final long[] numTerms;
     /**
-     * The number of localPostings in each local index.
+     * The number of postings_Global in each local index.
      */
     private final long[] numPostings;
     /**
@@ -288,24 +290,24 @@ public class PrunedPartition {
         if (skips && (quantum <= 0 || height < 0))
             throw new IllegalArgumentException("You must specify a positive quantum and a nonnegative height (variable quanta are not available when partitioning documentally).");
 
-        for (int i = 0; i < numIndices; i++) {
+        // we only produce 1 index
             switch (indexType) {
                 case INTERLEAVED:
                     if (!skips)
-                        indexWriter[i] = new BitStreamIndexWriter(IOFactory.FILESYSTEM_FACTORY, localBasename[i], numberOfDocuments[i], true, writerFlags);
+                        indexWriter[0] = new BitStreamIndexWriter(IOFactory.FILESYSTEM_FACTORY, localBasename[0], numberOfDocuments[0], true, writerFlags);
                     else
-                        indexWriter[i] = new SkipBitStreamIndexWriter(IOFactory.FILESYSTEM_FACTORY, localBasename[i], numberOfDocuments[i], true, skipBufferOrCacheSize, writerFlags, quantum, height);
+                        indexWriter[0] = new SkipBitStreamIndexWriter(IOFactory.FILESYSTEM_FACTORY, localBasename[0], numberOfDocuments[0], true, skipBufferOrCacheSize, writerFlags, quantum, height);
                     break;
                 case HIGH_PERFORMANCE:
-                    indexWriter[i] = new BitStreamHPIndexWriter(localBasename[i], numberOfDocuments[i], true, skipBufferOrCacheSize, writerFlags, quantum, height);
+                    indexWriter[0] = new BitStreamHPIndexWriter(localBasename[0], numberOfDocuments[0], true, skipBufferOrCacheSize, writerFlags, quantum, height);
                     break;
                 case QUASI_SUCCINCT:
-                    quasiSuccinctIndexWriter[i] = (QuasiSuccinctIndexWriter) (indexWriter[i] = new QuasiSuccinctIndexWriter(IOFactory.FILESYSTEM_FACTORY, localBasename[i], numberOfDocuments[i], Fast.mostSignificantBit(quantum < 0 ? QuasiSuccinctIndex.DEFAULT_QUANTUM : quantum), skipBufferOrCacheSize, writerFlags, ByteOrder.nativeOrder()));
+                    quasiSuccinctIndexWriter[0] = (QuasiSuccinctIndexWriter) (indexWriter[0] = new QuasiSuccinctIndexWriter(IOFactory.FILESYSTEM_FACTORY, localBasename[0], numberOfDocuments[0], Fast.mostSignificantBit(quantum < 0 ? QuasiSuccinctIndex.DEFAULT_QUANTUM : quantum), skipBufferOrCacheSize, writerFlags, ByteOrder.nativeOrder()));
             }
-            localTerms[i] = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(localBasename[i] + DiskBasedIndex.TERMS_EXTENSION), "UTF-8")));
-        }
+        localTerms[0] = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(localBasename[0] + DiskBasedIndex.TERMS_EXTENSION), "UTF-8")));
 
         terms = new FastBufferedReader(new InputStreamReader(new FileInputStream(inputBasename + DiskBasedIndex.TERMS_EXTENSION), "UTF-8"));
+
     }
 
     public static void main(final String arg[]) throws Exception {
@@ -375,31 +377,43 @@ public class PrunedPartition {
     }
 
     private void partitionSizes() throws IOException {
+
         final File sizesFile = new File(inputBasename + DiskBasedIndex.SIZES_EXTENSION);
+
         if (sizesFile.exists()) {
+
             LOGGER.info("Partitioning sizes...");
             final InputBitStream sizes = new InputBitStream(sizesFile);
-            final OutputBitStream localSizes[] = new OutputBitStream[numIndices];
-            for (int i = 0; i < numIndices; i++)
-                localSizes[i] = new OutputBitStream(localBasename[i] + DiskBasedIndex.SIZES_EXTENSION);
+            final OutputBitStream localSizes = new OutputBitStream(localBasename[0] + DiskBasedIndex.SIZES_EXTENSION);
+
+            // WARN: can only handle 2.5billion documents; should be OK
+            int[] localDocSize = new int[(int) strategy.numberOfDocuments(0)];
 
             // ALERT: for the time being, we decide whether to "fill the gaps" in sizes using as sole indicator the equality between global and local number of documents.
-            int size, localIndex;
+            int size, localIndex, localID;
+            int currdoc = 0;
+
             if (globalIndex.numberOfDocuments == strategy.numberOfDocuments(0)) {
                 for (int i = 0; i < globalIndex.numberOfDocuments; i++) {
-                    localSizes[localIndex = strategy.localIndex(i)].writeGamma(size = sizes.readGamma());
+                    localIndex = strategy.localIndex(i);
+                    size = sizes.readGamma();
+                    localDocSize[localID = (int) strategy.localPointer(i)] = (localIndex == 0) ? size : 0;
                     if (maxDocSize[localIndex] < size) maxDocSize[localIndex] = size;
-                    for (int l = numIndices; l-- != 0; ) if (l != localIndex) localSizes[l].writeGamma(0);
                 }
             } else {
                 for (int i = 0; i < globalIndex.numberOfDocuments; i++) {
-                    localSizes[localIndex = strategy.localIndex(i)].writeGamma(size = sizes.readGamma());
+                    localIndex = strategy.localIndex(i);
+                    size = sizes.readGamma();
+                    if (localIndex == 0) localDocSize[localID = (int) strategy.localPointer(i)] = size;
                     if (maxDocSize[localIndex] < size) maxDocSize[localIndex] = size;
                 }
             }
-
+            // write documents in local numbering
+            for (int i = 0; i < strategy.numberOfDocuments(0); i++) {
+                localSizes.writeGamma(localDocSize[i]);
+            }
             sizes.close();
-            for (int i = 0; i < numIndices; i++) localSizes[i].close();
+            localSizes.close();
         }
     }
 
@@ -407,177 +421,232 @@ public class PrunedPartition {
 
         final ProgressLogger pl = new ProgressLogger(LOGGER, logInterval, TimeUnit.MILLISECONDS);
         final IntBigList sizeList = globalIndex.sizes;
+
         partitionSizes();
 
         final int[] position = new int[Math.max(0, globalIndex.maxCount)];
-        final long[] localFrequency = new long[numIndices];
-        final long[] sumMaxPos = new long[numIndices];
-        final int[] usedIndex = new int[numIndices];
-        final InputBitStream[] direct = new InputBitStream[numIndices];
-        final InputBitStream[] indirect = new InputBitStream[numIndices];
+
+        long localFrequency = 0;
+        long sumMaxPos = 0;
+        boolean inIndex = false;
+        InputBitStream direct;
+        InputBitStream indirect;
         @SuppressWarnings("unchecked")
-        final BloomFilter<Void>[] bloomFilter = bloomFilterPrecision != 0 ? new BloomFilter[numIndices] : null;
-        final File[] tempFile = new File[numIndices];
-        final CachingOutputBitStream[] temp = new CachingOutputBitStream[numIndices];
+        BloomFilter<Void> bloomFilter;
+
+        final File tempFile;
+        final CachingOutputBitStream temp;
+
+        final File orderFile;
+        final CachingOutputBitStream order;
+
         IndexIterator indexIterator;
 
-        for (int i = 0; i < numIndices; i++) {
-            tempFile[i] = new File(localBasename[i] + ".temp");
-            temp[i] = new CachingOutputBitStream(tempFile[i], bufferSize);
-            direct[i] = new InputBitStream(temp[i].buffer());
-            indirect[i] = new InputBitStream(tempFile[i]);
-            if (bloomFilterPrecision != 0)
-                bloomFilter[i] = BloomFilter.create(globalIndex.numberOfTerms, bloomFilterPrecision);
-        }
-        int usedIndices;
+        tempFile = new File(localBasename[0] + ".temp");
+        temp = new CachingOutputBitStream(tempFile, bufferSize);
+
+        direct = new InputBitStream(temp.buffer());
+        indirect = new InputBitStream(tempFile);
+
+        bloomFilter = (bloomFilterPrecision != 0) ?
+                BloomFilter.create(globalIndex.numberOfTerms, bloomFilterPrecision) : null;
+
         MutableString currentTerm = new MutableString();
         Payload payload = null;
         long frequency, globalPointer, localPointer, termID;
         int localIndex, count = -1;
 
         pl.expectedUpdates = globalIndex.numberOfPostings;
-        pl.itemsName = "localPostings";
+        pl.itemsName = "postings";
         pl.logInterval = logInterval;
         pl.start("Partitioning index...");
+
+        final OutputBitStream globalFrequencies = new OutputBitStream(localBasename[0] + ".termfreq");
+
+        Long2LongOpenHashMap list = new Long2LongOpenHashMap();
 
         for (long t = 0; t < globalIndex.numberOfTerms; t++) {
 
             terms.readLine(currentTerm);
+
             indexIterator = indexReader.nextIterator();
-            usedIndices = 0;
+            inIndex = false;
             frequency = indexIterator.frequency();
             termID = indexIterator.termNumber();
+            assert termID == t;
+            localFrequency = 0;
 
+            if (((PostingPruningStrategy) strategy).localTermId(termID) == -1)
+                continue;
+
+            list.clear();
             for (long j = 0; j < frequency; j++) {
 
                 globalPointer = indexIterator.nextDocument();
 
-                localIndex = ((PostingPruningStrategy) strategy).localIndex(termID, globalPointer);
+                // (term,doc) in the pruned index?
+                if ((localIndex = ((PostingPruningStrategy) strategy).localIndex(termID, globalPointer)) == 0) {
 
-                if (localFrequency[localIndex] == 0) {
-                    // First time we see a document for this index.
-                    currentTerm.println(localTerms[localIndex]);
-                    numTerms[localIndex]++;
-                    usedIndex[usedIndices++] = localIndex;
-                    if (bloomFilterPrecision != 0) bloomFilter[localIndex].add(currentTerm);
-                }
+                    // First time this term in the pruned partition
+                    if (localFrequency == 0) {
+                        assert numTerms[0] == ((PostingPruningStrategy) strategy).localTermId(termID);
+                        numTerms[0]++;
+                        currentTerm.println(localTerms[localIndex]);        // save term
+                        globalFrequencies.writeLongGamma(frequency);        // save original term size
+                        if (bloomFilterPrecision != 0) bloomFilter.add(currentTerm);
+                        inIndex = true;
+                    }
 
-				/* Store temporarily posting data; note that we save the global pointer as we
-                 * will have to access the size list. */
+                    /* Store temporarily posting data; note that we save the global pointer as we
+                     * will have to access the size list. */
+                    // local docID is written in later...
+                    //
 
-                localFrequency[localIndex]++;
-                numPostings[localIndex]++;
-                temp[localIndex].writeLongGamma(globalPointer);
+                    temp.writeLongGamma(globalPointer);
+                    list.put(strategy.localPointer(globalPointer), localFrequency); // save local ID
 
-                if (globalIndex.hasPayloads) payload = indexIterator.payload();
-                if (havePayloads) payload.write(temp[localIndex]);
+                    localFrequency++;
+                    numPostings[0]++;
 
-                if (haveCounts) {
-                    count = indexIterator.count();
-                    temp[localIndex].writeGamma(count);
-                    occurrencies[localIndex] += count;
-                    if (maxDocPos[localIndex] < count) maxDocPos[localIndex] = count;
-                    if (havePositions) {
-                        int pos = indexIterator.nextPosition(), prevPos = pos;
-                        temp[localIndex].writeDelta(pos);
-                        for (int p = 1; p < count; p++) {
-                            temp[localIndex].writeDelta((pos = indexIterator.nextPosition()) - prevPos - 1);
-                            prevPos = pos;
+                    if (globalIndex.hasPayloads) payload = indexIterator.payload();
+                    if (havePayloads) payload.write(temp);
+                    if (haveCounts) {
+                        if (haveCounts) count = indexIterator.count();
+                        temp.writeGamma(count);
+                        occurrencies[localIndex] += count;
+                        if (maxDocPos[localIndex] < count) maxDocPos[localIndex] = count;
+                        if (havePositions) {
+                            int pos = indexIterator.nextPosition(), prevPos = pos;
+                            temp.writeDelta(pos);
+                            for (int p = 1; p < count; p++) {
+                                temp.writeDelta((pos = indexIterator.nextPosition()) - prevPos - 1);
+                                prevPos = pos;
+                            }
+                            sumMaxPos += pos;
                         }
-                        sumMaxPos[localIndex] += pos;
+                    }
+                } else {
+                    // synchronize aux files
+                    if (globalIndex.hasPayloads) payload = indexIterator.payload();
+                    if (haveCounts) {
+                        count = indexIterator.count();
+                        if (havePositions) {
+                            for (int p = 0; p < count; p++) {
+                                int pos = indexIterator.nextPosition();
+                            }
+                        }
                     }
                 }
             }
 
-            // We now run through the indices used by this term and copy from the temporary buffer.
-
+            // We now run through the pruned index and copy from the temporary buffer.
             OutputBitStream obs;
+            InputBitStream ibs;
 
-            for (int k = 0; k < usedIndices; k++) {
-                final int i = usedIndex[k];
+            // list will not be ordered anymore, since we will remap to local docIDs.
+            // and the local docIDs were assigned by the strategy based on the strategy order (hits, etc)
 
-                if (haveCounts) numOccurrences[i] += occurrencies[i];
-                InputBitStream ibs;
+            if (inIndex) {
+
+                if (haveCounts) numOccurrences[0] += occurrencies[0];
 
                 // create a post list
-                if (quasiSuccinctIndexWriter[i] != null)
-                    quasiSuccinctIndexWriter[i].newInvertedList(localFrequency[i], occurrencies[i], sumMaxPos[i]);
-                else indexWriter[i].newInvertedList();
+                if (quasiSuccinctIndexWriter[0] != null)
+                    quasiSuccinctIndexWriter[0].newInvertedList(localFrequency, occurrencies[0], sumMaxPos);
+                else indexWriter[0].newInvertedList();
 
-                occurrencies[i] = 0;
+                occurrencies[0] = 0;
 
-                temp[i].align();
-                if (temp[i].buffer() != null) ibs = direct[i];
+                temp.align();
+                if (temp.buffer() != null) ibs = direct;
                 else {
                     // We cannot read directly from the internal buffer.
-                    ibs = indirect[i];
+                    ibs = indirect;
                     ibs.flush();
-                    temp[i].flush();
+                    temp.flush();
                 }
 
-                ibs.position(0);
+                // we want the index list in local docID order
+                long[] docs = list.keySet().toLongArray();
+                Arrays.sort(docs);
 
-                indexWriter[i].writeFrequency(localFrequency[i]);
-                for (long j = 0; j < localFrequency[i]; j++) {
-                    obs = indexWriter[i].newDocumentRecord();
+                indexWriter[0].writeFrequency(localFrequency);
+
+                // write document list in local docID order
+                for (long localID : docs) {
+
+                    // we do not know whether we can put the entire list in memory; so we do brute force
+                    // re-ordering by scanning
+                    ibs.position(0);    // reset to beginning
+                    long pos = list.get(localID);
+                    while (--pos >= 0) {
+                        globalPointer = ibs.readLongGamma();
+                        if (havePayloads) payload.read(ibs);
+                        if (haveCounts) count = ibs.readGamma();
+                        if (havePositions) ibs.readDeltas(position, count);
+                    }
+
+                    // at the position we need
+                    obs = indexWriter[0].newDocumentRecord();
                     globalPointer = ibs.readLongGamma();
+
+                    // map from global docID to local docID
                     localPointer = strategy.localPointer(globalPointer);
-                    indexWriter[i].writeDocumentPointer(obs, localPointer);
+                    assert localID == localPointer;
+
+                    indexWriter[0].writeDocumentPointer(obs, localPointer);
                     if (havePayloads) {
                         payload.read(ibs);
-                        indexWriter[i].writePayload(obs, payload);
+                        indexWriter[0].writePayload(obs, payload);
                     }
-                    if (haveCounts) indexWriter[i].writePositionCount(obs, count = ibs.readGamma());
+                    if (haveCounts) indexWriter[0].writePositionCount(obs, count = ibs.readGamma());
                     if (havePositions) {
                         ibs.readDeltas(position, count);
                         for (int p = 1; p < count; p++) position[p] += position[p - 1] + 1;
-                        indexWriter[i].writeDocumentPositions(obs, position, 0, count, sizeList != null ? sizeList.getInt(globalPointer) : -1);
+                        indexWriter[0].writeDocumentPositions(obs, position, 0, count, sizeList != null ? sizeList.getInt(globalPointer) : -1);
                     }
                 }
-                temp[i].position(0);
-                temp[i].writtenBits(0);
-                localFrequency[i] = 0;
-                sumMaxPos[i] = 0;
-            }
 
-            usedIndices = 0;
+                temp.position(0);
+                temp.writtenBits(0);
+                sumMaxPos = 0;
+            } else {
+                sumMaxPos = 0;
+            }
+            localFrequency = 0;
             pl.count += frequency - 1;
             pl.update();
         }
-
         pl.done();
 
         Properties globalProperties = new Properties();
         globalProperties.setProperty(Index.PropertyKeys.FIELD, inputProperties.getProperty(Index.PropertyKeys.FIELD));
         globalProperties.setProperty(Index.PropertyKeys.TERMPROCESSOR, inputProperties.getProperty(Index.PropertyKeys.TERMPROCESSOR));
 
-        for (int i = 0; i < numIndices; i++) {
-            localTerms[i].close();
-            indexWriter[i].close();
-            if (bloomFilterPrecision != 0)
-                BinIO.storeObject(bloomFilter[i], localBasename[i] + DocumentalCluster.BLOOM_EXTENSION);
-            temp[i].close();
-            tempFile[i].delete();
+        localTerms[0].close();
+        indexWriter[0].close();
+        if (bloomFilterPrecision != 0)
+            BinIO.storeObject(bloomFilter, localBasename[0] + DocumentalCluster.BLOOM_EXTENSION);
+        temp.close();
+        tempFile.delete();
 
-            Properties localProperties = indexWriter[i].properties();
-            localProperties.addAll(globalProperties);
-            localProperties.setProperty(Index.PropertyKeys.MAXCOUNT, String.valueOf(maxDocPos[i]));
-            localProperties.setProperty(Index.PropertyKeys.MAXDOCSIZE, maxDocSize[i]);
-            localProperties.setProperty(Index.PropertyKeys.FIELD, globalProperties.getProperty(Index.PropertyKeys.FIELD));
-            localProperties.setProperty(Index.PropertyKeys.OCCURRENCES, haveCounts ? numOccurrences[i] : -1);
-            localProperties.setProperty(Index.PropertyKeys.POSTINGS, numPostings[i]);
-            localProperties.setProperty(Index.PropertyKeys.TERMS, numTerms[i]);
-            if (havePayloads)
-                localProperties.setProperty(Index.PropertyKeys.PAYLOADCLASS, payload.getClass().getName());
-            if (strategyProperties != null && strategyProperties[i] != null)
-                localProperties.addAll(strategyProperties[i]);
-            localProperties.save(localBasename[i] + DiskBasedIndex.PROPERTIES_EXTENSION);
-        }
+        Properties localProperties = indexWriter[0].properties();
+        localProperties.addAll(globalProperties);
+        localProperties.setProperty(Index.PropertyKeys.MAXCOUNT, String.valueOf(maxDocPos[0]));
+        localProperties.setProperty(Index.PropertyKeys.MAXDOCSIZE, maxDocSize[0]);
+        localProperties.setProperty(Index.PropertyKeys.FIELD, globalProperties.getProperty(Index.PropertyKeys.FIELD));
+        localProperties.setProperty(Index.PropertyKeys.OCCURRENCES, haveCounts ? numOccurrences[0] : -1);
+        localProperties.setProperty(Index.PropertyKeys.POSTINGS, numPostings[0]);
+        localProperties.setProperty(Index.PropertyKeys.TERMS, numTerms[0]);
+        if (havePayloads)
+            localProperties.setProperty(Index.PropertyKeys.PAYLOADCLASS, payload.getClass().getName());
+        if (strategyProperties != null && strategyProperties[0] != null)
+            localProperties.addAll(strategyProperties[0]);
+        localProperties.save(localBasename[0] + DiskBasedIndex.PROPERTIES_EXTENSION);
 
         if (strategyFilename != null)
             globalProperties.setProperty(IndexCluster.PropertyKeys.STRATEGY, strategyFilename);
-        for (int i = 0; i < numIndices; i++)
-            globalProperties.addProperty(IndexCluster.PropertyKeys.LOCALINDEX, localBasename[i]);
+        globalProperties.addProperty(IndexCluster.PropertyKeys.LOCALINDEX, localBasename[0]);
         globalProperties.setProperty(DocumentalCluster.PropertyKeys.BLOOM, bloomFilterPrecision != 0);
         // If we partition an index with a single term, by definition we have a flat cluster
         globalProperties.setProperty(DocumentalCluster.PropertyKeys.FLAT, inputProperties.getLong(Index.PropertyKeys.TERMS) <= 1);
