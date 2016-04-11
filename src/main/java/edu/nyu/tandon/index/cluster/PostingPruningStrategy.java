@@ -142,7 +142,8 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
             for (int i = 0; i < t_list.length - 1; i++) {
                 if (strategies[i] && n >= threshold[i]) {
                     strategies[i] = false;
-                    BinIO.storeObject(new PostingPruningStrategy(jsapResult.getString("titles"), jsapResult.getString("strategy-titles"), terms, postings, documentsGlobal, documentsLocal), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[i] * 100)) + ".strategy");
+                    String level = String.format("%02d", (int) (t_list[i] * 100));
+                    BinIO.storeObject(new PostingPruningStrategy(jsapResult.getString("titles"), jsapResult.getString("strategy-titles")+"-"+ level , terms, postings, documentsGlobal, documentsLocal), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[i] * 100)) + ".strategy");
                     LOGGER.info(String.valueOf(t_list[i]) + " strategy serialized : " + String.valueOf(documentsGlobal.size()) + " documents, " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings");
                 }
             }
@@ -155,7 +156,8 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
         prunelist.close();
 
         // dump last one
-        BinIO.storeObject(new PostingPruningStrategy(jsapResult.getString("titles"), jsapResult.getString("strategy-titles"), terms, postings, documentsGlobal, documentsLocal), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[t_list.length - 1] * 100)) + ".strategy");
+        String level = String.format("%02d", (int) (t_list[t_list.length - 1] * 100));
+        BinIO.storeObject(new PostingPruningStrategy(jsapResult.getString("titles"), jsapResult.getString("strategy-titles")+"-"+level, terms, postings, documentsGlobal, documentsLocal), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[t_list.length - 1] * 100)) + ".strategy");
         LOGGER.info(String.valueOf(t_list[t_list.length - 1]) + " strategy serialized : " + String.valueOf(documentsGlobal.size()) + " documents, " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings");
 
     }
