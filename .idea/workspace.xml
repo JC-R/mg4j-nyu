@@ -7,25 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f5c1c26e-bcf1-41c8-9bd8-e8503886c18f" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/.name" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/ant.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/deployment.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/jars.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/mg4j-nyu.iml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/module_mg4j-nyu.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/sample.txt" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mg4j-nyu.jar" afterPath="$PROJECT_DIR$/mg4j-nyu.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/mg4j_nyu.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/mg4j_nyu.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/encodings.xml" afterPath="$PROJECT_DIR$/.idea/encodings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mg4j-nyu.iml" afterPath="$PROJECT_DIR$/mg4j-nyu.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/PrunedPartition.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/PrunedPartition.java" />
     </list>
     <ignored path="mg4j-nyu.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -587,12 +569,20 @@
       <workItem from="1460304511647" duration="3579000" />
       <workItem from="1460309041390" duration="161000" />
       <workItem from="1460339108680" duration="1959000" />
-      <workItem from="1460341091138" duration="901000" />
+      <workItem from="1460341091138" duration="926000" />
     </task>
+    <task id="LOCAL-00001" summary="fixed pruning runtime; in memory list buiild">
+      <created>1460342015022</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1460342015022</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6867000" />
+    <option name="totallyTimeSpent" value="6892000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="24" width="1922" height="1033" extended-state="6" />
@@ -636,6 +626,10 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="fixed pruning runtime; in memory list buiild" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed pruning runtime; in memory list buiild" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
