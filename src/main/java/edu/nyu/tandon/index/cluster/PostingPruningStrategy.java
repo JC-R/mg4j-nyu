@@ -17,7 +17,9 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class PostingPruningStrategy implements DocumentalPartitioningStrategy, DocumentalClusteringStrategy, Serializable {
 
@@ -33,23 +35,43 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
     public final Long2LongOpenHashMap terms_Global;
 
     /**
-     * Creates a pruned strategy with the given postings_Global
+     * Creates a pruned strategy with the given lists
      */
 
-    public PostingPruningStrategy(final Long2LongOpenHashMap terms, final Long2ObjectOpenHashMap<LongOpenHashSet> postings, Long2LongOpenHashMap docs) {
+    public PostingPruningStrategy(String baseline, final Long2LongOpenHashMap terms, final Long2ObjectOpenHashMap<LongOpenHashSet> postings, Long2LongOpenHashMap docs) {
 
         if (terms.size() == 0 || docs.size() == 0) throw new IllegalArgumentException("Empty prune list");
 
         this.documents_Global = docs.clone();
         this.terms_Global = terms.clone();
         this.postings_Global = postings.clone();
+
+        // create the local document titles
+        try {
+            ArrayList<String> titles = new ArrayList<String>(documents_Global.size());
+            BufferedReader Titles = new BufferedReader(new InputStreamReader(new FileInputStream(baseline), Charset.forName("UTF-8")));
+            String line;
+            while ((line = Titles.readLine()) != null)
+                titles.add(line);
+            Titles.close();
+            long p;
+            BufferedWriter newTitles = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(baseline), Charset.forName("UTF-8")));
+            for (long j=0; j<documents_Global.size(); j++) {
+                if ((p = globalPointer(0,j))!= -1) {
+                    newTitles.write(titles.get((int)p));
+                }
+            }
+            newTitles.close();
+        }
+        catch(IOException e) {
+        }
     }
 
     public static void main(final String[] arg) throws JSAPException, IOException, ConfigurationException, SecurityException,
             URISyntaxException, ClassNotFoundException, InstantiationException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
 
-        final SimpleJSAP jsap = new SimpleJSAP(PrunedLexicalStrategy.class.getName(), "Builds a documental partitioning strategy based on a prune list.",
+        final SimpleJSAP jsap = new SimpleJSAP(PostingPruningStrategy.class.getName(), "Builds a documental partitioning strategy based on a prune list.",
                 new Parameter[]{
                         new FlaggedOption("threshold", JSAP.DOUBLE_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 't', "threshold", "Prune threshold for the index (may be specified several times).").setAllowMultipleDeclarations(true),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index."),
@@ -113,7 +135,7 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
             for (int i = 0; i < t_list.length - 1; i++) {
                 if (strategies[i] && n >= threshold[i]) {
                     strategies[i] = false;
-                    BinIO.storeObject(new PostingPruningStrategy(terms, postings, documents), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[i] * 100)) + ".strategy");
+                    BinIO.storeObject(new PostingPruningStrategy(jsapResult.getString("basename"), terms, postings, documents), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[i] * 100)) + ".strategy");
                     LOGGER.info(String.valueOf(t_list[i]) + " strategy serialized : " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings_Global");
                 }
             }
@@ -126,7 +148,7 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
         prunelist.close();
 
         // dump last one
-        BinIO.storeObject(new PostingPruningStrategy(terms, postings, documents), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[t_list.length - 1] * 100)) + ".strategy");
+        BinIO.storeObject(new PostingPruningStrategy(jsapResult.getString("basename"), terms, postings, documents), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[t_list.length - 1] * 100)) + ".strategy");
         LOGGER.info(String.valueOf(t_list[t_list.length - 1]) + " strategy serialized : " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings_Global");
 
     }
