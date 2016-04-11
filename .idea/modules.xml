@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/mg4j-nyu.iml" filepath="$PROJECT_DIR$/.idea/mg4j-nyu.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mg4j-nyu.iml" filepath="$PROJECT_DIR$/mg4j-nyu.iml" />
     </modules>
   </component>
 </project>

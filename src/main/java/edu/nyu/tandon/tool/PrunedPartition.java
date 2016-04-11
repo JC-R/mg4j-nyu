@@ -33,9 +33,13 @@ import it.unimi.di.big.mg4j.tool.Combine.IndexType;
 import it.unimi.di.big.mg4j.tool.Merge;
 import it.unimi.dsi.Util;
 import it.unimi.dsi.bits.Fast;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntBigList;
 import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import it.unimi.dsi.io.FastBufferedReader;
 import it.unimi.dsi.io.InputBitStream;
 import it.unimi.dsi.io.OutputBitStream;
@@ -47,6 +51,7 @@ import org.apache.commons.configuration.ConfigurationMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.print.Doc;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
@@ -424,11 +429,11 @@ public class PrunedPartition {
 
         partitionSizes();
 
-        final int[] position = new int[Math.max(0, globalIndex.maxCount)];
+        final Long2LongOpenHashMap documents = new Long2LongOpenHashMap();
 
         long localFrequency = 0;
         long sumMaxPos = 0;
-        boolean inIndex = false;
+
         InputBitStream direct;
         InputBitStream indirect;
         @SuppressWarnings("unchecked")
@@ -461,70 +466,80 @@ public class PrunedPartition {
         pl.logInterval = logInterval;
         pl.start("Partitioning index...");
 
-        final OutputBitStream globalFrequencies = new OutputBitStream(localBasename[0] + ".termfreq");
+        final OutputBitStream globalFrequencies = new OutputBitStream(localBasename[0] + ".globaltermfreq");
 
-        Long2LongOpenHashMap list = new Long2LongOpenHashMap();
+        // for now, we rebuild the list in memory : TODO: fix so any size list is possible
+        class DocEntry {
+            long docID;
+            Payload payload;
+            int count;
+            int[] pos;
+        }
+        Long2ObjectOpenHashMap<DocEntry> list = new Long2ObjectOpenHashMap<DocEntry>();
+        list.clear();
 
         for (long t = 0; t < globalIndex.numberOfTerms; t++) {
 
             terms.readLine(currentTerm);
 
             indexIterator = indexReader.nextIterator();
-            inIndex = false;
             frequency = indexIterator.frequency();
             termID = indexIterator.termNumber();
-            assert termID == t;
+//            assert termID == t;
+
             localFrequency = 0;
 
-            if (((PostingPruningStrategy) strategy).localTermId(termID) == -1)
-                continue;
 
-            list.clear();
+            // if the term never made it to the pruned index; then skip it
+            if (((PostingPruningStrategy) strategy).localTermId(termID) == -1) continue;
+
             for (long j = 0; j < frequency; j++) {
 
                 globalPointer = indexIterator.nextDocument();
 
+
                 // (term,doc) in the pruned index?
                 if ((localIndex = ((PostingPruningStrategy) strategy).localIndex(termID, globalPointer)) == 0) {
 
-                    // First time this term in the pruned partition
+                    // First time this term is seen
                     if (localFrequency == 0) {
-                        assert numTerms[0] == ((PostingPruningStrategy) strategy).localTermId(termID);
+//                        assert numTerms[0] == ((PostingPruningStrategy) strategy).localTermId(termID);
                         numTerms[0]++;
                         currentTerm.println(localTerms[localIndex]);        // save term
                         globalFrequencies.writeLongGamma(frequency);        // save original term size
                         if (bloomFilterPrecision != 0) bloomFilter.add(currentTerm);
-                        inIndex = true;
                     }
 
                     /* Store temporarily posting data; note that we save the global pointer as we
                      * will have to access the size list. */
                     // local docID is written in later...
                     //
+                    if (globalIndex.hasPayloads) payload = indexIterator.payload();
 
-                    temp.writeLongGamma(globalPointer);
-                    list.put(strategy.localPointer(globalPointer), localFrequency); // save local ID
+                    DocEntry d = new DocEntry();
+                    d.docID = globalPointer;
+                    if (globalIndex.hasPayloads) payload = indexIterator.payload();
+                    d.payload = (havePayloads) ? payload : null;
+                    count = (haveCounts) ? indexIterator.count() : 0;
+                    d.count = count;
 
-                    localFrequency++;
                     numPostings[0]++;
 
-                    if (globalIndex.hasPayloads) payload = indexIterator.payload();
-                    if (havePayloads) payload.write(temp);
                     if (haveCounts) {
-                        if (haveCounts) count = indexIterator.count();
-                        temp.writeGamma(count);
                         occurrencies[localIndex] += count;
                         if (maxDocPos[localIndex] < count) maxDocPos[localIndex] = count;
                         if (havePositions) {
-                            int pos = indexIterator.nextPosition(), prevPos = pos;
-                            temp.writeDelta(pos);
-                            for (int p = 1; p < count; p++) {
-                                temp.writeDelta((pos = indexIterator.nextPosition()) - prevPos - 1);
-                                prevPos = pos;
+                            d.pos = new int[count];
+                            for (int p = 0; p < count; p++) {
+                                int pos = indexIterator.nextPosition();
+                                d.pos[p] = pos;
+                                sumMaxPos += pos;
                             }
-                            sumMaxPos += pos;
                         }
                     }
+
+                    localFrequency++;
+                    list.put(strategy.localPointer(globalPointer), d);
                 } else {
                     // synchronize aux files
                     if (globalIndex.hasPayloads) payload = indexIterator.payload();
@@ -541,12 +556,11 @@ public class PrunedPartition {
 
             // We now run through the pruned index and copy from the temporary buffer.
             OutputBitStream obs;
-            InputBitStream ibs;
 
             // list will not be ordered anymore, since we will remap to local docIDs.
             // and the local docIDs were assigned by the strategy based on the strategy order (hits, etc)
 
-            if (inIndex) {
+            if (localFrequency>0) {
 
                 if (haveCounts) numOccurrences[0] += occurrencies[0];
 
@@ -557,58 +571,38 @@ public class PrunedPartition {
 
                 occurrencies[0] = 0;
 
-                temp.align();
-                if (temp.buffer() != null) ibs = direct;
-                else {
-                    // We cannot read directly from the internal buffer.
-                    ibs = indirect;
-                    ibs.flush();
-                    temp.flush();
-                }
+                indexWriter[0].writeFrequency(localFrequency);
 
                 // we want the index list in local docID order
                 long[] docs = list.keySet().toLongArray();
                 Arrays.sort(docs);
-
-                indexWriter[0].writeFrequency(localFrequency);
-
-                // write document list in local docID order
                 for (long localID : docs) {
 
-                    // we do not know whether we can put the entire list in memory; so we do brute force
-                    // re-ordering by scanning
-                    ibs.position(0);    // reset to beginning
-                    long pos = list.get(localID);
-                    while (--pos >= 0) {
-                        globalPointer = ibs.readLongGamma();
-                        if (havePayloads) payload.read(ibs);
-                        if (haveCounts) count = ibs.readGamma();
-                        if (havePositions) ibs.readDeltas(position, count);
-                    }
+                    DocEntry d = list.get(localID);
+                    globalPointer = d.docID;
+                    if (havePayloads) payload = d.payload;
+                    if (haveCounts) count = d.count;
+
+                    // TODO: support positions
 
                     // at the position we need
                     obs = indexWriter[0].newDocumentRecord();
-                    globalPointer = ibs.readLongGamma();
 
                     // map from global docID to local docID
-                    localPointer = strategy.localPointer(globalPointer);
-                    assert localID == localPointer;
+//                    localPointer = strategy.localPointer(globalPointer);
+//                    assert localID == localPointer;
+                    indexWriter[0].writeDocumentPointer(obs, localID);
 
-                    indexWriter[0].writeDocumentPointer(obs, localPointer);
                     if (havePayloads) {
-                        payload.read(ibs);
                         indexWriter[0].writePayload(obs, payload);
                     }
-                    if (haveCounts) indexWriter[0].writePositionCount(obs, count = ibs.readGamma());
+
+                    if (haveCounts) indexWriter[0].writePositionCount(obs, count);
                     if (havePositions) {
-                        ibs.readDeltas(position, count);
-                        for (int p = 1; p < count; p++) position[p] += position[p - 1] + 1;
-                        indexWriter[0].writeDocumentPositions(obs, position, 0, count, sizeList != null ? sizeList.getInt(globalPointer) : -1);
+                        indexWriter[0].writeDocumentPositions(obs, d.pos, 0, count, sizeList != null ? sizeList.getInt(globalPointer) : -1);
                     }
                 }
 
-                temp.position(0);
-                temp.writtenBits(0);
                 sumMaxPos = 0;
             } else {
                 sumMaxPos = 0;
@@ -616,6 +610,8 @@ public class PrunedPartition {
             localFrequency = 0;
             pl.count += frequency - 1;
             pl.update();
+            list.clear();
+
         }
         pl.done();
 
