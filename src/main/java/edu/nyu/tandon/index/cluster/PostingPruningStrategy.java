@@ -17,6 +17,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class PostingPruningStrategy implements DocumentalPartitioningStrategy, DocumentalClusteringStrategy, Serializable {
@@ -43,6 +44,14 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
         this.documents_Global = docs.clone();
         this.terms_Global = terms.clone();
         this.postings_Global = postings.clone();
+
+        BufferedReader f_titles = new BufferedReader(new InputStreamReader(new FileInputStream(jsapResult.getString("basename")+".titles"), Charset.forName("UTF-8")));
+        String line;
+        ArrayList<String> titles = new ArrayList<String>();
+        while ((line = f_titles.readLine()) != null) {
+            titles.add(line);
+        }
+        f_titles.close();
     }
 
     public static void main(final String[] arg) throws JSAPException, IOException, ConfigurationException, SecurityException,
@@ -79,10 +88,11 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
         terms.defaultReturnValue(-1);
         LOGGER.info("Generating posting prunning strategy for " + jsapResult.getString("basename"));
 
+
+
         // read the prune list up to 50%
         BufferedReader prunelist = new BufferedReader(new InputStreamReader(new FileInputStream(jsapResult.getString("prunelist")), Charset.forName("UTF-8")));
         double n = 0;
-        String line;
         while ((line = prunelist.readLine()) != null) {
 
             String[] tokens = line.split(",");
@@ -115,6 +125,8 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
                     strategies[i] = false;
                     BinIO.storeObject(new PostingPruningStrategy(terms, postings, documents), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[i] * 100)) + ".strategy");
                     LOGGER.info(String.valueOf(t_list[i]) + " strategy serialized : " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings_Global");
+
+
                 }
             }
             if (n++ >= threshold[threshold.length - 1]) break;
