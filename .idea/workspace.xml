@@ -569,7 +569,7 @@
       <workItem from="1460304511647" duration="3579000" />
       <workItem from="1460309041390" duration="161000" />
       <workItem from="1460339108680" duration="1959000" />
-      <workItem from="1460341091138" duration="926000" />
+      <workItem from="1460341091138" duration="930000" />
     </task>
     <task id="LOCAL-00001" summary="fixed pruning runtime; in memory list buiild">
       <created>1460342015022</created>
@@ -578,11 +578,18 @@
       <option name="project" value="LOCAL" />
       <updated>1460342015022</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="fixed pruning runtime; in memory list buiild">
+      <created>1460342019132</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1460342019132</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6892000" />
+    <option name="totallyTimeSpent" value="6896000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="24" width="1922" height="1033" extended-state="6" />
