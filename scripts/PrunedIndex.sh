@@ -17,7 +17,8 @@ INDECES=/home/juan/work/IR/Gov2/index/mg4j
 FULL_INDEX=$INDECES/qs-xdoc/$CORPUS-text
 INDEX_DIR=$INDECES/pruned
 
-for n in 01 02 03 04 05 10 15 20 25 30 35;
+#for n in 01 02 03 04 05 10 15 20 25 30 35;
+for n in 01 02 03 04 05 10 15;
 do
 
 # create the pruned index

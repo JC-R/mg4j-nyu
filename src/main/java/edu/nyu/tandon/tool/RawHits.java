@@ -1,4 +1,4 @@
-package edu.nyu.tandon.experiments;
+package edu.nyu.tandon.tool;
 /*
  * MG4J: Managing Gigabytes for Java (big)
  *
