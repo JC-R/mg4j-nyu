@@ -229,9 +229,9 @@ import org.apache.spark.ml.evaluation._
 import org.apache.spark.ml.param.ParamMap
 
 
-val model_name="top1k"
+val model_name="top10"
 val data = sqlContext.read.parquet(work_dir+model_name+".ph.train.parquet").na.fill(0.0).map(row => { 
-val d = (for (i<-1 to 54) yield row.getDouble(i)).toArray
+val d = (for (i<-1 to 55) yield row.getDouble(i)).toArray
 (row.getDouble(0), Vectors.dense(d)) 
 }).toDF("label","features")
 
@@ -246,7 +246,7 @@ setEvaluator(evaluator).
 setEstimatorParamMaps(Array(rf.extractParamMap))
 
 val model = cv.fit(trainingData)
-model.save(work_dir+"top1k_drf.model")
+model.save(work_dir+model_name+"_drf.model")
 
 //val sameModel = RandomForestModel.load(sc, "target/tmp/myRandomForestRegressionModel")
 
