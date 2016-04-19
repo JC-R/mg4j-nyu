@@ -434,9 +434,7 @@ public class RawHits {
 
             // postHits
             for (j = 0; j < dsi.info.size(); j++)
-                postHits.add(new ImmutableTriple<Integer, Integer, Integer>(doc,
-                        (int) ((BM25Scorer) queryEngine.scorer).flatIndexIterator[dsi.info.get(j)].termNumber(),
-                        i));
+                postHits.add(new ImmutableTriple<Integer, Integer, Integer>(doc,(int) ((BM25Scorer) queryEngine.scorer).flatIndexIterator[dsi.info.get(j)].termNumber(),i));
         }
 
         if (doc > 0 && (queryCount % 2000 == 0))

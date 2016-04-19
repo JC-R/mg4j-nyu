@@ -120,7 +120,7 @@ public class HitsQueryEngine<T> extends QueryEngine<T> {
             while ((document = scorer.nextDocument()) != END_OF_LIST) {
                 if (alreadySeen.add(document)) continue;
                 count++;
-                // find the terms involved in this score
+                // save the terms involved in this score
                 ObjectArrayList<Byte> termList = new ObjectArrayList<Byte>();
                 for (int i = 0; i < ((BM25Scorer) scorer).flatIndexIterator.length; i++) {
                     if (document == ((BM25Scorer) scorer).flatIndexIterator[i].document()) {
@@ -131,7 +131,7 @@ public class HitsQueryEngine<T> extends QueryEngine<T> {
             }
         else
             while ((document = scorer.nextDocument()) != END_OF_LIST) {
-                // find the terms involved in this score
+                // save the terms involved in this score
                 ObjectArrayList<Byte> termList = new ObjectArrayList<Byte>();
                 for (int i = 0; i < ((BM25Scorer) scorer).flatIndexIterator.length; i++) {
                     if (document == ((BM25Scorer) scorer).flatIndexIterator[i].document()) {
@@ -155,9 +155,6 @@ public class HitsQueryEngine<T> extends QueryEngine<T> {
             final double adjustment = lastMinScore / (s != 0 ? ((DocumentScoreInfo<?>) elements[s]).score : 1.0);
             for (int i = n; i-- != 0; ) ((DocumentScoreInfo<?>) elements[i + s]).score *= adjustment;
         }
-
         return count;
     }
-
-
 }

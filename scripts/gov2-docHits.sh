@@ -13,7 +13,7 @@ export CLASSPATH=.:/home/juan/sandbox/mg4j-nyu/*:/home/juan/sandbox/mg4j-nyu/lib
 starttime=$(date +%s)
 
 java -Xmx32g edu.nyu.tandon.experiments.RawDocHits \
--r 10000 -I 100M-s.txt -d $WORK_DIR/docHits-raw.txt $WORK_DIR/index/qs-xdoc/gov2-text?inmemory=1
+-r 1280 -I 100M-s.txt -d $WORK_DIR/docHits-raw.txt $WORK_DIR/index/qs-xdoc/gov2-text?inmemory=1
 
 
 

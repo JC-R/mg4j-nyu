@@ -18,50 +18,42 @@ WORK_DIR=/home/juan/work/experiments
 PWD=`pwd`
 cd $WORK_DIR
 
-run_params="\$score BM25Scorer(1.2,0.3)\n\$limit $NUM_RESULTS\n\$mplex off"
-
-#cat <(echo -e $run_params) <(cat lists/$CORPUS.topics.AND.txt) >lists/$CORPUS.trec_eval.AND.txt
-#cat <(echo -e $run_params) <(cat lists/$CORPUS.topics.OR.txt) >lists/$CORPUS.trec_eval.OR.txt
-#cat <(cat topics-and-qrels/qrels.701-750.txt) <(cat topics-and-qrels/qrels.751-800.txt) <(cat topics-and-qrels/qrels.801-850.txt) > results/qrels.txt
+run_params="\$score BM25PrunedScorer(1.2,0.3)\n\$limit $NUM_RESULTS\n\$mplex off"
+cat <(echo -e $run_params) <(cat lists/$CORPUS.topics.AND.txt) >lists/$CORPUS.trec_eval.AND.txt
+cat <(echo -e $run_params) <(cat lists/$CORPUS.topics.OR.txt) >lists/$CORPUS.trec_eval.OR.txt
+cat <(cat topics-and-qrels/qrels.701-750.txt) <(cat topics-and-qrels/qrels.751-800.txt) <(cat topics-and-qrels/qrels.801-850.txt) > results/qrels.txt
 
 #
 
 # prune levels
 #for n in {1,2,3,4,5,6,7,8,9,10,15,20,25,30,35,40,45,50,75,100}
 
-for n in 01 02 03 04 05 10 15; do
+for n in 01 02 03 04 05 10 15 20; do
 for k in top10 top1k; do
 for s in AND OR; do
-#for f in lists/*.ml; do
 
-#fname=$(echo $f | cut -d '/' -f 2)
-#RUN=results/run.$fname.trec_eval.prune-$n.$s.txt
-#ERR=results/err.$fname.trec_eval.prune-$n.$s.txt
+#  requires pruned index
+# ----------------------
+INDEX=$PRUNED_DIR/$CORPUS-$k-$n
+fname=$CORPUS-$k-$n
 
-# doc pruning - on the fly (simulated pruning)
-#   requires: --prune -I <doc-list> -T <titles> -s <threshold>
-# --------------------------------------------
-#java -server -Dlogback.configurationFile=logback.xml edu.nyu.tandon.experiments.PrunedQuery --trec -T $INDEX_DIR/$CORPUS.titles --prune -s $n -L $f $BASELINE_INDEX -I lists/$CORPUS.trec_eval.$s.txt -d $run 2>>$err
+java $OPTIONS edu.nyu.tandon.experiments.PrunedQuery --trec --globalScoring -I lists/$CORPUS.trec_eval.$s.txt -T $PRUNED_DIR/$fname.titles -d results/$fname-$s-global.txt $INDEX-0 2>>results/$fname-$s-global.log &
+java $OPTIONS edu.nyu.tandon.experiments.PrunedQuery --trec -I lists/$CORPUS.trec_eval.$s.txt -T $PRUNED_DIR/$fname.titles -d results/$fname-$s-local.txt $INDEX-0 2>>results/$fname-$s-local.log &
 
-# posthits pruning - actual index
-#   requires full pruned index
-# -------------------------------
-INDEX=$PRUNED_DIR/$CORPUS-$k-$n-0
-
-java $OPTIONS edu.nyu.tandon.experiments.PrunedQuery --trec -I lists/$CORPUS.trec_eval.$s.txt -d results/$CORPUS.pruned-$n.txt $INDEX 2>>$ERR
+wait
 
 # eval results
 # ------------
-trec_eval -q results/qrels.txt $run >results/eval.$fname.trec_eval.$n.$s
-grep ms\; $err | cut -d' ' -f6 | paste -d+ -s | bc -l >results/time.$fname.trec_eval.$n.$s
-
-#done
+for scoring in local global; do
+trec_eval -q results/qrels.txt results/$fname-$s-$scoring.txt >results/eval.$fname-$s-$scoring
+grep ms\; results/$fname-$s-$scoring.log | cut -d' ' -f6 | paste -d+ -s | bc -l >results/time.$fname-$s-$scoring
+done
 done
 done
 done
 
 #collect  results
-echo "dataset,training_set,model,target_label,query_set,prune_size,query_semantics,metric,value" >  eval.$CORPUS.csv
-grep '[[:space:]]all[[:space:]]' results/eval.$CORPUS.* | tr ':/.\t' ' ' | sed -e 's/_0 /_0./g' -e 's/[[:space:]]0 / 0./g' -e 's/results eval //g' -e 's/none //' -e 's/all //g' -e 's/ ml / /g' -e 's/[[:space:]][[:space:]]*/ /g' -e 's/_1 /_1./g' | tr ' ' ',' >> eval.$CORPUS.csv
+echo "dataset,target_label,prune_size,query_semantics,scoring,metric,value" >  eval.$CORPUS-ph.csv
+grep '[[:space:]]all[[:space:]]' results/eval.$CORPUS-top1?-??-* | tr ':/.\t-' ' ' | sed -e 's/_0 /_0./g' -e 's/[[:space:]]0 / 0./g' -e 's/results eval //g' -e 's/none //' -e 's/all //g' -e 's/_1 /_1./g' -e 's/  \+/ /g' | tr ' ' ',' | sed -e 's/^/ph,/g' > eval.$CORPUS-ph.csv
 
-
+cd $PWD

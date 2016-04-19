@@ -229,6 +229,23 @@ public class PrunedPartition {
      */
     private QuasiSuccinctIndexWriter[] quasiSuccinctIndexWriter;
 
+    /** Symbolic names for global metrics */
+    public static enum globalPropertyKeys {
+        /** The number of documents in the collection. */
+        G_DOCUMENTS,
+        /** The number of terms in the collection. */
+        G_TERMS,
+        /** The number of occurrences in the collection, or -1 if the number of occurrences is not known. */
+        G_OCCURRENCES,
+        /** The number of postings (pairs term/document) in the collection. */
+        G_POSTINGS,
+        /** The number of batches this index was (or should be) built from. */
+        G_MAXCOUNT,
+        /** The maximum size (in words) of a document, or -1 if the maximum document size is not known. */
+        G_MAXDOCSIZE
+    }
+
+
     public PrunedPartition(final String inputBasename,
                            final String outputBasename,
                            final DocumentalPartitioningStrategy strategy,
@@ -330,6 +347,7 @@ public class PrunedPartition {
                         new Switch("highPerformance", 'h', "high-performance", "Forces a high-performance index."),
                         new FlaggedOption("cacheSize", JSAP.INTSIZE_PARSER, Util.formatBinarySize(QuasiSuccinctIndexWriter.DEFAULT_CACHE_SIZE), JSAP.NOT_REQUIRED, JSAP.NO_SHORTFLAG, "cache-size", "The size of the bit cache used while creating a quasi-succinct index."),
                         new FlaggedOption("quantum", JSAP.INTSIZE_PARSER, "32", JSAP.NOT_REQUIRED, 'Q', "quantum", "The skip quantum."),
+                        new FlaggedOption("stopwords", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'S', "stopword", "The stop words."),
                         new FlaggedOption("height", JSAP.INTSIZE_PARSER, Integer.toString(BitStreamIndex.DEFAULT_HEIGHT), JSAP.NOT_REQUIRED, 'H', "height", "The skip height."),
                         new FlaggedOption("skipBufferSize", JSAP.INTSIZE_PARSER, Util.formatBinarySize(SkipBitStreamIndexWriter.DEFAULT_TEMP_BUFFER_SIZE), JSAP.NOT_REQUIRED, JSAP.NO_SHORTFLAG, "skip-buffer-size", "The size of the internal temporary buffer used while creating an index with skips."),
                         new UnflaggedOption("inputBasename", JSAP.STRING_PARSER, JSAP.REQUIRED, "The basename of the global index."),
@@ -447,12 +465,6 @@ public class PrunedPartition {
 
         IndexIterator indexIterator;
 
-        tempFile = new File(localBasename[0] + ".temp");
-        temp = new CachingOutputBitStream(tempFile, bufferSize);
-
-        direct = new InputBitStream(temp.buffer());
-        indirect = new InputBitStream(tempFile);
-
         bloomFilter = (bloomFilterPrecision != 0) ?
                 BloomFilter.create(globalIndex.numberOfTerms, bloomFilterPrecision) : null;
 
@@ -489,14 +501,12 @@ public class PrunedPartition {
 
             localFrequency = 0;
 
-
             // if the term never made it to the pruned index; then skip it
             if (((PostingPruningStrategy) strategy).localTermId(termID) == -1) continue;
 
             for (long j = 0; j < frequency; j++) {
 
                 globalPointer = indexIterator.nextDocument();
-
 
                 // (term,doc) in the pruned index?
                 if ((localIndex = ((PostingPruningStrategy) strategy).localIndex(termID, globalPointer)) == 0) {
@@ -613,6 +623,8 @@ public class PrunedPartition {
             list.clear();
 
         }
+        globalFrequencies.close();
+
         pl.done();
 
         Properties globalProperties = new Properties();
@@ -623,8 +635,6 @@ public class PrunedPartition {
         indexWriter[0].close();
         if (bloomFilterPrecision != 0)
             BinIO.storeObject(bloomFilter, localBasename[0] + DocumentalCluster.BLOOM_EXTENSION);
-        temp.close();
-        tempFile.delete();
 
         Properties localProperties = indexWriter[0].properties();
         localProperties.addAll(globalProperties);
@@ -638,6 +648,14 @@ public class PrunedPartition {
             localProperties.setProperty(Index.PropertyKeys.PAYLOADCLASS, payload.getClass().getName());
         if (strategyProperties != null && strategyProperties[0] != null)
             localProperties.addAll(strategyProperties[0]);
+        // add global properties
+        localProperties.addProperty(globalPropertyKeys.G_MAXCOUNT, inputProperties.getProperty(Index.PropertyKeys.MAXCOUNT));
+        localProperties.addProperty(globalPropertyKeys.G_MAXDOCSIZE, inputProperties.getProperty(Index.PropertyKeys.MAXDOCSIZE));
+        localProperties.addProperty(globalPropertyKeys.G_POSTINGS, inputProperties.getProperty(Index.PropertyKeys.POSTINGS));
+        localProperties.addProperty(globalPropertyKeys.G_OCCURRENCES, inputProperties.getProperty(Index.PropertyKeys.OCCURRENCES));
+        localProperties.addProperty(globalPropertyKeys.G_DOCUMENTS, inputProperties.getProperty(Index.PropertyKeys.DOCUMENTS));
+        localProperties.addProperty(globalPropertyKeys.G_TERMS, inputProperties.getProperty(Index.PropertyKeys.TERMS));
+
         localProperties.save(localBasename[0] + DiskBasedIndex.PROPERTIES_EXTENSION);
 
         if (strategyFilename != null)
