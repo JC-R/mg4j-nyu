@@ -106,23 +106,23 @@ public class BM25Scorer extends AbstractWeightedScorer implements DelegatingScor
     /**
      * The counter setup visitor used to estimate counts.
      */
-    private final CounterSetupVisitor setupVisitor;
+    public final CounterSetupVisitor setupVisitor;
     /**
      * The term collection visitor used to estimate counts.
      */
-    private final TermCollectionVisitor termVisitor;
+    public final TermCollectionVisitor termVisitor;
     /**
      * The parameter <var>k</var><sub>1</sub>.
      */
-    private final double k1;
+    public final double k1;
     /**
      * The parameter <var>b</var>.
      */
-    private final double b;
+    public final double b;
     /**
      * The parameter {@link #k1} multiplied by one minus {@link #b}, precomputed.
      */
-    private final double k1Times1MinusB;
+    public final double k1Times1MinusB;
     /**
      * An array of nonzero-frequency index iterators, all on the same index, used by the flat evaluator, or <code>null</code> for generic evaluation.
      */
@@ -130,23 +130,23 @@ public class BM25Scorer extends AbstractWeightedScorer implements DelegatingScor
     /**
      * A value precomputed for flat evaluation.
      */
-    private double k1TimesBDividedByAverageDocumentSize;
+    public double k1TimesBDividedByAverageDocumentSize;
     /**
      * The list of sizes, cached for flat evaluation.
      */
-    private IntBigList sizes;
+    public IntBigList sizes;
     /**
      * An array indexed by offsets that caches the inverse document-frequency part of the formula, multiplied by the index weight, cached for flat evaluation.
      */
-    private double[] k1Plus1TimesWeightedIdfPart;
+    public double[] k1Plus1TimesWeightedIdfPart;
     /**
      * The value of {@link TermCollectionVisitor#numberOfPairs()} cached, if {@link #indexIterator} is <code>null</code>.
      */
-    private int numberOfPairs;
+    public int numberOfPairs;
     /**
      * A visitor used by the generic evaluator.
      */
-    private Visitor visitor;
+    public Visitor visitor;
 
     /**
      * Creates a BM25 scorer using {@link #DEFAULT_K1} and {@link #DEFAULT_B} as parameters.
@@ -300,7 +300,7 @@ public class BM25Scorer extends AbstractWeightedScorer implements DelegatingScor
         return false;
     }
 
-    private static final class Visitor extends AbstractDocumentIteratorVisitor {
+    public static final class Visitor extends AbstractDocumentIteratorVisitor {
         /**
          * Offset-indexed precomputed values.
          */

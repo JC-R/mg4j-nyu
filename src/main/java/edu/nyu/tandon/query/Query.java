@@ -171,7 +171,7 @@ public class Query {
             }
             spec = spec.substring(0, pos);
         }
-        array[index] = ObjectParser.fromSpec(spec, klass, new String[]{"it.unimi.di.big.mg4j.search.score", "it.unimi.di.big.mg4j.query.nodes"});
+        array[index] = ObjectParser.fromSpec(spec, klass, new String[]{"edu.nyu.tandon.search.score", "it.unimi.di.big.mg4j.search.score", "it.unimi.di.big.mg4j.query.nodes"});
         return weightSpec;
     }
 

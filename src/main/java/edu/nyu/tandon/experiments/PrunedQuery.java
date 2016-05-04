@@ -1,33 +1,13 @@
 package edu.nyu.tandon.experiments;
-/*
- * MG4J: Managing Gigabytes for Java (big)
- *
- * Copyright (C) 2005-2015 Paolo Boldi and Sebastiano Vigna
- *
- *  This library is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU Lesser General Public License as published by the Free
- *  Software Foundation; either version 3 of the License, or (at your option)
- *  any later version.
- *
- *  This library is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
- *  for more details.
- *
- *  You should have received a copy of the GNU Lesser General Public License
- *  along with this program; if not, see <http://www.gnu.org/licenses/>.
- *
- */
 
 import com.martiansoftware.jsap.*;
+import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import edu.nyu.tandon.query.PrunedQueryEngine;
 import edu.nyu.tandon.query.Query;
-import edu.nyu.tandon.query.QueryEngine;
 import it.unimi.di.big.mg4j.document.AbstractDocumentSequence;
 import it.unimi.di.big.mg4j.document.DocumentCollection;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
-import it.unimi.di.big.mg4j.query.HttpQueryServer;
 import it.unimi.di.big.mg4j.query.IntervalSelector;
 import it.unimi.di.big.mg4j.query.SelectedInterval;
 import it.unimi.di.big.mg4j.query.TextMarker;
@@ -53,27 +33,28 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
-/**
- * A command-line interpreter to query indices using a pruned list of documents.
- * <p>
- * <p>This class can be used to start a {@linkplain QueryEngine query engine}
- * from the command line. Optionally, it can
- * start a {@linkplain HttpQueryServer web server} that will serve the results in a
- * search-engine-like environment. Changes
- * to the query engine made on the command line will reflect on subsequent queries (also on the
- * web server). The web server access is fully multithreaded.
- * <p>
- * <p>This class does not provide command-line history or editing: to get that effect,
- * we suggest to rely on some operating-system utility such as
- * <a href="http://utopia.knoware.nl/~hlub/uck/rlwrap/"><samp>rlwrap</samp></a>.
- * <p>
- * <p><strong>Warning:</strong> This class is <strong>highly experimental</strong> (it is the
- * place that we tweak to experiment every kind of new indexing/ranking method).
- */
+// TODO: this entire code does not track multiple indeces
+
 public class PrunedQuery extends Query {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PrunedQuery.class);
 
+    /** Symbolic names for global metrics */
+    public static enum globalPropertyKeys {
+        /** The number of documents in the collection. */
+        G_DOCUMENTS,
+        /** The number of terms in the collection. */
+        G_TERMS,
+        /** The number of occurrences in the collection, or -1 if the number of occurrences is not known. */
+        G_OCCURRENCES,
+        /** The number of postings (pairs term/document) in the collection. */
+        G_POSTINGS,
+        /** The number of batches this index was (or should be) built from. */
+        G_MAXCOUNT,
+        /** The maximum size (in words) of a document, or -1 if the maximum document size is not known. */
+        G_MAXDOCSIZE
+    }
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PrunedQuery.class);
     public PrunedQuery(final PrunedQueryEngine queryEngine) {
         super(queryEngine);
     }
@@ -102,6 +83,8 @@ public class PrunedQuery extends Query {
 
                         new FlaggedOption("divert", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'd', "divert", "output file"),
                         new Switch("prune", 'e', "prune", "Enable pruned list"),
+                        new Switch("globalScoring", 'G', "globalScoring", "Enable global metric scoring"),
+
                         new FlaggedOption("prunelist", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'L', "prunelist", "prune list"),
                         new FlaggedOption("threshold", JSAP.INTEGER_PARSER, "100", JSAP.NOT_REQUIRED, 's', "threshold", "prune threshold percentage"),
 
@@ -125,33 +108,55 @@ public class PrunedQuery extends Query {
         PrunedQuery.loadIndicesFromSpec(basenameWeight, loadSizes, documentCollection, indexMap, index2Weight);
 
         final long numberOfDocuments = indexMap.values().iterator().next().numberOfDocuments;
-
         final Object2ObjectOpenHashMap<String, TermProcessor> termProcessors = new Object2ObjectOpenHashMap<String, TermProcessor>(indexMap.size());
         for (String alias : indexMap.keySet()) termProcessors.put(alias, indexMap.get(alias).termProcessor);
-
         final SimpleParser simpleParser = new SimpleParser(indexMap.keySet(), indexMap.firstKey(), termProcessors);
-
         final Reference2ReferenceMap<Index, Object> index2Parser = new Reference2ReferenceOpenHashMap<Index, Object>();
+
+        boolean disallowScorer = false;
 
         final PrunedQueryEngine queryEngine = new PrunedQueryEngine(simpleParser, new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING), indexMap);
 
-        queryEngine.setWeights(index2Weight);
-        queryEngine.score(new Scorer[]{new BM25Scorer(), new VignaScorer()}, new double[]{1, 1});
-        // We set up an interval selector only if there is a collection for snippeting
-        queryEngine.intervalSelector = documentCollection != null ? new IntervalSelector(4, 40) : new IntervalSelector();
 
-        queryEngine.multiplex = !jsapResult.userSpecified("moPlex") || jsapResult.getBoolean("noMplex");
-
-        queryEngine.prunning = jsapResult.userSpecified("prune");
-        if (queryEngine.prunning) {
-            queryEngine.loadPrunedIndex(jsapResult.getString("prunelist"), (int) ((jsapResult.getInt("threshold", 100) / 100.0) * (float) numberOfDocuments));
+        // use local or global metrics during scoring: can be overriden in the input query stream via $score command
+        if (jsapResult.getBoolean("globalScoring")) {
+            queryEngine.loadGlobalTermFrequencies(basenameWeight[0]+".globaltermfreq");
+            BM25PrunedScorer scorer = new BM25PrunedScorer(1.2,0.3);
+            scorer.setGlobalMetrics(
+                    indexMap.get(indexMap.firstKey()).properties.getLong(globalPropertyKeys.G_DOCUMENTS),
+                    indexMap.get(indexMap.firstKey()).properties.getLong(globalPropertyKeys.G_OCCURRENCES),
+                    queryEngine.globalTermFrequencies);
+            queryEngine.score(new Scorer[]{scorer, new VignaScorer()}, new double[]{1, 1});
+            if (queryEngine.globalTermFrequencies.size() != indexMap.get(indexMap.firstKey()).numberOfTerms)
+                throw new IllegalArgumentException("The number of global term frequencies (" + queryEngine.globalTermFrequencies.size() + " and the number of local terms do not match");
+            disallowScorer = true;
+        }
+        else {
+            // can be overriden in the input query stream via $score command
+            queryEngine.score(new Scorer[]{new BM25PrunedScorer(), new VignaScorer()}, new double[]{1, 1});
+            disallowScorer = false;
         }
 
+
+        queryEngine.setWeights(index2Weight);
         queryEngine.equalize(1000);
 
+        // We set up an interval selector only if there is a collection for snippeting
+        queryEngine.intervalSelector = documentCollection != null ? new IntervalSelector(4, 40) : new IntervalSelector();
+        queryEngine.multiplex = !jsapResult.userSpecified("moPlex") || jsapResult.getBoolean("noMplex");
+
+
+        // this flag is used only for document-based (emulated) pruning: uses an ordered list of documents to include and a partition threshold
+        // for posting-based actual pruning, pass in a pruned index instead (built by PrunedPartition)
+        queryEngine.docPrunning = jsapResult.userSpecified("prune");
+        if (queryEngine.docPrunning) {
+            queryEngine.loadDocumentPrunedList(jsapResult.getString("prunelist"), (int) ((jsapResult.getInt("threshold", 100) / 100.0) * (float) numberOfDocuments));
+        }
+
         PrunedQuery query = new PrunedQuery(queryEngine);
-        query.maxOutput = jsapResult.getInt("results", 20000);
-        query.interpretCommand("$score BM25Scorer");
+        query.maxOutput = jsapResult.getInt("results", 1280);
+
+        // divert output to a file?
         if (jsapResult.userSpecified("divert"))
             query.interpretCommand("$divert " + jsapResult.getObject("divert"));
 
@@ -168,12 +173,11 @@ public class PrunedQuery extends Query {
         if (titleList != null && titleList.size64() != numberOfDocuments)
             throw new IllegalArgumentException("The number of titles (" + titleList.size64() + " and the number of documents (" + numberOfDocuments + ") do not match");
 
-
         String q;
         String[] q_parts;
 
         System.err.println("Welcome to the MG4J pruned query class (setup with $mode snippet, $score BM25Scorer VignaScorer, $mplex on, $equalize 1000, $select " + (documentCollection != null ? "4 40" : "all") + ")");
-        if (queryEngine.prunning) {
+        if (queryEngine.docPrunning) {
             System.err.println("Running in prunning mode.");
             LOGGER.debug("Processing Query with pruned index");
         }
@@ -197,6 +201,8 @@ public class PrunedQuery extends Query {
                 }
                 if (q.length() == 0) continue;
                 if (q.charAt(0) == '$') {
+                    if (q.contains("$score") && disallowScorer)
+                        continue;
                     if (!query.interpretCommand(q)) break;
                     continue;
                 }
