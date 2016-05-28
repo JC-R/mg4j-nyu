@@ -26,6 +26,7 @@ import it.unimi.di.big.mg4j.index.*;
 import it.unimi.di.big.mg4j.index.CompressionFlags.Coding;
 import it.unimi.di.big.mg4j.index.CompressionFlags.Component;
 import it.unimi.di.big.mg4j.index.cluster.*;
+import it.unimi.di.big.mg4j.index.payload.IntegerPayload;
 import it.unimi.di.big.mg4j.index.payload.Payload;
 import it.unimi.di.big.mg4j.io.IOFactory;
 import it.unimi.di.big.mg4j.tool.Combine;
@@ -463,6 +464,8 @@ public class PrunedPartition {
         final File orderFile;
         final CachingOutputBitStream order;
 
+        long lID;
+
         IndexIterator indexIterator;
 
         bloomFilter = (bloomFilterPrecision != 0) ?
@@ -497,12 +500,14 @@ public class PrunedPartition {
             indexIterator = indexReader.nextIterator();
             frequency = indexIterator.frequency();
             termID = indexIterator.termNumber();
-//            assert termID == t;
+            assert termID == t;
 
             localFrequency = 0;
 
-            // if the term never made it to the pruned index; then skip it
-            if (((PostingPruningStrategy) strategy).localTermId(termID) == -1) continue;
+            IntegerPayload payload1;
+
+            // if the term never made it to the pruned index; skip it
+            if ((lID = ((PostingPruningStrategy) strategy).localTermId(termID)) == -1) continue;
 
             for (long j = 0; j < frequency; j++) {
 

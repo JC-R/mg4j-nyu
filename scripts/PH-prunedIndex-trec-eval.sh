@@ -2,19 +2,19 @@
 set -e
 
 # Runs the MG4J k-out-of-n queries and performs evaluation
-export CLASSPATH=/home/juan/sandbox/mg4j-nyu/*:/home/juan/work/runtime/*
+export CLASSPATH=/home/juan/work/sandbox/mg4j-nyu/*
 export PATH=.:$PATH
 
 CORPUS=gov2
-NUM_RESULTS=1000
+NUM_RESULTS=1280
 
 OPTIONS="-server -Dlogback.configurationFile=logback.xml"
 
-INDEX_DIR=/home/juan/work/IR/Gov2/index/mg4j/
+INDEX_DIR=/home/juan/work/data/IR/Gov2/index/mg4j/
 BASELINE_INDEX=$INDEX_DIR/qs-xdoc/$CORPUS-text
 PRUNED_DIR=$INDEX_DIR/pruned
 
-WORK_DIR=/home/juan/work/experiments
+WORK_DIR=/home/juan/work/data/experiments
 PWD=`pwd`
 cd $WORK_DIR
 
@@ -28,8 +28,9 @@ cat <(cat topics-and-qrels/qrels.701-750.txt) <(cat topics-and-qrels/qrels.751-8
 # prune levels
 #for n in {1,2,3,4,5,6,7,8,9,10,15,20,25,30,35,40,45,50,75,100}
 
-for n in 01 02 03 04 05 10 15 20; do
+for n in 01 02 03 04 05 10 15 20 25 30; do
 for k in top10 top1k; do
+#for k in top1k; do
 for s in AND OR; do
 
 #  requires pruned index

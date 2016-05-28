@@ -20,7 +20,7 @@ INDEX_DIR=$INDECES/pruned
 export _JAVA_OPTIONS="-Xmx10g -XX:-UseConcMarkSweepGC"
 
 #for k in top10 top1k; do
-for k in top1k; do
+for k in top10 top1k; do
 for n in 01 02 03 04; do
 ~/work/sandbox/mg4j-nyu/scripts/SingletonPrunedIndex.sh $INDEX_DIR/prune-$CORPUS-$k-$n.strategy $FULL_INDEX $INDEX_DIR/$CORPUS-$k-$n &
 done
@@ -30,7 +30,7 @@ done
 export _JAVA_OPTIONS="-Xmx30g -XX:-UseConcMarkSweepGC"
 for n in 05 10 15 20 25 30; do
 #for k in top10 top1k; do
-for k in top1k; do
+for k in top10; do
 ~/work/sandbox/mg4j-nyu/scripts/SingletonPrunedIndex.sh $INDEX_DIR/prune-$CORPUS-$k-$n.strategy $FULL_INDEX $INDEX_DIR/$CORPUS-$k-$n
 done
 wait

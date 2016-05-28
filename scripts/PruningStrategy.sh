@@ -5,7 +5,7 @@
 #  PruningStretegy classes perform the work of selecting whrther a posting is in or out
 #
 # input: $1    // an ordered list of postings, best first (descending) that will be used as prune criteria
-#        $2    // top10 or top1k
+#        $2    // output titles
 
 CP=/home/juan/work/sandbox/mg4j-nyu/mg4j-nyu.jar
 export _JAVA_OPTIONS="-Xmx54g -XX:-UseConcMarkSweepGC"
