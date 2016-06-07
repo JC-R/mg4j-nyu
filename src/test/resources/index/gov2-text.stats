@@ -1,0 +1,21 @@
+Pointers
+=========
+Upper bits: 394242 (49.28KB, 35.45%)
+Lower bits: 676132 (84.52KB, 60.79%)
+Skip pointers bits: 3714 (464B, 0.33%)
+Additional bits: 38154 (4.77KB, 3.43%)
+Overall bits: 1112242 (139.03KB)
+
+Bits per pointer: 7.37 (7.40 with skips)
+
+Counts
+=========
+Upper bits: 251778 (31.47KB, 91.77%)
+Lower bits: 21581 (2.70KB, 7.87%)
+Skip pointers bits: 1010 (126B, 0.37%)
+Additional bits: 0 (0B, 0.00%)
+Overall bits: 274369 (34.30KB)
+
+Bits per count: 1.82 (1.82 with skips)
+
+Size: 1386611 bits (173.33KB)

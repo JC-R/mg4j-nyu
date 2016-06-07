@@ -8,7 +8,7 @@ OUTPUT_PREFIX=/mnt/eldysk/web/gov2c/map
 rm *.tmp
 
 for i in $(seq 1 ${NO_CLUSTERS}); do
-    ./cluster-ordering.sh "${INDEX_PREFIX}-${i}.titles" ${GLOBAL_ORDERING} "${OUTPUT_PREFIX}-${i}"
+    cluster-ordering.sh "${INDEX_PREFIX}-${i}.titles" ${GLOBAL_ORDERING} "${OUTPUT_PREFIX}-${i}"
 done
 
 rm *.tmp
