@@ -14,6 +14,7 @@
 workDir=$1
 global=$2
 shift
+shift
 
 globalSorted=`mktemp`
 seq 0 $((`wc -l < ${global}` - 1)) | paste -d" " ${global} - | sort > ${globalSorted}
@@ -23,5 +24,5 @@ for cluster in "$@"
 do
         base=`basename ${cluster}`
         >&2 echo "Creating cluster mapping for '${cluster}'"
-        ./strategy.sh -s ${globalSorted} ${cluster} "${workDir}/numbers/${base}"
+        ./cluster-mapping.sh -s ${globalSorted} ${cluster} "${workDir}/numbers/${base}"
 done

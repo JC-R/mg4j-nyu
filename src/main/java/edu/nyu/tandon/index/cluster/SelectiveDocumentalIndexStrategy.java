@@ -127,7 +127,8 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
                 "", // TODO
                 new Parameter[] {
                         new Switch("asciiIds", 'a', "ascii-ids", "If present, the document IDs in the cluster specifications will be read as longs encoded in ascii delimited by new lines."),
-                        new QualifiedSwitch("clusters", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'c', "clusters", "The files defining the clusters: either containing sorted list of global IDs or titles (only if -g provided)."),
+                        new QualifiedSwitch("clusters", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'c', "clusters", "The files defining the clusters: either containing sorted list of global IDs or titles (only if -g provided).")
+                            .setList(true).setListSeparator(','),
                         new UnflaggedOption("outputFile", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.GREEDY, "The output file where the serialized strategy will be stored.")
                 });
 
