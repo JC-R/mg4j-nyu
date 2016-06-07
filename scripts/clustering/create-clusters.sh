@@ -6,7 +6,10 @@
 # Produce clusters of a global index based on files with titles.
 #
 # Arguments:
-# 1)
+# 1) working directory;
+# 2) global index base name (absolute path, e.g., /home/user/index/basename-text);
+# 3) output index (and clusters) base name
+# 4...) the list of files containing titles of the documents in clusters.
 #
 
 CLASSPATH=../../target/artifacts/mg4j_nyu_jar/mg4j-nyu.jar
