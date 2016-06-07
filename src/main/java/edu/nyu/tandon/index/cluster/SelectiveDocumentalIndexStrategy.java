@@ -4,6 +4,7 @@ import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.utils.FileAsciiLongIterator;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalPartitioningStrategy;
+import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongIterator;
@@ -16,6 +17,7 @@ import java.io.Serializable;
 import java.util.Iterator;
 
 import static it.unimi.dsi.fastutil.io.BinIO.asLongIterator;
+import static it.unimi.dsi.fastutil.io.BinIO.storeObject;
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -125,7 +127,8 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
                 "", // TODO
                 new Parameter[] {
                         new Switch("asciiIds", 'a', "ascii-ids", "If present, the document IDs in the cluster specifications will be read as longs encoded in ascii delimited by new lines."),
-                        new QualifiedSwitch("clusters", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'c', "clusters", "The files defining the clusters: either containing sorted list of global IDs or titles (only if -g provided).")
+                        new QualifiedSwitch("clusters", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'c', "clusters", "The files defining the clusters: either containing sorted list of global IDs or titles (only if -g provided)."),
+                        new UnflaggedOption("outputFile", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.GREEDY, "The output file where the serialized strategy will be stored.")
                 });
 
         JSAPResult jsapResult = jsap.parse(args);
@@ -139,7 +142,11 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
                 ));
 
         try {
-            createStrategy(clustersPaths, jsapResult.userSpecified("asciiIds"));
+
+            SelectiveDocumentalIndexStrategy strategy =
+                    createStrategy(clustersPaths, jsapResult.userSpecified("asciiIds"));
+            storeObject(strategy, jsapResult.getString("outputFile"));
+
         } catch (IOException e) {
             // TODO
             e.printStackTrace();

@@ -1,10 +1,15 @@
 package edu.nyu.tandon.index.cluster;
 
+import it.unimi.dsi.fastutil.io.BinIO;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.*;
 
 import static java.util.Arrays.sort;
@@ -17,6 +22,9 @@ import static org.junit.Assert.assertThat;
 public class SelectiveDocumentalIndexStrategyTest {
 
     private static SelectiveDocumentalIndexStrategy strategy;
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @BeforeClass
     public static void createStrategy() throws IOException {
@@ -31,6 +39,23 @@ public class SelectiveDocumentalIndexStrategyTest {
         sort(clusters);
 
         strategy = SelectiveDocumentalIndexStrategy.createStrategy(clusters, true);
+    }
+
+    @Test
+    public void serialize() throws IOException, ClassNotFoundException {
+
+        // Given
+        File file = folder.newFile();
+
+        // When
+        BinIO.storeObject(strategy, file);
+        SelectiveDocumentalIndexStrategy actual = (SelectiveDocumentalIndexStrategy) BinIO.loadObject(file);
+
+        // Then
+        assertThat(actual.numberOfDocuments, equalTo(strategy.numberOfDocuments));
+        assertThat(actual.localIndices, equalTo(strategy.localIndices));
+        assertThat(actual.localPointers, equalTo(strategy.localPointers));
+        assertThat(actual.globalPointers, equalTo(strategy.globalPointers));
     }
 
     @Test
