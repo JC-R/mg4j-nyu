@@ -70,7 +70,11 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
 
     @Override
     public Properties[] properties() {
-        return new Properties[0];
+        Properties[] properties = new Properties[numberOfDocuments.length];
+        for(int i = 0; i < numberOfDocuments.length; ++i) {
+            properties[i] = new Properties();
+        }
+        return properties;
     }
 
     public static SelectiveDocumentalIndexStrategy createStrategy(String[] clusterFiles, boolean ascii) throws IOException {
