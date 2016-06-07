@@ -7,12 +7,13 @@
 #
 # Arguments:
 # 1) working directory;
-# 2) global index base name (absolute path, e.g., /home/user/index/basename-text);
+# 2) global index base name (absolute path, e.g., /home/user/index/basename);
 # 3) output index (and clusters) base name
 # 4...) the list of files containing titles of the documents in clusters.
 #
 
-CLASSPATH=../../target/artifacts/mg4j_nyu_jar/mg4j-nyu.jar
+if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../`; fi;
+CLASSPATH="${ROOT}/../target/artifacts/mg4j_nyu_jar/mg4j-nyu.jar"
 
 workDir=$1
 globalBase=$2
@@ -23,9 +24,10 @@ shift
 
 if [ -z "${workDir}" ]; then echo "You have to define working directory."; exit 1; fi;
 if [ -z "${globalBase}" ]; then echo "You have to define the basename of a global index."; exit 1; fi;
+if [ -z "${outputName}" ]; then echo "You have to define the output name."; exit 1; fi;
 
 # Create the strategy
-./cluster-mappings.sh ${workDir} "${globalBase}.titles" "$@"
+${ROOT}/clustering/cluster-mappings.sh ${workDir} "${globalBase}.titles" "$@"
 clusterList=`find "${workDir}/numbers" -type f | sort | paste -sd "," -`
 java -cp ${CLASSPATH} edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy -a "-c:${clusterList}" "${workDir}/${outputName}.strategy"
 

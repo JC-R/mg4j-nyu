@@ -11,6 +11,8 @@
 # 3...) the list of files containing titles of the documents in clusters.
 #
 
+if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../`; fi;
+
 workDir=$1
 global=$2
 shift
@@ -19,10 +21,12 @@ shift
 globalSorted=`mktemp`
 seq 0 $((`wc -l < ${global}` - 1)) | paste -d" " ${global} - | sort > ${globalSorted}
 
+mkdir -p "${workDir}/numbers"
+
 >&2 echo "Creating clusters mappings for index '${global}'"
 for cluster in "$@"
 do
         base=`basename ${cluster}`
         >&2 echo "Creating cluster mapping for '${cluster}'"
-        ./cluster-mapping.sh -s ${globalSorted} ${cluster} "${workDir}/numbers/${base}"
+        ${ROOT}/clustering/cluster-mapping.sh -s ${globalSorted} ${cluster} "${workDir}/numbers/${base}"
 done

@@ -13,6 +13,8 @@
 # 2) the titles of the documents that are supposed to be in the cluster (new line delimited).
 #
 
+if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../`; fi;
+
 SORT=true
 while getopts ":s" opt; do
   case $opt in
