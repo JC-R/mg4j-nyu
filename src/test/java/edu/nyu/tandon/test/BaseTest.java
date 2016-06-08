@@ -1,11 +1,18 @@
 package edu.nyu.tandon.test;
 
+import edu.nyu.tandon.csi.CentralSampleIndex;
 import edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy;
+import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
+import it.unimi.di.big.mg4j.index.cluster.DocumentalPartitioningStrategy;
+import it.unimi.dsi.fastutil.io.BinIO;
+import org.apache.commons.configuration.ConfigurationException;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -39,6 +46,14 @@ public class BaseTest {
 
     public static String[] getFilePathsFromDirectory(String dir) {
         return getFilePathsFromDirectory(getFileFromResourcePath(dir));
+    }
+
+    public static CentralSampleIndex loadCSI() throws IOException, ClassNotFoundException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException {
+        File csiDir = getFileFromResourcePath("csi");
+        return new CentralSampleIndex(
+                csiDir.getAbsolutePath() + "/csi-0",
+                (DocumentalClusteringStrategy) BinIO.loadObject(getFileFromResourcePath("csi/csi.strategy")),
+                (DocumentalPartitioningStrategy) BinIO.loadObject(getFileFromResourcePath("clusters/gov2C.strategy")));
     }
 
 }

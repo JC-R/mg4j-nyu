@@ -35,12 +35,8 @@ public class CentralSampleIndexTest extends BaseTest {
     protected static CentralSampleIndex csi;
 
     @BeforeClass
-    public static void loadCSI() throws IllegalAccessException, URISyntaxException, IOException, InstantiationException, NoSuchMethodException, ConfigurationException, InvocationTargetException, ClassNotFoundException {
-        File csiDir = getFileFromResourcePath("csi");
-        csi = new CentralSampleIndex(
-                csiDir.getAbsolutePath() + "/csi-0",
-                (DocumentalClusteringStrategy) BinIO.loadObject(getFileFromResourcePath("csi/csi.strategy")),
-                (DocumentalPartitioningStrategy) BinIO.loadObject(getFileFromResourcePath("clusters/gov2C.strategy")));
+    public static void beforeClass() throws IllegalAccessException, URISyntaxException, IOException, InstantiationException, NoSuchMethodException, ConfigurationException, InvocationTargetException, ClassNotFoundException {
+        csi = loadCSI();
     }
 
     @Test
