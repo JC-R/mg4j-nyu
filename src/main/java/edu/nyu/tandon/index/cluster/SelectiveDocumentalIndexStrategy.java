@@ -4,7 +4,6 @@ import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.utils.FileAsciiLongIterator;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalPartitioningStrategy;
-import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongIterator;
@@ -77,7 +76,7 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
         return properties;
     }
 
-    public static SelectiveDocumentalIndexStrategy createStrategy(String[] clusterFiles, boolean ascii) throws IOException {
+    public static SelectiveDocumentalIndexStrategy constructStrategy(String[] clusterFiles, boolean ascii) throws IOException {
         int length = clusterFiles.length;
         Iterator<Long>[] clusters = ascii
                 ? new FileAsciiLongIterator[length]
@@ -87,10 +86,10 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
                         ? new FileAsciiLongIterator(clusterFiles[i])
                         : asLongIterator(clusterFiles[i]);
         }
-        return createStrategy(clusters);
+        return constructStrategy(clusters);
     }
 
-    public static SelectiveDocumentalIndexStrategy createStrategy(Iterator<Long>[] clusters) {
+    public static SelectiveDocumentalIndexStrategy constructStrategy(Iterator<Long>[] clusters) {
         SelectiveDocumentalIndexStrategy strategy = new SelectiveDocumentalIndexStrategy(clusters.length);
 
         int clusterId = 0;
@@ -149,7 +148,7 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
         try {
 
             SelectiveDocumentalIndexStrategy strategy =
-                    createStrategy(clustersPaths, jsapResult.userSpecified("asciiIds"));
+                    constructStrategy(clustersPaths, jsapResult.userSpecified("asciiIds"));
             storeObject(strategy, jsapResult.getString("outputFile"));
 
         } catch (IOException e) {

@@ -1,15 +1,12 @@
 package edu.nyu.tandon.index.cluster;
 
+import edu.nyu.tandon.test.BaseTest;
 import it.unimi.dsi.fastutil.io.BinIO;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.*;
 
 import static java.util.Arrays.sort;
@@ -19,33 +16,24 @@ import static org.junit.Assert.assertThat;
 /**
  * @author michal.siedlaczek@nyu.edu
  */
-public class SelectiveDocumentalIndexStrategyTest {
+public class SelectiveDocumentalIndexStrategyTest extends BaseTest {
 
     private static SelectiveDocumentalIndexStrategy strategy;
-
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
 
     @BeforeClass
     public static void createStrategy() throws IOException {
 
-        ClassLoader classLoader = SelectiveDocumentalIndexStrategy.class.getClassLoader();
-        File dir = new File(classLoader.getResource("clusters/numbers").getFile());
-        File[] clusterFiles = dir.listFiles();
-        String[] clusters = new String[clusterFiles.length];
-        for (int i = 0; i < clusters.length; i++) {
-            clusters[i] = clusterFiles[i].getAbsolutePath();
-        }
+        String[] clusters = getFilePathsFromDirectory("clusters/numbers");
         sort(clusters);
 
-        strategy = SelectiveDocumentalIndexStrategy.createStrategy(clusters, true);
+        strategy = SelectiveDocumentalIndexStrategy.constructStrategy(clusters, true);
     }
 
     @Test
     public void serialize() throws IOException, ClassNotFoundException {
 
         // Given
-        File file = folder.newFile();
+        File file = newTemporaryFile();
 
         // When
         BinIO.storeObject(strategy, file);

@@ -26,6 +26,8 @@ if [ -z "${workDir}" ]; then echo "You have to define working directory."; exit 
 if [ -z "${globalBase}" ]; then echo "You have to define the basename of a global index."; exit 1; fi;
 if [ -z "${outputName}" ]; then echo "You have to define the output name."; exit 1; fi;
 
+rm -R "${workDir}/numbers"
+
 # Create the strategy
 ${ROOT}/clustering/cluster-mappings.sh ${workDir} "${globalBase}.titles" "$@"
 clusterList=`find "${workDir}/numbers" -type f | sort | paste -sd "," -`
@@ -37,3 +39,12 @@ java -cp ${CLASSPATH} it.unimi.di.big.mg4j.tool.PartitionDocumentally \
     -s "${workDir}/${outputName}.strategy" \
     "${globalBase}-text" \
     "${workDir}/${outputName}"
+
+# Produce term mappings
+ls ${workDir}/*-*terms | while read termFile;
+do
+        base=`basename ${termFile}`
+        number=`echo ${base} | sed "s/.*-//" | sed "s/\..*//"`
+        java -cp ${CLASSPATH} it.unimi.dsi.sux4j.mph.MWHCFunction -s 32 "${workDir}/${outputName}-${number}.mwhc" "${workDir}/${outputName}-${number}.terms"
+        java -cp ${CLASSPATH} it.unimi.dsi.sux4j.util.SignedFunctionStringMap "${workDir}/${outputName}-${number}.mwhc" "${workDir}/${outputName}-${number}.termmap"
+done
