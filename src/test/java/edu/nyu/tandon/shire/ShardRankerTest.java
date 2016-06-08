@@ -48,6 +48,13 @@ public class ShardRankerTest extends BaseTest {
         traverseTree(topRanked, Arrays.asList(new Integer[] { 2, 1 }));
     }
 
+    @Test
+    public void traverseTreeWithCutoff() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
+        Node topRanked = new Document(1, 1.);
+        Node root = new Intermediate(topRanked, new Document(2, .0001));
+        traverseTree(topRanked, Arrays.asList(new Integer[] { 1 }));
+    }
+
     public void traverseTree(Node topRanked, List<Integer> expected) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
 
         // Given
