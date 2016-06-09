@@ -1,14 +1,13 @@
-package edu.nyu.tandon.shire;
+package edu.nyu.tandon.shard.ranking.shire;
 
-import edu.nyu.tandon.csi.Result;
-import edu.nyu.tandon.shire.node.Document;
-import edu.nyu.tandon.shire.node.Intermediate;
-import edu.nyu.tandon.shire.node.Node;
+import edu.nyu.tandon.shard.csi.Result;
+import edu.nyu.tandon.shard.ranking.shire.node.Document;
+import edu.nyu.tandon.shard.ranking.shire.node.Intermediate;
+import edu.nyu.tandon.shard.ranking.shire.node.Node;
 import edu.nyu.tandon.test.BaseTest;
 import org.apache.commons.configuration.ConfigurationException;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package edu.nyu.tandon.shire.node;
+package edu.nyu.tandon.shard.ranking.shire.node;
 
 import java.util.Map;
 

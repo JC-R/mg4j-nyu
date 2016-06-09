@@ -1,10 +1,10 @@
-package edu.nyu.tandon.shire;
+package edu.nyu.tandon.shard.ranking.shire;
 
-import edu.nyu.tandon.csi.CentralSampleIndex;
-import edu.nyu.tandon.csi.Result;
-import edu.nyu.tandon.shire.node.Document;
-import edu.nyu.tandon.shire.node.Intermediate;
-import edu.nyu.tandon.shire.node.Node;
+import edu.nyu.tandon.shard.csi.CentralSampleIndex;
+import edu.nyu.tandon.shard.csi.Result;
+import edu.nyu.tandon.shard.ranking.shire.node.Document;
+import edu.nyu.tandon.shard.ranking.shire.node.Intermediate;
+import edu.nyu.tandon.shard.ranking.shire.node.Node;
 
 import java.util.Iterator;
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author michal.siedlaczek@nyu.edu
  */
-public class RankS extends ShardRanker {
+public class RankS extends ShireShardSelector {
 
     public RankS(CentralSampleIndex csi, double B) {
         super(csi, B);

@@ -1,7 +1,6 @@
 package edu.nyu.tandon.test;
 
-import edu.nyu.tandon.csi.CentralSampleIndex;
-import edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy;
+import edu.nyu.tandon.shard.csi.CentralSampleIndex;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalPartitioningStrategy;
 import it.unimi.dsi.fastutil.io.BinIO;

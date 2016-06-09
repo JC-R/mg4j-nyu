@@ -1,4 +1,4 @@
-package edu.nyu.tandon.csi;
+package edu.nyu.tandon.shard.csi;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 

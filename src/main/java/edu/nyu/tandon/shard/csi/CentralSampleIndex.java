@@ -1,4 +1,4 @@
-package edu.nyu.tandon.csi;
+package edu.nyu.tandon.shard.csi;
 
 import edu.nyu.tandon.query.Query;
 import it.unimi.di.big.mg4j.index.Index;
@@ -34,7 +34,7 @@ public class CentralSampleIndex {
 
     protected QueryEngine csiEngine;
 
-    public int maxOutput = 10000;
+    protected int maxOutput = 10000;
 
     public CentralSampleIndex(String indexBasename, DocumentalClusteringStrategy csiStrategy,
                               DocumentalPartitioningStrategy clustersStrategy)
@@ -43,6 +43,22 @@ public class CentralSampleIndex {
         this.csiStrategy = csiStrategy;
         this.clustersStrategy = clustersStrategy;
         constructQueryEngine(indexBasename);
+    }
+
+    public void setMaxOutput(int m) {
+        maxOutput = m;
+    }
+
+    public long numberOfDocuments(int clusterId) {
+        return clustersStrategy.numberOfDocuments(clusterId);
+    }
+
+    public DocumentalClusteringStrategy getCsiStrategy() {
+        return csiStrategy;
+    }
+
+    public DocumentalPartitioningStrategy getClustersStrategy() {
+        return clustersStrategy;
     }
 
     protected void constructQueryEngine(String indexBasename) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {

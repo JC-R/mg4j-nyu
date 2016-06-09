@@ -1,9 +1,9 @@
-package edu.nyu.tandon.shire;
+package edu.nyu.tandon.shard.ranking.shire;
 
-import edu.nyu.tandon.csi.Result;
-import edu.nyu.tandon.shire.node.Document;
-import edu.nyu.tandon.shire.node.Intermediate;
-import edu.nyu.tandon.shire.node.Node;
+import edu.nyu.tandon.shard.csi.Result;
+import edu.nyu.tandon.shard.ranking.shire.node.Document;
+import edu.nyu.tandon.shard.ranking.shire.node.Intermediate;
+import edu.nyu.tandon.shard.ranking.shire.node.Node;
 import edu.nyu.tandon.test.BaseTest;
 import org.apache.commons.configuration.ConfigurationException;
 import org.hamcrest.CoreMatchers;
@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * @author michal.siedlaczek@nyu.edu
  */
-public class ShardRankerTest extends BaseTest {
+public class ShireShardSelectorTest extends BaseTest {
 
     @Test
     public void traverseOneDocumentTree() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
@@ -58,7 +58,7 @@ public class ShardRankerTest extends BaseTest {
     public void traverseTree(Node topRanked, List<Integer> expected) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
 
         // Given
-        ShardRanker shardRanker = new ShardRanker(loadCSI(), 1.5) {
+        ShireShardSelector shardRanker = new ShireShardSelector(loadCSI(), 1.5) {
             @Override
             protected Node transform(List<Result> results) {
                 return null;

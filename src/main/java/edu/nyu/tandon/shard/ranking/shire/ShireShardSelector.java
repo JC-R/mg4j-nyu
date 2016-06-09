@@ -1,8 +1,9 @@
-package edu.nyu.tandon.shire;
+package edu.nyu.tandon.shard.ranking.shire;
 
-import edu.nyu.tandon.csi.CentralSampleIndex;
-import edu.nyu.tandon.csi.Result;
-import edu.nyu.tandon.shire.node.Node;
+import edu.nyu.tandon.shard.csi.CentralSampleIndex;
+import edu.nyu.tandon.shard.csi.Result;
+import edu.nyu.tandon.shard.ranking.ShardSelector;
+import edu.nyu.tandon.shard.ranking.shire.node.Node;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * @author michal.siedlaczek@nyu.edu
  */
-public abstract class ShardRanker {
+public abstract class ShireShardSelector implements ShardSelector {
 
     /**
      * CSI query engine: only consists of x% of the original index.
@@ -27,12 +28,12 @@ public abstract class ShardRanker {
 
     protected abstract Node transform(List<Result> results);
 
-    public ShardRanker(CentralSampleIndex csi, double B) {
+    public ShireShardSelector(CentralSampleIndex csi, double B) {
         this.csi = csi;
         this.B = B;
     }
 
-    public List<Integer> traverseTree(Node topRanked) {
+    protected List<Integer> traverseTree(Node topRanked) {
 
         Map<Integer, Double> votes = new HashMap<>();
         Node node = topRanked;
@@ -51,7 +52,7 @@ public abstract class ShardRanker {
                 .collect(Collectors.toList());
     }
 
-    public List<Integer> cutoff(List<Integer> shards, Map<Integer, Double> votes) {
+    protected List<Integer> cutoff(List<Integer> shards, Map<Integer, Double> votes) {
         List<Integer> result = new ArrayList<>();
         for (Integer shrad : shards) {
 
@@ -59,7 +60,8 @@ public abstract class ShardRanker {
         return result;
     }
 
-    public List<Integer> chooseShards(String query) throws QueryParserException, QueryBuilderVisitorException, IOException {
+    @Override
+    public List<Integer> selectShards(String query) throws QueryParserException, QueryBuilderVisitorException, IOException {
         List<Result> results = csi.runQuery(query);
         Node topRanked = transform(results);
         return traverseTree(topRanked);

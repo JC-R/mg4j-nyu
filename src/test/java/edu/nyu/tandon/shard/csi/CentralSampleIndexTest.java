@@ -1,21 +1,17 @@
-package edu.nyu.tandon.csi;
+package edu.nyu.tandon.shard.csi;
 
 import edu.nyu.tandon.test.BaseTest;
 import it.unimi.di.big.mg4j.index.Index;
-import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
-import it.unimi.di.big.mg4j.index.cluster.DocumentalPartitioningStrategy;
 import it.unimi.di.big.mg4j.query.SelectedInterval;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
-import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import org.apache.commons.configuration.ConfigurationException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
