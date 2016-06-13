@@ -76,7 +76,7 @@ import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
  * there are selection operators that specify an index, the inner specification will overwrite
  * the external one, so that the semantics of the query is only amplified, but never contradicted.
  * <p>
- * <p>The results returned are instances of {@link DocumentScoreInfo}. If
+ * <p>The results returned are instances of{@link DocumentScoreInfo}. If
  * an {@linkplain #intervalSelector interval selector} has been set,
  * the <code>info</code> field will contain a map from indices to arrays of {@linkplain it.unimi.di.big.mg4j.query.SelectedInterval selected intervals}
  * satisfying the query (see {@link it.unimi.di.big.mg4j.search} for some elaboration on minimal-interval semantics support in MG4J).

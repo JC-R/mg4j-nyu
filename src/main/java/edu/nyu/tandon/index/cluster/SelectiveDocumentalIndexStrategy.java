@@ -23,6 +23,8 @@ import static it.unimi.dsi.fastutil.io.BinIO.storeObject;
  */
 public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningStrategy, DocumentalClusteringStrategy, Serializable {
 
+    public static final String STRATEGY = ".strategy";
+
     public static final Logger LOGGER = LoggerFactory.getLogger(SelectiveDocumentalIndexStrategy.class);
 
     private static final long serialVersionUID = 0L;

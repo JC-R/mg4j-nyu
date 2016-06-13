@@ -33,7 +33,11 @@ csiSize=$(printf %.0f `echo "scale=1;${size} * ${fraction}" | bc`)
 if [ "${csiSize}" -ge "${size}" ]; then echo "Whoa! Let's take a step back: CSI just has to be smaller than the global index."; exit 1; fi;
 
 # Choose random titles
+random=`mktemp`
+cat ${titles} | sort -R > ${random}
 csi=`mktemp`
-cat ${titles} | sort -R | head "-n${csiSize}" > ${csi}
+rest=`mktemp`
+cat ${random} | head "-n${csiSize}" > ${csi}
+cat ${random} | tail "-n$((${size} - ${csiSize}))" > ${rest}
 
-${ROOT}/clustering/create-clusters.sh ${workDir} ${globalBase} ${outputName} ${csi}
+${ROOT}/clustering/create-clusters.sh ${workDir} ${globalBase} ${outputName} ${csi} ${rest}

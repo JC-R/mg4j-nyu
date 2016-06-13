@@ -1,13 +1,17 @@
 package edu.nyu.tandon.shard.csi;
 
+import edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy;
 import edu.nyu.tandon.test.BaseTest;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.query.SelectedInterval;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
+import it.unimi.dsi.fastutil.io.BinIO;
+import it.unimi.dsi.fastutil.objects.Object2LongFunction;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
+import it.unimi.dsi.sux4j.mph.MWHCFunction;
 import org.apache.commons.configuration.ConfigurationException;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -61,16 +65,19 @@ public class CentralSampleIndexTest extends BaseTest {
         List<Result> actual = spy.getResults(r);
 
         // Then
-        assertThat(actual, equalTo(asList(new Result[] {
+        assertThat(actual, equalTo(asList(
                 new Result(1, 0.5, 1),
                 new Result(2, 0.4, 2),
                 new Result(3, 0.3, 3)
-        })));
+        )));
     }
 
     @Test
-    public void runQueryAndNotFail() throws QueryParserException, QueryBuilderVisitorException, IOException {
-        csi.runQuery("query");
+    public void runQueryAndNotFail() throws QueryParserException, QueryBuilderVisitorException, IOException, ClassNotFoundException {
+//        csi.runQuery("us oil industry history");
+        csi.runQuery("oil");
+//        Object2LongFunction mwhc = (Object2LongFunction) BinIO.loadObject(getFileFromResourcePath("csi/csi-0.mwhc").getAbsolutePath());
+//        mwhc.getLong("oil");
     }
 
 }

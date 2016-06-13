@@ -1,5 +1,6 @@
 package edu.nyu.tandon.shard.csi;
 
+import edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy;
 import edu.nyu.tandon.query.Query;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
@@ -11,8 +12,10 @@ import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.di.big.mg4j.query.parser.SimpleParser;
 import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
+import it.unimi.di.big.mg4j.search.score.BM25Scorer;
 import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
 import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.objects.*;
 import org.apache.commons.configuration.ConfigurationException;
 
@@ -22,6 +25,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy.STRATEGY;
 import static edu.nyu.tandon.query.Query.MAX_STEMMING;
 
 /**
@@ -67,7 +71,7 @@ public class CentralSampleIndex {
 
         final Object2ReferenceLinkedOpenHashMap<String, Index> indexMap = new Object2ReferenceLinkedOpenHashMap<String, Index>(Hash.DEFAULT_INITIAL_SIZE, .5f);
         final Reference2DoubleOpenHashMap<Index> index2Weight = new Reference2DoubleOpenHashMap<Index>();
-        Query.loadIndicesFromSpec(basenameWeight, false, null, indexMap, index2Weight);
+        Query.loadIndicesFromSpec(basenameWeight, true, null, indexMap, index2Weight);
 
         final Object2ObjectOpenHashMap<String, TermProcessor> termProcessors = new Object2ObjectOpenHashMap<String, TermProcessor>(indexMap.size());
         for (String alias : indexMap.keySet()) termProcessors.put(alias, indexMap.get(alias).termProcessor);
@@ -78,6 +82,8 @@ public class CentralSampleIndex {
                 simpleParser,
                 new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING),
                 indexMap);
+        csiEngine.setWeights(index2Weight);
+        csiEngine.score(new BM25Scorer());
     }
 
     protected int resolveCluster(long csiId) {
@@ -103,6 +109,12 @@ public class CentralSampleIndex {
         csiEngine.process(query, 0, maxOutput, r);
         return getResults(r);
 
+    }
+
+    public static CentralSampleIndex loadCSI(String csiBasename, String clustersBasename) throws IOException, ClassNotFoundException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException {
+        DocumentalClusteringStrategy csiStrategy = (DocumentalClusteringStrategy) BinIO.loadObject(csiBasename + STRATEGY);
+        SelectiveDocumentalIndexStrategy clusterStrategy = (SelectiveDocumentalIndexStrategy) BinIO.loadObject(clustersBasename + STRATEGY);
+        return new CentralSampleIndex(csiBasename + "-0", csiStrategy, clusterStrategy);
     }
 
 }
