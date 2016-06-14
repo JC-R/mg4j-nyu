@@ -42,9 +42,9 @@ public class CentralSampleIndexTest extends BaseTest {
     @Test
     public void resolveCluster() throws IOException {
 
-        assertThat(csi.resolveCluster(0l), equalTo(4));
-        assertThat(csi.resolveCluster(1l), equalTo(1));
-        assertThat(csi.resolveCluster(2l), equalTo(6));
+        assertThat(csi.resolveCluster(0l), equalTo(1));
+        assertThat(csi.resolveCluster(1l), equalTo(7));
+        assertThat(csi.resolveCluster(2l), equalTo(2));
     }
 
     @Test
@@ -74,10 +74,7 @@ public class CentralSampleIndexTest extends BaseTest {
 
     @Test
     public void runQueryAndNotFail() throws QueryParserException, QueryBuilderVisitorException, IOException, ClassNotFoundException {
-//        csi.runQuery("us oil industry history");
         csi.runQuery("oil");
-//        Object2LongFunction mwhc = (Object2LongFunction) BinIO.loadObject(getFileFromResourcePath("csi/csi-0.mwhc").getAbsolutePath());
-//        mwhc.getLong("oil");
     }
 
 }

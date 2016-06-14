@@ -35,8 +35,8 @@ if [ "${csiSize}" -ge "${size}" ]; then echo "Whoa! Let's take a step back: CSI 
 # Choose random titles
 random=`mktemp`
 cat ${titles} | sort -R > ${random}
-csi=`mktemp`
-rest=`mktemp`
+csi=`mktemp 0XXXXX`
+rest=`mktemp 1XXXXX`
 cat ${random} | head "-n${csiSize}" > ${csi}
 cat ${random} | tail "-n$((${size} - ${csiSize}))" > ${rest}
 

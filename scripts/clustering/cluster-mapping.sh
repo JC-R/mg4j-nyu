@@ -42,4 +42,4 @@ if [ "$SORT" = true ]; then
         globalSorted=`mktemp`
         seq 0 $((`wc -l < ${GLOBAL}` - 1)) | paste -d" " ${GLOBAL} - | sort > ${globalSorted}
 fi
-sort ${CLUSTER} | join ${globalSorted} - | cut -d" " -f2 | sort -n > ${OUTPUT}
+sort ${CLUSTER} | join -t '' ${globalSorted} - | cut -d" " -f2 | sort -n > ${OUTPUT}

@@ -13,7 +13,7 @@
 #
 
 if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../`; fi;
-CLASSPATH="${ROOT}/../target/artifacts/mg4j_nyu_jar/mg4j-nyu.jar"
+CLASSPATH=`find "${ROOT}/../target/" -name "*.jar" | paste -d: -s`
 
 workDir=$1
 globalBase=$2

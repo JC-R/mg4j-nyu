@@ -52,7 +52,7 @@ public class ReDDEShardSelectorTest extends BaseTest {
         // Then
         assertThat(sampleSizes, equalTo(new Int2LongOpenHashMap(
                 new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
-                new long[] { 10, 7, 14, 13, 6, 9, 11, 6, 11, 13, 9 })));
+                new long[] { 10, 10, 11, 10, 15, 6, 10, 9, 7, 13, 8 })));
     }
 
     @Test

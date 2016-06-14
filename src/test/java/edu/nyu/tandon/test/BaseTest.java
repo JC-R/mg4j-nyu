@@ -52,7 +52,7 @@ public class BaseTest {
         File csiDir = getFileFromResourcePath("csi");
         return new CentralSampleIndex(
                 csiDir.getAbsolutePath() + "/csi-0",
-                (DocumentalClusteringStrategy) loadObject(getFileFromResourcePath("csi/tmp/csi.strategy")),
+                (DocumentalClusteringStrategy) loadObject(getFileFromResourcePath("csi/csi.strategy")),
                 (DocumentalPartitioningStrategy) loadObject(getFileFromResourcePath("clusters/gov2C.strategy")));
     }
 
