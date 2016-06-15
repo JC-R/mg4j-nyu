@@ -1,4 +1,5 @@
 *.orig
 .idea/workspace.xml
+.idea/dictionaries/*
 *.class
 target/*

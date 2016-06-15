@@ -1,12 +1,11 @@
 package edu.nyu.tandon.experiments;
 
-import com.google.common.base.Joiner;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.experiments.logger.EventLogger;
-import edu.nyu.tandon.experiments.logger.FileEventLogger;
 import edu.nyu.tandon.experiments.logger.ResultEventLogger;
 import edu.nyu.tandon.experiments.logger.TimeEventLogger;
 import edu.nyu.tandon.query.Query;
+import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
 import it.unimi.di.big.mg4j.query.QueryEngine;
@@ -15,9 +14,10 @@ import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.di.big.mg4j.query.parser.SimpleParser;
 import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
-import it.unimi.di.big.mg4j.search.score.BM25Scorer;
 import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
 import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.io.BinIO;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.objects.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static edu.nyu.tandon.query.Query.MAX_STEMMING;
+import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.GLOB_FREQ_EXTENSION;
+import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.GLOB_STAT_EXTENSION;
+import static it.unimi.dsi.fastutil.io.BinIO.loadLongs;
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -42,6 +45,7 @@ public class RunQueries {
 
         SimpleJSAP jsap = new SimpleJSAP(Query.class.getName(), "Loads indices relative to a collection, possibly loads the collection, and answers to queries.",
                 new Parameter[]{
+                        new Switch("globalStatistics", 'g', "global-statistics", "Whether to use global statistics. Note that they need to be calculated: see ClusterGlobalStatistics."),
                         new FlaggedOption("input", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'i', "input", "The input file with queries delimited by new lines."),
                         new FlaggedOption("timeOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 't', "time-output", "The output file to store execution times."),
                         new FlaggedOption("resultOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'r', "result-output", "The output file to store results."),
@@ -51,7 +55,8 @@ public class RunQueries {
         final JSAPResult jsapResult = jsap.parse(args);
         if (jsap.messagePrinted()) return;
 
-        String[] basenameWeight = new String[] { jsapResult.getString("basename") };
+        String basename = jsapResult.getString("basename");
+        String[] basenameWeight = new String[] { basename };
 
         final Object2ReferenceLinkedOpenHashMap<String, Index> indexMap = new Object2ReferenceLinkedOpenHashMap<String, Index>(Hash.DEFAULT_INITIAL_SIZE, .5f);
         final Reference2DoubleOpenHashMap<Index> index2Weight = new Reference2DoubleOpenHashMap<Index>();
@@ -67,8 +72,17 @@ public class RunQueries {
                 new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING),
                 indexMap);
         engine.setWeights(index2Weight);
-        // TODO: GLOBAL STATISTICS
-        engine.score(new BM25Scorer());
+        BM25PrunedScorer scorer = new BM25PrunedScorer();
+        if (jsapResult.userSpecified("globalStatistics")) {
+            LongArrayList frequencies = new LongArrayList(loadLongs(basename + GLOB_FREQ_EXTENSION));
+            long[] globalStats = loadLongs(basename + GLOB_STAT_EXTENSION);
+            if (globalStats.length != 2) {
+                throw new IllegalStateException(String.format("File %s must contain 2 longs (but contains %d)",
+                        basename + GLOB_STAT_EXTENSION, globalStats.length));
+            }
+            scorer.setGlobalMetrics(globalStats[0], globalStats[1], frequencies);
+        }
+        engine.score(scorer);
 
         List<EventLogger> eventLoggers = new ArrayList<>();
 

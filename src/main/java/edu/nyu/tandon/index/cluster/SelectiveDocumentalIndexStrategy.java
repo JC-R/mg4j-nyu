@@ -54,7 +54,7 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
 
     @Override
     public long globalPointer(int i, long l) {
-        return globalPointers[i].get(l);
+        return globalPointers[i].getLong(l);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
 
     @Override
     public long localPointer(long l) {
-        return localPointers.get(l);
+        return localPointers.getLong(l);
     }
 
     @Override
