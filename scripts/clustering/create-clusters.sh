@@ -31,7 +31,8 @@ rm -R "${workDir}/numbers"
 # Create the strategy
 ${ROOT}/clustering/cluster-mappings.sh ${workDir} "${globalBase}.titles" "$@"
 clusterList=`find "${workDir}/numbers" -type f | sort | paste -sd "," -`
-java -cp ${CLASSPATH} edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy -a "-c:${clusterList}" "${workDir}/${outputName}.strategy"
+totalNumberOfDocuments=`wc -l "${globalBase}.titles"| cut -d" " -f1`
+java -cp ${CLASSPATH} edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy -a "-c:${clusterList}" -n ${totalNumberOfDocuments} "${workDir}/${outputName}.strategy"
 
 # Create the clusters
 java -cp ${CLASSPATH} it.unimi.di.big.mg4j.tool.PartitionDocumentally \

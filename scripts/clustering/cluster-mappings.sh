@@ -19,7 +19,7 @@ shift
 shift
 
 globalSorted=`mktemp`
-seq 0 $((`wc -l < ${global}` - 1)) | paste -d" " ${global} - | sort > ${globalSorted}
+seq 0 $((`wc -l < ${global}` - 1)) | paste -d" " ${global} - | sort -k1b,1 > ${globalSorted}
 
 mkdir -p "${workDir}/numbers"
 

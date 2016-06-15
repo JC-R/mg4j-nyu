@@ -26,7 +26,7 @@ public class SelectiveDocumentalIndexStrategyTest extends BaseTest {
         String[] clusters = getFilePathsFromDirectory("clusters/numbers");
         sort(clusters);
 
-        strategy = SelectiveDocumentalIndexStrategy.constructStrategy(clusters, true);
+        strategy = SelectiveDocumentalIndexStrategy.constructStrategy(clusters, true, 1092);
     }
 
     @Test

@@ -48,6 +48,14 @@ public class BaseTest {
         return getFilePathsFromDirectory(getFileFromResourcePath(dir));
     }
 
+    public static File[] getFilesFromDirectory(File dir) {
+        return dir.listFiles();
+    }
+
+    public static File[] getFilesFromDirectory(String dir) {
+        return getFilesFromDirectory(getFileFromResourcePath(dir));
+    }
+
     public static CentralSampleIndex loadCSI() throws IOException, ClassNotFoundException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException {
         File csiDir = getFileFromResourcePath("csi");
         return new CentralSampleIndex(

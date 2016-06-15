@@ -40,6 +40,6 @@ if [ -z "${OUTPUT}" ]; then echo "You have to define output file."; exit 1; fi;
 globalSorted=${GLOBAL}
 if [ "$SORT" = true ]; then
         globalSorted=`mktemp`
-        seq 0 $((`wc -l < ${GLOBAL}` - 1)) | paste -d" " ${GLOBAL} - | sort > ${globalSorted}
+        seq 0 $((`wc -l < ${GLOBAL}` - 1)) | paste -d" " ${GLOBAL} - | sort -k1b,1 > ${globalSorted}
 fi
-sort ${CLUSTER} | join -t '' ${globalSorted} - | cut -d" " -f2 | sort -n > ${OUTPUT}
+sort -k1b,1 ${CLUSTER} | join ${globalSorted} - | cut -d" " -f2 | sort -n > ${OUTPUT}

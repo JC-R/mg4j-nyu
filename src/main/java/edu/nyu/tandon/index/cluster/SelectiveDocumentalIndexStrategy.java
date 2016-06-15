@@ -4,8 +4,10 @@ import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.utils.FileAsciiLongIterator;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalPartitioningStrategy;
+import it.unimi.dsi.fastutil.ints.IntBigArrayBigList;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongBigArrayBigList;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.util.Properties;
 import org.slf4j.Logger;
@@ -29,18 +31,24 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
 
     private static final long serialVersionUID = 0L;
 
-    protected Long2IntOpenHashMap localIndices;
-    protected Long2LongOpenHashMap localPointers;
-    protected Long2LongOpenHashMap[] globalPointers;
+//    protected Long2IntOpenHashMap localIndices;
+    protected IntBigArrayBigList localIndices;
+    protected LongBigArrayBigList localPointers;
+    protected LongBigArrayBigList[] globalPointers;
     protected long[] numberOfDocuments;
 
-    protected SelectiveDocumentalIndexStrategy(int numberOfClusters) {
-        localIndices = new Long2IntOpenHashMap();
-        localPointers = new Long2LongOpenHashMap();
-        globalPointers = new Long2LongOpenHashMap[numberOfClusters];
+    protected SelectiveDocumentalIndexStrategy(int numberOfClusters, long totalNumberOfDocuments) {
+
+        localIndices = new IntBigArrayBigList(totalNumberOfDocuments);
+        localIndices.size(totalNumberOfDocuments);
+
+        localPointers = new LongBigArrayBigList();
+        localPointers.size(totalNumberOfDocuments);
+
+        globalPointers = new LongBigArrayBigList[numberOfClusters];
         numberOfDocuments = new long[numberOfClusters];
         for (int i = 0; i < numberOfClusters; i++) {
-            globalPointers[i] = new Long2LongOpenHashMap();
+            globalPointers[i] = new LongBigArrayBigList();
         }
     };
 
@@ -51,7 +59,7 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
 
     @Override
     public int localIndex(long l) {
-        return localIndices.get(l);
+        return localIndices.getInt(l);
     }
 
     @Override
@@ -78,7 +86,8 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
         return properties;
     }
 
-    public static SelectiveDocumentalIndexStrategy constructStrategy(String[] clusterFiles, boolean ascii) throws IOException {
+    public static SelectiveDocumentalIndexStrategy constructStrategy(String[] clusterFiles, boolean ascii,
+                                                                     long totalNumberOfDocuments) throws IOException {
         int length = clusterFiles.length;
         Iterator<Long>[] clusters = ascii
                 ? new FileAsciiLongIterator[length]
@@ -88,18 +97,18 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
                         ? new FileAsciiLongIterator(clusterFiles[i])
                         : asLongIterator(clusterFiles[i]);
         }
-        return constructStrategy(clusters);
+        return constructStrategy(clusters, totalNumberOfDocuments);
     }
 
-    public static SelectiveDocumentalIndexStrategy constructStrategy(Iterator<Long>[] clusters) {
-        SelectiveDocumentalIndexStrategy strategy = new SelectiveDocumentalIndexStrategy(clusters.length);
+    public static SelectiveDocumentalIndexStrategy constructStrategy(Iterator<Long>[] clusters, long totalNumberOfDocuments) {
+        SelectiveDocumentalIndexStrategy strategy = new SelectiveDocumentalIndexStrategy(clusters.length, totalNumberOfDocuments);
 
         int clusterId = 0;
         // For each cluster:
         for (Iterator<Long> cluster : clusters) {
 
             // Initialize a global pointers mapping
-            strategy.globalPointers[clusterId] = new Long2LongOpenHashMap();
+            strategy.globalPointers[clusterId] = new LongBigArrayBigList();
 
             long localDocumentId = 0;
             // For each local document in the cluster
@@ -108,11 +117,12 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
                 long globalDocumentId = cluster.next();
 
                 // Store mapping from a global document ID to a cluster ID and a local document ID within the cluster
-                strategy.localIndices.put(globalDocumentId, clusterId);
-                strategy.localPointers.put(globalDocumentId, localDocumentId);
+//                strategy.localIndices.set(globalDocumentId, clusterId);
+                strategy.localIndices.set(globalDocumentId, clusterId);
+                strategy.localPointers.set(globalDocumentId, localDocumentId);
 
                 // Store mapping from a cluster ID and a local document ID within the cluster to a global document ID
-                strategy.globalPointers[clusterId].put(localDocumentId, globalDocumentId);
+                strategy.globalPointers[clusterId].push(globalDocumentId);
 
                 localDocumentId++;
             }
@@ -134,6 +144,7 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
                         new Switch("asciiIds", 'a', "ascii-ids", "If present, the document IDs in the cluster specifications will be read as longs encoded in ascii delimited by new lines."),
                         new QualifiedSwitch("clusters", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'c', "clusters", "The files defining the clusters: either containing sorted list of global IDs or titles (only if -g provided).")
                             .setList(true).setListSeparator(','),
+                        new FlaggedOption("numberOfDocuments", JSAP.LONG_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'n', "number-of-documents", "The number of documents of the global index."),
                         new UnflaggedOption("outputFile", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.GREEDY, "The output file where the serialized strategy will be stored.")
                 });
 
@@ -149,8 +160,8 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
 
         try {
 
-            SelectiveDocumentalIndexStrategy strategy =
-                    constructStrategy(clustersPaths, jsapResult.userSpecified("asciiIds"));
+            SelectiveDocumentalIndexStrategy strategy = constructStrategy(clustersPaths,
+                    jsapResult.userSpecified("asciiIds"), jsapResult.getLong("numberOfDocuments"));
             storeObject(strategy, jsapResult.getString("outputFile"));
 
         } catch (IOException e) {

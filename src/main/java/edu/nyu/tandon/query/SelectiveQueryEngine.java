@@ -1,7 +1,6 @@
 package edu.nyu.tandon.query;
 
 import edu.nyu.tandon.experiments.logger.EventLogger;
-import edu.nyu.tandon.experiments.querylistener.QueryListener;
 import edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy;
 import edu.nyu.tandon.shard.csi.CentralSampleIndex;
 import edu.nyu.tandon.shard.ranking.ShardSelector;
