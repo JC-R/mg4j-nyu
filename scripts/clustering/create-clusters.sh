@@ -9,7 +9,6 @@
 # 1) working directory;
 # 2) global index base name (absolute path, e.g., /home/user/index/basename);
 # 3) output index (and clusters) base name
-# 4...) the list of files containing titles of the documents in clusters.
 #
 
 if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../`; fi;
@@ -18,20 +17,14 @@ CLASSPATH=`find "${ROOT}/../target/" -name "*.jar" | paste -d: -s`
 workDir=$1
 globalBase=$2
 outputName=$3
-shift
-shift
-shift
 
 if [ -z "${workDir}" ]; then echo "You have to define working directory."; exit 1; fi;
 if [ -z "${globalBase}" ]; then echo "You have to define the basename of a global index."; exit 1; fi;
 if [ -z "${outputName}" ]; then echo "You have to define the output name."; exit 1; fi;
 
-rm -R "${workDir}/numbers"
-
 # Create the strategy
-${ROOT}/clustering/cluster-mappings.sh ${workDir} "${globalBase}.titles" "$@"
 clusterList=`find "${workDir}/numbers" -type f | sort | paste -sd "," -`
-totalNumberOfDocuments=`wc -l "${globalBase}.titles"| cut -d" " -f1`
+totalNumberOfDocuments=`wc -l "${globalBase}.titles" | cut -d" " -f1`
 java -cp ${CLASSPATH} edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy -a "-c:${clusterList}" -n ${totalNumberOfDocuments} "${workDir}/${outputName}.strategy"
 
 # Create the clusters

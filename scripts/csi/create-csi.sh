@@ -25,6 +25,7 @@ if [ -z "${outputName}" ]; then echo "You have to define the output name."; exit
 if [ -z "${fraction}" ]; then echo "You have to define the fraction."; exit 1; fi;
 
 titles="${globalBase}.titles"
+rm -fR "${workDir}/numbers"
 
 # Calculate the size
 size=`wc -l ${titles} | cut -d" " -f1`
@@ -34,10 +35,8 @@ if [ "${csiSize}" -ge "${size}" ]; then echo "Whoa! Let's take a step back: CSI 
 
 # Choose random titles
 random=`mktemp`
-cat ${titles} | sort -R > ${random}
-csi=`mktemp 0XXXXX`
-rest=`mktemp 1XXXXX`
-cat ${random} | head "-n${csiSize}" > ${csi}
-cat ${random} | tail "-n$((${size} - ${csiSize}))" > ${rest}
+seq 0 $((${size} - 1)) | sort -R > ${random}
+cat ${random} | head "-n${csiSize}" | sort -n > "${workDir}/numbers/0"
+cat ${random} | tail "-n$((${size} - ${csiSize}))" | sort -n > "${workDir}/numbers/1"
 
-${ROOT}/clustering/create-clusters.sh ${workDir} ${globalBase} ${outputName} ${csi} ${rest}
+${ROOT}/clustering/create-clusters.sh ${workDir} ${globalBase} ${outputName}

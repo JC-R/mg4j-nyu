@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static it.unimi.dsi.fastutil.io.BinIO.loadObject;
+import static it.unimi.dsi.fastutil.io.BinIO.storeObject;
 import static java.util.Arrays.sort;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -21,12 +23,23 @@ public class SelectiveDocumentalIndexStrategyTest extends BaseTest {
     private static SelectiveDocumentalIndexStrategy strategy;
 
     @BeforeClass
-    public static void createStrategy() throws IOException {
+    public static void createStrategy() throws IOException, ClassNotFoundException {
 
         String[] clusters = getFilePathsFromDirectory("clusters/numbers");
         sort(clusters);
 
-        strategy = SelectiveDocumentalIndexStrategy.constructStrategy(clusters, true, 1092);
+//        strategy = SelectiveDocumentalIndexStrategy.constructStrategy(clusters, true, 1092);
+        strategy = (SelectiveDocumentalIndexStrategy) loadObject("/home/elshize/gov2c.strategy");
+    }
+
+    @Test
+    public void numberOfDocuments() {
+        int cluster = 1;
+        long count = 0;
+        for (long i = 0; i < strategy.localIndices.size64(); i++) {
+            if (strategy.localIndex(i) == cluster) count++;
+        }
+        assertThat(count, equalTo(strategy.numberOfDocuments(cluster)));
     }
 
     @Test
@@ -36,8 +49,8 @@ public class SelectiveDocumentalIndexStrategyTest extends BaseTest {
         File file = newTemporaryFile();
 
         // When
-        BinIO.storeObject(strategy, file);
-        SelectiveDocumentalIndexStrategy actual = (SelectiveDocumentalIndexStrategy) BinIO.loadObject(file);
+        storeObject(strategy, file);
+        SelectiveDocumentalIndexStrategy actual = (SelectiveDocumentalIndexStrategy) loadObject(file);
 
         // Then
         assertThat(actual.numberOfDocuments, equalTo(strategy.numberOfDocuments));

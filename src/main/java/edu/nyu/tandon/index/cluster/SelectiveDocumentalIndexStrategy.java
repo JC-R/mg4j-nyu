@@ -31,7 +31,6 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
 
     private static final long serialVersionUID = 0L;
 
-//    protected Long2IntOpenHashMap localIndices;
     protected IntBigArrayBigList localIndices;
     protected LongBigArrayBigList localPointers;
     protected LongBigArrayBigList[] globalPointers;
@@ -117,7 +116,6 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
                 long globalDocumentId = cluster.next();
 
                 // Store mapping from a global document ID to a cluster ID and a local document ID within the cluster
-//                strategy.localIndices.set(globalDocumentId, clusterId);
                 strategy.localIndices.set(globalDocumentId, clusterId);
                 strategy.localPointers.set(globalDocumentId, localDocumentId);
 

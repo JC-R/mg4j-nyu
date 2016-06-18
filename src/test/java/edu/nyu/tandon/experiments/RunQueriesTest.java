@@ -1,5 +1,6 @@
 package edu.nyu.tandon.experiments;
 
+import com.google.common.base.Splitter;
 import edu.nyu.tandon.test.BaseTest;
 import org.junit.Test;
 
@@ -26,7 +27,7 @@ public class RunQueriesTest extends BaseTest {
                 getFileFromResourcePath("queries/gov2-trec_eval-queries.txt").getAbsoluteFile(),
                 outputTime.getAbsoluteFile(),
                 outputResult.getAbsoluteFile(),
-                getFileFromResourcePath("clusters").getAbsoluteFile() + "/gov2C-5")
+                getFileFromResourcePath("index").getAbsoluteFile() + "/gov2-text")
                 .split(" ");
 
         // When
@@ -36,6 +37,15 @@ public class RunQueriesTest extends BaseTest {
         int count = 0;
         for (String t : Files.readAllLines(outputTime.toPath())) {
             assertThat(tryParse(t), notNullValue(Integer.class));
+            count++;
+        }
+        assertThat(count, equalTo(150));
+        count = 0;
+        for (String l : Files.readAllLines(outputResult.toPath())) {
+            for (String doc : Splitter.on(" ").omitEmptyStrings().split(" ")) {
+                assertThat(String.format("Problem parsing list of integers: %s", l),
+                        tryParse(doc), notNullValue(Integer.class));
+            }
             count++;
         }
         assertThat(count, equalTo(150));

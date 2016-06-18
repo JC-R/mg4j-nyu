@@ -16,7 +16,6 @@ import it.unimi.di.big.mg4j.query.parser.SimpleParser;
 import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
 import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
 import it.unimi.dsi.fastutil.Hash;
-import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.objects.*;
 import org.slf4j.Logger;
@@ -74,6 +73,7 @@ public class RunQueries {
         engine.setWeights(index2Weight);
         BM25PrunedScorer scorer = new BM25PrunedScorer();
         if (jsapResult.userSpecified("globalStatistics")) {
+            LOGGER.info("Running queries with global statistics.");
             LongArrayList frequencies = new LongArrayList(loadLongs(basename + GLOB_FREQ_EXTENSION));
             long[] globalStats = loadLongs(basename + GLOB_STAT_EXTENSION);
             if (globalStats.length != 2) {
@@ -99,11 +99,11 @@ public class RunQueries {
             lines.forEach(query -> {
                 try {
 
-                    for (EventLogger l : eventLoggers) l.onStart();
+                    for (EventLogger l : eventLoggers) l.onStart(query);
                     ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r =
                             new ObjectArrayList<>();
-                    int shards = engine.process(query, 0, 10, r);
-                    for (EventLogger l : eventLoggers) l.onEnd(r.stream().mapToLong(dsi -> dsi.document).toArray());
+                    int docs = engine.process(query, 0, 10, r);
+                    for (EventLogger l : eventLoggers) l.onEnd(r.stream().map(dsi -> Long.valueOf(dsi.document)).toArray());
 
                 } catch (QueryParserException | QueryBuilderVisitorException | IOException e) {
                     LOGGER.error(String.format("There was an error while processing query: %s", query), e);

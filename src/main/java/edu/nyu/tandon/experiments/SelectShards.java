@@ -43,6 +43,7 @@ public class SelectShards {
         final JSAPResult jsapResult = jsap.parse(args);
         if (jsap.messagePrinted()) return;
 
+        LOGGER.info("Loading CSI...");
         CentralSampleIndex csi = CentralSampleIndex.loadCSI(jsapResult.getString("csi"), jsapResult.getString("basename"));
         // TODO: Allow different selectors
         ShardSelector shardSelector = new ReDDEShardSelector(csi);
@@ -57,12 +58,24 @@ public class SelectShards {
             eventLoggers.add(new ResultEventLogger(jsapResult.getString("resultOutput")));
         }
 
+        eventLoggers.add(new EventLogger() {
+            @Override
+            public void onStart(Object... o) {
+                LOGGER.debug(String.format("Processing query: %s", Joiner.on(" ").join(o)));
+            }
+
+            @Override
+            public void onEnd(Object... o) {
+
+            }
+        });
+
         try (Stream<String> lines = Files.lines(Paths.get(jsapResult.getString("input")))) {
 
             lines.forEach(query -> {
                 try {
 
-                    for (EventLogger l : eventLoggers) l.onStart();
+                    for (EventLogger l : eventLoggers) l.onStart(query);
                     List<Integer> shards = shardSelector.selectShards(query);
                     for (EventLogger l : eventLoggers) l.onEnd(shards.toArray());
 
