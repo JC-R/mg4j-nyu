@@ -28,8 +28,8 @@ public class SelectiveDocumentalIndexStrategyTest extends BaseTest {
         String[] clusters = getFilePathsFromDirectory("clusters/numbers");
         sort(clusters);
 
-//        strategy = SelectiveDocumentalIndexStrategy.constructStrategy(clusters, true, 1092);
-        strategy = (SelectiveDocumentalIndexStrategy) loadObject("/home/elshize/gov2c.strategy");
+        strategy = SelectiveDocumentalIndexStrategy.constructStrategy(clusters, true, 1092);
+//        strategy = (SelectiveDocumentalIndexStrategy) loadObject("/home/elshize/gov2c.strategy");
     }
 
     @Test

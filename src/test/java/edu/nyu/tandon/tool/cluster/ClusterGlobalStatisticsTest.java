@@ -69,8 +69,6 @@ public class ClusterGlobalStatisticsTest extends BaseTest {
 
         // When
         ClusterGlobalStatistics.main(new String[] {
-                "-g",
-                getFileFromResourcePath("index").getAbsolutePath() + "/gov2-text",
                 tmp.getAbsoluteFile() + "/gov2C"
         });
 
