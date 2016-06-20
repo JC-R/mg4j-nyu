@@ -7,6 +7,8 @@ import it.unimi.di.big.mg4j.index.payload.Payload;
 import it.unimi.di.big.mg4j.io.IOFactory;
 import it.unimi.di.big.mg4j.tool.Scan;
 import it.unimi.dsi.fastutil.io.BinIO;
+import it.unimi.dsi.fastutil.longs.LongBigArrayBigList;
+import it.unimi.dsi.fastutil.longs.LongBigArrays;
 import it.unimi.dsi.io.InputBitStream;
 import it.unimi.dsi.io.OutputBitStream;
 import it.unimi.dsi.util.Properties;
@@ -29,6 +31,8 @@ import java.util.Map;
 
 import static it.unimi.di.big.mg4j.index.DiskBasedIndex.*;
 import static it.unimi.di.big.mg4j.index.IndexIterator.END_OF_LIST;
+import static it.unimi.dsi.fastutil.io.BinIO.loadLongsBig;
+import static java.lang.Integer.valueOf;
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -53,7 +57,7 @@ public class Renumber {
     /**
      * Mapping of document IDs: i-th document will be remapped to mapping[i].
      */
-    protected int[] mapping;
+    protected LongBigArrayBigList mapping;
 
     public Renumber(String inputBasename, String outputBasename) throws IOException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, URISyntaxException, ConfigurationException, ClassNotFoundException {
         index = Index.getInstance(inputBasename);
@@ -70,7 +74,7 @@ public class Renumber {
                         new FlaggedOption("inputBasename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'i', "input-basename", "The basename of the index to be renumbered."),
                         new FlaggedOption("outputBasename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "output-basename", "The basename of the renumbered index."),
                         new FlaggedOption("mapFile", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'm', "map-file", "The file containing mapping between document IDs."),
-                        new Switch("binaryMapping", 'b', "binary-mapping", "Provided mapping is a binary list of integers instead of (by default) a text file containing numbers in consecutive lines.")
+                        new Switch("binaryMapping", 'b', "binary-mapping", "When present, provided mapping is a binary list of integers instead of (by default) a text file containing numbers in consecutive lines.")
                 });
 
         JSAPResult jsapResult = jsap.parse(args);
@@ -91,7 +95,7 @@ public class Renumber {
             qsIndexWriter = new QuasiSuccinctIndexWriter(ioFactory,
                     basename,
                     index.numberOfDocuments,
-                    (int) Math.round(DoubleMath.log2(Integer.valueOf((String) index.properties.getProperty(BitStreamIndex.PropertyKeys.SKIPQUANTUM)))),
+                    (int) Math.round(DoubleMath.log2(valueOf((String) index.properties.getProperty(BitStreamIndex.PropertyKeys.SKIPQUANTUM)))),
                     QuasiSuccinctIndexWriter.DEFAULT_CACHE_SIZE,
                     CompressionFlags.valueOf(new String[]{"POSITIONS:NONE"}, CompressionFlags.DEFAULT_STANDARD_INDEX),
                     ByteOrder.nativeOrder());
@@ -109,17 +113,18 @@ public class Renumber {
         LOGGER.info(String.format("Copying inverted lists"));
 
         long start = System.currentTimeMillis();
-        int i = 0;
-        IndexIterator indexIterator;
-        while ((indexIterator = indexReader.nextIterator()) != null) {
-            writeReorderedList(indexIterator);
-            if (++i % 1000 == 0) {
-                long elapsed = System.currentTimeMillis() - start;
-                long left = (index.numberOfTerms - i) / i * elapsed;
-                LOGGER.debug(String.format("Copied %d terms. Elapsed time: %s. Estimated time left: %s.", i,
-                        DurationFormatUtils.formatDurationHMS(elapsed),
-                        DurationFormatUtils.formatDurationHMS(left)));
+        IndexIterator indexIterator = indexReader.nextIterator();
+        while (indexIterator != null) {
+            int i = 0;
+            while (indexIterator != null && i++ < 1000) {
+                writeReorderedList(indexIterator);
+                indexIterator = indexReader.nextIterator();
             }
+            long elapsed = System.currentTimeMillis() - start;
+            long left = (index.numberOfTerms - i) / i * elapsed;
+            LOGGER.debug(String.format("Copied %d terms. Elapsed time: %s. Estimated time left: %s.", i,
+                    DurationFormatUtils.formatDurationHMS(elapsed),
+                    DurationFormatUtils.formatDurationHMS(left)));
         }
 
         LOGGER.info(String.format("Copying sizes"));
@@ -144,13 +149,14 @@ public class Renumber {
                 OutputBitStream out = new OutputBitStream(ioFactory.getOutputStream(outputBasename + SIZES_EXTENSION), false)
         ) {
 
-            int[] sizes = new int[(int) index.numberOfDocuments];
+            LongBigArrayBigList sizes = new LongBigArrayBigList(index.numberOfDocuments);
+            sizes.size(index.numberOfDocuments);
             int i;
             for (i = 0; i < index.numberOfDocuments; i++) {
-                sizes[mapping[i]] = in.readGamma();
+                sizes.set(mapping.getLong(i), in.readGamma());
             }
             for (i = 0; i < index.numberOfDocuments; i++) {
-                out.writeGamma(sizes[i]);
+                out.writeLongGamma(sizes.getLong(i));
             }
         }
     }
@@ -182,16 +188,16 @@ public class Renumber {
 
         long frequency = indexIterator.frequency();
 
-        int[] documents = new int[(int) frequency];
-//        Posting[] postings_Global = new Posting[(int) index.numberOfDocuments];
-        Map<Integer, Posting> postings = new HashMap<>();
+        LongBigArrayBigList documents = new LongBigArrayBigList(frequency);
+        documents.size(frequency);
+        Map<Long, Posting> postings = new HashMap<>();
         long sumMaxPos = 0, occurrency = 0;
 
         long doc;
         int i = 0;
         while ((doc = indexIterator.nextDocument()) != END_OF_LIST) {
-            int mappedId = mapping[(int) doc];
-            documents[i++] = mappedId;
+            long mappedId = mapping.getLong(doc);
+            documents.set(i++, mappedId);
 
             Posting posting = new Posting();
             if (index.hasPayloads) posting.payload = indexIterator.payload();
@@ -206,10 +212,9 @@ public class Renumber {
                 posting.documentSize = -1;
             }
 
-//            postings_Global[mappedId] = posting;
             postings.put(mappedId, posting);
         }
-        Arrays.sort(documents);
+        LongBigArrays.quickSort(documents.elements());
 
         return new InvertedList(documents, postings, frequency, occurrency, sumMaxPos);
     }
@@ -227,35 +232,36 @@ public class Renumber {
     }
 
     public void writeRecords(InvertedList invertedList) throws IOException {
-        for (int document : invertedList.documents) {
-//            Posting p = invertedList.postings_Global[document];
+        for (long document : invertedList.documents) {
             Posting p = invertedList.postings.get(document);
             OutputBitStream out = indexWriter.newDocumentRecord();
             indexWriter.writeDocumentPointer(out, document);
             if (index.hasPayloads) indexWriter.writePayload(out, p.payload);
             if (index.hasCounts) indexWriter.writePositionCount(out, p.positionCount);
-            if (index.hasPositions)
+            if (index.hasPositions) {
                 indexWriter.writeDocumentPositions(out, p.positions, 0, p.positionCount, p.documentSize);
+            }
         }
     }
 
     public void readMapping(String mapFile, boolean binary) throws IOException {
         try {
             if (binary) {
-                mapping = BinIO.loadInts(mapFile);
+                mapping = new LongBigArrayBigList(loadLongsBig(mapFile));
             } else {
-                mapping = readMapping(mapFile, (int) index.numberOfDocuments);
+                mapping = readMapping(mapFile, index.numberOfDocuments);
             }
         } catch (IOException e) {
             throw new RuntimeException("Error while reading mapping", e);
         }
     }
 
-    private int[] readMapping(String file, int numberOfDocuments) throws IOException {
-        int[] ints = new int[numberOfDocuments];
+    private LongBigArrayBigList readMapping(String file, long numberOfDocuments) throws IOException {
+        LongBigArrayBigList ints = new LongBigArrayBigList();
+        ints.size(numberOfDocuments);
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             for (int i = 0; i < numberOfDocuments; i++) {
-                ints[i] = Integer.valueOf(reader.readLine());
+                ints.set(i, valueOf(reader.readLine()));
             }
         }
         return ints;
@@ -275,10 +281,10 @@ public class Renumber {
         public long frequency;
         public long occurrency;
         public long sumMaxPos;
-        public int[] documents;
-        public Map<Integer, Posting> postings;
+        public LongBigArrayBigList documents;
+        public Map<Long, Posting> postings;
 
-        public InvertedList(int[] documents, Map<Integer, Posting> postings, long frequency, long occurrency, long sumMaxPos) {
+        public InvertedList(LongBigArrayBigList documents, Map<Long, Posting> postings, long frequency, long occurrency, long sumMaxPos) {
             this.documents = documents;
             this.postings = postings;
             this.frequency = frequency;

@@ -25,7 +25,7 @@ OUTPUT_TITLES=${OUTPUT_INDEX}.titles
 
 starttime=$(date +%s)
 
-export CLASSPATH=.:$(find ../ -iname \*.jar | paste -d: -s)
+export CLASSPATH=.:$(find ../../ -iname \*.jar | paste -d: -s)
 
 # The following code permutes the original titles according to the mapping and outputs to a new file.
 

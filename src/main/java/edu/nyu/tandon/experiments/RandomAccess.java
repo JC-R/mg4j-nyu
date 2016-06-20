@@ -17,7 +17,7 @@ import it.unimi.dsi.fastutil.objects.*;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static edu.nyu.tandon.utils.utils.rand;
+import static edu.nyu.tandon.utils.Utils.rand;
 import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
 
 /**
