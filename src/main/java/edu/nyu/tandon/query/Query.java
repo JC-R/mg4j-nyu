@@ -78,7 +78,7 @@ public class Query {
     /**
      * A formatter for TREC results.
      */
-    private static final java.text.NumberFormat FORMATTER = new java.text.DecimalFormat("0.0000000000");
+    protected static final java.text.NumberFormat FORMATTER = new java.text.DecimalFormat("0.0000000000");
     /**
      * The current query engine.
      */

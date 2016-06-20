@@ -1,16 +1,20 @@
 package edu.nyu.tandon.experiments;
 
 import com.martiansoftware.jsap.*;
+import edu.nyu.tandon.index.cluster.PostingPruningStrategy;
 import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import edu.nyu.tandon.query.PrunedQueryEngine;
 import edu.nyu.tandon.query.Query;
 import it.unimi.di.big.mg4j.document.AbstractDocumentSequence;
+import it.unimi.di.big.mg4j.document.Document;
 import it.unimi.di.big.mg4j.document.DocumentCollection;
+import it.unimi.di.big.mg4j.document.DocumentFactory;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
-import it.unimi.di.big.mg4j.query.IntervalSelector;
-import it.unimi.di.big.mg4j.query.SelectedInterval;
-import it.unimi.di.big.mg4j.query.TextMarker;
+import it.unimi.di.big.mg4j.index.cluster.DocumentalPartitioningStrategy;
+import it.unimi.di.big.mg4j.index.cluster.DocumentalStrategies;
+import it.unimi.di.big.mg4j.index.cluster.IndexCluster;
+import it.unimi.di.big.mg4j.query.*;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.di.big.mg4j.query.parser.SimpleParser;
 import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
@@ -29,9 +33,9 @@ import it.unimi.dsi.sux4j.io.FileLinesBigList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.Arrays;
+import java.util.Comparator;
 
 // TODO: this entire code does not track multiple indeces
 
@@ -84,13 +88,15 @@ public class PrunedQuery extends Query {
                         new FlaggedOption("divert", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'd', "divert", "output file"),
                         new Switch("prune", 'e', "prune", "Enable pruned list"),
                         new Switch("globalScoring", 'G', "globalScoring", "Enable global metric scoring"),
+                        new Switch("localID",'D',"localID","document IDs are locally numbered"),
 
                         new FlaggedOption("prunelist", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'L', "prunelist", "prune list"),
-                        new FlaggedOption("threshold", JSAP.INTEGER_PARSER, "100", JSAP.NOT_REQUIRED, 's', "threshold", "prune threshold percentage"),
+                        new FlaggedOption("threshold", JSAP.INTEGER_PARSER, "100", JSAP.NOT_REQUIRED, 'S', "threshold", "prune threshold percentage"),
 
                         new Switch("trec", 'E', "trec", "trec"),
-                        new FlaggedOption("trec-runtag", JSAP.STRING_PARSER, "NYU_TANDON", JSAP.NOT_REQUIRED, 'g', "trec-runtag", "runtag for TREC output")
-
+                        new FlaggedOption("trec-runtag", JSAP.STRING_PARSER, "NYU_TANDON", JSAP.NOT_REQUIRED, 'g', "trec-runtag", "runtag for TREC output"),
+                        new Switch("trecQueries",'Q',"trecQueries","trecQueries"),
+                        new FlaggedOption("strategy", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 's', "strategy", "A serialised partitioning strategy, with local-global ID mappings")
                 });
 
 
@@ -117,7 +123,6 @@ public class PrunedQuery extends Query {
 
         final PrunedQueryEngine queryEngine = new PrunedQueryEngine(simpleParser, new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING), indexMap);
 
-
         // use local or global metrics during scoring: can be overriden in the input query stream via $score command
         if (jsapResult.getBoolean("globalScoring")) {
             queryEngine.loadGlobalTermFrequencies(basenameWeight[0]+".globaltermfreq");
@@ -130,21 +135,29 @@ public class PrunedQuery extends Query {
             if (queryEngine.globalTermFrequencies.size() != indexMap.get(indexMap.firstKey()).numberOfTerms)
                 throw new IllegalArgumentException("The number of global term frequencies (" + queryEngine.globalTermFrequencies.size() + " and the number of local terms do not match");
             disallowScorer = true;
+
+            //  disable cache *** or global stat will fail
+            queryEngine.equalize(0);
+
         }
         else {
             // can be overriden in the input query stream via $score command
-            queryEngine.score(new Scorer[]{new BM25PrunedScorer(), new VignaScorer()}, new double[]{1, 1});
+            queryEngine.score(new Scorer[]{new BM25PrunedScorer(1.2,0.3), new VignaScorer()}, new double[]{1, 1});
             disallowScorer = false;
+
+            //  enable cache with lcocal stats
+            queryEngine.equalize(0);
         }
 
+        // maps between local-global IDs
+        String strategyFilename = jsapResult.getString("strategy",null);
+        PostingPruningStrategy strategy = (strategyFilename == null)? null : (PostingPruningStrategy) BinIO.loadObject(strategyFilename);
 
         queryEngine.setWeights(index2Weight);
-        queryEngine.equalize(1000);
 
         // We set up an interval selector only if there is a collection for snippeting
         queryEngine.intervalSelector = documentCollection != null ? new IntervalSelector(4, 40) : new IntervalSelector();
         queryEngine.multiplex = !jsapResult.userSpecified("moPlex") || jsapResult.getBoolean("noMplex");
-
 
         // this flag is used only for document-based (emulated) pruning: uses an ordered list of documents to include and a partition threshold
         // for posting-based actual pruning, pass in a pruned index instead (built by PrunedPartition)
@@ -208,7 +221,7 @@ public class PrunedQuery extends Query {
                 }
 
                 // if custom trec mode (topic number in query line), split out query components
-                if (jsapResult.userSpecified("trec")) {
+                if (jsapResult.userSpecified("trec") || jsapResult.userSpecified("trecQueries")) {
                     q_parts = q.split(",");
                     if (q_parts.length != 2) {
                         System.err.println("TREC Query error *** missing topic number");
@@ -236,12 +249,103 @@ public class PrunedQuery extends Query {
 
                 time += System.nanoTime();
 
-                query.output(results, documentCollection, titleList, TextMarker.TEXT_BOLDFACE);
+                query.output(results, strategy, documentCollection, titleList, TextMarker.TEXT_BOLDFACE);
+
                 System.err.println(results.size() + " results; " + n + " documents examined; " + time / 1000000. + " ms; " + Util.format((n * 1000000000.0) / time) + " documents/s, " + Util.format(time / (double) n) + " ns/document");
             }
 
         } finally {
             if (query.output != System.out) query.output.close();
         }
+    }
+
+    /**
+     * Scores the given document iterator and produces score output.
+     *
+     * @param results            an iterator returning instances of {@link DocumentScoreInfo}.
+     * @param documentCollection an optional document collection, or <code>null</code>.
+     * @param titleList          an optional list of titles, or <code>null</code>.
+     * @param marker             an optional text marker to mark snippets, or <code>null</code>.
+     * @return the number of documents scanned.
+     */
+    @SuppressWarnings("boxing")
+    public int output(final ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> results, final PostingPruningStrategy strategy, final DocumentCollection documentCollection, final BigList<? extends CharSequence> titleList, final Marker marker) throws IOException {
+        int i;
+        DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi;
+
+        if (displayMode == OutputType.TREC) {
+            if (titleList == null) throw new IllegalStateException("You cannot use TREC mode without a title list");
+            for (i = 0; i < results.size(); i++) {
+                dsi = results.get(i);
+                output.println(trecTopicNumber + " Q0 " + titleList.get(dsi.document) + " " + i + " " + FORMATTER.format(dsi.score) + " " + trecRunTag);
+            }
+
+            // Horrible patch for no-answer queries (a workaround for TREC necessity of at least one result per query)
+            if (results.size() == 0) output.println(trecTopicNumber + " Q0 GX000-00-0000000 1 0 " + trecRunTag);
+        } else {
+
+            for (i = 0; i < results.size(); i++) {
+                dsi = results.get(i);
+
+                // check whether this is a pruned index and we need global IDs
+                final long document =  dsi.document;
+                if (strategy == null) {
+                    output.print(document);
+                }
+                else {
+                    long globalID = strategy.globalPointer(0,document);
+                    output.print(globalID);
+                }
+
+                Document d = null; // Filled lazily
+
+                // We try to print a title, preferring the supplied title list if present
+                if (titleList != null) output.println(" " + titleList.get(document));
+                else if (documentCollection != null) {
+                    d = documentCollection.document(document);
+                    output.println(" " + d.title().toString().trim());
+                } else output.println();
+
+                if ((displayMode == OutputType.LONG || displayMode == OutputType.SNIPPET) && dsi.info != null && queryEngine.intervalSelector != null) {
+                    final Index[] sortedIndex = dsi.info.keySet().toArray(new Index[0]);
+                    if (documentCollection != null) Arrays.sort(sortedIndex, new Comparator<Index>() {
+                        public int compare(final Index i0, final Index i1) {
+                            return documentCollection.factory().fieldIndex(i0.field) - documentCollection.factory().fieldIndex(i1.field);
+                        }
+                    });
+                    for (Index index : sortedIndex)
+                        if (index.hasPositions) {
+                            SelectedInterval[] interval = dsi.info.get(index);
+                            if (interval == SelectedInterval.TRUE_ARRAY) output.println(index.field + ": TRUE");
+                            else if (interval == SelectedInterval.FALSE_ARRAY) output.println(index.field + ": FALSE");
+                            else if (displayMode == OutputType.LONG || documentCollection == null)
+                                output.println(index.field + ": " + Arrays.toString(interval));
+                            else { // SNIPPET_MODE
+                                final MarkingMutableString s = new MarkingMutableString(marker);
+                                s.startField(interval);
+                                // TODO: this must be in increasing field order
+                                if (d == null) d = documentCollection.document(document);
+                                int fieldIndex = documentCollection.factory().fieldIndex(index.field);
+                                if (fieldIndex == -1 || documentCollection.factory().fieldType(fieldIndex) != DocumentFactory.FieldType.TEXT)
+                                    continue;
+                                final Reader reader = (Reader) d.content(fieldIndex);
+                                s.appendAndMark(d.wordReader(fieldIndex).setReader(reader));
+                                s.endField();
+                                output.println(index.field + ": " + s.toString());
+                            }
+                        } else if (index.hasPayloads && dsi.info.get(index) == SelectedInterval.TRUE_ARRAY) {
+                            if (d == null) d = documentCollection.document(document);
+                            int fieldIndex = documentCollection.factory().fieldIndex(index.field);
+                            if (fieldIndex == -1) continue;
+                            output.println(d.content(fieldIndex));
+                        }
+                    output.println();
+                }
+
+                if (d != null) d.close();
+            }
+        }
+        if (displayMode != OutputType.TREC) output.println();
+        return i;
     }
 }

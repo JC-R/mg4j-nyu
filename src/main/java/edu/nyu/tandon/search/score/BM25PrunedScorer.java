@@ -61,40 +61,21 @@ public class BM25PrunedScorer extends BM25Scorer {
 
         super.wrap(d);
 
-        // need access to global term frequencies
-        final Index[] index = termVisitor.indices();
-        if (indexIterator != null && index.length == 1 && (documentIterator instanceof AbstractIntersectionDocumentIterator || indexIterator.length < MAX_FLAT_DISJUNCTS)) {
-			/* This code is a flat, simplified duplication of what a CounterSetupVisitor would do. It is here just for efficiency. */
-
-            if (flatIndexIterator.length != 0) {
-
-                // index is pruned if global metrics are available
-                if (!globalScoring) {
-                    numDocs =flatIndexIterator[0].index().numberOfDocuments;
-                    numOccurrences = flatIndexIterator[0].index().numberOfOccurrences;
-                }
-
-                // Some caching of frequently-used values
-                k1TimesBDividedByAverageDocumentSize = k1 * b * numDocs / numOccurrences;
-                if ((this.sizes = flatIndexIterator[0].index().sizes) == null)
-                    throw new IllegalStateException("A BM25 scorer requires document sizes");
-
-                // We do all logs here, and multiply by the weight
-                for (int i = 0; i < numberOfPairs; i++) {
-                    if (globalScoring) {
+        if (globalScoring) {
+            // need access to global term frequencies
+            final Index[] index = termVisitor.indices();
+            if (indexIterator != null && index.length == 1 && (documentIterator instanceof AbstractIntersectionDocumentIterator || indexIterator.length < MAX_FLAT_DISJUNCTS)) {
+                if (flatIndexIterator.length != 0) {
+                    k1TimesBDividedByAverageDocumentSize = k1 * b * numDocs / numOccurrences;
+                    for (int i = 0; i < numberOfPairs; i++) {
                         final long frequency = globalTermFrequencies.getLong((int)flatIndexIterator[i].termNumber());
-                        k1Plus1TimesWeightedIdfPart[i] = (k1 + 1) * Math.max(EPSILON_SCORE,
-                                Math.log((numDocs - frequency + 0.5) / (frequency + 0.5))) * index2Weight.getDouble(flatIndexIterator[i].index());
-                    } else {
-                        final long frequency = flatIndexIterator[i].frequency();
                         k1Plus1TimesWeightedIdfPart[i] = (k1 + 1) * Math.max(EPSILON_SCORE,
                                 Math.log((numDocs - frequency + 0.5) / (frequency + 0.5))) * index2Weight.getDouble(flatIndexIterator[i].index());
                     }
                 }
+            } else {
+                throw new IllegalArgumentException("Multiple index queries not supported.");
             }
-        } else {
-            throw new IllegalArgumentException("Multiple index queries not supported.");
         }
-
     }
 }

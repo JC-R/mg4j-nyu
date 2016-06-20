@@ -108,16 +108,17 @@ public class PrunedQueryEngine<T> extends QueryEngine<T> {
         // TODO: we should avoid enqueueing until we really know we shall use the values
         if (alreadySeen != null)
             while ((document = scorer.nextDocument()) != END_OF_LIST) {
-                if (alreadySeen.add(document)) continue;
-                if (!isDocumentPruned(document)) continue;
+                if (!alreadySeen.add(document)) continue;
+                if (this.docPrunning && isDocumentPruned(document)==false) continue;
                 count++;
                 top.enqueue(document, scorer.score());
             }
         else
             while ((document = scorer.nextDocument()) != END_OF_LIST) {
-                if (!isDocumentPruned(document)) continue;
+                if (this.docPrunning && isDocumentPruned(document)==false) continue;
                 count++;
-                top.enqueue(document, scorer.score());
+                double s = scorer.score();
+                top.enqueue(document, s);
             }
 
         final int n = Math.max(top.size() - offset, 0); // Number of actually useful documents, if any

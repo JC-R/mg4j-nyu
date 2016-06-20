@@ -28,10 +28,9 @@ wait
 done
 
 export _JAVA_OPTIONS="-Xmx30g -XX:-UseConcMarkSweepGC"
-for n in 05 10 15 20 25 30; do
-#for k in top10 top1k; do
-for k in top10; do
-~/work/sandbox/mg4j-nyu/scripts/SingletonPrunedIndex.sh $INDEX_DIR/prune-$CORPUS-$k-$n.strategy $FULL_INDEX $INDEX_DIR/$CORPUS-$k-$n
+for n in 05 10 15 20 25 30 35; do
+for k in top10 top1k; do
+~/work/sandbox/mg4j-nyu/scripts/SingletonPrunedIndex.sh $INDEX_DIR/prune-$CORPUS-$k-$n.strategy $FULL_INDEX $INDEX_DIR/$CORPUS-$k-$n &
 done
 wait
 done

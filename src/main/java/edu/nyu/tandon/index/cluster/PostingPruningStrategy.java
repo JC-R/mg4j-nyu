@@ -110,6 +110,7 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
         // read the prune list up to 50%
         BufferedReader prunelist = new BufferedReader(new InputStreamReader(new FileInputStream(jsapResult.getString("prunelist")), Charset.forName("UTF-8")));
         double n = 0;
+        long totPostings = 0;
         String line;
         while ((line = prunelist.readLine()) != null) {
 
@@ -137,6 +138,7 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
                 postings.put(term, new LongOpenHashSet());
             }
             postings.get(term).add(doc);
+            totPostings++;
 
             // dispatch intermediate strategies if we reached their thresholds
             for (int i = 0; i < t_list.length - 1; i++) {
