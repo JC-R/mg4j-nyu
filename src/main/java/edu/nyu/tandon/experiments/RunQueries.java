@@ -1,5 +1,6 @@
 package edu.nyu.tandon.experiments;
 
+import com.google.common.base.Splitter;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.experiments.logger.EventLogger;
 import edu.nyu.tandon.experiments.logger.FileEventLogger;
@@ -53,6 +54,7 @@ public class RunQueries {
                         new FlaggedOption("timeOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 't', "time-output", "The output file to store execution times."),
                         new FlaggedOption("resultOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'r', "result-output", "The output file to store results."),
                         new FlaggedOption("listLengthsOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'l', "list-lengths-output", "The output file to store inverted list lengths."),
+                        new FlaggedOption("topK", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'k', "top-k", "The engine will limit the result set to top k results. k=10 by default."),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index.")
                 });
 
@@ -123,10 +125,11 @@ public class RunQueries {
             lines.forEach(query -> {
                 try {
 
-                    for (EventLogger l : eventLoggers) l.onStart(query.split(" "));
+                    for (EventLogger l : eventLoggers) l.onStart(Splitter.on(" ").split(query));
                     ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r =
                             new ObjectArrayList<>();
-                    int docs = engine.process(query, 0, 10, r);
+                    int k = jsapResult.userSpecified("topK") ? jsapResult.getInt("topK") : 10;
+                    int docs = engine.process(query, 0, k, r);
                     for (EventLogger l : eventLoggers) l.onEnd(r.stream().map(dsi -> Long.valueOf(dsi.document)).toArray());
 
                 } catch (QueryParserException | QueryBuilderVisitorException | IOException e) {

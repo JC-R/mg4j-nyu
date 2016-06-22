@@ -28,9 +28,11 @@ if [ -z "${csiBase}" ]; then echo "You have to define CSI."; exit 1; fi;
 java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.SelectShards \
     -i ${input} \
     -t "${outputDir}/shards.time" \
-    -r "${outputDir}/shards.results" \
+    -r "${outputDir}/shards.t10" \
     "${dir}/`ls ${dir} | egrep '\.strategy' | sed 's/\.strategy//'`" \
     ${csiBase}
+
+inputBase=`basename ${input}`
 
 ls ${dir}/*-*properties | while read file;
 do
@@ -38,9 +40,12 @@ do
         number=`basename ${file} | sed "s/.*-//" | sed "s/\..*//"`
         echo "${number}"
 
-        java -cp "${CLASSPATH}" edu.nyu.tandon.experiments.RunQueries -g \
+        mkdir -p "${outputDir}/${number}"
+
+        java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.RunQueries -g \
             -i ${input} \
-            -t "${outputDir}/${number}.time" \
-            -r "${outputDir}/${number}.results" \
+            -t "${outputDir}/${number}/${inputBase}.time" \
+            -r "${outputDir}/${number}/${inputBase}.top10" \
+            -l "${outputDir}/${number}/${inputBase}.listlengths" \
             ${clusterBase}
 done

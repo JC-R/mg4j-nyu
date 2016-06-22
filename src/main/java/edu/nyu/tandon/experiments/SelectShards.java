@@ -36,6 +36,7 @@ public class SelectShards {
                         new FlaggedOption("input", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'i', "input", "The input file with queries delimited by new lines."),
                         new FlaggedOption("timeOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 't', "time-output", "The output file to store execution times."),
                         new FlaggedOption("resultOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'r', "result-output", "The output file to store results."),
+                        new FlaggedOption("reddeT", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'T', "redde-t", "T parameter in ReDDE (how many shards to choose). T=10 by default."),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the cluster indices (not including number suffixes). In other words, the basename of the partitioned index as if loaded as a DocumentalMergedCluster."),
                         new UnflaggedOption("csi", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the central sample index.")
                 });
@@ -46,7 +47,8 @@ public class SelectShards {
         LOGGER.info("Loading CSI...");
         CentralSampleIndex csi = CentralSampleIndex.loadCSI(jsapResult.getString("csi"), jsapResult.getString("basename"));
         // TODO: Allow different selectors
-        ShardSelector shardSelector = new ReDDEShardSelector(csi);
+        ShardSelector shardSelector = new ReDDEShardSelector(csi)
+                .withT(jsapResult.userSpecified("reddeT") ? jsapResult.getInt("reddeT") : 10);
 
         List<EventLogger> eventLoggers = new ArrayList<>();
 

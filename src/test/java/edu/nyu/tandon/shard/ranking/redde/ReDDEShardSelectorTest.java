@@ -2,7 +2,6 @@ package edu.nyu.tandon.shard.ranking.redde;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import edu.nyu.tandon.shard.csi.CentralSampleIndex;
 import edu.nyu.tandon.shard.csi.Result;
 import edu.nyu.tandon.test.BaseTest;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
@@ -11,17 +10,14 @@ import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap;
 import org.apache.commons.configuration.ConfigurationException;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.*;
@@ -135,7 +131,7 @@ public class ReDDEShardSelectorTest extends BaseTest {
     public void selectShards() throws QueryParserException, QueryBuilderVisitorException, IOException {
         // Given
         ReDDEShardSelector selector = spy(reddeSelector);
-        selector.setT(5);
+        selector.withT(5);
         doReturn(ImmutableMap.builder()
                 .put(1, 0.1)
                 .put(2, 1.0)

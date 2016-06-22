@@ -25,7 +25,7 @@ public class RunQueriesTest extends BaseTest {
         File outputTime = newTemporaryFile();
         File outputResult = newTemporaryFile();
         File outputListLengths = newTemporaryFile();
-        String[] args = String.format("-i %s -t %s -r %s -l %s %s",
+        String[] args = String.format("-i %s -t %s -r %s -l %s -k 15 %s",
                 getFileFromResourcePath("queries/gov2-trec_eval-queries.txt").getAbsoluteFile(),
                 outputTime.getAbsoluteFile(),
                 outputResult.getAbsoluteFile(),

@@ -76,7 +76,7 @@ public class ClusterGlobalStatistics {
 
     public static void main(String[] args) throws JSAPException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
 
-        SimpleJSAP jsap = new SimpleJSAP(Query.class.getName(), "Produces a list of term frequencies based on a clustering strategy.",
+        SimpleJSAP jsap = new SimpleJSAP(ClusterGlobalStatistics.class.getName(), "Produces a list of term frequencies based on a clustering strategy.",
                 new Parameter[]{
                         new UnflaggedOption("index", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.GREEDY, "The docuental merged index for which we want to compute global frequencies.")
                 });

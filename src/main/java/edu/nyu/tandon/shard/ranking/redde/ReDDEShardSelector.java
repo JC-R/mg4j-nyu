@@ -30,8 +30,9 @@ public class ReDDEShardSelector implements ShardSelector {
         this.sampleSizes = computeSampleSizes();
     }
 
-    public void setT(int t) {
+    public ReDDEShardSelector withT(int t) {
         T = t;
+        return this;
     }
 
     protected Int2LongOpenHashMap computeSampleSizes() {
