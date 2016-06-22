@@ -36,6 +36,7 @@ if [ "${csiSize}" -ge "${size}" ]; then echo "Whoa! Let's take a step back: CSI 
 # Choose random titles
 random=`mktemp`
 seq 0 $((${size} - 1)) | sort -R > ${random}
+mkdir -p "${workDir}/numbers"
 cat ${random} | head "-n${csiSize}" | sort -n > "${workDir}/numbers/0"
 cat ${random} | tail "-n$((${size} - ${csiSize}))" | sort -n > "${workDir}/numbers/1"
 

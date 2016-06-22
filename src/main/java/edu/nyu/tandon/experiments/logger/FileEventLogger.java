@@ -27,9 +27,9 @@ public abstract class FileEventLogger implements EventLogger {
         writer = new BufferedWriter(new FileWriter(f));
     }
 
-    protected void log(Object o) {
+    protected void log(Object ... o) {
         try {
-            writer.append(o.toString());
+            writer.append(Joiner.on(" ").join(o));
             writer.newLine();
             writer.flush();
         } catch (IOException e) {

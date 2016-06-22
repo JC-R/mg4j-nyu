@@ -2,6 +2,7 @@ package edu.nyu.tandon.experiments;
 
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.experiments.logger.EventLogger;
+import edu.nyu.tandon.experiments.logger.FileEventLogger;
 import edu.nyu.tandon.experiments.logger.ResultEventLogger;
 import edu.nyu.tandon.experiments.logger.TimeEventLogger;
 import edu.nyu.tandon.query.Query;
@@ -21,11 +22,14 @@ import it.unimi.dsi.fastutil.objects.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static edu.nyu.tandon.query.Query.MAX_STEMMING;
@@ -46,8 +50,9 @@ public class RunQueries {
                 new Parameter[]{
                         new Switch("globalStatistics", 'g', "global-statistics", "Whether to use global statistics. Note that they need to be calculated: see ClusterGlobalStatistics."),
                         new FlaggedOption("input", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'i', "input", "The input file with queries delimited by new lines."),
-                        new FlaggedOption("timeOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 't', "time-output", "The output file to store execution times."),
-                        new FlaggedOption("resultOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'r', "result-output", "The output file to store results."),
+                        new FlaggedOption("timeOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 't', "time-output", "The output file to store execution times."),
+                        new FlaggedOption("resultOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'r', "result-output", "The output file to store results."),
+                        new FlaggedOption("listLengthsOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'l', "list-lengths-output", "The output file to store inverted list lengths."),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index.")
                 });
 
@@ -86,6 +91,25 @@ public class RunQueries {
 
         List<EventLogger> eventLoggers = new ArrayList<>();
 
+        // It is important that this event Logger is before the time logger.
+        if (jsapResult.userSpecified("listLengthsOutput")) {
+            eventLoggers.add(new FileEventLogger(new File(jsapResult.getString("listLengthsOutput"))) {
+                @Override
+                public void onStart(Object... o) {
+                    log(Arrays.stream(o).map(b -> {
+                        try {
+                            return indexMap.get("text").documents(b.toString()).frequency();
+                        } catch (IOException e) {
+                            return -1;
+                        }
+                    }).collect(Collectors.toList()).toArray());
+                }
+
+                @Override
+                public void onEnd(Object... o) {}
+            });
+        }
+
         if (jsapResult.userSpecified("timeOutput")) {
             eventLoggers.add(new TimeEventLogger(jsapResult.getString("timeOutput")));
         }
@@ -99,7 +123,7 @@ public class RunQueries {
             lines.forEach(query -> {
                 try {
 
-                    for (EventLogger l : eventLoggers) l.onStart(query);
+                    for (EventLogger l : eventLoggers) l.onStart(query.split(" "));
                     ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r =
                             new ObjectArrayList<>();
                     int docs = engine.process(query, 0, 10, r);

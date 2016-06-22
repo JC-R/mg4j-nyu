@@ -28,6 +28,6 @@ public class ResultEventLogger extends FileEventLogger {
 
     @Override
     public void onEnd(Object... o) {
-        log(Joiner.on(" ").join(o));
+        log(o);
     }
 }

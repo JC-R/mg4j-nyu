@@ -2,6 +2,7 @@ package edu.nyu.tandon.experiments;
 
 import com.google.common.base.Splitter;
 import edu.nyu.tandon.test.BaseTest;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import java.io.File;
@@ -23,10 +24,12 @@ public class RunQueriesTest extends BaseTest {
         // Given
         File outputTime = newTemporaryFile();
         File outputResult = newTemporaryFile();
-        String[] args = String.format("-i %s -t %s -r %s %s",
+        File outputListLengths = newTemporaryFile();
+        String[] args = String.format("-i %s -t %s -r %s -l %s %s",
                 getFileFromResourcePath("queries/gov2-trec_eval-queries.txt").getAbsoluteFile(),
                 outputTime.getAbsoluteFile(),
                 outputResult.getAbsoluteFile(),
+                outputListLengths.getAbsoluteFile(),
                 getFileFromResourcePath("index").getAbsoluteFile() + "/gov2-text")
                 .split(" ");
 
@@ -49,6 +52,18 @@ public class RunQueriesTest extends BaseTest {
             count++;
         }
         assertThat(count, equalTo(150));
+        count = 0;
+        for (String l : Files.readAllLines(outputListLengths.toPath())) {
+            for (String length : Splitter.on(" ").omitEmptyStrings().split(" ")) {
+                Integer len = tryParse(length);
+                assertThat(String.format("Problem parsing list of integers: %s", l),
+                        tryParse(length), notNullValue(Integer.class));
+                assertThat(String.format("There is a -1 value (exception during running queries) at line %d", count),
+                        len, CoreMatchers.not(equalTo(-1l)));
+            }
+            count++;
+        }
+        assertThat(count, equalTo(150));
     }
 
     @Test
@@ -57,10 +72,12 @@ public class RunQueriesTest extends BaseTest {
         // Given
         File outputTime = newTemporaryFile();
         File outputResult = newTemporaryFile();
-        String[] args = String.format("-g -i %s -t %s -r %s %s",
+        File outputListLengths = newTemporaryFile();
+        String[] args = String.format("-g -i %s -t %s -r %s -l %s %s",
                 getFileFromResourcePath("queries/gov2-trec_eval-queries.txt").getAbsoluteFile(),
                 outputTime.getAbsoluteFile(),
                 outputResult.getAbsoluteFile(),
+                outputListLengths.getAbsoluteFile(),
                 getFileFromResourcePath("clusters").getAbsoluteFile() + "/gov2C-5")
                 .split(" ");
 
