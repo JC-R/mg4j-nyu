@@ -2,7 +2,7 @@
 
 #
 # Copy ${INPUT_INDEX} to ${OUTPUT_INDEX} (with field ${FIELD})
-# and renumber its documents according to ${MAP}.
+# and renumber its documents according to ${TITLES}.
 #
 
 # Input index basename.
@@ -37,12 +37,13 @@ paste -d" " ${INPUT_TITLES} ${ID} | sort -k1b,1 > ${A}
 B=`mktemp`
 paste -d " " ${TITLES} ${ID} | sort -k1b,1 > ${B}
 
+MAP=`mktemp`
 join ${A} ${B} | cut -d " " -f 2- | sort -n -k2 | paste -d " " - ${ID} | sort -n -k1 | cut -d " " -f 3- > ${MAP}
 
 
 
 cp ${INPUT_TITLES} ${OUTPUT_TITLES}
-java -Xmx1G edu.nyu.tandon.tool.renumber.Renumber -i "${INPUT_INDEX}-${FIELD}" -o "${OUTPUT_INDEX}-${FIELD}" -m "${MAP}"
+java -Xmx3G edu.nyu.tandon.tool.renumber.Renumber -i "${INPUT_INDEX}-${FIELD}" -o "${OUTPUT_INDEX}-${FIELD}" -m "${MAP}"
 
 endtime=$(date +%s)
 

@@ -1,5 +1,6 @@
 package edu.nyu.tandon.experiments;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.experiments.logger.EventLogger;
@@ -7,12 +8,12 @@ import edu.nyu.tandon.experiments.logger.FileEventLogger;
 import edu.nyu.tandon.experiments.logger.ResultEventLogger;
 import edu.nyu.tandon.experiments.logger.TimeEventLogger;
 import edu.nyu.tandon.query.Query;
+import edu.nyu.tandon.query.QueryEngine;
 import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
-import it.unimi.di.big.mg4j.query.QueryEngine;
 import it.unimi.di.big.mg4j.query.SelectedInterval;
-import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
+import it.unimi.di.big.mg4j.query.nodes.*;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.di.big.mg4j.query.parser.SimpleParser;
 import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
@@ -20,6 +21,7 @@ import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.objects.*;
+import it.unimi.dsi.lang.MutableString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +46,9 @@ import static it.unimi.dsi.fastutil.io.BinIO.loadLongs;
 public class RunQueries {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(RunQueries.class);
+
+    // TODO: Should be more general and support other kinds of aliases.
+    private static final String ALIAS = "text";
 
     public static void main(String[] args) throws Exception {
 
@@ -100,7 +105,7 @@ public class RunQueries {
                 public void onStart(Object... o) {
                     log(Arrays.stream(o).map(b -> {
                         try {
-                            return indexMap.get("text").documents(b.toString()).frequency();
+                            return indexMap.get(ALIAS).documents(b.toString()).frequency();
                         } catch (IOException e) {
                             return -1;
                         }
@@ -123,18 +128,29 @@ public class RunQueries {
         try (Stream<String> lines = Files.lines(Paths.get(jsapResult.getString("input")))) {
 
             lines.forEach(query -> {
+
+                TermProcessor termProcessor = termProcessors.get(ALIAS);
+                List<MutableString> processedTerms = Splitter.on(' ').omitEmptyStrings().splitToList(query).stream()
+                        .map(t -> {
+                            MutableString m = new MutableString(t);
+                            termProcessor.processTerm(m);
+                            return m;
+                        })
+                        .collect(Collectors.toList());
+                
+                for (EventLogger l : eventLoggers) l.onStart(processedTerms.toArray());
+                ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r =
+                        new ObjectArrayList<>();
+                int k = jsapResult.userSpecified("topK") ? jsapResult.getInt("topK") : 10;
+                query = CharMatcher.is(',').replaceFrom(query, "");
+
                 try {
-
-                    for (EventLogger l : eventLoggers) l.onStart(Splitter.on(" ").split(query));
-                    ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r =
-                            new ObjectArrayList<>();
-                    int k = jsapResult.userSpecified("topK") ? jsapResult.getInt("topK") : 10;
                     int docs = engine.process(query, 0, k, r);
-                    for (EventLogger l : eventLoggers) l.onEnd(r.stream().map(dsi -> Long.valueOf(dsi.document)).toArray());
-
-                } catch (QueryParserException | QueryBuilderVisitorException | IOException e) {
+                } catch (Exception e) {
                     LOGGER.error(String.format("There was an error while processing query: %s", query), e);
                 }
+
+                for (EventLogger l : eventLoggers) l.onEnd(r.stream().map(dsi -> Long.valueOf(dsi.document)).toArray());
             });
 
         }

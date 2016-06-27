@@ -25,18 +25,21 @@ if [ -z "${input}" ]; then echo "You have to define input file."; exit 1; fi;
 if [ -z "${outputDir}" ]; then echo "You have to define output directory."; exit 1; fi;
 if [ -z "${csiBase}" ]; then echo "You have to define CSI."; exit 1; fi;
 
+inputBase=`basename ${input}`
+
 java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.SelectShards \
     -i ${input} \
-    -t "${outputDir}/shards.time" \
-    -r "${outputDir}/shards.t10" \
+    -t "${outputDir}/${inputBase}.shards.time" \
+    -r "${outputDir}/${inputBase}.shards.t10" \
     "${dir}/`ls ${dir} | egrep '\.strategy' | sed 's/\.strategy//'`" \
     ${csiBase}
-
-inputBase=`basename ${input}`
 
 ls ${dir}/*-*properties | while read file;
 do
         clusterBase=`echo ${file} | sed "s/\.properties$//"`
+
+        # TODO: differentiate it in some other way!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+
         number=`basename ${file} | sed "s/.*-//" | sed "s/\..*//"`
         echo "${number}"
 
