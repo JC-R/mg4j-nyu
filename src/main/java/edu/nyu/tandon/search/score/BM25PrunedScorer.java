@@ -4,7 +4,6 @@ import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.search.AbstractIntersectionDocumentIterator;
 import it.unimi.di.big.mg4j.search.DocumentIterator;
 import it.unimi.di.big.mg4j.search.score.BM25Scorer;
-import it.unimi.di.big.mg4j.search.score.DelegatingScorer;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
