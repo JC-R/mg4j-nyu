@@ -9,6 +9,7 @@
       <sourceFolder url="file://$MODULE_DIR$/scripts" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/scala" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.idea" />
       <excludeFolder url="file://$MODULE_DIR$/src/scala" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
@@ -219,5 +220,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="Maven: com.github.scopt:scopt_2.10:3.5.0" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.10.6" level="project" />
   </component>
 </module>

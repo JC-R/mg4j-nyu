@@ -2,7 +2,6 @@ package edu.nyu.tandon.experiments
 
 import java.io.File
 
-import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FileUtils.copyFile
 
 import scala.util.Try
