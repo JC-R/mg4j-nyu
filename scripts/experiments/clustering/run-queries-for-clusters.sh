@@ -26,13 +26,13 @@ if [ -z "${outputDir}" ]; then echo "You have to define output directory."; exit
 if [ -z "${csiBase}" ]; then echo "You have to define CSI."; exit 1; fi;
 
 inputBase=`basename ${input}`
-clusterBase="${dir}/`ls ${dir} | egrep '\.strategy' | sed 's/\.strategy//'`"
+base="${dir}/`ls ${dir} | egrep '\.strategy' | sed 's/\.strategy//'`"
 
 java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.SelectShards \
     -i ${input} \
     -t "${outputDir}/${inputBase}.shards.time" \
     -r "${outputDir}/${inputBase}.shards.t10" \
-    ${clusterBase} \
+    ${base} \
     ${csiBase}
 
 ls ${dir}/*-*properties | while read file;
@@ -55,6 +55,6 @@ do
 
         java -cp "${CLASSPATH}" edu.nyu.tandon.experiments.TranslateToGlobalIds \
             -i "${outputDir}/${number}/${inputBase}.top10" \
-            -s "${clusterBase}.strategy" \
+            -s "${base}.strategy" \
             -c ${number}
 done
