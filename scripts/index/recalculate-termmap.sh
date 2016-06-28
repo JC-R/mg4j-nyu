@@ -11,7 +11,6 @@
 
 if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../`; fi;
 CLASSPATH=`find "${ROOT}/../target/" -name "*.jar" | paste -d: -s`
-echo ${CLASSPATH}
 
 dir=$1
 
