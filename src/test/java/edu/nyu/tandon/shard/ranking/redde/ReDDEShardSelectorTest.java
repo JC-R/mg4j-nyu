@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,24 +56,32 @@ public class ReDDEShardSelectorTest extends BaseTest {
     public void computeShardCounts() {
         // Given
         ReDDEShardSelector selector = reddeSelector;
-        List<Result> results = Arrays.asList(new Result[] {
+        List<Result> results = Arrays.asList(
                 new Result(1, 1., 1),
                 new Result(2, 1., 1),
                 new Result(3, 1., 1),
                 new Result(4, 1., 2),
                 new Result(5, 1., 2),
                 new Result(6, 1., 3)
-        });
+        );
 
         // When
         Map<Integer, Long> actualShardCounts = selector.computeShardCounts(results);
 
         // Then
-        assertThat(actualShardCounts, equalTo(ImmutableMap.of(
-                1, 3l,
-                2, 2l,
-                3, 1l
-        )));
+        Map<Integer, Long> expected = new HashMap<>();
+        expected.put(0, 0L);
+        expected.put(1, 3L);
+        expected.put(2, 2L);
+        expected.put(3, 1L);
+        expected.put(4, 0L);
+        expected.put(5, 0L);
+        expected.put(6, 0L);
+        expected.put(7, 0L);
+        expected.put(8, 0L);
+        expected.put(9, 0L);
+        expected.put(10, 0L);
+        assertThat(actualShardCounts, equalTo(expected));
     }
 
     @Test

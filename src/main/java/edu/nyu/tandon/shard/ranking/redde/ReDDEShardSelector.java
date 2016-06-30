@@ -40,13 +40,17 @@ public class ReDDEShardSelector implements ShardSelector {
         for (int i = 0; i < csi.getCsiStrategy().numberOfDocuments(0); i++) {
             long globalId = csi.getCsiStrategy().globalPointer(0, i);
             int shardId = csi.getClustersStrategy().localIndex(globalId);
-            sampleSizes.put(shardId, sampleSizes.getOrDefault(shardId, 0l) + 1);
+            sampleSizes.put(shardId, sampleSizes.getOrDefault(shardId, 0L) + 1);
         }
         return sampleSizes;
     }
 
     protected Map<Integer, Long> computeShardCounts(List<Result> results) {
-        return results.stream().collect(groupingBy(result -> result.shardId, counting()));
+        Map<Integer, Long> resultCounts = results.stream().collect(groupingBy(result -> result.shardId, counting()));
+        sampleSizes.forEach((key, value) -> {
+            if (!resultCounts.containsKey(key)) resultCounts.put(key, 0L);
+        });
+        return resultCounts;
     }
 
     protected double shardWeight(int shardId) {
