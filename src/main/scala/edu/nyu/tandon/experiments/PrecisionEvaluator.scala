@@ -17,9 +17,9 @@ object PrecisionEvaluator {
     * @param actual     actual set of results
     * @return           either Some(precision), or None if original is empty
     */
-  def precision(original: Seq[Long], actual: Seq[Long]): Option[Double] =
+  def precision(original: Seq[Long], actual: Seq[Long], k: Int = -1): Option[Double] =
     if (original.isEmpty) None
-    else Some((original intersect actual).length.toDouble / original.length.toDouble)
+    else Some((original intersect actual).length.toDouble / (if (k != -1) k.toDouble else original.length.toDouble))
 
   /**
     * Prints all doubles in iterator and returns the sum of all numbers and its count.
@@ -48,7 +48,8 @@ object PrecisionEvaluator {
   def evaluatePrecision(fullResultsFile: File,
                         shardChoicesFile: File,
                         shardResultsFiles: Seq[File],
-                        outputWriter: OutputStreamWriter) = {
+                        outputWriter: OutputStreamWriter,
+                        k: Int) = {
 
     val fullIterator = Source.fromFile(fullResultsFile).getLines() map lineToLongs
     val shardChoicesIterator = Source.fromFile(shardChoicesFile).getLines() map lineToLongs
@@ -62,7 +63,7 @@ object PrecisionEvaluator {
     }.flatten
 
     val precisionIterator: Iterator[Option[Double]] = (fullIterator zip documentsForQueries) map {
-      case (topResults, clusterResults) => precision(topResults, clusterResults)
+      case (topResults, clusterResults) => precision(topResults, clusterResults, k)
     }
 
     val (sum, len) = printAndAggregatePrecision(precisionIterator, outputWriter)
@@ -74,7 +75,8 @@ object PrecisionEvaluator {
     case class Config(fullResults: File = null,
                       shards: File = null,
                       shardResults: Seq[File] = List(),
-                      outputWriter: OutputStreamWriter = new OutputStreamWriter(System.out))
+                      outputWriter: OutputStreamWriter = new OutputStreamWriter(System.out),
+                      k: Int = -1)
 
     val parser = new OptionParser[Config](this.getClass.getSimpleName) {
 
@@ -93,6 +95,10 @@ object PrecisionEvaluator {
         .text("result files of the cluster shards")
         .required()
 
+      opt[Seq[File]]('k', "k-parameter")
+        .action((x, c) => c.copy(shardResults = x))
+        .text("k parameter for P@k")
+
       opt[File]('o', "output")
         .action((x, c) => c.copy(outputWriter = new OutputStreamWriter(new FileOutputStream(x))))
         .text("output file")
@@ -104,7 +110,8 @@ object PrecisionEvaluator {
         config.fullResults,
         config.shards,
         config.shardResults,
-        config.outputWriter)
+        config.outputWriter,
+        config.k)
       case None =>
     }
 

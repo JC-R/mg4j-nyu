@@ -62,23 +62,6 @@ public class CentralSampleIndex {
 
     protected void constructQueryEngine(String indexBasename) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
         csiEngine = Utils.constructQueryEngine(indexBasename);
-//        String[] basenameWeight = new String[] { indexBasename };
-//
-//        final Object2ReferenceLinkedOpenHashMap<String, Index> indexMap = new Object2ReferenceLinkedOpenHashMap<String, Index>(Hash.DEFAULT_INITIAL_SIZE, .5f);
-//        final Reference2DoubleOpenHashMap<Index> index2Weight = new Reference2DoubleOpenHashMap<Index>();
-//        Query.loadIndicesFromSpec(basenameWeight, true, null, indexMap, index2Weight);
-//
-//        final Object2ObjectOpenHashMap<String, TermProcessor> termProcessors = new Object2ObjectOpenHashMap<String, TermProcessor>(indexMap.size());
-//        for (String alias : indexMap.keySet()) termProcessors.put(alias, indexMap.get(alias).termProcessor);
-//        final SimpleParser simpleParser = new SimpleParser(indexMap.keySet(), indexMap.firstKey(), termProcessors);
-//        final Reference2ReferenceMap<Index, Object> index2Parser = new Reference2ReferenceOpenHashMap<Index, Object>();
-//
-//        csiEngine = new QueryEngine(
-//                simpleParser,
-//                new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING),
-//                indexMap);
-//        csiEngine.setWeights(index2Weight);
-//        csiEngine.score(new BM25Scorer());
     }
 
     protected int resolveCluster(long csiId) {

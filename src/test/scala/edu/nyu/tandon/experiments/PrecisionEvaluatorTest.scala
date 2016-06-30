@@ -24,6 +24,18 @@ class PrecisionEvaluatorTest extends FunSuite {
     assert(precision === Some(0.5))
   }
 
+  test("precision with fixed k") {
+    // given
+    val original: Seq[Long] = Seq(1, 2, 3, 4)
+    val actual: Seq[Long] = Seq(1, 3)
+
+    // when
+    val precision = PrecisionEvaluator.precision(original, actual, k = 10)
+
+    // then
+    assert(precision === Some(0.2))
+  }
+
   test("undefined precision") {
     // given
     val original: Seq[Long] = Seq()
