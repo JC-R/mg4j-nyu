@@ -57,35 +57,4 @@ public class SelectiveQueryEngineTest extends BaseTest {
         }));
     }
 
-//    @Test
-//    public void queryListener() throws QueryParserException, QueryBuilderVisitorException, IOException {
-//        // Given
-//        final List<String> l = new ArrayList<>();
-//        selectiveQueryEngine.addEventLogger(new EventLogger() {
-//
-//            @Override
-//            public void onStart(Object... o) {
-//
-//            }
-//
-//            @Override
-//            public void onEnd(Object... o) {
-//
-//            }
-//        });
-//
-//        // When
-//        final ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> results = new ObjectArrayList<>();
-//        selectiveQueryEngine.process("queryA", 0, 10, results);
-//        selectiveQueryEngine.process("queryB", 0, 10, results);
-//        selectiveQueryEngine.process("queryC", 0, 10, results);
-//
-//        // Then
-//        assertThat(l, equalTo(ImmutableList.of(
-//                "START:queryA", "END:queryA",
-//                "START:queryB", "END:queryB",
-//                "START:queryC", "END:queryC"
-//        )));
-//    }
-
 }

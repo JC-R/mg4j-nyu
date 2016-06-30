@@ -29,7 +29,6 @@ public class SelectiveDocumentalIndexStrategyTest extends BaseTest {
         sort(clusters);
 
         strategy = SelectiveDocumentalIndexStrategy.constructStrategy(clusters, true, 1092);
-//        strategy = (SelectiveDocumentalIndexStrategy) loadObject("/home/elshize/gov2c.strategy");
     }
 
     @Test
