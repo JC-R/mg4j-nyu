@@ -1,5 +1,7 @@
 package edu.nyu.tandon.experiments
 
+import scala.io.Source
+
 /**
   * Convert the following result format:
   * [ result ]
@@ -15,7 +17,7 @@ object ResultToRelationConverter {
 
   def main(args: Array[String]) =
     for {
-      (ln, i) <- io.Source.stdin.getLines.zipWithIndex
+      (ln, i) <- Source.stdin.getLines.zipWithIndex
     } for {
       n <- ln.split("\\s+") map (_.trim)
     } println(i + " " + n)

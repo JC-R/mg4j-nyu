@@ -2,7 +2,7 @@ package edu.nyu.tandon.experiments
 
 import java.io.{File, FileOutputStream, OutputStreamWriter, Writer}
 
-import edu.nyu.tandon.experiments.Utils._
+import edu.nyu.tandon._
 import edu.nyu.tandon.utils.BulkIterator
 import scopt.OptionParser
 
@@ -95,8 +95,8 @@ object PrecisionEvaluator {
         .text("result files of the cluster shards")
         .required()
 
-      opt[Seq[File]]('k', "k-parameter")
-        .action((x, c) => c.copy(shardResults = x))
+      opt[Int]('k', "k-parameter")
+        .action((x, c) => c.copy(k = x))
         .text("k parameter for P@k")
 
       opt[File]('o', "output")

@@ -2,7 +2,7 @@ package edu.nyu.tandon.experiments
 
 import java.io.{File, FileInputStream, ObjectInputStream, PrintWriter}
 
-import edu.nyu.tandon.experiments.Utils._
+import edu.nyu.tandon._
 import edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy
 import scopt.OptionParser
 
