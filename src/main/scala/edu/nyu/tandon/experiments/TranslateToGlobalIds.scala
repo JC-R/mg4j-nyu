@@ -30,10 +30,10 @@ object TranslateToGlobalIds {
     writer.close()
   }
 
-  def translate(sqlContext: SQLContext)(input: File, cluster: Int, strategy: SelectiveDocumentalIndexStrategy): Unit = {
-    val localResultsDF = loadFeatureFile(sqlContext)(input)
-    SegmentCounter.segment(localResultsDF, "results", strategy.numberOfDocuments(cluster), 10)
-  }
+//  def translate(sqlContext: SQLContext)(input: File, cluster: Int, strategy: SelectiveDocumentalIndexStrategy): Unit = {
+//    val localResultsDF = loadFeatureFile(sqlContext)(input)
+//    SegmentCounter.segment(localResultsDF, "results", strategy.numberOfDocuments(cluster), 10)
+//  }
 
   def main(args: Array[String]) = {
 

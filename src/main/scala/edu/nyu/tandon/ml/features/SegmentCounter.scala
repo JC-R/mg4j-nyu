@@ -1,17 +1,14 @@
 package edu.nyu.tandon.ml.features
 
-import java.io.File
+import java.io._
 
 import edu.nyu.tandon._
+import edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy
 import edu.nyu.tandon.ml._
+import edu.nyu.tandon.spark.SQLContextSingleton
+import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.sql.{DataFrame, Row}
 import scopt.OptionParser
-import java.io.Writer
-import java.io.OutputStreamWriter
-
-import org.apache.spark.sql.{DataFrame, Row, SQLContext}
-
-import scala.io.Source
-import scala.io.BufferedSource
 
 /**
   * @author michal.siedlaczek@nyu.edu
@@ -27,41 +24,31 @@ object SegmentCounter {
       .mapValues(_.length)
   }
 
-  def binsToString(numBins: Int)(chunks: Map[Int, Int]): String = {
+  def binsToRows(numBins: Int)(id: Long, cluster: Int, chunks: Map[Int, Int]): Seq[(Long, Int, Int)] = {
     val c = chunks.withDefaultValue(0)
-    (for (i <- 0 until numBins) yield c(i)) mkString " "
+    for (i <- 0 until numBins) yield (id, cluster, c(i))
   }
 
-  def binsToRows(numBins: Int)(id: Long, chunks: Map[Int, Int]): Seq[(Long, Int)] = {
-    val c = chunks.withDefaultValue(0)
-    for (i <- 0 until numBins) yield (id, c(i))
-  }
-
-  def segment(in: BufferedSource)(out: Writer)(numDocs: Long, numBins: Int): Unit = {
-    val results = in.getLines() map lineToLongs
-    val counts = results map countByBin(numDocs, numBins)
-    for (c <- counts) {
-      out.append(binsToString(numBins)(c))
-      out.append("\n")
-      out.flush()
-    }
-  }
-
-  def segment(data: DataFrame, column: String, numDoc: Long, numBins: Int): DataFrame = {
+  def segment(data: DataFrame, column: String, numDocs: Long, numBins: Int, cluster: Int): DataFrame = {
     data.explode(data(IdCol), data(column)) {
       case Row(id: Long, line: String) =>
-        binsToRows(numBins)(id, countByBin(numDocs, numBins)(lineToLongs(line.toString)))
+        binsToRows(numBins)(id, cluster, countByBin(numDocs, numBins)(lineToLongs(line.toString)))
     }
   }
 
   def main(args: Array[String]): Unit = {
 
-    case class Config(inputFile: File = null,
-                      outputFile: File = null,
+    case class Config(input: File = null,
                       numBins: Int = -1,
-                      numDocs: Int = -1)
+                      numDocs: Int = -1,
+                      cluster: Int = -1)
 
     val parser = new OptionParser[Config](this.getClass.getSimpleName) {
+
+      opt[File]('i', "input")
+        .action((x, c) => c.copy(input = x))
+        .text("result file with local IDs")
+        .required()
 
       opt[Int]('b', "num-bins")
         .action((x, c) => c.copy(numBins = x))
@@ -73,11 +60,27 @@ object SegmentCounter {
         .text("the number of documents")
         .required()
 
+      opt[Int]('c', "cluster")
+        .action( (x, c) => c.copy(cluster = x) )
+        .text("cluster number")
+        .required()
+
     }
 
     parser.parse(args, Config()) match {
+      case Some(config) =>
+        val sparkContext = new SparkContext(new SparkConf().setAppName(this.getClass.toString).setMaster("local[*]"))
+        val sqlContext = SQLContextSingleton.getInstance(sparkContext)
+
+        val output = segment(loadFeatureFile(sqlContext)(config.input),
+          "results",
+          config.numDocs,
+          config.numBins,
+          config.cluster)
+
+        saveFeatureFile(output, config.input.getAbsolutePath + ".segmented")
+
       case None =>
-      case Some(config) => segment(Source.stdin)(new OutputStreamWriter(System.out))(config.numDocs, config.numBins)
     }
 
   }

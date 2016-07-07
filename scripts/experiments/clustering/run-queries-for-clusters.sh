@@ -55,4 +55,9 @@ do
             -i "${outputDir}/${number}/${inputBase}.top10" \
             -s "${base}.strategy" \
             -c ${number}
+
+        java -cp "${CLASSPATH}" edu.nyu.tandon.ml.features.SegmentCounter \
+            -i "${outputDir}/${number}/${inputBase}.top10" \
+            -b 10 \
+            -d `wc -l ${clusterBase}`
 done
