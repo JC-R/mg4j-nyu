@@ -5,28 +5,18 @@ import java.io.File
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
 import scopt.OptionParser
+import edu.nyu.tandon.spark.SQLContextSingleton
 
 /**
   * @author michal.siedlaczek@nyu.edu
   */
 object FeatureJoin {
 
-  def loadFeatureFile(sqlContext: SQLContext)(file: File): DataFrame =
-    sqlContext.read
-      .format("com.databricks.spark.csv")
-      .option("header", "true")
-      .option("mode", "FAILFAST")
-      .option("inferSchema", "true")
-      .load(file.getAbsolutePath)
-
-  def saveFeatureFile(features: DataFrame, file: String): Unit =
-    features.write
-      .format("com.databricks.spark.csv")
-      .option("header", "false")
-      .save(file)
-
   def join(features: Seq[DataFrame]): DataFrame =
     features reduce (_.join(_, "id"))
+
+  def join(head: DataFrame, rest: DataFrame*): DataFrame =
+    join(head +: rest)
 
   def join(sqlContext: SQLContext)(features: Seq[File]): DataFrame =
     join(features map loadFeatureFile(sqlContext))
@@ -55,7 +45,7 @@ object FeatureJoin {
       case Some(config) =>
 
         val sparkContext = new SparkContext(new SparkConf().setAppName(this.getClass.toString).setMaster("local[*]"))
-        val sqlContext = new SQLContext(sparkContext)
+        val sqlContext = SQLContextSingleton.getInstance(sparkContext)
 
         saveFeatureFile(
           join(sqlContext)(config.features),

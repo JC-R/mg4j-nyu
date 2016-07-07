@@ -38,7 +38,7 @@ class FeatureJoinTest extends FunSuite with BeforeAndAfterAll {
     // given
     new Files {
       // when
-      val joined = FeatureJoin.join(sqlContext)(List(f1, f2))
+      val joined = FeatureJoin.join(sqlContext)(List(f1, f2)).sort("id", "f1", "f2")
       // then
       assertResult(1) { joined.filter(joined("id") === 0).count() }
       assertResult(2) { joined.filter(joined("id") === 1).count() }

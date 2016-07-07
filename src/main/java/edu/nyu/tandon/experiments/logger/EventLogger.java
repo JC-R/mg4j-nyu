@@ -5,7 +5,7 @@ package edu.nyu.tandon.experiments.logger;
  */
 public interface EventLogger {
 
-    void onStart(Object ... o);
-    void onEnd(Object ... o);
+    void onStart(Iterable<String> query);
+    void onEnd(Iterable<Long> results);
 
 }

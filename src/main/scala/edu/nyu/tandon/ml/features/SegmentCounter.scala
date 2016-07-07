@@ -3,9 +3,13 @@ package edu.nyu.tandon.ml.features
 import java.io.File
 
 import edu.nyu.tandon._
+import edu.nyu.tandon.ml._
 import scopt.OptionParser
 import java.io.Writer
 import java.io.OutputStreamWriter
+
+import org.apache.spark.sql.{DataFrame, Row, SQLContext}
+
 import scala.io.Source
 import scala.io.BufferedSource
 
@@ -28,6 +32,11 @@ object SegmentCounter {
     (for (i <- 0 until numBins) yield c(i)) mkString " "
   }
 
+  def binsToRows(numBins: Int)(id: Long, chunks: Map[Int, Int]): Seq[(Long, Int)] = {
+    val c = chunks.withDefaultValue(0)
+    for (i <- 0 until numBins) yield (id, c(i))
+  }
+
   def segment(in: BufferedSource)(out: Writer)(numDocs: Long, numBins: Int): Unit = {
     val results = in.getLines() map lineToLongs
     val counts = results map countByBin(numDocs, numBins)
@@ -35,6 +44,13 @@ object SegmentCounter {
       out.append(binsToString(numBins)(c))
       out.append("\n")
       out.flush()
+    }
+  }
+
+  def segment(data: DataFrame, column: String, numDoc: Long, numBins: Int): DataFrame = {
+    data.explode(data(IdCol), data(column)) {
+      case Row(id: Long, line: String) =>
+        binsToRows(numBins)(id, countByBin(numDocs, numBins)(lineToLongs(line.toString)))
     }
   }
 

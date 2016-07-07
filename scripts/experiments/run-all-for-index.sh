@@ -29,7 +29,7 @@ mkdir -p "${outputDir}/clusters/unordered"
 mkdir -p "${outputDir}/clusters/ordered"
 
 # Run for unordered full index
-java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.RunQueries \
+java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.ExtractFeatures \
     -i ${queryFile} \
     -t "${outputDir}/full/unordered/${inputBase}.time" \
     -r "${outputDir}/full/unordered/${inputBase}.top10" \
@@ -37,7 +37,7 @@ java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.RunQueries \
     ${unorderedFullIndex}
 
 # Run for ordered full index
-java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.RunQueries \
+java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.ExtractFeatures \
     -i ${queryFile} \
     -t "${outputDir}/full/ordered/${inputBase}.time" \
     -r "${outputDir}/full/ordered/${inputBase}.top10" \

@@ -35,18 +35,16 @@ java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.SelectShards \
     ${base} \
     ${csiBase}
 
-ls ${dir}/*-*properties | while read file;
+ls ${dir}/*-*terms | while read file;
 do
-        clusterBase=`echo ${file} | sed "s/\.properties$//"`
-
-        # TODO: differentiate it in some other way!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+        clusterBase=`echo ${file} | sed "s/\.terms$//"`
 
         number=`basename ${file} | sed "s/.*-//" | sed "s/\..*//"`
         echo "${number}"
 
         mkdir -p "${outputDir}/${number}"
 
-        java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.RunQueries -g \
+        java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.ExtractFeatures -g \
             -i ${input} \
             -t "${outputDir}/${number}/${inputBase}.time" \
             -r "${outputDir}/${number}/${inputBase}.top10" \

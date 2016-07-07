@@ -36,10 +36,15 @@ public class SelectShardsTest extends BaseTest {
         // Then
         int count = 0;
         for (String t : Files.readAllLines(outputTime.toPath())) {
-            assertThat(tryParse(t), notNullValue(Integer.class));
+            if (count == 0) assertThat(t, equalTo("id,time"));
+            else {
+                String[] l = t.split(",");
+                assertThat(tryParse(l[0]), notNullValue(Integer.class));
+                assertThat(tryParse(l[1]), notNullValue(Integer.class));
+            }
             count++;
         }
-        assertThat(count, equalTo(150));
+        assertThat(count, equalTo(151));
     }
 
 }

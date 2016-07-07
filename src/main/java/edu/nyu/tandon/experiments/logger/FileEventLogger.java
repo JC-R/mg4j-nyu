@@ -15,23 +15,29 @@ public abstract class FileEventLogger implements EventLogger {
 
     private BufferedWriter writer;
 
-    public FileEventLogger(OutputStream o) {
-        writer = new BufferedWriter(new OutputStreamWriter(o));
+    public abstract String header();
+
+    public void init(BufferedWriter writer) throws IOException {
+        this.writer = writer;
+        this.writer.append(header() + "\n");
+    }
+
+    public FileEventLogger(OutputStream o) throws IOException {
+        init(new BufferedWriter(new OutputStreamWriter(o)));
     }
 
     public FileEventLogger(File f) throws IOException {
-        writer = new BufferedWriter(new FileWriter(f));
+        init(new BufferedWriter(new FileWriter(f)));
     }
 
     public FileEventLogger(String f) throws IOException {
-        writer = new BufferedWriter(new FileWriter(f));
+        init(new BufferedWriter(new FileWriter(f)));
     }
 
-    protected void log(Object ... o) {
+    protected void log(String s) {
         try {
-            writer.append(Joiner.on(" ").join(o));
-            writer.newLine();
-            writer.flush();
+            writer.append(s + "\n")
+                    .flush();
         } catch (IOException e) {
             LOGGER.error("Writing event has failed", e);
         }

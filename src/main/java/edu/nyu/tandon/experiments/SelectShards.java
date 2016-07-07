@@ -1,6 +1,7 @@
 package edu.nyu.tandon.experiments;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.experiments.logger.EventLogger;
 import edu.nyu.tandon.experiments.logger.FileEventLogger;
@@ -20,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -60,26 +62,14 @@ public class SelectShards {
             eventLoggers.add(new ResultEventLogger(jsapResult.getString("resultOutput")));
         }
 
-        eventLoggers.add(new EventLogger() {
-            @Override
-            public void onStart(Object... o) {
-                LOGGER.debug(String.format("Processing query: %s", Joiner.on(" ").join(o)));
-            }
-
-            @Override
-            public void onEnd(Object... o) {
-
-            }
-        });
-
         try (Stream<String> lines = Files.lines(Paths.get(jsapResult.getString("input")))) {
 
             lines.forEach(query -> {
                 try {
 
-                    for (EventLogger l : eventLoggers) l.onStart(query);
+                    for (EventLogger l : eventLoggers) l.onStart(Splitter.on(" ").split(query));
                     List<Integer> shards = shardSelector.selectShards(query);
-                    for (EventLogger l : eventLoggers) l.onEnd(shards.toArray());
+                    for (EventLogger l : eventLoggers) l.onEnd(shards.stream().map(s -> s.longValue()).collect(Collectors.toList()));
 
                 } catch (QueryParserException | QueryBuilderVisitorException | IOException e) {
                     LOGGER.error(String.format("There was an error while processing query: %s", query), e);

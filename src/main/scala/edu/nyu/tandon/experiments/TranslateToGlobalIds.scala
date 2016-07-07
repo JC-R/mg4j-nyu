@@ -3,7 +3,11 @@ package edu.nyu.tandon.experiments
 import java.io.{File, FileInputStream, ObjectInputStream, PrintWriter}
 
 import edu.nyu.tandon._
+import edu.nyu.tandon.ml.features._
 import edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy
+import edu.nyu.tandon.spark.SQLContextSingleton
+import org.apache.spark.sql.SQLContext
+import org.apache.spark.{SparkConf, SparkContext}
 import scopt.OptionParser
 
 import scala.io.Source
@@ -24,6 +28,11 @@ object TranslateToGlobalIds {
       line <- lineStream map lineToLongs map toGlobal(strategy, cluster) map longsToLine
     } writer.write(line + "\n")
     writer.close()
+  }
+
+  def translate(sqlContext: SQLContext)(input: File, cluster: Int, strategy: SelectiveDocumentalIndexStrategy): Unit = {
+    val localResultsDF = loadFeatureFile(sqlContext)(input)
+    SegmentCounter.segment(localResultsDF, "results", strategy.numberOfDocuments(cluster), 10)
   }
 
   def main(args: Array[String]) = {
@@ -51,9 +60,12 @@ object TranslateToGlobalIds {
 
     parser.parse(args, Config()) match {
       case Some(config) =>
+
         val strategy = new ObjectInputStream(new FileInputStream(config.strategy)).readObject()
           .asInstanceOf[SelectiveDocumentalIndexStrategy]
+
         translate(config.input, config.cluster, strategy)
+
       case None =>
     }
 

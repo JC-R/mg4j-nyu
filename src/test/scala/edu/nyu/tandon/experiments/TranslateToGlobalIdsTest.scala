@@ -3,6 +3,7 @@ package edu.nyu.tandon.experiments
 import java.io.{File, FileWriter}
 
 import edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy
+import edu.nyu.tandon.test._
 import org.junit.runner.RunWith
 import org.mockito.Mockito.when
 import org.scalatest.FunSuite
@@ -25,6 +26,8 @@ class TranslateToGlobalIdsTest extends FunSuite {
     when(strategy.globalPointer(1, 0l)).thenReturn(3l)
     when(strategy.globalPointer(1, 1l)).thenReturn(4l)
     when(strategy.globalPointer(1, 2l)).thenReturn(5l)
+    when(strategy.numberOfDocuments(0)).thenReturn(3)
+    when(strategy.numberOfDocuments(1)).thenReturn(3)
 
     def c0 = TranslateToGlobalIds.toGlobal(strategy, 0)_
     def c1 = TranslateToGlobalIds.toGlobal(strategy, 1)_
@@ -43,6 +46,13 @@ class TranslateToGlobalIdsTest extends FunSuite {
     def readLinesFromFile(file: File): Seq[String] = {
       (for (line <- Source.fromFile(file).getLines()) yield line) toList
     }
+  }
+
+  trait DF {
+    val df = sqlContext.createDataFrame(List(
+      (0, "0 1 2"),
+      (1, "0 2")
+    )).toDF("id", "results")
   }
 
   test("toGlobal") {
@@ -93,6 +103,12 @@ class TranslateToGlobalIdsTest extends FunSuite {
         "4 5",
         "5 3"
       ))
+    }
+  }
+
+  test("translate from dataframe") {
+    new Strategy with DF {
+      TranslateToGlobalIds
     }
   }
 

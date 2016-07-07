@@ -111,7 +111,7 @@ public class SelectiveQueryEngine<T> {
 
     public int process(final String query, int offset, final int length, final ObjectArrayList<DocumentScoreInfo<T>> results) throws QueryParserException, QueryBuilderVisitorException, IOException {
 
-        for (EventLogger l : eventLoggers) l.onStart(query);
+//        for (EventLogger l : eventLoggers) l.onStart(query);
 
         List<Integer> shards = shardSelector.selectShards(query);
         ObjectArrayList<DocumentScoreInfo<T>> cumulativeResults = new ObjectArrayList<>();
@@ -127,7 +127,7 @@ public class SelectiveQueryEngine<T> {
                 .limit(length)
                 .collect(Collectors.toList()));
 
-        for (EventLogger l : eventLoggers) l.onEnd(results);
+//        for (EventLogger l : eventLoggers) l.onEnd(results);
 
         return results.size();
     }
