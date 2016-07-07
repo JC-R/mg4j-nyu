@@ -15,9 +15,6 @@ import edu.nyu.tandon.test._
 @RunWith(classOf[JUnitRunner])
 class FeatureJoinTest extends FunSuite with BeforeAndAfterAll {
 
-//  val sparkContext = new SparkContext(new SparkConf().setAppName(this.getClass.toString).setMaster("local[*]"))
-//  val sqlContext = new SQLContext(sparkContext)
-
   trait Files {
     val f1 = File.createTempFile("first", "feature")
     val f2 = File.createTempFile("second", "feature")

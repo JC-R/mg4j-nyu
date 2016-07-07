@@ -3,11 +3,10 @@ package edu.nyu.tandon.ml.features
 import java.io._
 
 import edu.nyu.tandon._
-import edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy
 import edu.nyu.tandon.ml._
 import edu.nyu.tandon.spark.SQLContextSingleton
-import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.{DataFrame, Row}
+import org.apache.spark.{SparkConf, SparkContext}
 import scopt.OptionParser
 
 /**

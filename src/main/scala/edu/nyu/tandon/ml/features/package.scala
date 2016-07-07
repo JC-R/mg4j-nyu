@@ -23,7 +23,7 @@ package object features {
   def saveFeatureFile(features: DataFrame, file: String): Unit =
     features.write
       .format("com.databricks.spark.csv")
-      .option("header", "false")
+      .option("header", "true")
       .save(file)
 
   def withColumnRenamedAndCastedToDouble(dataFrame: DataFrame, columnName: String): DataFrame =
