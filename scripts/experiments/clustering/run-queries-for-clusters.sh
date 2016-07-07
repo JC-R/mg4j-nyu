@@ -35,9 +35,9 @@ java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.SelectShards \
     ${base} \
     ${csiBase}
 
-ls ${dir}/*-*terms | while read file;
+ls ${dir}/*-*titles | while read file;
 do
-        clusterBase=`echo ${file} | sed "s/\.terms$//"`
+        clusterBase=`echo ${file} | sed "s/\.titles$//"`
 
         number=`basename ${file} | sed "s/.*-//" | sed "s/\..*//"`
         echo "${number}"
@@ -59,5 +59,6 @@ do
         java -cp "${CLASSPATH}" edu.nyu.tandon.ml.features.SegmentCounter \
             -i "${outputDir}/${number}/${inputBase}.top10" \
             -b 10 \
-            -d `wc -l ${clusterBase}`
+            -d `wc -l ${file}` \
+            -c ${number}
 done

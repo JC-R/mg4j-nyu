@@ -27,6 +27,7 @@ if [ -z "${globalBase}" ]; then echo "You have to define the basename of a globa
 if [ -z "${outputName}" ]; then echo "You have to define the output name."; exit 1; fi;
 
 rm -fR "${workDir}/numbers"
+rm -fR "${workDir}/titles"
 
 # Create the strategy
 ${ROOT}/clustering/cluster-mappings.sh ${workDir} "${globalBase}.titles" "$@"

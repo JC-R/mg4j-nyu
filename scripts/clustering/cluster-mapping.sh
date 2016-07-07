@@ -32,10 +32,12 @@ shift $((OPTIND-1))
 GLOBAL=$1
 CLUSTER=$2
 OUTPUT=$3
+OUTPUT_TITLES=$4
 
 if [ -z "${GLOBAL}" ]; then echo "You have to define global index's title list."; exit 1; fi;
 if [ -z "${CLUSTER}" ]; then echo "You have to define cluster's title list."; exit 1; fi;
-if [ -z "${OUTPUT}" ]; then echo "You have to define output file."; exit 1; fi;
+if [ -z "${OUTPUT}" ]; then echo "You have to define numbers output file."; exit 1; fi;
+if [ -z "${OUTPUT_TITLES}" ]; then echo "You have to define titles output file."; exit 1; fi;
 
 globalSorted=${GLOBAL}
 if [ "$SORT" = true ]; then
@@ -43,3 +45,5 @@ if [ "$SORT" = true ]; then
         seq 0 $((`wc -l < ${GLOBAL}` - 1)) | paste -d" " ${GLOBAL} - | sort -k1b,1 > ${globalSorted}
 fi
 sort -k1b,1 ${CLUSTER} | join ${globalSorted} - | cut -d" " -f2 | sort -n > ${OUTPUT}
+sort -k1b,1 ${CLUSTER} | join ${globalSorted} - | sort -n -k2 | cut -d" " -f1 > ${OUTPUT_TITLES}
+

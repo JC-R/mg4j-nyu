@@ -22,11 +22,12 @@ globalSorted=`mktemp`
 seq 0 $((`wc -l < ${global}` - 1)) | paste -d" " ${global} - | sort -k1b,1 > ${globalSorted}
 
 mkdir -p "${workDir}/numbers"
+mkdir -p "${workDir}/titles"
 
 >&2 echo "Creating clusters mappings for index '${global}'"
 for cluster in "$@"
 do
         base=`basename ${cluster}`
         >&2 echo "Creating cluster mapping for '${cluster}'"
-        ${ROOT}/clustering/cluster-mapping.sh -s ${globalSorted} ${cluster} "${workDir}/numbers/${base}"
+        ${ROOT}/clustering/cluster-mapping.sh -s ${globalSorted} ${cluster} "${workDir}/numbers/${base}" "${workDir}/titles/${base}"
 done
