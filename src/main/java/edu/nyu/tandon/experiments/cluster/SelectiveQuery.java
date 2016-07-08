@@ -95,7 +95,7 @@ public class SelectiveQuery extends Query {
 		*/
 
         final SelectiveQueryEngine queryEngine = new SelectiveQueryEngine(simpleParser, new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING), indexMap,
-                indexMap.firstKey(), jsapResult.getString("csi"));
+                basenameWeight[0], jsapResult.getString("csi"));
 
         SelectiveQuery query = new SelectiveQuery(queryEngine);
         query.displayMode = Query.OutputType.TIME;
