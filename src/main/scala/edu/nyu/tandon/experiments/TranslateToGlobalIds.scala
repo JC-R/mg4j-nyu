@@ -21,16 +21,6 @@ object TranslateToGlobalIds {
   def toGlobal(strategy: SelectiveDocumentalIndexStrategy, cluster: Int)(localIds: Seq[Long]): Seq[Long] =
     localIds map (strategy.globalPointer(cluster, _))
 
-//  def translate(input: File, cluster: Int, strategy: SelectiveDocumentalIndexStrategy): Unit = {
-//    val globalFile = new File(input.getAbsolutePath + ".global")
-//    val writer = new PrintWriter(globalFile)
-//    val lineStream = Source.fromFile(input).getLines().toStream
-//    for {
-//      line <- lineStream map lineToLongs map toGlobal(strategy, cluster) map longsToLine
-//    } writer.write(line + "\n")
-//    writer.close()
-//  }
-
   def columnToGlobal(strategy: SelectiveDocumentalIndexStrategy, cluster: Int) = udf {
     line: String => {
       longsToLine(toGlobal(strategy, cluster)(lineToLongs(line)))
@@ -44,7 +34,7 @@ object TranslateToGlobalIds {
       .drop("results")
   }
 
-  def main(args: Array[String]) = {
+  def main(args: Array[String]): Unit = {
 
     case class Config(input: File = null, strategy: File = null, cluster: Int = -1)
 
@@ -76,11 +66,11 @@ object TranslateToGlobalIds {
         val strategy = new ObjectInputStream(new FileInputStream(config.strategy)).readObject()
           .asInstanceOf[SelectiveDocumentalIndexStrategy]
 
-        translate(
+        saveFeatureFile(translate(
           loadFeatureFile(sqlContext)(config.input),
           config.cluster,
           strategy
-        )
+        ), config.input.getAbsolutePath + ".global")
 
       case None =>
     }

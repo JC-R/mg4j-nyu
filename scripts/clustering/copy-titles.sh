@@ -1,7 +1,6 @@
 #!/bin/bash
 
 if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../`; fi;
-CLASSPATH=`find "${ROOT}/../target/" -name "*.jar" | paste -d: -s`
 
 workDir=$1
 
@@ -21,5 +20,5 @@ do
         base=`basename ${termFile}`
         number=`echo ${base} | sed "s/.*-//" | sed "s/\..*//"`
         outputName=`echo ${termFile} | sed "s/\.terms$//"`
-        mv "${workDir}/${number}" "${workDir}/${outputName}-${number}.titles"
+        mv "${workDir}/${number}" "${outputName}.titles"
 done

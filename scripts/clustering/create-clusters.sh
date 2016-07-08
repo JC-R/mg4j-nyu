@@ -12,7 +12,7 @@
 #
 
 if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../`; fi;
-CLASSPATH=`find "${ROOT}/../target/" -name "*.jar" | paste -d: -s`
+CLASSPATH="${CLASSPATH}:${ROOT}/../:`find "${ROOT}/../target/" -name "*.jar" | paste -d: -s`"
 
 workDir=$1
 globalBase=$2

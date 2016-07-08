@@ -13,7 +13,8 @@
 #
 
 if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../../`; fi;
-CLASSPATH=`find "${ROOT}/../target/" -name "*.jar" | paste -d: -s`
+#CLASSPATH=`find "${ROOT}/../target/" -name "*.jar" | paste -d: -s`
+export CLASSPATH="${CLASSPATH}:${ROOT}/../:`find "${ROOT}/../target/" -name "*.jar" | paste -d: -s`"
 
 dir=$1
 input=$2
