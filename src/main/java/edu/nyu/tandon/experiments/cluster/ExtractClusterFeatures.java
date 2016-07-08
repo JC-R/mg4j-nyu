@@ -1,13 +1,13 @@
-package edu.nyu.tandon.experiments;
+package edu.nyu.tandon.experiments.cluster;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.martiansoftware.jsap.*;
-import edu.nyu.tandon.experiments.logger.EventLogger;
-import edu.nyu.tandon.experiments.logger.FileEventLogger;
-import edu.nyu.tandon.experiments.logger.ResultEventLogger;
-import edu.nyu.tandon.experiments.logger.TimeEventLogger;
+import edu.nyu.tandon.experiments.cluster.logger.EventLogger;
+import edu.nyu.tandon.experiments.cluster.logger.FileClusterEventLogger;
+import edu.nyu.tandon.experiments.cluster.logger.ResultClusterEventLogger;
+import edu.nyu.tandon.experiments.cluster.logger.TimeClusterEventLogger;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.query.QueryEngine;
 import edu.nyu.tandon.search.score.BM25PrunedScorer;
@@ -25,27 +25,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spark_project.guava.collect.Lists;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static edu.nyu.tandon.query.Query.MAX_STEMMING;
-import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.GLOB_FREQ_EXTENSION;
-import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.GLOB_STAT_EXTENSION;
+import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.*;
 import static it.unimi.dsi.fastutil.io.BinIO.loadLongs;
 
 /**
  * @author michal.siedlaczek@nyu.edu
  */
-public class ExtractFeatures {
+public class ExtractClusterFeatures {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(ExtractFeatures.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(ExtractClusterFeatures.class);
 
     // TODO: Should be more general and support other kinds of aliases.
     private static final String ALIAS = "text";
@@ -61,6 +63,7 @@ public class ExtractFeatures {
                         new FlaggedOption("listLengthsOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'l', "list-lengths-output", "The output file to store inverted list lengths."),
                         new FlaggedOption("queryLengthOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'q', "query-length-output", "The output file to store query lengths."),
                         new FlaggedOption("topK", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'k', "top-k", "The engine will limit the result set to top k results. k=10 by default."),
+                        new FlaggedOption("cluster", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'c', "cluster", "The cluster number."),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index.")
                 });
 
@@ -87,27 +90,22 @@ public class ExtractFeatures {
         BM25PrunedScorer scorer = new BM25PrunedScorer();
         if (jsapResult.userSpecified("globalStatistics")) {
             LOGGER.info("Running queries with global statistics.");
-            LongArrayList frequencies = new LongArrayList(loadLongs(basename + GLOB_FREQ_EXTENSION));
-            long[] globalStats = loadLongs(basename + GLOB_STAT_EXTENSION);
-            if (globalStats.length != 2) {
-                throw new IllegalStateException(String.format("File %s must contain 2 longs (but contains %d)",
-                        basename + GLOB_STAT_EXTENSION, globalStats.length));
-            }
+            LongArrayList frequencies = loadGlobalFrequencies(basename);
+            long[] globalStats = loadGlobalStats(basename);
             scorer.setGlobalMetrics(globalStats[0], globalStats[1], frequencies);
         }
         engine.score(scorer);
 
         int k = jsapResult.userSpecified("topK") ? jsapResult.getInt("topK") : 10;
+        int cluster = jsapResult.getInt("cluster");
 
         List<EventLogger> eventLoggers = new ArrayList<>();
 
         // It is important that this event Logger is before the time logger.
         if (jsapResult.userSpecified("listLengthsOutput")) {
-            eventLoggers.add(new FileEventLogger(new File(jsapResult.getString("listLengthsOutput"))) {
-                private long queriesProcessed = 0;
-
+            eventLoggers.add(new FileClusterEventLogger(jsapResult.getString("listLengthsOutput"), cluster) {
                 @Override
-                public void onStart(Iterable<String> query) {
+                public void onStart(long id, Iterable<String> query) {
                     List<Long> lengths = StreamSupport.stream(query.spliterator(), false).map(b -> {
                         try {
                             return indexMap.get(ALIAS).documents(b).frequency();
@@ -115,35 +113,35 @@ public class ExtractFeatures {
                             return -1L;
                         }
                     }).collect(Collectors.toList());
-                    log(String.valueOf(queriesProcessed++) + "," + Joiner.on(" ").join(lengths));
+                    log(id, Joiner.on(" ").join(lengths));
                 }
 
                 @Override
-                public void onEnd(Iterable<Long> results) {
+                public void onEnd(long id, Iterable<Long> results) {
                 }
 
                 @Override
-                public String header() {
-                    return "id,list-lengths";
+                public String column() {
+                    return "list-lengths";
                 }
 
             });
         }
 
         if (jsapResult.userSpecified("queryLengthOutput")) {
-            eventLoggers.add(new FileEventLogger(new File(jsapResult.getString("queryLengthOutput"))) {
+            eventLoggers.add(new FileClusterEventLogger(jsapResult.getString("queryLengthOutput"), cluster) {
                 @Override
-                public void onStart(Iterable<String> query) {
-                    log(String.valueOf(StreamSupport.stream(query.spliterator(), false).count()));
+                public void onStart(long id, Iterable<String> query) {
+                    log(id, String.valueOf(StreamSupport.stream(query.spliterator(), false).count()));
                 }
 
                 @Override
-                public void onEnd(Iterable<Long> results) {
+                public void onEnd(long id, Iterable<Long> results) {
 
                 }
 
                 @Override
-                public String header() {
+                public String column() {
                     return "id,length";
                 }
 
@@ -151,29 +149,29 @@ public class ExtractFeatures {
         }
 
         if (jsapResult.userSpecified("timeOutput")) {
-            eventLoggers.add(new TimeEventLogger(jsapResult.getString("timeOutput")));
+            eventLoggers.add(new TimeClusterEventLogger(jsapResult.getString("timeOutput"), cluster));
         }
 
         if (jsapResult.userSpecified("resultOutput")) {
-            eventLoggers.add(new ResultEventLogger(new File(jsapResult.getString("resultOutput"))));
+            eventLoggers.add(new ResultClusterEventLogger(jsapResult.getString("resultOutput"), cluster));
         }
 
-        try (Stream<String> lines = Files.lines(Paths.get(jsapResult.getString("input")))) {
-
-            lines.forEach(query -> {
+        try(BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
+            long id = 0;
+            for (String query; (query = br.readLine()) != null; ) {
 
                 TermProcessor termProcessor = termProcessors.get(ALIAS);
                 List<String> processedTerms =
                         Lists.newArrayList(Splitter.on(' ').omitEmptyStrings().split(query))
-                        .stream()
-                        .map(t -> {
-                            MutableString m = new MutableString(t);
-                            termProcessor.processTerm(m);
-                            return m.toString();
-                        })
-                        .collect(Collectors.toList());
-                
-                for (EventLogger l : eventLoggers) l.onStart(processedTerms);
+                                .stream()
+                                .map(t -> {
+                                    MutableString m = new MutableString(t);
+                                    termProcessor.processTerm(m);
+                                    return m.toString();
+                                })
+                                .collect(Collectors.toList());
+
+                for (EventLogger l : eventLoggers) l.onStart(id, processedTerms);
 
                 ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r =
                         new ObjectArrayList<>();
@@ -185,9 +183,10 @@ public class ExtractFeatures {
                     LOGGER.error(String.format("There was an error while processing query: %s", query), e);
                 }
 
-                for (EventLogger l : eventLoggers) l.onEnd(r.stream().map(dsi -> dsi.document).collect(Collectors.toList()));
-            });
+                for (EventLogger l : eventLoggers) l.onEnd(id, r.stream().map(dsi -> dsi.document).collect(Collectors.toList()));
+                id++;
 
+            }
         }
 
     }

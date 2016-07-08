@@ -1,5 +1,6 @@
-package edu.nyu.tandon.experiments;
+package edu.nyu.tandon.experiments.cluster;
 
+import edu.nyu.tandon.experiments.cluster.SelectShards;
 import edu.nyu.tandon.test.BaseTest;
 import org.junit.Test;
 
@@ -22,7 +23,7 @@ public class SelectShardsTest extends BaseTest {
         // Given
         File outputTime = newTemporaryFile();
         File outputResult = newTemporaryFile();
-        String[] args = String.format("-i %s -t %s -r %s %s %s",
+        String[] args = String.format("-i %s -t %s -r %s -c 0 %s %s",
                     getFileFromResourcePath("queries/gov2-trec_eval-queries.txt").getAbsoluteFile(),
                     outputTime.getAbsoluteFile(),
                     outputResult.getAbsoluteFile(),
@@ -36,11 +37,12 @@ public class SelectShardsTest extends BaseTest {
         // Then
         int count = 0;
         for (String t : Files.readAllLines(outputTime.toPath())) {
-            if (count == 0) assertThat(t, equalTo("id,time"));
+            if (count == 0) assertThat(t, equalTo("id,cluster,time"));
             else {
                 String[] l = t.split(",");
                 assertThat(tryParse(l[0]), notNullValue(Integer.class));
                 assertThat(tryParse(l[1]), notNullValue(Integer.class));
+                assertThat(tryParse(l[2]), notNullValue(Integer.class));
             }
             count++;
         }

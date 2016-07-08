@@ -1,12 +1,10 @@
-package edu.nyu.tandon.experiments;
+package edu.nyu.tandon.experiments.cluster;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.martiansoftware.jsap.*;
-import edu.nyu.tandon.experiments.logger.EventLogger;
-import edu.nyu.tandon.experiments.logger.FileEventLogger;
-import edu.nyu.tandon.experiments.logger.ResultEventLogger;
-import edu.nyu.tandon.experiments.logger.TimeEventLogger;
+import edu.nyu.tandon.experiments.cluster.logger.EventLogger;
+import edu.nyu.tandon.experiments.cluster.logger.ResultClusterEventLogger;
+import edu.nyu.tandon.experiments.cluster.logger.TimeClusterEventLogger;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.shard.csi.CentralSampleIndex;
 import edu.nyu.tandon.shard.ranking.ShardSelector;
@@ -16,6 +14,8 @@ import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -39,12 +39,15 @@ public class SelectShards {
                         new FlaggedOption("timeOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 't', "time-output", "The output file to store execution times."),
                         new FlaggedOption("resultOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'r', "result-output", "The output file to store results."),
                         new FlaggedOption("reddeT", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'T', "redde-t", "T parameter in ReDDE (how many shards to choose). T=10 by default."),
+                        new FlaggedOption("cluster", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'c', "cluster", "The cluster number."),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the cluster indices (not including number suffixes). In other words, the basename of the partitioned index as if loaded as a DocumentalMergedCluster."),
                         new UnflaggedOption("csi", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the central sample index.")
                 });
 
         final JSAPResult jsapResult = jsap.parse(args);
         if (jsap.messagePrinted()) return;
+
+        int cluster = jsapResult.getInt("cluster");
 
         LOGGER.info("Loading CSI...");
         CentralSampleIndex csi = CentralSampleIndex.loadCSI(jsapResult.getString("csi"), jsapResult.getString("basename"));
@@ -55,27 +58,29 @@ public class SelectShards {
         List<EventLogger> eventLoggers = new ArrayList<>();
 
         if (jsapResult.userSpecified("timeOutput")) {
-            eventLoggers.add(new TimeEventLogger(jsapResult.getString("timeOutput")));
+            eventLoggers.add(new TimeClusterEventLogger(jsapResult.getString("timeOutput"), cluster));
         }
 
         if (jsapResult.userSpecified("resultOutput")) {
-            eventLoggers.add(new ResultEventLogger(jsapResult.getString("resultOutput")));
+            eventLoggers.add(new ResultClusterEventLogger(jsapResult.getString("resultOutput"), cluster));
         }
 
-        try (Stream<String> lines = Files.lines(Paths.get(jsapResult.getString("input")))) {
-
-            lines.forEach(query -> {
+        try (BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
+            long id = 0;
+            for (String query; (query = br.readLine()) != null; ) {
                 try {
 
-                    for (EventLogger l : eventLoggers) l.onStart(Splitter.on(" ").split(query));
+                    for (EventLogger l : eventLoggers) l.onStart(id, Splitter.on(" ").split(query));
                     List<Integer> shards = shardSelector.selectShards(query);
-                    for (EventLogger l : eventLoggers) l.onEnd(shards.stream().map(s -> s.longValue()).collect(Collectors.toList()));
+                    for (EventLogger l : eventLoggers)
+                        l.onEnd(id, shards.stream().map(s -> s.longValue()).collect(Collectors.toList()));
 
                 } catch (QueryParserException | QueryBuilderVisitorException | IOException e) {
                     LOGGER.error(String.format("There was an error while processing query: %s", query), e);
+                } finally {
+                    id++;
                 }
-            });
-
+            }
         }
     }
 

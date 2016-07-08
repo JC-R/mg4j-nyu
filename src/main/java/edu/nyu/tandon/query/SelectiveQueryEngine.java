@@ -1,16 +1,20 @@
 package edu.nyu.tandon.query;
 
-import edu.nyu.tandon.experiments.logger.EventLogger;
+import edu.nyu.tandon.experiments.cluster.logger.EventLogger;
 import edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy;
+import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import edu.nyu.tandon.shard.csi.CentralSampleIndex;
 import edu.nyu.tandon.shard.ranking.ShardSelector;
 import edu.nyu.tandon.shard.ranking.redde.ReDDEShardSelector;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
+import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitor;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
+import it.unimi.di.big.mg4j.query.parser.QueryParser;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.di.big.mg4j.query.parser.SimpleParser;
+import it.unimi.di.big.mg4j.search.DocumentIterator;
 import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
 import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
 import it.unimi.dsi.fastutil.Hash;
@@ -30,7 +34,9 @@ import java.util.stream.Collectors;
 
 import static edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy.STRATEGY;
 import static edu.nyu.tandon.query.Query.MAX_STEMMING;
+import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.*;
 import static it.unimi.di.big.mg4j.index.DiskBasedIndex.PROPERTIES_EXTENSION;
+import static it.unimi.dsi.fastutil.io.BinIO.loadLongs;
 
 /**
  *
@@ -39,7 +45,7 @@ import static it.unimi.di.big.mg4j.index.DiskBasedIndex.PROPERTIES_EXTENSION;
  *
  * @author michal.siedlaczek@nyu.edu
  */
-public class SelectiveQueryEngine<T> {
+public class SelectiveQueryEngine<T> extends QueryEngine<T> {
 
     protected DocumentalClusteringStrategy csiStrategy;
     protected SelectiveDocumentalIndexStrategy clusterStrategy;
@@ -48,7 +54,13 @@ public class SelectiveQueryEngine<T> {
     protected ShardSelector shardSelector;
     protected List<EventLogger> eventLoggers;
 
-    public SelectiveQueryEngine(String basename, String csiBasename) throws IllegalAccessException, ConfigurationException, IOException, InstantiationException, ClassNotFoundException, URISyntaxException, NoSuchMethodException, InvocationTargetException {
+    public SelectiveQueryEngine(final QueryParser queryParser,
+                                final QueryBuilderVisitor<DocumentIterator> builderVisitor,
+                                final Object2ReferenceMap<String, Index> indexMap,
+                                String basename,
+                                String csiBasename)
+            throws IllegalAccessException, ConfigurationException, IOException, InstantiationException, ClassNotFoundException, URISyntaxException, NoSuchMethodException, InvocationTargetException {
+        super(queryParser, builderVisitor, indexMap);
         init(basename, csiBasename);
     }
 
@@ -79,20 +91,28 @@ public class SelectiveQueryEngine<T> {
 
         String[] basenameWeight = new String[] { indexBasename };
 
-        final Object2ReferenceLinkedOpenHashMap<String, Index> indexMap = new Object2ReferenceLinkedOpenHashMap<String, Index>(Hash.DEFAULT_INITIAL_SIZE, .5f);
-        final Reference2DoubleOpenHashMap<Index> index2Weight = new Reference2DoubleOpenHashMap<Index>();
-        Query.loadIndicesFromSpec(basenameWeight, false, null, indexMap, index2Weight);
+        final Object2ReferenceLinkedOpenHashMap<String, Index> indexMap = new Object2ReferenceLinkedOpenHashMap<>(Hash.DEFAULT_INITIAL_SIZE, .5f);
+        final Reference2DoubleOpenHashMap<Index> index2Weight = new Reference2DoubleOpenHashMap<>();
+        Query.loadIndicesFromSpec(basenameWeight, true, null, indexMap, index2Weight);
 
-        final Object2ObjectOpenHashMap<String, TermProcessor> termProcessors = new Object2ObjectOpenHashMap<String, TermProcessor>(indexMap.size());
+        final Object2ObjectOpenHashMap<String, TermProcessor> termProcessors = new Object2ObjectOpenHashMap<>(indexMap.size());
         for (String alias : indexMap.keySet()) termProcessors.put(alias, indexMap.get(alias).termProcessor);
         final SimpleParser simpleParser = new SimpleParser(indexMap.keySet(), indexMap.firstKey(), termProcessors);
-        final Reference2ReferenceMap<Index, Object> index2Parser = new Reference2ReferenceOpenHashMap<Index, Object>();
+        final Reference2ReferenceMap<Index, Object> index2Parser = new Reference2ReferenceOpenHashMap<>();
 
-        // TODO: Use pruned query engine with GLOBAL STATISTICS!
-        return new QueryEngine(
+        PrunedQueryEngine engine = new PrunedQueryEngine(
                 simpleParser,
                 new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING),
                 indexMap);
+
+        engine.setWeights(index2Weight);
+
+        BM25PrunedScorer scorer = new BM25PrunedScorer();
+        long[] globalStats = loadGlobalStats(indexBasename);
+        scorer.setGlobalMetrics(globalStats[0], globalStats[1], loadGlobalFrequencies(indexBasename));
+        engine.score(scorer);
+
+        return engine;
     }
 
     protected void loadClusterEngines(String basename) throws IllegalAccessException, URISyntaxException, IOException, InstantiationException, NoSuchMethodException, ConfigurationException, InvocationTargetException, ClassNotFoundException {
@@ -109,9 +129,8 @@ public class SelectiveQueryEngine<T> {
         }
     }
 
+    @Override
     public int process(final String query, int offset, final int length, final ObjectArrayList<DocumentScoreInfo<T>> results) throws QueryParserException, QueryBuilderVisitorException, IOException {
-
-//        for (EventLogger l : eventLoggers) l.onStart(query);
 
         List<Integer> shards = shardSelector.selectShards(query);
         ObjectArrayList<DocumentScoreInfo<T>> cumulativeResults = new ObjectArrayList<>();
@@ -126,8 +145,6 @@ public class SelectiveQueryEngine<T> {
                 .sorted((r, q) -> -Double.valueOf(r.score).compareTo(Double.valueOf(q.score)))
                 .limit(length)
                 .collect(Collectors.toList()));
-
-//        for (EventLogger l : eventLoggers) l.onEnd(results);
 
         return results.size();
     }

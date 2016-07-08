@@ -1,4 +1,4 @@
-package edu.nyu.tandon.experiments;
+package edu.nyu.tandon.experiments.cluster;
 
 import com.google.common.base.Splitter;
 import edu.nyu.tandon.test.BaseTest;
@@ -17,7 +17,7 @@ import static org.junit.Assert.assertThat;
 /**
  * @author michal.siedlaczek@nyu.edu
  */
-public class ExtractFeaturesTest extends BaseTest {
+public class ExtractClusterFeaturesTest extends BaseTest {
 
     @Test
     public void runQueriesAndCheckFileFormat() throws Exception {
@@ -26,7 +26,7 @@ public class ExtractFeaturesTest extends BaseTest {
         File outputTime = newTemporaryFile();
         File outputResult = newTemporaryFile();
         File outputListLengths = newTemporaryFile();
-        String[] args = String.format("-i %s -t %s -r %s -l %s -k 15 %s",
+        String[] args = String.format("-i %s -t %s -r %s -l %s -k 15 -c 0 %s",
                 getFileFromResourcePath("queries/gov2-trec_eval-queries.txt").getAbsoluteFile(),
                 outputTime.getAbsoluteFile(),
                 outputResult.getAbsoluteFile(),
@@ -35,25 +35,27 @@ public class ExtractFeaturesTest extends BaseTest {
                 .split(" ");
 
         // When
-        ExtractFeatures.main(args);
+        ExtractClusterFeatures.main(args);
 
         // Then
         int count = 0;
         for (String t : Files.readAllLines(outputTime.toPath())) {
-            if (count == 0) assertThat(t, equalTo("id,time"));
+            if (count == 0) assertThat(t, equalTo("id,cluster,time"));
             else {
                 String[] l = t.split(",");
                 assertThat(tryParse(l[0]), notNullValue(Integer.class));
                 assertThat(tryParse(l[1]), notNullValue(Integer.class));
+                assertThat(tryParse(l[2]), notNullValue(Integer.class));
             }
             count++;
         }
         assertThat(count, equalTo(151));
         count = 0;
         for (String line : Files.readAllLines(outputResult.toPath())) {
-            if (count == 0) assertThat(line, equalTo("id,results"));
+            if (count == 0) assertThat(line, equalTo("id,cluster,results"));
             else {
                 Iterator<String> l = Splitter.on(",").split(line).iterator();
+                assertThat(tryParse(l.next()), notNullValue(Integer.class));
                 assertThat(tryParse(l.next()), notNullValue(Integer.class));
                 String s = l.next();
                 for (String doc : Splitter.on(" ").omitEmptyStrings().split(s)) {
@@ -66,13 +68,14 @@ public class ExtractFeaturesTest extends BaseTest {
         assertThat(count, equalTo(151));
         count = 0;
         for (String line : Files.readAllLines(outputListLengths.toPath())) {
-            if (count == 0) assertThat(line, equalTo("id,list-lengths"));
+            if (count == 0) assertThat(line, equalTo("id,cluster,list-lengths"));
             else {
                 String[] l = line.split(",");
                 assertThat(tryParse(l[0]), notNullValue(Integer.class));
-                for (String length : Splitter.on(" ").omitEmptyStrings().split(l[1])) {
+                assertThat(tryParse(l[1]), notNullValue(Integer.class));
+                for (String length : Splitter.on(" ").omitEmptyStrings().split(l[2])) {
                     Integer len = tryParse(length);
-                    assertThat(String.format("Problem parsing list of integers: %s", l[1]),
+                    assertThat(String.format("Problem parsing list of integers: %s", l[2]),
                             tryParse(length), notNullValue(Integer.class));
                     assertThat(String.format("There is a -1 value (exception during running queries) at line %d", count),
                             len, CoreMatchers.not(equalTo(-1l)));
@@ -90,7 +93,7 @@ public class ExtractFeaturesTest extends BaseTest {
         File outputTime = newTemporaryFile();
         File outputResult = newTemporaryFile();
         File outputListLengths = newTemporaryFile();
-        String[] args = String.format("-g -i %s -t %s -r %s -l %s %s",
+        String[] args = String.format("-g -i %s -t %s -r %s -l %s -c 0 %s",
                 getFileFromResourcePath("queries/gov2-trec_eval-queries.txt").getAbsoluteFile(),
                 outputTime.getAbsoluteFile(),
                 outputResult.getAbsoluteFile(),
@@ -99,7 +102,7 @@ public class ExtractFeaturesTest extends BaseTest {
                 .split(" ");
 
         // When
-        ExtractFeatures.main(args);
+        ExtractClusterFeatures.main(args);
 
         // Then
         int count = 0;
