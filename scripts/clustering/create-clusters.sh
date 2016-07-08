@@ -39,7 +39,9 @@ ls ${workDir}/*-*terms | while read termFile;
 do
         base=`basename ${termFile}`
         number=`echo ${base} | sed "s/.*-//" | sed "s/\..*//"`
-        cp "${workDir}/titles/${number}" "${workDir}/${outputName}-${number}.titles"
         java -cp ${CLASSPATH} it.unimi.dsi.sux4j.mph.MWHCFunction -s 32 "${workDir}/${outputName}-${number}.mwhc" "${workDir}/${outputName}-${number}.terms"
         java -cp ${CLASSPATH} it.unimi.dsi.sux4j.util.SignedFunctionStringMap "${workDir}/${outputName}-${number}.mwhc" "${workDir}/${outputName}-${number}.termmap"
 done
+
+# Copy titles
+${ROOT}/clustering/copy-titles.sh ${workDir}
