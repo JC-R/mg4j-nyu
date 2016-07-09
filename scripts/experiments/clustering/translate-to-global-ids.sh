@@ -10,8 +10,7 @@
 # 4) csi
 #
 
-if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../../`; fi;
-CLASSPATH=`find "${ROOT}/../target/" -name "*.jar" | paste -d: -s`
+source "${MG4J_NYU_SCRIPTS}/commons.sh"
 
 dir=$1
 input=$2
@@ -30,7 +29,7 @@ do
         number=`basename ${file} | sed "s/.*-//" | sed "s/\..*//"`
         echo "${number}"
 
-        java -cp "${CLASSPATH}" edu.nyu.tandon.experiments.TranslateToGlobalIds \
+        java edu.nyu.tandon.experiments.TranslateToGlobalIds \
             -i "${outputDir}/${number}/${inputBase}.top10" \
             -s ${strategy} \
             -c ${number}

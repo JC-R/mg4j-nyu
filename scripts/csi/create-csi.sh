@@ -12,7 +12,7 @@
 # 4) fraction of the original index to use for CSI.
 #
 
-if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../`; fi;
+source "${MG4J_NYU_SCRIPTS}/commons.sh"
 
 workDir=$1
 globalBase=$2
@@ -40,4 +40,4 @@ mkdir -p "${workDir}/numbers"
 cat ${random} | head "-n${csiSize}" | sort -n > "${workDir}/numbers/0"
 cat ${random} | tail "-n$((${size} - ${csiSize}))" | sort -n > "${workDir}/numbers/1"
 
-${ROOT}/clustering/create-clusters.sh ${workDir} ${globalBase} ${outputName}
+${MG4J_NYU_SCRIPTS}/clustering/create-clusters.sh ${workDir} ${globalBase} ${outputName}

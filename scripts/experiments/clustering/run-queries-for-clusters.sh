@@ -12,9 +12,7 @@
 # 4) csi
 #
 
-if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../../`; fi;
-#CLASSPATH=`find "${ROOT}/../target/" -name "*.jar" | paste -d: -s`
-export CLASSPATH="${CLASSPATH}:${ROOT}/../:`find "${ROOT}/../target/" -name "*.jar" | paste -d: -s`"
+source "${MG4J_NYU_SCRIPTS}/commons.sh"
 
 dir=$1
 input=$2
@@ -29,7 +27,7 @@ if [ -z "${csiBase}" ]; then echo "You have to define CSI."; exit 1; fi;
 inputBase=`basename ${input}`
 base="${dir}/`ls ${dir} | egrep '\.strategy' | sed 's/\.strategy//'`"
 
-java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.SelectShards \
+java -Xmx3g edu.nyu.tandon.experiments.SelectShards \
     -i ${input} \
     -t "${outputDir}/${inputBase}.shards.time" \
     -r "${outputDir}/${inputBase}.shards.t10" \
@@ -45,19 +43,19 @@ do
 
         mkdir -p "${outputDir}/${number}"
 
-        java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.ExtractFeatures -g \
+        java -Xmx3g edu.nyu.tandon.experiments.ExtractFeatures -g \
             -i ${input} \
             -t "${outputDir}/${number}/${inputBase}.time" \
             -r "${outputDir}/${number}/${inputBase}.top10" \
             -l "${outputDir}/${number}/${inputBase}.listlengths" \
             ${clusterBase}
 
-        java -cp "${CLASSPATH}" edu.nyu.tandon.experiments.TranslateToGlobalIds \
+        java edu.nyu.tandon.experiments.TranslateToGlobalIds \
             -i "${outputDir}/${number}/${inputBase}.top10" \
             -s "${base}.strategy" \
             -c ${number}
 
-        java -cp "${CLASSPATH}" edu.nyu.tandon.ml.features.SegmentCounter \
+        java edu.nyu.tandon.ml.features.SegmentCounter \
             -i "${outputDir}/${number}/${inputBase}.top10" \
             -b 10 \
             -d `wc -l ${file}` \

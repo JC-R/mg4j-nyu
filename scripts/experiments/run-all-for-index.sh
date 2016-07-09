@@ -1,7 +1,6 @@
 #!/bin/bash
 
-if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../`; fi;
-CLASSPATH=`find "${ROOT}/../target/" -name "*.jar" | paste -d: -s`
+source "${MG4J_NYU_SCRIPTS}/commons.sh"
 
 queryFile=$1
 outputDir=$2
@@ -29,7 +28,7 @@ mkdir -p "${outputDir}/clusters/unordered"
 mkdir -p "${outputDir}/clusters/ordered"
 
 # Run for unordered full index
-java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.ExtractFeatures \
+java -Xmx3g edu.nyu.tandon.experiments.ExtractFeatures \
     -i ${queryFile} \
     -t "${outputDir}/full/unordered/${inputBase}.time" \
     -r "${outputDir}/full/unordered/${inputBase}.top10" \
@@ -37,7 +36,7 @@ java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.ExtractFeatures \
     ${unorderedFullIndex}
 
 # Run for ordered full index
-java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.ExtractFeatures \
+java -Xmx3g edu.nyu.tandon.experiments.ExtractFeatures \
     -i ${queryFile} \
     -t "${outputDir}/full/ordered/${inputBase}.time" \
     -r "${outputDir}/full/ordered/${inputBase}.top10" \
@@ -45,14 +44,14 @@ java -Xmx3g -cp "${CLASSPATH}" edu.nyu.tandon.experiments.ExtractFeatures \
     ${orderedFullIndex}
 
 # Run for unordered clusters
-${ROOT}/experiments/clustering/run-queries-for-clusters.sh \
+${MG4J_NYU_SCRIPTS}/experiments/clustering/run-queries-for-clusters.sh \
     ${unorderedClusterDir} \
     ${queryFile} \
     "${outputDir}/clusters/unordered" \
     ${csi}
 
 # Run for ordered clusters
-${ROOT}/experiments/clustering/run-queries-for-clusters.sh \
+${MG4J_NYU_SCRIPTS}/experiments/clustering/run-queries-for-clusters.sh \
     ${orderedClusterDir} \
     ${queryFile} \
     "${outputDir}/clusters/ordered" \

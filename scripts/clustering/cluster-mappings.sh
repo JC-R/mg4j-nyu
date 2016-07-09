@@ -11,7 +11,7 @@
 # 3...) the list of files containing titles of the documents in clusters.
 #
 
-if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../`; fi;
+source "${MG4J_NYU_SCRIPTS}/commons.sh"
 
 workDir=$1
 global=$2
@@ -29,5 +29,5 @@ for cluster in "$@"
 do
         base=`basename ${cluster}`
         >&2 echo "Creating cluster mapping for '${cluster}'"
-        ${ROOT}/clustering/cluster-mapping.sh -s ${globalSorted} ${cluster} "${workDir}/numbers/${base}" "${workDir}/titles/${base}"
+        ${MG4J_NYU_SCRIPTS}/clustering/cluster-mapping.sh -s ${globalSorted} ${cluster} "${workDir}/numbers/${base}" "${workDir}/titles/${base}"
 done

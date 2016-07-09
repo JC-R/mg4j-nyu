@@ -1,12 +1,10 @@
 #!/bin/bash
 
-if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../`; fi;
+source "${MG4J_NYU_SCRIPTS}/commons.sh"
 
 workDir=$1
 
 if [ -z "${workDir}" ]; then echo "You have to define working directory."; exit 1; fi;
-
-#cp "${workDir}/titles/${number}" "${workDir}/${outputName}-${number}.titles"
 
 i=0
 find "${workDir}/titles" -type f | sort | while read file;

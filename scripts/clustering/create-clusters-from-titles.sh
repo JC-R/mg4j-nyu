@@ -12,7 +12,7 @@
 # 4...) the list of files containing titles of the documents in clusters.
 #
 
-if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../`; fi;
+source "${MG4J_NYU_SCRIPTS}/commons.sh"
 
 workDir=$1
 globalBase=$2
@@ -29,5 +29,5 @@ rm -fR "${workDir}/numbers"
 rm -fR "${workDir}/titles"
 
 # Create the strategy
-${ROOT}/clustering/cluster-mappings.sh ${workDir} "${globalBase}.titles" "$@"
-${ROOT}/clustering/create-clusters.sh ${workDir} ${globalBase} ${outputName}
+${MG4J_NYU_SCRIPTS}/clustering/cluster-mappings.sh ${workDir} "${globalBase}.titles" "$@"
+${MG4J_NYU_SCRIPTS}/clustering/create-clusters.sh ${workDir} ${globalBase} ${outputName}

@@ -9,8 +9,7 @@
 # 1) working directory
 #
 
-if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../`; fi;
-CLASSPATH=`find "${ROOT}/../target/" -name "*.jar" | paste -d: -s`
+source "${MG4J_NYU_SCRIPTS}/commons.sh"
 
 dir=$1
 
@@ -23,6 +22,6 @@ do
         number=`echo ${base} | sed "s/.*-//" | sed "s/\..*//"`
         mwhcFile=`echo ${termFile} | sed "s/terms$/mwhc/"`
         termmapFile=`echo ${termFile} | sed "s/terms$/termmap/"`
-        java -cp ${CLASSPATH} it.unimi.dsi.sux4j.mph.MWHCFunction -s 32 ${mwhcFile} ${termFile}
-        java -cp ${CLASSPATH} it.unimi.dsi.sux4j.util.SignedFunctionStringMap ${mwhcFile} ${termmapFile}
+        java it.unimi.dsi.sux4j.mph.MWHCFunction -s 32 ${mwhcFile} ${termFile}
+        java it.unimi.dsi.sux4j.util.SignedFunctionStringMap ${mwhcFile} ${termmapFile}
 done

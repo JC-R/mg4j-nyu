@@ -13,7 +13,7 @@
 # 2) the titles of the documents that are supposed to be in the cluster (new line delimited).
 #
 
-if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../`; fi;
+source "${MG4J_NYU_SCRIPTS}/commons.sh"
 
 SORT=true
 while getopts ":s" opt; do

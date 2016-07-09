@@ -11,8 +11,7 @@
 # 3) output index (and clusters) base name
 #
 
-if [ -z "${ROOT}" ]; then export ROOT=`readlink -f ../`; fi;
-CLASSPATH="${CLASSPATH}:${ROOT}/../:`find "${ROOT}/../target/" -name "*.jar" | paste -d: -s`"
+source "${MG4J_NYU_SCRIPTS}/commons.sh"
 
 workDir=$1
 globalBase=$2
@@ -25,10 +24,10 @@ if [ -z "${outputName}" ]; then echo "You have to define the output name."; exit
 # Create the strategy
 clusterList=`find "${workDir}/numbers" -type f | sort | paste -sd "," -`
 totalNumberOfDocuments=`wc -l "${globalBase}.titles" | cut -d" " -f1`
-java -cp ${CLASSPATH} edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy -a "-c:${clusterList}" -n ${totalNumberOfDocuments} "${workDir}/${outputName}.strategy"
+java edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy -a "-c:${clusterList}" -n ${totalNumberOfDocuments} "${workDir}/${outputName}.strategy"
 
 # Create the clusters
-java -cp ${CLASSPATH} it.unimi.di.big.mg4j.tool.PartitionDocumentally \
+java it.unimi.di.big.mg4j.tool.PartitionDocumentally \
     -c POSITIONS:NONE \
     -s "${workDir}/${outputName}.strategy" \
     "${globalBase}-text" \
@@ -39,9 +38,9 @@ ls ${workDir}/*-*terms | while read termFile;
 do
         base=`basename ${termFile}`
         number=`echo ${base} | sed "s/.*-//" | sed "s/\..*//"`
-        java -cp ${CLASSPATH} it.unimi.dsi.sux4j.mph.MWHCFunction -s 32 "${workDir}/${outputName}-${number}.mwhc" "${workDir}/${outputName}-${number}.terms"
-        java -cp ${CLASSPATH} it.unimi.dsi.sux4j.util.SignedFunctionStringMap "${workDir}/${outputName}-${number}.mwhc" "${workDir}/${outputName}-${number}.termmap"
+        java it.unimi.dsi.sux4j.mph.MWHCFunction -s 32 "${workDir}/${outputName}-${number}.mwhc" "${workDir}/${outputName}-${number}.terms"
+        java it.unimi.dsi.sux4j.util.SignedFunctionStringMap "${workDir}/${outputName}-${number}.mwhc" "${workDir}/${outputName}-${number}.termmap"
 done
 
 # Copy titles
-${ROOT}/clustering/copy-titles.sh ${workDir}
+${MG4J_NYU_SCRIPTS}/clustering/copy-titles.sh ${workDir}
