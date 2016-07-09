@@ -3,11 +3,12 @@ package edu.nyu.tandon.experiments.cluster;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.query.QueryEngine;
-import edu.nyu.tandon.query.SelectiveQueryEngine;
+import it.unimi.di.big.mg4j.index.cluster.SelectiveQueryEngine;
 import it.unimi.di.big.mg4j.document.AbstractDocumentSequence;
 import it.unimi.di.big.mg4j.document.DocumentCollection;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
+import it.unimi.di.big.mg4j.index.cluster.DocumentalMergedCluster;
 import it.unimi.di.big.mg4j.query.SelectedInterval;
 import it.unimi.di.big.mg4j.query.TextMarker;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
@@ -94,8 +95,9 @@ public class SelectiveQuery extends Query {
 		}
 		*/
 
+        DocumentalMergedCluster index = (DocumentalMergedCluster) indexMap.get(indexMap.firstKey());
         final SelectiveQueryEngine queryEngine = new SelectiveQueryEngine(simpleParser, new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING), indexMap,
-                basenameWeight[0], jsapResult.getString("csi"));
+                index, basenameWeight[0], jsapResult.getString("csi"));
 
         SelectiveQuery query = new SelectiveQuery(queryEngine);
         query.displayMode = Query.OutputType.TIME;

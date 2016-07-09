@@ -31,3 +31,6 @@ rm -fR "${workDir}/titles"
 # Create the strategy
 ${MG4J_NYU_SCRIPTS}/clustering/cluster-mappings.sh ${workDir} "${globalBase}.titles" "$@"
 ${MG4J_NYU_SCRIPTS}/clustering/create-clusters.sh ${workDir} ${globalBase} ${outputName}
+
+# Copy titles
+${MG4J_NYU_SCRIPTS}/clustering/copy-titles.sh ${workDir}

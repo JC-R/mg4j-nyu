@@ -1,7 +1,9 @@
-package edu.nyu.tandon.query;
+package it.unimi.di.big.mg4j.index.cluster;
 
 import edu.nyu.tandon.experiments.cluster.logger.EventLogger;
 import edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy;
+import edu.nyu.tandon.query.PrunedQueryEngine;
+import edu.nyu.tandon.query.QueryEngine;
 import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import edu.nyu.tandon.shard.csi.CentralSampleIndex;
 import edu.nyu.tandon.shard.ranking.ShardSelector;
@@ -9,6 +11,7 @@ import edu.nyu.tandon.shard.ranking.redde.ReDDEShardSelector;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
+import it.unimi.di.big.mg4j.index.cluster.DocumentalMergedCluster;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitor;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParser;
@@ -57,43 +60,43 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
     public SelectiveQueryEngine(final QueryParser queryParser,
                                 final QueryBuilderVisitor<DocumentIterator> builderVisitor,
                                 final Object2ReferenceMap<String, Index> indexMap,
+                                DocumentalMergedCluster index,
                                 String basename,
                                 String csiBasename)
             throws IllegalAccessException, ConfigurationException, IOException, InstantiationException, ClassNotFoundException, URISyntaxException, NoSuchMethodException, InvocationTargetException {
         super(queryParser, builderVisitor, indexMap);
-        init(basename, csiBasename);
+        init(index, basename, csiBasename);
     }
 
-    protected void init(String basename, String csiBasename)
+    protected void init(DocumentalMergedCluster index, String basename, String csiBasename)
             throws IllegalAccessException, URISyntaxException, IOException, InstantiationException, NoSuchMethodException, ConfigurationException, InvocationTargetException, ClassNotFoundException {
 
         csiStrategy = (DocumentalClusteringStrategy) BinIO.loadObject(csiBasename + STRATEGY);
         clusterStrategy = (SelectiveDocumentalIndexStrategy) BinIO.loadObject(basename + STRATEGY);
         csi = new CentralSampleIndex(csiBasename + "-0", csiStrategy, clusterStrategy);
         shardSelector = new ReDDEShardSelector(csi);
-        loadClusterEngines(basename);
+        loadClusterEngines(index, basename);
         eventLoggers = new ArrayList<>();
     }
 
     public void addEventLogger(EventLogger eventLogger) { eventLoggers.add(eventLogger); }
 
-    protected String[] resolveClusterBasenames(String basename) {
-        File propertiesFile = new File(basename + PROPERTIES_EXTENSION);
-        File clusterDirectory = propertiesFile.getParentFile();
-        File[] clusters = clusterDirectory.listFiles((dir, name) ->
-                Pattern.compile(".*-\\d+\\" + PROPERTIES_EXTENSION).matcher(name).matches());
-        return Arrays.stream(clusters)
-                .map(f -> f.getAbsolutePath().replaceAll("\\" + PROPERTIES_EXTENSION, ""))
-                .toArray(String[]::new);
-    }
+//    protected String[] resolveClusterBasenames(String basename) {
+//        File propertiesFile = new File(basename + PROPERTIES_EXTENSION);
+//        File clusterDirectory = propertiesFile.getParentFile();
+//        File[] clusters = clusterDirectory.listFiles((dir, name) ->
+//                Pattern.compile(".*-\\d+\\" + PROPERTIES_EXTENSION).matcher(name).matches());
+//        return Arrays.stream(clusters)
+//                .map(f -> f.getAbsolutePath().replaceAll("\\" + PROPERTIES_EXTENSION, ""))
+//                .toArray(String[]::new);
+//    }
 
-    protected QueryEngine loadClusterEngine(String indexBasename) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
-
-        String[] basenameWeight = new String[] { indexBasename };
+    protected QueryEngine loadClusterEngine(Index index, String basename) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
 
         final Object2ReferenceLinkedOpenHashMap<String, Index> indexMap = new Object2ReferenceLinkedOpenHashMap<>(Hash.DEFAULT_INITIAL_SIZE, .5f);
+        indexMap.put("I", index);
         final Reference2DoubleOpenHashMap<Index> index2Weight = new Reference2DoubleOpenHashMap<>();
-        Query.loadIndicesFromSpec(basenameWeight, true, null, indexMap, index2Weight);
+        index2Weight.put(index, 1.0);
 
         final Object2ObjectOpenHashMap<String, TermProcessor> termProcessors = new Object2ObjectOpenHashMap<>(indexMap.size());
         for (String alias : indexMap.keySet()) termProcessors.put(alias, indexMap.get(alias).termProcessor);
@@ -108,18 +111,21 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
         engine.setWeights(index2Weight);
 
         BM25PrunedScorer scorer = new BM25PrunedScorer();
-        long[] globalStats = loadGlobalStats(indexBasename);
-        scorer.setGlobalMetrics(globalStats[0], globalStats[1], loadGlobalFrequencies(indexBasename));
+        long[] globalStats = loadGlobalStats(basename);
+        scorer.setGlobalMetrics(globalStats[0], globalStats[1], loadGlobalFrequencies(basename));
         engine.score(scorer);
 
         return engine;
     }
 
-    protected void loadClusterEngines(String basename) throws IllegalAccessException, URISyntaxException, IOException, InstantiationException, NoSuchMethodException, ConfigurationException, InvocationTargetException, ClassNotFoundException {
-        String[] basenames = resolveClusterBasenames(basename);
-        clusterEngines = new QueryEngine[basenames.length];
-        for (int i = 0; i < clusterEngines.length; i++) {
-            clusterEngines[i] = loadClusterEngine(basenames[i]);
+    protected void loadClusterEngines(DocumentalMergedCluster index, String basename) throws IllegalAccessException, URISyntaxException, IOException, InstantiationException, NoSuchMethodException, ConfigurationException, InvocationTargetException, ClassNotFoundException {
+//        String[] basenames = resolveClusterBasenames(basename);
+//        clusterEngines = new QueryEngine[basenames.length];
+//        for (int i = 0; i < clusterEngines.length; i++) {
+//            clusterEngines[i] = loadClusterEngine(basenames[i]);
+//        }
+        for (int i = 0; i < index.allIndices.length; i++) {
+            clusterEngines[i] = loadClusterEngine(index.localIndex[i], basename);
         }
     }
 

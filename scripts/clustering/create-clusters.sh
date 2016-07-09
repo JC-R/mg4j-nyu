@@ -41,6 +41,3 @@ do
         java it.unimi.dsi.sux4j.mph.MWHCFunction -s 32 "${workDir}/${outputName}-${number}.mwhc" "${workDir}/${outputName}-${number}.terms"
         java it.unimi.dsi.sux4j.util.SignedFunctionStringMap "${workDir}/${outputName}-${number}.mwhc" "${workDir}/${outputName}-${number}.termmap"
 done
-
-# Copy titles
-${MG4J_NYU_SCRIPTS}/clustering/copy-titles.sh ${workDir}
