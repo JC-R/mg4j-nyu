@@ -2,7 +2,7 @@ package edu.nyu.tandon.ml
 
 import java.io.File
 
-import org.apache.spark.sql.{DataFrame, SQLContext}
+import org.apache.spark.sql.{DataFrame, SQLContext, SaveMode}
 import org.apache.spark.sql.types.DoubleType
 
 /**
@@ -24,6 +24,7 @@ package object features {
     features.write
       .format("com.databricks.spark.csv")
       .option("header", "true")
+      .mode(SaveMode.Overwrite)
       .save(file)
 
   def withColumnRenamedAndCastedToDouble(dataFrame: DataFrame, columnName: String): DataFrame =

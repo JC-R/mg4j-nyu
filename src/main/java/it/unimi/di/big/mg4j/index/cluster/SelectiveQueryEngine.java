@@ -81,16 +81,6 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
 
     public void addEventLogger(EventLogger eventLogger) { eventLoggers.add(eventLogger); }
 
-//    protected String[] resolveClusterBasenames(String basename) {
-//        File propertiesFile = new File(basename + PROPERTIES_EXTENSION);
-//        File clusterDirectory = propertiesFile.getParentFile();
-//        File[] clusters = clusterDirectory.listFiles((dir, name) ->
-//                Pattern.compile(".*-\\d+\\" + PROPERTIES_EXTENSION).matcher(name).matches());
-//        return Arrays.stream(clusters)
-//                .map(f -> f.getAbsolutePath().replaceAll("\\" + PROPERTIES_EXTENSION, ""))
-//                .toArray(String[]::new);
-//    }
-
     protected QueryEngine loadClusterEngine(Index index, String basename) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
 
         final Object2ReferenceLinkedOpenHashMap<String, Index> indexMap = new Object2ReferenceLinkedOpenHashMap<>(Hash.DEFAULT_INITIAL_SIZE, .5f);
@@ -119,13 +109,9 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
     }
 
     protected void loadClusterEngines(DocumentalMergedCluster index, String basename) throws IllegalAccessException, URISyntaxException, IOException, InstantiationException, NoSuchMethodException, ConfigurationException, InvocationTargetException, ClassNotFoundException {
-//        String[] basenames = resolveClusterBasenames(basename);
-//        clusterEngines = new QueryEngine[basenames.length];
-//        for (int i = 0; i < clusterEngines.length; i++) {
-//            clusterEngines[i] = loadClusterEngine(basenames[i]);
-//        }
+        clusterEngines = new QueryEngine[index.allIndices.length];
         for (int i = 0; i < index.allIndices.length; i++) {
-            clusterEngines[i] = loadClusterEngine(index.localIndex[i], basename);
+            clusterEngines[i] = loadClusterEngine(index.localIndex[i], basename + "-" + String.valueOf(i));
         }
     }
 

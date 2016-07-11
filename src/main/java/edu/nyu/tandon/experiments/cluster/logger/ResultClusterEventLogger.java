@@ -19,24 +19,16 @@ public class ResultClusterEventLogger extends FileClusterEventLogger {
         return "results";
     }
 
-//    public ResultClusterEventLogger(OutputStream o) throws IOException {
-//        super(o);
-//    }
-//
-//    public ResultClusterEventLogger(File f) throws IOException {
-//        super(f);
-//    }
-
-    public ResultClusterEventLogger(String f, int cluster) throws IOException {
-        super(f, cluster);
+    public ResultClusterEventLogger(String f) throws IOException {
+        super(f);
     }
 
     @Override
-    public void onStart(long id, Iterable<String> query) {
+    public void onStart(long id, int cluster, Iterable<String> query) {
     }
 
     @Override
-    public void onEnd(long id, Iterable<Long> results) {
-        log(id, Joiner.on(" ").join(results));
+    public void onEnd(long id, int cluster, Iterable<Long> results) {
+        log(id, cluster, Joiner.on(" ").join(results));
     }
 }

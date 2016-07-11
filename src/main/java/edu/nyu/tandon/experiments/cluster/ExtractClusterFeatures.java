@@ -103,9 +103,9 @@ public class ExtractClusterFeatures {
 
         // It is important that this event Logger is before the time logger.
         if (jsapResult.userSpecified("listLengthsOutput")) {
-            eventLoggers.add(new FileClusterEventLogger(jsapResult.getString("listLengthsOutput"), cluster) {
+            eventLoggers.add(new FileClusterEventLogger(jsapResult.getString("listLengthsOutput")) {
                 @Override
-                public void onStart(long id, Iterable<String> query) {
+                public void onStart(long id, int cluster, Iterable<String> query) {
                     List<Long> lengths = StreamSupport.stream(query.spliterator(), false).map(b -> {
                         try {
                             return indexMap.get(ALIAS).documents(b).frequency();
@@ -113,11 +113,11 @@ public class ExtractClusterFeatures {
                             return -1L;
                         }
                     }).collect(Collectors.toList());
-                    log(id, Joiner.on(" ").join(lengths));
+                    log(id, cluster, Joiner.on(" ").join(lengths));
                 }
 
                 @Override
-                public void onEnd(long id, Iterable<Long> results) {
+                public void onEnd(long id, int cluster, Iterable<Long> results) {
                 }
 
                 @Override
@@ -129,14 +129,14 @@ public class ExtractClusterFeatures {
         }
 
         if (jsapResult.userSpecified("queryLengthOutput")) {
-            eventLoggers.add(new FileClusterEventLogger(jsapResult.getString("queryLengthOutput"), cluster) {
+            eventLoggers.add(new FileClusterEventLogger(jsapResult.getString("queryLengthOutput")) {
                 @Override
-                public void onStart(long id, Iterable<String> query) {
-                    log(id, String.valueOf(StreamSupport.stream(query.spliterator(), false).count()));
+                public void onStart(long id, int cluster, Iterable<String> query) {
+                    log(id, cluster, String.valueOf(StreamSupport.stream(query.spliterator(), false).count()));
                 }
 
                 @Override
-                public void onEnd(long id, Iterable<Long> results) {
+                public void onEnd(long id, int cluster, Iterable<Long> results) {
 
                 }
 
@@ -149,11 +149,11 @@ public class ExtractClusterFeatures {
         }
 
         if (jsapResult.userSpecified("timeOutput")) {
-            eventLoggers.add(new TimeClusterEventLogger(jsapResult.getString("timeOutput"), cluster));
+            eventLoggers.add(new TimeClusterEventLogger(jsapResult.getString("timeOutput")));
         }
 
         if (jsapResult.userSpecified("resultOutput")) {
-            eventLoggers.add(new ResultClusterEventLogger(jsapResult.getString("resultOutput"), cluster));
+            eventLoggers.add(new ResultClusterEventLogger(jsapResult.getString("resultOutput")));
         }
 
         try(BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
@@ -171,7 +171,7 @@ public class ExtractClusterFeatures {
                                 })
                                 .collect(Collectors.toList());
 
-                for (EventLogger l : eventLoggers) l.onStart(id, processedTerms);
+                for (EventLogger l : eventLoggers) l.onStart(id, cluster, processedTerms);
 
                 ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r =
                         new ObjectArrayList<>();
@@ -183,7 +183,8 @@ public class ExtractClusterFeatures {
                     LOGGER.error(String.format("There was an error while processing query: %s", query), e);
                 }
 
-                for (EventLogger l : eventLoggers) l.onEnd(id, r.stream().map(dsi -> dsi.document).collect(Collectors.toList()));
+                for (EventLogger l : eventLoggers) l.onEnd(id, cluster,
+                        r.stream().map(dsi -> dsi.document).collect(Collectors.toList()));
                 id++;
 
             }

@@ -27,14 +27,16 @@ if [ -z "${csiBase}" ]; then echo "You have to define CSI."; exit 1; fi;
 inputBase=`basename ${input}`
 base="${dir}/`ls ${dir} | egrep '\.strategy' | sed 's/\.strategy//'`"
 
-java -Xmx3g edu.nyu.tandon.experiments.SelectShards \
-    -i ${input} \
-    -t "${outputDir}/${inputBase}.shards.time" \
-    -r "${outputDir}/${inputBase}.shards.t10" \
-    ${base} \
-    ${csiBase}
+#java -Xmx3g edu.nyu.tandon.experiments.cluster.ExctractShardScores \
+#    -i ${input} \
+#    -t "${outputDir}/${inputBase}.shards.time" \
+#    -r "${outputDir}/${inputBase}.shards.t10" \
+#    -c `ls ${dir}/*-*titles | wc -l`
+#    ${base} \
+#    ${csiBase}
 
-ls ${dir}/*-*titles | while read file;
+set -x
+ls ${dir}/*-*titles | sort | while read file;
 do
         clusterBase=`echo ${file} | sed "s/\.titles$//"`
 
@@ -43,21 +45,22 @@ do
 
         mkdir -p "${outputDir}/${number}"
 
-        java -Xmx3g edu.nyu.tandon.experiments.ExtractFeatures -g \
+        java -Xmx4g edu.nyu.tandon.experiments.cluster.ExtractClusterFeatures -g \
             -i ${input} \
             -t "${outputDir}/${number}/${inputBase}.time" \
             -r "${outputDir}/${number}/${inputBase}.top10" \
             -l "${outputDir}/${number}/${inputBase}.listlengths" \
+            -c ${number} \
             ${clusterBase}
 
-        java edu.nyu.tandon.experiments.TranslateToGlobalIds \
+        java -Xmx4g edu.nyu.tandon.experiments.TranslateToGlobalIds \
             -i "${outputDir}/${number}/${inputBase}.top10" \
             -s "${base}.strategy" \
             -c ${number}
 
-        java edu.nyu.tandon.ml.features.SegmentCounter \
+        java -Xmx4g edu.nyu.tandon.ml.features.SegmentCounter \
             -i "${outputDir}/${number}/${inputBase}.top10" \
             -b 10 \
-            -d `wc -l ${file}` \
+            -d `wc -l ${file} | cut -d" " -f1` \
             -c ${number}
 done

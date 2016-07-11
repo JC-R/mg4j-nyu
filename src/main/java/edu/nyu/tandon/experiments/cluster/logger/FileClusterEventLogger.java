@@ -13,7 +13,6 @@ public abstract class FileClusterEventLogger implements EventLogger {
     public static final Logger LOGGER = LoggerFactory.getLogger(FileClusterEventLogger.class);
 
     private BufferedWriter writer;
-    protected int cluster;
 
     public abstract String column();
 
@@ -25,20 +24,11 @@ public abstract class FileClusterEventLogger implements EventLogger {
                 .flush();
     }
 
-//    public FileClusterEventLogger(OutputStream o) throws IOException {
-//        init(new BufferedWriter(new OutputStreamWriter(o)));
-//    }
-//
-//    public FileClusterEventLogger(File f) throws IOException {
-//        init(new BufferedWriter(new FileWriter(f)));
-//    }
-
-    public FileClusterEventLogger(String f, int cluster) throws IOException {
+    public FileClusterEventLogger(String f) throws IOException {
         init(new BufferedWriter(new FileWriter(f)));
-        this.cluster = cluster;
     }
 
-    protected void log(long id, String columnValue) {
+    protected void log(long id, int cluster, String columnValue) {
         try {
             writer
                     .append(String.valueOf(id))

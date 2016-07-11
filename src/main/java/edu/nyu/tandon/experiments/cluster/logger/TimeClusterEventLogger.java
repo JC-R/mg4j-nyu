@@ -16,26 +16,18 @@ public class TimeClusterEventLogger extends FileClusterEventLogger {
         return "time";
     }
 
-//    public TimeClusterEventLogger(OutputStream o) throws IOException {
-//        super(o);
-//    }
-//
-//    public TimeClusterEventLogger(File f) throws IOException {
-//        super(f);
-//    }
-
-    public TimeClusterEventLogger(String f, int cluster) throws IOException {
-        super(f, cluster);
+    public TimeClusterEventLogger(String f) throws IOException {
+        super(f);
     }
 
     @Override
-    public void onStart(long id, Iterable<String> query) {
+    public void onStart(long id, int cluster, Iterable<String> query) {
         timestamp = System.currentTimeMillis();
     }
 
     @Override
-    public void onEnd(long id, Iterable<Long> results) {
+    public void onEnd(long id, int cluster, Iterable<Long> results) {
         long elapsed = System.currentTimeMillis() - timestamp;
-        log(id, String.valueOf(elapsed));
+        log(id, cluster, String.valueOf(elapsed));
     }
 }

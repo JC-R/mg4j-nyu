@@ -115,7 +115,7 @@ object RFRegression {
       case None =>
       case Some(config) =>
 
-        val sparkContext = new SparkContext(new SparkConf().setAppName("Train Model").setMaster("local[*]"))
+        val sparkContext = new SparkContext(new SparkConf().setAppName("Train Model").setMaster("local[1]"))
         val sqlContext = new SQLContext(sparkContext)
         val r = new RFRegression(config.numTrees, config.maxBins, config.maxDepth)
 

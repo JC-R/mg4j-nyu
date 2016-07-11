@@ -60,17 +60,21 @@ object TranslateToGlobalIds {
     parser.parse(args, Config()) match {
       case Some(config) =>
 
-        val sparkContext = new SparkContext(new SparkConf().setAppName(this.getClass.toString).setMaster("local[*]"))
+        val sparkContext = new SparkContext(
+          new SparkConf().setAppName(this.getClass.toString).setMaster("local[1]")
+        )
         val sqlContext = SQLContextSingleton.getInstance(sparkContext)
 
         val strategy = new ObjectInputStream(new FileInputStream(config.strategy)).readObject()
           .asInstanceOf[SelectiveDocumentalIndexStrategy]
 
-        saveFeatureFile(translate(
+        val translated = translate(
           loadFeatureFile(sqlContext)(config.input),
           config.cluster,
           strategy
-        ), config.input.getAbsolutePath + ".global")
+        )
+
+        saveFeatureFile(translated, config.input.getAbsolutePath + ".global")
 
       case None =>
     }

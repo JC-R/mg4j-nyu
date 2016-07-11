@@ -23,16 +23,19 @@ object SegmentCounter {
       .mapValues(_.length)
   }
 
-  def binsToRows(numBins: Int)(id: Long, cluster: Int, chunks: Map[Int, Int]): Seq[(Long, Int, Int)] = {
+  def binsToRows(numBins: Int)(id: Long, cluster: Int, chunks: Map[Int, Int]): Seq[(Int, Int)] = {
     val c = chunks.withDefaultValue(0)
-    for (i <- 0 until numBins) yield (id, cluster, c(i))
+    for (i <- 0 until numBins) yield (i, c(i))
   }
 
   def segment(data: DataFrame, column: String, numDocs: Long, numBins: Int, cluster: Int): DataFrame = {
     data.explode(data(IdCol), data(column)) {
-      case Row(id: Long, line: String) =>
+      case Row(id: Int, line: String) =>
         binsToRows(numBins)(id, cluster, countByBin(numDocs, numBins)(lineToLongs(line.toString)))
     }
+      .drop(column)
+      .withColumnRenamed("_1", "segment")
+      .withColumnRenamed("_2", "count")
   }
 
   def main(args: Array[String]): Unit = {
@@ -60,7 +63,7 @@ object SegmentCounter {
         .required()
 
       opt[Int]('c', "cluster")
-        .action( (x, c) => c.copy(cluster = x) )
+        .action((x, c) => c.copy(cluster = x))
         .text("cluster number")
         .required()
 

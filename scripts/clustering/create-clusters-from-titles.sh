@@ -17,13 +17,12 @@ source "${MG4J_NYU_SCRIPTS}/commons.sh"
 workDir=$1
 globalBase=$2
 outputName=$3
-shift
-shift
-shift
-
 if [ -z "${workDir}" ]; then echo "You have to define working directory."; exit 1; fi;
 if [ -z "${globalBase}" ]; then echo "You have to define the basename of a global index."; exit 1; fi;
 if [ -z "${outputName}" ]; then echo "You have to define the output name."; exit 1; fi;
+shift
+shift
+shift
 
 rm -fR "${workDir}/numbers"
 rm -fR "${workDir}/titles"

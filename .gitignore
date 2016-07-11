@@ -1,5 +1,5 @@
-*.orig
 .idea/workspace.xml
-.idea/dictionaries/*
-*.class
-target/*
+target/
+.idea/dictionaries/
+dependency-reduced-pom.xml
+spark-warehouse/

@@ -80,7 +80,7 @@ public class SelectiveQueryEngineTest extends BaseTest {
 //        }));
 //    }
 
-    @Test
+//    @Test
     public void processQuery() throws QueryParserException, QueryBuilderVisitorException, IOException {
         ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> results =
                 new ObjectArrayList<>();

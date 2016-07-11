@@ -58,6 +58,9 @@ public class SelectiveQuery extends Query {
                         new FlaggedOption("results", JSAP.INTEGER_PARSER, "1000", JSAP.NOT_REQUIRED, 'r', "results", "The # of results to display"),
                         new FlaggedOption("mode", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'M', "time", "The results display mode"),
 
+                        new Switch("trec", 'E', "trec", "trec"),
+                        new FlaggedOption("divert", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'd', "divert", "output file"),
+
                         new FlaggedOption("csi", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'C', "csi", "Central sample index")
                 });
 
@@ -100,7 +103,10 @@ public class SelectiveQuery extends Query {
                 index, basenameWeight[0], jsapResult.getString("csi"));
 
         SelectiveQuery query = new SelectiveQuery(queryEngine);
-        query.displayMode = Query.OutputType.TIME;
+        query.displayMode = jsapResult.userSpecified("trec") ? OutputType.TREC : OutputType.TIME;
+
+        if (jsapResult.userSpecified("divert"))
+            query.interpretCommand("$divert " + jsapResult.getObject("divert"));
 
         query.maxOutput = jsapResult.getInt("results", 1000);
 
