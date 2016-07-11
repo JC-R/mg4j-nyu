@@ -125,7 +125,7 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
 //            clusterEngines[i] = loadClusterEngine(basenames[i]);
 //        }
         for (int i = 0; i < index.allIndices.length; i++) {
-            clusterEngines[i] = loadClusterEngine(index.localIndex[i], basename);
+            clusterEngines[i] = loadClusterEngine(index.localIndex[i], basename + "-" + String.valueOf(i));
         }
     }
 
