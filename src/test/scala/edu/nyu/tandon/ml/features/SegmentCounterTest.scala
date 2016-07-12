@@ -54,16 +54,16 @@ class SegmentCounterTest extends FunSuite {
     val chunks = Map(0 -> 1, 2 -> 3, 9 -> 5, 2000 -> 111)
 
     assertResult(Seq(
-      (0, 1, 1),
-      (0, 1, 0),
-      (0, 1, 3),
-      (0, 1, 0),
-      (0, 1, 0),
-      (0, 1, 0),
-      (0, 1, 0),
-      (0, 1, 0),
-      (0, 1, 0),
-      (0, 1, 5)
+      (0, 1),
+      (1, 0),
+      (2, 3),
+      (3, 0),
+      (4, 0),
+      (5, 0),
+      (6, 0),
+      (7, 0),
+      (8, 0),
+      (9, 5)
     )) {
       SegmentCounter.binsToRows(numChunks)(0, 1, chunks)
     }
