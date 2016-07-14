@@ -3,9 +3,6 @@ package edu.nyu.tandon.tool;
 import com.martiansoftware.jsap.*;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.IndexReader;
-import it.unimi.dsi.fastutil.objects.ObjectBigArrayBigList;
-import it.unimi.dsi.fastutil.objects.ObjectBigListIterator;
-import it.unimi.dsi.fastutil.objects.ObjectListIterator;
 import org.apache.commons.configuration.ConfigurationException;
 
 import java.io.FileWriter;
