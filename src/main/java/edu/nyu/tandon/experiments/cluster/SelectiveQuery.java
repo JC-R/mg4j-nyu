@@ -3,12 +3,12 @@ package edu.nyu.tandon.experiments.cluster;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.query.QueryEngine;
-import it.unimi.di.big.mg4j.index.cluster.SelectiveQueryEngine;
 import it.unimi.di.big.mg4j.document.AbstractDocumentSequence;
 import it.unimi.di.big.mg4j.document.DocumentCollection;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalMergedCluster;
+import it.unimi.di.big.mg4j.index.cluster.SelectiveQueryEngine;
 import it.unimi.di.big.mg4j.query.SelectedInterval;
 import it.unimi.di.big.mg4j.query.TextMarker;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
@@ -23,6 +23,8 @@ import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.lang.ObjectParser;
 import it.unimi.dsi.sux4j.io.FileLinesBigList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -32,6 +34,8 @@ import java.io.InputStreamReader;
  * @author michal.siedlaczek@nyu.edu
  */
 public class SelectiveQuery extends Query {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SelectiveQuery.class);
 
     public SelectiveQuery(QueryEngine queryEngine) {
         super(queryEngine);
@@ -113,6 +117,7 @@ public class SelectiveQuery extends Query {
         query.interpretCommand("$score BM25Scorer");
 
         String q;
+        String[] q_parts;
 
         System.err.println("Welcome to the MG4J query class (setup with $mode snippet, $score BM25Scorer VignaScorer, $mplex on, $equalize 1000, $select " + (documentCollection != null ? "4 40" : "all") + ")");
         System.err.println("Please type $ for help.");
@@ -135,6 +140,18 @@ public class SelectiveQuery extends Query {
                 if (q.charAt(0) == '$') {
                     if (!query.interpretCommand(q)) break;
                     continue;
+                }
+
+                // if custom trec mode (topic number in query line), split out query components
+                if (jsapResult.userSpecified("trec")) {
+                    q_parts = q.split(",");
+                    if (q_parts.length != 2) {
+                        System.err.println("TREC Query error *** missing topic number");
+                        LOGGER.debug("TREC Query error *** missing topic number");
+                        throw new IllegalArgumentException("TREC Query error *** missing topic number");
+                    }
+                    q = q_parts[1];
+                    query.trecTopicNumber = Integer.parseInt(q_parts[0]);
                 }
 
                 long time = -System.nanoTime();
