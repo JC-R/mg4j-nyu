@@ -1,9 +1,9 @@
-package edu.nyu.tandon.shard.ranking.shire;
+package edu.nyu.tandon.shard.ranking.shrkc;
 
 import edu.nyu.tandon.shard.csi.CentralSampleIndex;
 import edu.nyu.tandon.shard.csi.Result;
 import edu.nyu.tandon.shard.ranking.ShardSelector;
-import edu.nyu.tandon.shard.ranking.shire.node.Node;
+import edu.nyu.tandon.shard.ranking.shrkc.node.Node;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 
@@ -33,8 +33,12 @@ public abstract class ShireShardSelector implements ShardSelector {
         this.B = B;
     }
 
-    protected List<Integer> traverseTree(Node topRanked) {
+    public ShireShardSelector withC(double c) {
+        C = c;
+        return this;
+    }
 
+    protected Map<Integer, Double> collectVotes(Node topRanked) {
         Map<Integer, Double> votes = new HashMap<>();
         Node node = topRanked;
         int U = 0;
@@ -43,6 +47,12 @@ public abstract class ShireShardSelector implements ShardSelector {
             node = node.getParent();
             U++;
         }
+        return votes;
+    }
+
+    protected List<Integer> traverseTree(Node topRanked) {
+
+        Map<Integer, Double> votes = collectVotes(topRanked);
 
         return new ArrayList<>(votes.keySet()).stream()
                 // Perform the cut-off
@@ -52,12 +62,11 @@ public abstract class ShireShardSelector implements ShardSelector {
                 .collect(Collectors.toList());
     }
 
-    protected List<Integer> cutoff(List<Integer> shards, Map<Integer, Double> votes) {
-        List<Integer> result = new ArrayList<>();
-        for (Integer shrad : shards) {
-
-        }
-        return result;
+    @Override
+    public Map<Integer, Double> shardScores(String query) throws QueryParserException, QueryBuilderVisitorException, IOException {
+        List<Result> results = csi.runQuery(query);
+        Node topRanked = transform(results);
+        return collectVotes(topRanked);
     }
 
     @Override

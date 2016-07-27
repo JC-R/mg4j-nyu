@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
 import static java.util.stream.Collectors.groupingBy;
@@ -23,7 +24,7 @@ public class ReDDEShardSelector implements ShardSelector {
 
     protected CentralSampleIndex csi;
     protected Int2LongOpenHashMap sampleSizes;
-    protected int T = 10;
+    protected int T = -1;
 
     public ReDDEShardSelector(CentralSampleIndex csi) {
         this.csi = csi;
@@ -73,13 +74,20 @@ public class ReDDEShardSelector implements ShardSelector {
     }
 
     @Override
+    public Map<Integer, Double> shardScores(String query) throws QueryParserException, QueryBuilderVisitorException, IOException {
+        List<Result> results = csi.runQuery(query);
+        Map<Integer, Long> shardCounts = computeShardCounts(results);
+        return computeShardScores(shardCounts);
+    }
+
+    @Override
     public List<Integer> selectShards(String query) throws QueryParserException, QueryBuilderVisitorException, IOException {
         List<Result> results = csi.runQuery(query);
         Map<Integer, Long> shardCounts = computeShardCounts(results);
         Map<Integer, Double> shardScores = computeShardScores(shardCounts);
-        return shardScores.keySet().stream()
-                .sorted((r, s) -> -shardScores.get(r).compareTo(shardScores.get(s)))
-                .limit(T)
-                .collect(Collectors.toList());
+        Stream<Integer> shards = shardScores.keySet().stream()
+                .sorted((r, s) -> -shardScores.get(r).compareTo(shardScores.get(s)));
+        if (T > 0) shards = shards.limit(T);
+        return shards.collect(Collectors.toList());
     }
 }

@@ -117,7 +117,7 @@ public class ExtractClusterFeatures {
                 }
 
                 @Override
-                public void onEnd(long id, int cluster, Iterable<Long> results) {
+                public void onEnd(long id, int cluster, Iterable<Object> results) {
                 }
 
                 @Override
@@ -136,7 +136,7 @@ public class ExtractClusterFeatures {
                 }
 
                 @Override
-                public void onEnd(long id, int cluster, Iterable<Long> results) {
+                public void onEnd(long id, int cluster, Iterable<Object> results) {
 
                 }
 

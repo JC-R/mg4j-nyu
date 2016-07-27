@@ -1,4 +1,4 @@
-package edu.nyu.tandon.shard.ranking.shire.node;
+package edu.nyu.tandon.shard.ranking.shrkc.node;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 

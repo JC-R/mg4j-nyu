@@ -8,7 +8,9 @@ import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 
@@ -28,6 +30,13 @@ public class BaseTest {
 
     public File newTemporaryFile(String name) throws IOException {
         return temporaryFolder.newFile(name);
+    }
+
+    public File newTemporaryFileWithContent(String content) throws IOException {
+        File f = temporaryFolder.newFile();
+        Writer w = new FileWriter(f).append(content);
+        w.close();
+        return f;
     }
 
     public static File getFileFromResourcePath(String path) {

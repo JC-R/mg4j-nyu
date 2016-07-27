@@ -1,9 +1,9 @@
-package edu.nyu.tandon.shard.ranking.shire;
+package edu.nyu.tandon.shard.ranking.shrkc;
 
 import edu.nyu.tandon.shard.csi.Result;
-import edu.nyu.tandon.shard.ranking.shire.node.Document;
-import edu.nyu.tandon.shard.ranking.shire.node.Intermediate;
-import edu.nyu.tandon.shard.ranking.shire.node.Node;
+import edu.nyu.tandon.shard.ranking.shrkc.node.Document;
+import edu.nyu.tandon.shard.ranking.shrkc.node.Intermediate;
+import edu.nyu.tandon.shard.ranking.shrkc.node.Node;
 import edu.nyu.tandon.test.BaseTest;
 import org.apache.commons.configuration.ConfigurationException;
 import org.hamcrest.CoreMatchers;
