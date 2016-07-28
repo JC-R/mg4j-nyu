@@ -61,7 +61,7 @@ public class CentralSampleIndex {
     }
 
     protected void constructQueryEngine(String indexBasename) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
-        csiEngine = Utils.constructQueryEngine(indexBasename);
+        csiEngine = Utils.constructQueryEngine(indexBasename, true);
     }
 
     protected int resolveCluster(long csiId) {

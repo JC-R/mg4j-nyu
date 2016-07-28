@@ -1,6 +1,7 @@
 package edu.nyu.tandon.utils;
 
 import edu.nyu.tandon.query.Query;
+import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
 import it.unimi.di.big.mg4j.query.QueryEngine;
@@ -17,6 +18,8 @@ import java.net.URISyntaxException;
 import java.util.Random;
 
 import static edu.nyu.tandon.query.Query.MAX_STEMMING;
+import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.loadGlobalFrequencies;
+import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.loadGlobalStats;
 
 /**
  * Created by RodriguJ on 6/11/2015.
@@ -46,6 +49,10 @@ public class Utils {
     }
 
     public static QueryEngine constructQueryEngine(String indexBasename) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
+        return constructQueryEngine(indexBasename, false);
+    }
+
+    public static QueryEngine constructQueryEngine(String indexBasename, boolean loadGlobalStats) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
 
         String[] basenameWeight = new String[] { indexBasename };
 
@@ -63,7 +70,14 @@ public class Utils {
                 new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING),
                 indexMap);
         engine.setWeights(index2Weight);
-        engine.score(new BM25Scorer());
+
+        BM25PrunedScorer scorer = new BM25PrunedScorer();
+        if (loadGlobalStats) {
+            long[] globalStats = loadGlobalStats(indexBasename);
+            scorer.setGlobalMetrics(globalStats[0], globalStats[1], loadGlobalFrequencies(indexBasename));
+        }
+        engine.score(scorer);
+
         return engine;
     }
 }

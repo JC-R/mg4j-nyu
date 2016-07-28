@@ -91,7 +91,7 @@ public class ExtractShardScoresTest extends BaseTest {
                 getFileFromResourcePath("csi").getAbsoluteFile() + "/csi")
                 .split(" ");
         ExtractShardScores.main(args);
-        
+
     }
 
 }
