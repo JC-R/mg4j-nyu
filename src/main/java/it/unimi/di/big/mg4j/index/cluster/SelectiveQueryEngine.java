@@ -128,6 +128,8 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
     @Override
     public int process(final String query, int offset, final int length, final ObjectArrayList<DocumentScoreInfo<T>> results) throws QueryParserException, QueryBuilderVisitorException, IOException {
 
+        results.clear();
+
         LOGGER.debug(String.format("Selecting shards using %s of class %s",
                 shardSelector.toString(),
                 shardSelector.getClass().getName()));
@@ -136,7 +138,7 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
 
         LOGGER.debug(String.format("Selected %d shards.", shards.size()));
 
-        results.clear();
+        ObjectArrayList<DocumentScoreInfo<T>> cumulativeResults = new ObjectArrayList<>();
         for (Integer shardId : shards) {
             final ObjectArrayList<DocumentScoreInfo<T>> partialResults = new ObjectArrayList<>();
             clusterEngines[shardId].process(query, offset, length, partialResults);
@@ -144,13 +146,13 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
             LOGGER.debug(String.format("Results in shard %d: %d", shardId, partialResults.size()));
 
             convertLocalToGlobal(shardId, partialResults);
-            results.addAll(partialResults);
+            cumulativeResults.addAll(partialResults);
         }
 
-        LOGGER.debug(String.format("Results in all shards: %d", results.size()));
+        LOGGER.debug(String.format("Results in all shards: %d", cumulativeResults.size()));
         LOGGER.debug(String.format("Sorting and truncating to: %d", length));
 
-        results.addAll(results.stream()
+        results.addAll(cumulativeResults.stream()
                 .sorted((r, q) -> -Double.valueOf(r.score).compareTo(Double.valueOf(q.score)))
                 .limit(length)
                 .collect(Collectors.toList()));
