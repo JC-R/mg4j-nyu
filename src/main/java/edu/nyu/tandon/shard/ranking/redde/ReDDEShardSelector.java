@@ -90,4 +90,11 @@ public class ReDDEShardSelector implements ShardSelector {
         if (T > 0) shards = shards.limit(T);
         return shards.collect(Collectors.toList());
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s { T = %d }",
+                ReDDEShardSelector.class.getName(),
+                T);
+    }
 }
