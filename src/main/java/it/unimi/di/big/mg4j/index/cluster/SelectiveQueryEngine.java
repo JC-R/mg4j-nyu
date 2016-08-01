@@ -136,7 +136,7 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
 
         LOGGER.debug(String.format("Selected %d shards.", shards.size()));
 
-        ObjectArrayList<DocumentScoreInfo<T>> cumulativeResults = new ObjectArrayList<>();
+        results.clear();
         for (Integer shardId : shards) {
             final ObjectArrayList<DocumentScoreInfo<T>> partialResults = new ObjectArrayList<>();
             clusterEngines[shardId].process(query, offset, length, partialResults);
@@ -144,13 +144,13 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
             LOGGER.debug(String.format("Results in shard %d: %d", shardId, partialResults.size()));
 
             convertLocalToGlobal(shardId, partialResults);
-            cumulativeResults.addAll(partialResults);
+            results.addAll(partialResults);
         }
 
-        LOGGER.debug(String.format("Results in all shards: %d", cumulativeResults.size()));
+        LOGGER.debug(String.format("Results in all shards: %d", results.size()));
         LOGGER.debug(String.format("Sorting and truncating to: %d", length));
 
-        results.addAll(cumulativeResults.stream()
+        results.addAll(results.stream()
                 .sorted((r, q) -> -Double.valueOf(r.score).compareTo(Double.valueOf(q.score)))
                 .limit(length)
                 .collect(Collectors.toList()));
