@@ -3,6 +3,7 @@ package edu.nyu.tandon.experiments.cluster;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.query.QueryEngine;
+import edu.nyu.tandon.shard.ranking.redde.ReDDEShardSelector;
 import it.unimi.di.big.mg4j.document.AbstractDocumentSequence;
 import it.unimi.di.big.mg4j.document.DocumentCollection;
 import it.unimi.di.big.mg4j.index.Index;
@@ -65,7 +66,8 @@ public class SelectiveQuery extends Query {
                         new Switch("trec", 'E', "trec", "trec"),
                         new FlaggedOption("divert", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'd', "divert", "output file"),
 
-                        new FlaggedOption("csi", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'C', "csi", "Central sample index")
+                        new FlaggedOption("csi", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'C', "csi", "Central sample index"),
+                        new FlaggedOption("reddeT", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'X', "redde-t", "ReDDE T parameter")
                 });
 
 
@@ -105,6 +107,11 @@ public class SelectiveQuery extends Query {
         DocumentalMergedCluster index = (DocumentalMergedCluster) indexMap.get(indexMap.firstKey());
         final SelectiveQueryEngine queryEngine = new SelectiveQueryEngine(simpleParser, new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING), indexMap,
                 index, basenameWeight[0], jsapResult.getString("csi"));
+
+        if (jsapResult.userSpecified("reddeT")) {
+            queryEngine.setShardSelector(new ReDDEShardSelector(queryEngine.getCsi())
+                .withT(jsapResult.getInt("reddeT")));
+        }
 
         SelectiveQuery query = new SelectiveQuery(queryEngine);
         query.displayMode = jsapResult.userSpecified("trec") ? OutputType.TREC : OutputType.TIME;

@@ -83,6 +83,14 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
         eventLoggers = new ArrayList<>();
     }
 
+    public void setShardSelector(ShardSelector s) {
+        shardSelector = s;
+    }
+
+    public CentralSampleIndex getCsi() {
+        return csi;
+    }
+
     public void addEventLogger(EventLogger eventLogger) { eventLoggers.add(eventLogger); }
 
     protected QueryEngine loadClusterEngine(Index index, String basename) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
