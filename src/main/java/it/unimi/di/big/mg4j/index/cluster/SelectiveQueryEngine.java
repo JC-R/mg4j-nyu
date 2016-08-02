@@ -22,6 +22,7 @@ import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
 import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.io.BinIO;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.objects.*;
 import org.apache.commons.configuration.ConfigurationException;
 import org.slf4j.Logger;
@@ -114,7 +115,8 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
 
         BM25PrunedScorer scorer = new BM25PrunedScorer();
         long[] globalStats = loadGlobalStats(basename);
-        scorer.setGlobalMetrics(globalStats[0], globalStats[1], loadGlobalFrequencies(basename));
+        LongArrayList globalFrequencies = loadGlobalFrequencies(basename);
+        scorer.setGlobalMetrics(globalStats[0], globalStats[1], globalFrequencies);
         engine.score(scorer);
 
         return engine;

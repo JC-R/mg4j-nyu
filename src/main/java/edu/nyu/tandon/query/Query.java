@@ -195,7 +195,10 @@ public class Query {
 
                         new Switch("noMplex", 'P', "noMplex", "Starts with multiplex disabled."),
                         new FlaggedOption("results", JSAP.INTEGER_PARSER, "1000", JSAP.NOT_REQUIRED, 'r', "results", "The # of results to display"),
-                        new FlaggedOption("mode", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'M', "time", "The results display mode")
+                        new FlaggedOption("mode", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'M', "time", "The results display mode"),
+
+                        new Switch("trec", 'E', "trec", "trec"),
+                        new FlaggedOption("divert", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'd', "divert", "output file")
                 });
 
 
@@ -243,13 +246,17 @@ public class Query {
         queryEngine.equalize(1000);
 
         Query query = new Query(queryEngine);
-        query.displayMode = OutputType.TIME;
+        query.displayMode = jsapResult.userSpecified("trec") ? OutputType.TREC : OutputType.TIME;
+
+        if (jsapResult.userSpecified("divert"))
+            query.interpretCommand("$divert " + jsapResult.getObject("divert"));
 
         query.maxOutput = jsapResult.getInt("results", 1000);
 
         query.interpretCommand("$score BM25Scorer");
 
         String q;
+        String[] q_parts;
 
         System.err.println("Welcome to the MG4J query class (setup with $mode snippet, $score BM25Scorer VignaScorer, $mplex on, $equalize 1000, $select " + (documentCollection != null ? "4 40" : "all") + ")");
         System.err.println("Please type $ for help.");
@@ -272,6 +279,18 @@ public class Query {
                 if (q.charAt(0) == '$') {
                     if (!query.interpretCommand(q)) break;
                     continue;
+                }
+
+                // if custom trec mode (topic number in query line), split out query components
+                if (jsapResult.userSpecified("trec")) {
+                    q_parts = q.split(",");
+                    if (q_parts.length != 2) {
+                        System.err.println("TREC Query error *** missing topic number");
+                        LOGGER.debug("TREC Query error *** missing topic number");
+                        throw new IllegalArgumentException("TREC Query error *** missing topic number");
+                    }
+                    q = q_parts[1];
+                    query.trecTopicNumber = Integer.parseInt(q_parts[0]);
                 }
 
                 long time = -System.nanoTime();
@@ -520,7 +539,7 @@ public class Query {
 
 //                output.print( "Document #" + document );
                 output.print(document);
-//                output.printf( " [%.3f]", dsi.score );
+                output.printf( " [%.3f]", dsi.score );
 
                 Document d = null; // Filled lazily
 
