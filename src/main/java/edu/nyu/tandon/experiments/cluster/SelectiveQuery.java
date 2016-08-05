@@ -3,7 +3,7 @@ package edu.nyu.tandon.experiments.cluster;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.query.QueryEngine;
-import edu.nyu.tandon.shard.ranking.redde.ReDDEShardSelector;
+import edu.nyu.tandon.shard.ranking.redde.ModifiedReDDEShardSelector;
 import it.unimi.di.big.mg4j.document.AbstractDocumentSequence;
 import it.unimi.di.big.mg4j.document.DocumentCollection;
 import it.unimi.di.big.mg4j.index.Index;
@@ -109,7 +109,7 @@ public class SelectiveQuery extends Query {
                 index, basenameWeight[0], jsapResult.getString("csi"));
 
         if (jsapResult.userSpecified("reddeT")) {
-            queryEngine.setShardSelector(new ReDDEShardSelector(queryEngine.getCsi())
+            queryEngine.setShardSelector(new ModifiedReDDEShardSelector(queryEngine.getCsi())
                 .withT(jsapResult.getInt("reddeT")));
         }
 
@@ -137,7 +137,7 @@ public class SelectiveQuery extends Query {
             final ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> results = new ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>>();
 
             for (; ; ) {
-                if (query.displayMode != Query.OutputType.TREC) System.out.print(prompt);
+                if (query.displayMode != OutputType.TREC) System.out.print(prompt);
                 q = br.readLine();
                 if (q == null) {
                     System.err.println();

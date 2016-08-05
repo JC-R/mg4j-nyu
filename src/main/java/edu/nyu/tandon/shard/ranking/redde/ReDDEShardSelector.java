@@ -82,9 +82,7 @@ public class ReDDEShardSelector implements ShardSelector {
 
     @Override
     public List<Integer> selectShards(String query) throws QueryParserException, QueryBuilderVisitorException, IOException {
-        List<Result> results = csi.runQuery(query);
-        Map<Integer, Long> shardCounts = computeShardCounts(results);
-        Map<Integer, Double> shardScores = computeShardScores(shardCounts);
+        Map<Integer, Double> shardScores = shardScores(query);
         Stream<Integer> shards = shardScores.keySet().stream()
                 .sorted((r, s) -> -shardScores.get(r).compareTo(shardScores.get(s)));
         if (T > 0) shards = shards.limit(T);
@@ -94,7 +92,7 @@ public class ReDDEShardSelector implements ShardSelector {
     @Override
     public String toString() {
         return String.format("%s { T = %d }",
-                ReDDEShardSelector.class.getName(),
+                this.getClass().getName(),
                 T);
     }
 }
