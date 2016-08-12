@@ -27,13 +27,13 @@ if [ -z "${csiBase}" ]; then echo "You have to define CSI."; exit 1; fi;
 inputBase=`basename ${input}`
 base="${dir}/`ls ${dir} | egrep '\.strategy' | sed 's/\.strategy//'`"
 
-#java -Xmx3g edu.nyu.tandon.experiments.cluster.ExtractShardScores \
-#    -i ${input} \
-#    -t "${outputDir}/${inputBase}.shards.time" \
-#    -r "${outputDir}/${inputBase}.shards.t10" \
-#    -c `ls ${dir}/*-*titles | wc -l`
-#    ${base} \
-#    ${csiBase}
+java -Xmx3g edu.nyu.tandon.experiments.cluster.ExtractShardScores \
+    -s redde
+    -i ${input} \
+    -r "${outputDir}/${inputBase}.shards.scores" \
+    -c `ls ${dir}/*-*titles | wc -l`
+    ${base} \
+    ${csiBase}
 
 set -x
 ls ${dir}/*-*titles | sort | while read file;
