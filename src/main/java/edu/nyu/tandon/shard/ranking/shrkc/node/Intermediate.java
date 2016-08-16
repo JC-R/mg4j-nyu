@@ -26,7 +26,7 @@ public class Intermediate extends Node {
             visited = true;
             this.leftChild.updateVotes(votes, U, B);
             this.rightChild.updateVotes(votes, U, B);
-            if (parent != null) parent.updateVotes(votes, U + 1, B);
+//            if (parent != null) parent.updateVotes(votes, U + 1, B);
         }
     }
 

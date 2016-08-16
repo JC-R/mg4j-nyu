@@ -28,10 +28,18 @@ inputBase=`basename ${input}`
 base="${dir}/`ls ${dir} | egrep '\.strategy' | sed 's/\.strategy//'`"
 
 java -Xmx3g edu.nyu.tandon.experiments.cluster.ExtractShardScores \
-    -s redde
+    -s redde \
     -i ${input} \
-    -r "${outputDir}/${inputBase}.shards.scores" \
-    -c `ls ${dir}/*-*titles | wc -l`
+    -r "${outputDir}/${inputBase}.redde.scores" \
+    -c `ls ${dir}/*-*titles | wc -l` \
+    ${base} \
+    ${csiBase}
+
+java -Xmx3g edu.nyu.tandon.experiments.cluster.ExtractShardScores \
+    -s shrkc \
+    -i ${input} \
+    -r "${outputDir}/${inputBase}.shrkc.scores" \
+    -c `ls ${dir}/*-*titles | wc -l` \
     ${base} \
     ${csiBase}
 

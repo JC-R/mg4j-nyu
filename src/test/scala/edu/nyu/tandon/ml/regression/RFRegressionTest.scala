@@ -15,7 +15,7 @@ import edu.nyu.tandon.test._
 class RFRegressionTest extends FunSuite {
 
   trait DataFrames {
-    val r = new RFRegression(numTrees = 10, maxBins = 10, maxDepth = 10)
+    val r = new RFRegression(numTrees = 10, maxBins = 10, maxDepth = 10, labelCol = "label")
     val df = sqlContext.createDataFrame(List(
       (0, 0.0, 1.0),
       (1, 0.1, 1.1)

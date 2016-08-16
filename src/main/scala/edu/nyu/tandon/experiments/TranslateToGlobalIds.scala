@@ -61,20 +61,30 @@ object TranslateToGlobalIds {
       case Some(config) =>
 
         val sparkContext = new SparkContext(
-          new SparkConf().setAppName(this.getClass.toString).setMaster("local[1]")
+          new SparkConf().setAppName(this.getClass.toString).setMaster("local[*]")
         )
         val sqlContext = SQLContextSingleton.getInstance(sparkContext)
 
         val strategy = new ObjectInputStream(new FileInputStream(config.strategy)).readObject()
           .asInstanceOf[SelectiveDocumentalIndexStrategy]
 
-        val translated = translate(
-          loadFeatureFile(sqlContext)(config.input),
-          config.cluster,
-          strategy
-        )
+        try {
+          val translated = translate(
+            loadFeatureFile(sqlContext)(config.input),
+            config.cluster,
+            strategy
+          )
 
-        saveFeatureFile(translated, config.input.getAbsolutePath + ".global")
+          saveFeatureFile(translated, config.input.getAbsolutePath + ".global")
+        }
+        catch {
+          case e: Exception => throw new RuntimeException(
+            "A fatal error occurred while processing " +
+              s"input=${config.input.getAbsolutePath()}; " +
+              s"strategy=${config.strategy.getAbsolutePath()}; " +
+              s"cluster=${config.cluster}",
+            e)
+        }
 
       case None =>
     }

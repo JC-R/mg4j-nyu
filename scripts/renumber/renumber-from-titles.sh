@@ -42,7 +42,7 @@ join ${A} ${B} | cut -d " " -f 2- | sort -n -k2 | paste -d " " - ${ID} | sort -n
 
 
 
-cp ${INPUT_TITLES} ${OUTPUT_TITLES}
+cp ${TITLES} ${OUTPUT_TITLES}
 java -Xmx3G edu.nyu.tandon.tool.renumber.Renumber -i "${INPUT_INDEX}-${FIELD}" -o "${OUTPUT_INDEX}-${FIELD}" -m "${MAP}"
 
 endtime=$(date +%s)

@@ -29,7 +29,7 @@ public class Document extends Node {
             double vote = votes.getOrDefault(shardId, .0);
             vote += score * Math.pow(B, -U);
             votes.put(shardId, vote);
-            if (parent != null) parent.updateVotes(votes, U + 1, B);
+//            if (parent != null) parent.updateVotes(votes, U + 1, B);
         }
     }
 

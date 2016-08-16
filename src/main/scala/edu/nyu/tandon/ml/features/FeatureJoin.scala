@@ -12,19 +12,20 @@ import edu.nyu.tandon.spark.SQLContextSingleton
   */
 object FeatureJoin {
 
-  def join(features: Seq[DataFrame]): DataFrame =
+  def join(joinCols: Seq[String], features: Seq[DataFrame]): DataFrame =
     features reduce (_.join(_, "id"))
 
-  def join(head: DataFrame, rest: DataFrame*): DataFrame =
-    join(head +: rest)
+  def join(joinCols: Seq[String], head: DataFrame, rest: DataFrame*): DataFrame =
+    join(joinCols, head +: rest)
 
-  def join(sqlContext: SQLContext)(features: Seq[File]): DataFrame =
-    join(features map loadFeatureFile(sqlContext))
+  def join(sqlContext: SQLContext, joinCols: Seq[String])(features: Seq[File]): DataFrame =
+    join(joinCols, features map loadFeatureFile(sqlContext))
 
   def main(args: Array[String]): Unit = {
 
     case class Config(features: Seq[File] = null,
-                      output: File = null)
+                      output: File = null,
+                      joinCols: Seq[String] = null)
 
     val parser = new OptionParser[Config](this.getClass.getSimpleName) {
 
@@ -38,6 +39,11 @@ object FeatureJoin {
         .text("the output file")
         .required()
 
+      opt[Seq[String]]('j', "join-cols")
+        .action((x, c) => c.copy(joinCols = x))
+        .text("the join colums")
+        .required()
+
     }
 
     parser.parse(args, Config()) match {
@@ -48,7 +54,7 @@ object FeatureJoin {
         val sqlContext = SQLContextSingleton.getInstance(sparkContext)
 
         saveFeatureFile(
-          join(sqlContext)(config.features),
+          join(sqlContext, config.joinCols)(config.features),
           config.output.getAbsolutePath
         )
 

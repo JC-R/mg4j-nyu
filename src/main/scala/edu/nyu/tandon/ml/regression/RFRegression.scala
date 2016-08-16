@@ -17,9 +17,10 @@ import scopt.OptionParser
   */
 class RFRegression(val numTrees: Int,
                    val maxBins: Int,
-                   val maxDepth: Int) {
+                   val maxDepth: Int,
+                   val labelCol: String) {
 
-  def excludedFromFeatures: Set[String] = Set(LabelCol, FeaturesCol, IdCol)
+  def excludedFromFeatures: Set[String] = Set(labelCol, FeaturesCol, IdCol)
 
   def featureAssembler(df: DataFrame): VectorAssembler =
     if (df.schema.fieldNames.contains(FeaturesCol))
@@ -32,19 +33,10 @@ class RFRegression(val numTrees: Int,
     .setNumTrees(numTrees)
     .setMaxBins(maxBins)
     .setMaxDepth(maxDepth)
-    .setLabelCol(LabelCol)
+    .setLabelCol(labelCol)
     .setFeaturesCol(FeaturesCol)
 
   def fit(trainingData: DataFrame, stages: Array[PipelineStage], numFolds: Int): PipelineModel = {
-    //    val paramGrid = new ParamGridBuilder()
-    //      .build()
-    //    val crossValidator = new CrossValidator()
-    //      .setEstimator(pipeline)
-    //      .setEvaluator(new RegressionEvaluator())
-    //      .setEstimatorParamMaps(paramGrid)
-    //      .setNumFolds(numFolds)
-    //
-    //    crossValidator.fit(trainingData)
     new Pipeline()
       .setStages(stages)
       .fit(trainingData)
@@ -72,7 +64,8 @@ object RFRegression {
                     numTrees: Int = 50,
                     maxBins: Int = 20,
                     maxDepth: Int = 15,
-                    labelCol: String = LabelCol)
+                    labelCol: String = LabelCol,
+                    joinCols: Seq[String] = null)
 
   def main(args: Array[String]): Unit = {
 
@@ -109,17 +102,22 @@ object RFRegression {
         .text("the output file for the trained model")
         .required()
 
+      opt[Seq[String]]('j', "join-cols")
+        .action((x, c) => c.copy(joinCols = x))
+        .text("the join colums")
+        .required()
+
     }
 
     parser.parse(args, Config()) match {
       case None =>
       case Some(config) =>
 
-        val sparkContext = new SparkContext(new SparkConf().setAppName("Train Model").setMaster("local[1]"))
+        val sparkContext = new SparkContext(new SparkConf().setAppName("Train Model").setMaster("local[*]"))
         val sqlContext = new SQLContext(sparkContext)
-        val r = new RFRegression(config.numTrees, config.maxBins, config.maxDepth)
+        val r = new RFRegression(config.numTrees, config.maxBins, config.maxDepth, config.labelCol)
 
-        val Array(trainingData, testData) = FeatureJoin.join(sqlContext)(config.dataFiles)
+        val Array(trainingData, testData) = FeatureJoin.join(sqlContext, config.joinCols)(config.dataFiles)
             .randomSplit(Array(0.7, 0.3))
 
         val m = r.model(trainingData, config.numFolds)
