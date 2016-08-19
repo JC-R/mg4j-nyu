@@ -3,7 +3,7 @@ package edu.nyu.tandon.ml.regression
 import java.io.{File, FileWriter}
 
 import edu.nyu.tandon.ml._
-import edu.nyu.tandon.ml.features.FeatureJoin
+import edu.nyu.tandon.ml.features._
 import org.apache.spark.ml.evaluation.RegressionEvaluator
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.regression.RandomForestRegressor
@@ -58,23 +58,22 @@ class RFRegression(val numTrees: Int,
 
 object RFRegression {
 
-  case class Config(dataFiles: Seq[File] = List(),
+  case class Config(dataFile: File = null,
                     outputFile: File = null,
                     numFolds: Int = 10,
                     numTrees: Int = 50,
                     maxBins: Int = 20,
                     maxDepth: Int = 15,
-                    labelCol: String = LabelCol,
-                    joinCols: Seq[String] = null)
+                    labelCol: String = LabelCol)
 
   def main(args: Array[String]): Unit = {
 
     val default = new Config()
     val parser = new OptionParser[Config](this.getClass.getSimpleName) {
 
-      opt[Seq[File]]('i', "input")
-        .action((x, c) => c.copy(dataFiles = x))
-        .text("file(s) containing training data")
+      opt[File]('i', "input")
+        .action((x, c) => c.copy(dataFile = x))
+        .text("file containing training data")
         .required()
 
       opt[Int]('F', "num-folds")
@@ -102,28 +101,27 @@ object RFRegression {
         .text("the output file for the trained model")
         .required()
 
-      opt[Seq[String]]('j', "join-cols")
-        .action((x, c) => c.copy(joinCols = x))
-        .text("the join colums")
-        .required()
-
     }
 
     parser.parse(args, Config()) match {
       case None =>
       case Some(config) =>
 
-        val sparkContext = new SparkContext(new SparkConf().setAppName("Train Model").setMaster("local[*]"))
+        val sparkContext = new SparkContext(new SparkConf()
+          .setAppName("Random Forest Regression")
+          .setMaster("local[*]"))
         val sqlContext = new SQLContext(sparkContext)
         val r = new RFRegression(config.numTrees, config.maxBins, config.maxDepth, config.labelCol)
 
-        val Array(trainingData, testData) = FeatureJoin.join(sqlContext, config.joinCols)(config.dataFiles)
-            .randomSplit(Array(0.7, 0.3))
+        val Array(trainingData, testData) = loadFeatureFile(sqlContext)(config.dataFile)
+          .randomSplit(Array(0.7, 0.3))
 
         val m = r.model(trainingData, config.numFolds)
 
         val testPredictions = m.transform(testData)
-        val eval = new RegressionEvaluator().evaluate(testPredictions)
+        val eval = new RegressionEvaluator()
+          .setLabelCol(config.labelCol)
+          .evaluate(testPredictions)
         new FileWriter(config.outputFile.getAbsolutePath + ".eval")
           .append(eval.toString)
           .close()

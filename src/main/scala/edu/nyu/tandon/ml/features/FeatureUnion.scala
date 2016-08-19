@@ -2,30 +2,29 @@ package edu.nyu.tandon.ml.features
 
 import java.io.File
 
-import org.apache.spark.sql.{DataFrame, SQLContext}
+import edu.nyu.tandon.spark.SQLContextSingleton
+import org.apache.spark.sql._
 import org.apache.spark.{SparkConf, SparkContext}
 import scopt.OptionParser
-import edu.nyu.tandon.spark.SQLContextSingleton
 
 /**
   * @author michal.siedlaczek@nyu.edu
   */
-object FeatureJoin {
+object FeatureUnion {
 
-  def join(joinCols: Seq[String], features: Seq[DataFrame]): DataFrame =
-    features reduce (_.join(_, joinCols))
+  def union(features: Seq[DataFrame]): DataFrame =
+    features reduce (_.union(_))
 
-  def join(joinCols: Seq[String], head: DataFrame, rest: DataFrame*): DataFrame =
-    join(joinCols, head +: rest)
+  def union(head: DataFrame, rest: DataFrame*): DataFrame =
+    union(head +: rest)
 
-  def join(sqlContext: SQLContext, joinCols: Seq[String])(features: Seq[File]): DataFrame =
-    join(joinCols, features map loadFeatureFile(sqlContext))
+  def union(sqlContext: SQLContext)(features: Seq[File]): DataFrame =
+    union(features map loadFeatureFile(sqlContext))
 
   def main(args: Array[String]): Unit = {
 
     case class Config(features: Seq[File] = null,
-                      output: File = null,
-                      joinCols: Seq[String] = null)
+                      output: File = null)
 
     val parser = new OptionParser[Config](this.getClass.getSimpleName) {
 
@@ -39,11 +38,6 @@ object FeatureJoin {
         .text("the output file")
         .required()
 
-      opt[Seq[String]]('j', "join-cols")
-        .action((x, c) => c.copy(joinCols = x))
-        .text("the join colums")
-        .required()
-
     }
 
     parser.parse(args, Config()) match {
@@ -53,9 +47,8 @@ object FeatureJoin {
         val sparkContext = new SparkContext(new SparkConf().setAppName(this.getClass.toString).setMaster("local[*]"))
         val sqlContext = SQLContextSingleton.getInstance(sparkContext)
 
-        val joined = join(sqlContext, config.joinCols)(config.features)
         saveFeatureFile(
-          joined,
+          union(sqlContext)(config.features),
           config.output.getAbsolutePath
         )
 

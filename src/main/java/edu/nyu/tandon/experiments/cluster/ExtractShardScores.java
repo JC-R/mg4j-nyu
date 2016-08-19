@@ -65,7 +65,12 @@ public class ExtractShardScores {
         }
 
         if (jsapResult.userSpecified("scoresOutput")) {
-            eventLoggers.add(new ResultClusterEventLogger(jsapResult.getString("scoresOutput")));
+            eventLoggers.add(new ResultClusterEventLogger(jsapResult.getString("scoresOutput")) {
+                @Override
+                public String column() {
+                    return selectorType + "-score";
+                }
+            });
         }
 
         try (BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
