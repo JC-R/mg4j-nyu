@@ -64,7 +64,8 @@ object RFRegression {
                     numTrees: Int = 50,
                     maxBins: Int = 20,
                     maxDepth: Int = 15,
-                    labelCol: String = LabelCol)
+                    labelCol: String = LabelCol,
+                    sparkMaster: String = "local[*]")
 
   def main(args: Array[String]): Unit = {
 
@@ -101,6 +102,10 @@ object RFRegression {
         .text("the output file for the trained model")
         .required()
 
+      opt[String]('M', "spark-master")
+        .action((x, c) => c.copy(sparkMaster = x))
+        .text("spark master (default: local[*])")
+
     }
 
     parser.parse(args, Config()) match {
@@ -109,7 +114,7 @@ object RFRegression {
 
         val sparkContext = new SparkContext(new SparkConf()
           .setAppName("Random Forest Regression")
-          .setMaster("local[*]"))
+          .setMaster(config.sparkMaster))
         val sqlContext = new SQLContext(sparkContext)
         val r = new RFRegression(config.numTrees, config.maxBins, config.maxDepth, config.labelCol)
 

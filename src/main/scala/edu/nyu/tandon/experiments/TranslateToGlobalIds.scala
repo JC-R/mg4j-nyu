@@ -36,7 +36,10 @@ object TranslateToGlobalIds {
 
   def main(args: Array[String]): Unit = {
 
-    case class Config(input: File = null, strategy: File = null, cluster: Int = -1)
+    case class Config(input: File = null,
+                      strategy: File = null,
+                      cluster: Int = -1,
+                      sparkMaster: String = "local[*]")
 
     val parser = new OptionParser[Config](this.getClass.getSimpleName) {
 
@@ -55,13 +58,17 @@ object TranslateToGlobalIds {
         .text("cluster number")
         .required()
 
+      opt[String]('M', "spark-master")
+        .action((x, c) => c.copy(sparkMaster = x))
+        .text("spark master (default: local[*])")
+
     }
 
     parser.parse(args, Config()) match {
       case Some(config) =>
 
         val sparkContext = new SparkContext(
-          new SparkConf().setAppName(this.getClass.toString).setMaster("local[*]")
+          new SparkConf().setAppName(this.getClass.toString).setMaster(config.sparkMaster)
         )
         val sqlContext = SQLContextSingleton.getInstance(sparkContext)
 

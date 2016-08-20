@@ -25,7 +25,8 @@ object FeatureJoin {
 
     case class Config(features: Seq[File] = null,
                       output: File = null,
-                      joinCols: Seq[String] = null)
+                      joinCols: Seq[String] = null,
+                      sparkMaster: String = "local[*]")
 
     val parser = new OptionParser[Config](this.getClass.getSimpleName) {
 
@@ -44,13 +45,19 @@ object FeatureJoin {
         .text("the join colums")
         .required()
 
+      opt[String]('M', "spark-master")
+        .action((x, c) => c.copy(sparkMaster = x))
+        .text("spark master (default: local[*])")
+
     }
 
     parser.parse(args, Config()) match {
       case None =>
       case Some(config) =>
 
-        val sparkContext = new SparkContext(new SparkConf().setAppName(this.getClass.toString).setMaster("local[*]"))
+        val sparkContext = new SparkContext(new SparkConf()
+          .setAppName(this.getClass.toString)
+          .setMaster(config.sparkMaster))
         val sqlContext = SQLContextSingleton.getInstance(sparkContext)
 
         val joined = join(sqlContext, config.joinCols)(config.features)

@@ -43,7 +43,8 @@ object SegmentCounter {
     case class Config(input: File = null,
                       numBins: Int = -1,
                       numDocs: Int = -1,
-                      cluster: Int = -1)
+                      cluster: Int = -1,
+                      sparkMaster: String = "local[*]")
 
     val parser = new OptionParser[Config](this.getClass.getSimpleName) {
 
@@ -67,11 +68,17 @@ object SegmentCounter {
         .text("cluster number")
         .required()
 
+      opt[String]('M', "spark-master")
+        .action((x, c) => c.copy(sparkMaster = x))
+        .text("spark master (default: local[*])")
+
     }
 
     parser.parse(args, Config()) match {
       case Some(config) =>
-        val sparkContext = new SparkContext(new SparkConf().setAppName(this.getClass.toString).setMaster("local[*]"))
+        val sparkContext = new SparkContext(new SparkConf()
+          .setAppName(this.getClass.toString)
+          .setMaster(config.sparkMaster))
         val sqlContext = SQLContextSingleton.getInstance(sparkContext)
 
         val output = segment(loadFeatureFile(sqlContext)(config.input),
