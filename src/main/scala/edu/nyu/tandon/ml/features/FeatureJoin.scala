@@ -6,6 +6,7 @@ import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
 import scopt.OptionParser
 import edu.nyu.tandon.spark.SQLContextSingleton
+import org.apache.log4j.{Level, Logger}
 
 /**
   * @author michal.siedlaczek@nyu.edu
@@ -25,8 +26,7 @@ object FeatureJoin {
 
     case class Config(features: Seq[File] = null,
                       output: File = null,
-                      joinCols: Seq[String] = null,
-                      sparkMaster: String = "local[*]")
+                      joinCols: Seq[String] = null)
 
     val parser = new OptionParser[Config](this.getClass.getSimpleName) {
 
@@ -45,10 +45,6 @@ object FeatureJoin {
         .text("the join colums")
         .required()
 
-      opt[String]('M', "spark-master")
-        .action((x, c) => c.copy(sparkMaster = x))
-        .text("spark master (default: local[*])")
-
     }
 
     parser.parse(args, Config()) match {
@@ -56,8 +52,7 @@ object FeatureJoin {
       case Some(config) =>
 
         val sparkContext = new SparkContext(new SparkConf()
-          .setAppName(this.getClass.toString)
-          .setMaster(config.sparkMaster))
+          .setAppName(this.getClass.toString))
         val sqlContext = SQLContextSingleton.getInstance(sparkContext)
 
         val joined = join(sqlContext, config.joinCols)(config.features)

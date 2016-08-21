@@ -24,19 +24,39 @@ set -x
 segmentFeatureFiles=$(find $dir -regex ".*${prefix}.*segmented" | tr '\n' ',' | sed 's/,$//')
 segmentFeatures=`mktemp --tmpdir "segment-features-XXX"`
 
-java edu.nyu.tandon.ml.features.FeatureUnion \
+#java edu.nyu.tandon.ml.features.FeatureUnion \
+#    --features ${segmentFeatureFiles} \
+#    --output ${segmentFeatures}
+
+${SPARK_HOME}/bin/spark-submit --master spark://localhost:7077 \
+    --class edu.nyu.tandon.ml.features.FeatureUnion \
+    ~/IdeaProjects/mg4j-nyu/target/mg4j-nyu-1.0.jar \
     --features ${segmentFeatureFiles} \
     --output ${segmentFeatures}
 
 clusterFeatureFiles=$(find $dir -regex ".*${prefix}.*scores" | tr '\n' ',' | sed 's/,$//')
 allFeatures=`mktemp --tmpdir "all-features-XXX"`
 
-java edu.nyu.tandon.ml.features.FeatureJoin \
+#java edu.nyu.tandon.ml.features.FeatureJoin \
+#    --features "${segmentFeatures},${clusterFeatureFiles}" \
+#    --output ${allFeatures} \
+#    --join-cols id,cluster
+
+${SPARK_HOME}/bin/spark-submit --master spark://localhost:7077 \
+    --class edu.nyu.tandon.ml.features.FeatureJoin \
+    ${MG4J_NYU_CLASSPATH} \
     --features "${segmentFeatures},${clusterFeatureFiles}" \
     --output ${allFeatures} \
     --join-cols id,cluster
 
-java edu.nyu.tandon.ml.regression.RFRegression -Xmx4g \
+${SPARK_HOME}/bin/spark-submit --master spark://localhost:7077 \
+    --class edu.nyu.tandon.ml.regression.RFRegression \
+    ${MG4J_NYU_CLASSPATH} \
     --input ${allFeatures} \
     --output ${output} \
     --label-col count
+
+#java edu.nyu.tandon.ml.regression.RFRegression \
+#    --input ${allFeatures} \
+#    --output ${output} \
+#    --label-col count

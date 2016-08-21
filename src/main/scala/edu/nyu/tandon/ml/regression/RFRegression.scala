@@ -4,6 +4,8 @@ import java.io.{File, FileWriter}
 
 import edu.nyu.tandon.ml._
 import edu.nyu.tandon.ml.features._
+import edu.nyu.tandon.spark.SQLContextSingleton
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.ml.evaluation.RegressionEvaluator
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.regression.RandomForestRegressor
@@ -64,8 +66,7 @@ object RFRegression {
                     numTrees: Int = 50,
                     maxBins: Int = 20,
                     maxDepth: Int = 15,
-                    labelCol: String = LabelCol,
-                    sparkMaster: String = "local[*]")
+                    labelCol: String = LabelCol)
 
   def main(args: Array[String]): Unit = {
 
@@ -102,10 +103,6 @@ object RFRegression {
         .text("the output file for the trained model")
         .required()
 
-      opt[String]('M', "spark-master")
-        .action((x, c) => c.copy(sparkMaster = x))
-        .text("spark master (default: local[*])")
-
     }
 
     parser.parse(args, Config()) match {
@@ -113,9 +110,9 @@ object RFRegression {
       case Some(config) =>
 
         val sparkContext = new SparkContext(new SparkConf()
-          .setAppName("Random Forest Regression")
-          .setMaster(config.sparkMaster))
-        val sqlContext = new SQLContext(sparkContext)
+          .setAppName("Random Forest Regression"))
+        val sqlContext = SQLContextSingleton.getInstance(sparkContext)
+
         val r = new RFRegression(config.numTrees, config.maxBins, config.maxDepth, config.labelCol)
 
         val Array(trainingData, testData) = loadFeatureFile(sqlContext)(config.dataFile)
@@ -131,7 +128,7 @@ object RFRegression {
           .append(eval.toString)
           .close()
 
-        m.write.save(config.outputFile.getAbsolutePath)
+        m.write.overwrite().save(config.outputFile.getAbsolutePath)
 
     }
 
