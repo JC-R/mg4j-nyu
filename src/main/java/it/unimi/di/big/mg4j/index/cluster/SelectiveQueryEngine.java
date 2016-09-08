@@ -21,6 +21,7 @@ import it.unimi.di.big.mg4j.search.DocumentIterator;
 import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
 import it.unimi.di.big.mg4j.search.score.BM25Scorer;
 import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
+import it.unimi.di.big.mg4j.search.score.LinearAggregator;
 import it.unimi.di.big.mg4j.search.score.Scorer;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.io.BinIO;
@@ -64,6 +65,9 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
     protected ShardSelector shardSelector;
     protected List<EventLogger> eventLoggers;
 
+    protected DocumentalMergedCluster index;
+    protected String basename;
+
     public SelectiveQueryEngine(final QueryParser queryParser,
                                 final QueryBuilderVisitor<DocumentIterator> builderVisitor,
                                 final Object2ReferenceMap<String, Index> indexMap,
@@ -78,11 +82,13 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
     protected void init(DocumentalMergedCluster index, String basename, String csiBasename)
             throws IllegalAccessException, URISyntaxException, IOException, InstantiationException, NoSuchMethodException, ConfigurationException, InvocationTargetException, ClassNotFoundException {
 
+        this.index = index;
+        this.basename = basename;
+
         csiStrategy = (DocumentalClusteringStrategy) BinIO.loadObject(csiBasename + STRATEGY);
         clusterStrategy = (SelectiveDocumentalIndexStrategy) BinIO.loadObject(basename + STRATEGY);
         csi = new CentralSampleIndex(csiBasename + "-0", csiStrategy, clusterStrategy);
         shardSelector = new ReDDEShardSelector(csi);
-        loadClusterEngines(index, basename);
         eventLoggers = new ArrayList<>();
     }
 
@@ -125,6 +131,16 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
         engine.score(scorer);
 
         return engine;
+    }
+
+    @Override
+    public synchronized void score(final Scorer[] scorer, final double[] weight) {
+        super.score(scorer, weight);
+        try {
+            loadClusterEngines(index, basename);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to load cluster engines", e);
+        }
     }
 
     protected void loadClusterEngines(DocumentalMergedCluster index, String basename) throws IllegalAccessException, URISyntaxException, IOException, InstantiationException, NoSuchMethodException, ConfigurationException, InvocationTargetException, ClassNotFoundException {
