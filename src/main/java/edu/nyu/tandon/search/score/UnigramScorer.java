@@ -35,4 +35,11 @@ public class UnigramScorer extends BM25Scorer {
         }
     }
 
+    @Override
+    public synchronized UnigramScorer copy() {
+        final UnigramScorer scorer = new UnigramScorer();
+        scorer.setWeights(index2Weight);
+        return scorer;
+    }
+
 }

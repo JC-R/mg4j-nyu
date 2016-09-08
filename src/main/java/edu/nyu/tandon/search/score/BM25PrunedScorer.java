@@ -96,4 +96,11 @@ public class BM25PrunedScorer extends BM25Scorer {
         }
 
     }
+
+    @Override
+    public synchronized BM25PrunedScorer copy() {
+        final BM25PrunedScorer scorer = new BM25PrunedScorer(k1, b);
+        scorer.setWeights(index2Weight);
+        return scorer;
+    }
 }

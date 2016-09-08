@@ -129,13 +129,25 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
             prunedScorer.setGlobalMetrics(globalStats[0], globalStats[1], globalFrequencies);
         }
         engine.score(scorer);
+        LOGGER.debug(String.format("Cluster engine using scorer %s", scorer.getClass().getName()));
 
         return engine;
     }
 
     @Override
     public synchronized void score(final Scorer[] scorer, final double[] weight) {
+//        LOGGER.debug(String.format("Setting scorer %s", scorer[0].getClass().getName()));
         super.score(scorer, weight);
+        try {
+            if (scorer.length > 0) loadClusterEngines(index, basename);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to load cluster engines", e);
+        }
+    }
+
+    @Override
+    public synchronized void score(final Scorer scorer) {
+        super.score(scorer);
         try {
             loadClusterEngines(index, basename);
         } catch (Exception e) {
