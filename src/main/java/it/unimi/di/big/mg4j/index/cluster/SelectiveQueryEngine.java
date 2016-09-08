@@ -19,7 +19,9 @@ import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.di.big.mg4j.query.parser.SimpleParser;
 import it.unimi.di.big.mg4j.search.DocumentIterator;
 import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
+import it.unimi.di.big.mg4j.search.score.BM25Scorer;
 import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
+import it.unimi.di.big.mg4j.search.score.Scorer;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
@@ -113,10 +115,13 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
 
         engine.setWeights(index2Weight);
 
-        BM25PrunedScorer scorer = new BM25PrunedScorer();
-        long[] globalStats = loadGlobalStats(basename);
-        LongArrayList globalFrequencies = loadGlobalFrequencies(basename);
-        scorer.setGlobalMetrics(globalStats[0], globalStats[1], globalFrequencies);
+        Scorer scorer = this.scorer.copy();
+        if (scorer instanceof BM25PrunedScorer) {
+            BM25PrunedScorer prunedScorer = (BM25PrunedScorer) scorer;
+            long[] globalStats = loadGlobalStats(basename);
+            LongArrayList globalFrequencies = loadGlobalFrequencies(basename);
+            prunedScorer.setGlobalMetrics(globalStats[0], globalStats[1], globalFrequencies);
+        }
         engine.score(scorer);
 
         return engine;

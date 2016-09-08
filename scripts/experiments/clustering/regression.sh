@@ -30,7 +30,7 @@ segmentFeatures=`mktemp --tmpdir "segment-features-XXX"`
 
 ${SPARK_HOME}/bin/spark-submit --master spark://localhost:7077 \
     --class edu.nyu.tandon.ml.features.FeatureUnion \
-    ~/IdeaProjects/mg4j-nyu/target/mg4j-nyu-1.0.jar \
+    ${MG4J_NYU_CLASSPATH} \
     --features ${segmentFeatureFiles} \
     --output ${segmentFeatures}
 
