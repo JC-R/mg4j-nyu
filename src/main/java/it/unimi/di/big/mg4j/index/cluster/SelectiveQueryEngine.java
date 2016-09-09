@@ -71,12 +71,22 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
     public SelectiveQueryEngine(final QueryParser queryParser,
                                 final QueryBuilderVisitor<DocumentIterator> builderVisitor,
                                 final Object2ReferenceMap<String, Index> indexMap,
-                                DocumentalMergedCluster index,
                                 String basename,
                                 String csiBasename)
             throws IllegalAccessException, ConfigurationException, IOException, InstantiationException, ClassNotFoundException, URISyntaxException, NoSuchMethodException, InvocationTargetException {
         super(queryParser, builderVisitor, indexMap);
-        init(index, basename, csiBasename);
+        if (indexMap.size() != 1) {
+            throw new RuntimeException("Index map must contain exactly one index");
+        }
+        Index i = indexMap.values().iterator().next();
+        if (i instanceof DocumentalMergedCluster) {
+            init((DocumentalMergedCluster) i, basename, csiBasename);
+        }
+        else {
+            throw new RuntimeException(
+                    String.format("Expected DocumentalMergedCluster, got %s", i.getClass().getName()));
+        }
+        loadClusterEngines(index, basename);
     }
 
     protected void init(DocumentalMergedCluster index, String basename, String csiBasename)
@@ -121,7 +131,7 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
 
         engine.setWeights(index2Weight);
 
-        Scorer scorer = this.scorer.copy();
+        Scorer scorer = this.scorer != null ? this.scorer.copy() : new BM25Scorer();
         if (scorer instanceof BM25PrunedScorer) {
             BM25PrunedScorer prunedScorer = (BM25PrunedScorer) scorer;
             long[] globalStats = loadGlobalStats(basename);

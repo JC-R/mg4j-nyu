@@ -104,9 +104,16 @@ public class SelectiveQuery extends Query {
 		}
 		*/
 
-        DocumentalMergedCluster index = (DocumentalMergedCluster) indexMap.get(indexMap.firstKey());
-        final SelectiveQueryEngine queryEngine = new SelectiveQueryEngine(simpleParser, new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING), indexMap,
-                index, basenameWeight[0], jsapResult.getString("csi"));
+//        DocumentalMergedCluster index = (DocumentalMergedCluster) indexMap.get(indexMap.firstKey());
+        final SelectiveQueryEngine queryEngine = new SelectiveQueryEngine(
+                simpleParser,
+                new DocumentIteratorBuilderVisitor(indexMap,
+                        index2Parser,
+                        indexMap.get(indexMap.firstKey()),
+                        MAX_STEMMING),
+                indexMap,
+                basenameWeight[0],
+                jsapResult.getString("csi"));
 
         if (jsapResult.userSpecified("reddeT")) {
             queryEngine.setShardSelector(new ModifiedReDDEShardSelector(queryEngine.getCsi())
