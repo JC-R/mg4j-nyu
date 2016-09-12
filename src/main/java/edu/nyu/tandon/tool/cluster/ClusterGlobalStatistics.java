@@ -1,7 +1,7 @@
 package edu.nyu.tandon.tool.cluster;
 
 import com.martiansoftware.jsap.*;
-import edu.nyu.tandon.query.Query;
+import it.unimi.di.big.mg4j.index.IndexAccessHelper;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.IndexReader;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalMergedCluster;
@@ -31,10 +31,15 @@ public class ClusterGlobalStatistics {
     public static final Logger LOGGER = LoggerFactory.getLogger(ClusterGlobalStatistics.class);
 
     public static final String GLOB_FREQ_EXTENSION = ".globfreq";
+    public static final String GLOB_OCC_EXTENSION = ".globocc";
     public static final String GLOB_STAT_EXTENSION = ".globstat";
 
     public static LongArrayList loadGlobalFrequencies(String basename) throws IOException {
         return new LongArrayList(loadLongs(basename + GLOB_FREQ_EXTENSION));
+    }
+
+    public static LongArrayList loadGlobalOccurrencies(String basename) throws IOException {
+        return new LongArrayList(loadLongs(basename + GLOB_OCC_EXTENSION));
     }
 
     public static long[] loadGlobalStats(String basename) throws IOException {
@@ -48,6 +53,23 @@ public class ClusterGlobalStatistics {
 
     public static long frequency(Index index, long term) throws IOException {
         return index.documents(term).frequency();
+    }
+
+    public static void globalOccurrencies(Index index, int clusterId, String clusterBasename)
+            throws IOException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, URISyntaxException, ConfigurationException, ClassNotFoundException {
+
+        try (DataOutputStream o = new DataOutputStream(new FileOutputStream(clusterBasename + GLOB_OCC_EXTENSION));
+             IndexReader indexReader = index.getReader()) {
+
+            LineIterator it = FileUtils.lineIterator(new File(clusterBasename + TERMS_EXTENSION));
+            while (it.hasNext()) {
+                String term = it.nextLine();
+                LOGGER.trace(String.format("Processing term: %s", term));
+                o.writeLong(IndexAccessHelper.getOccurrency(indexReader.documents(term)));
+            }
+            it.close();
+        }
+
     }
 
     public static void globalFrequencies(Index index, int clusterId, String clusterBasename)
@@ -77,7 +99,7 @@ public class ClusterGlobalStatistics {
 
     }
 
-    public static void globalStatistics(DocumentalMergedCluster index)
+    public static void globalStatistics(DocumentalMergedCluster index, boolean skipOccurrencies)
             throws IOException, ClassNotFoundException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException {
 
         String[] localIndices = index.properties.getStringArray("localindex");
@@ -85,14 +107,16 @@ public class ClusterGlobalStatistics {
             LOGGER.info(String.format("Creating global statistics for cluster %s", localIndices[i]));
             globalStats(index, localIndices[i]);
             globalFrequencies(index, i, localIndices[i]);
+            if (!skipOccurrencies) globalOccurrencies(index, i, localIndices[i]);
         }
 
     }
 
     public static void main(String[] args) throws JSAPException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
 
-        SimpleJSAP jsap = new SimpleJSAP(ClusterGlobalStatistics.class.getName(), "Produces a list of term frequencies based on a clustering strategy.",
+        SimpleJSAP jsap = new SimpleJSAP(ClusterGlobalStatistics.class.getName(), "Produces a list of term frequencies [and occurrencies] based on a clustering strategy.",
                 new Parameter[]{
+                        new Switch("skipOccurrencies", 's', "skip-occurrencies", "Do not produce the list of global occurrencies."),
                         new UnflaggedOption("index", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.GREEDY, "The documental merged index for which we want to compute global frequencies.")
                 });
 
@@ -102,7 +126,7 @@ public class ClusterGlobalStatistics {
         String basename = jsapResult.getString("index");
         DocumentalMergedCluster index = (DocumentalMergedCluster) getInstance(basename);
         LOGGER.info(String.format("Creating global statistics for clusters in %s", basename));
-        globalStatistics(index);
+        globalStatistics(index, jsapResult.userSpecified("skipOccurrencies"));
 
     }
 

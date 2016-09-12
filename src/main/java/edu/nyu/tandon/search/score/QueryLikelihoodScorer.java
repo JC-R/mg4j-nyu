@@ -1,11 +1,11 @@
 package edu.nyu.tandon.search.score;
 
-import it.unimi.di.big.mg4j.index.AccessHelper;
+import it.unimi.di.big.mg4j.index.IndexAccessHelper;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.IndexIterator;
 import it.unimi.di.big.mg4j.search.DocumentIterator;
 import it.unimi.di.big.mg4j.search.score.BM25Scorer;
-import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,11 +29,27 @@ public class QueryLikelihoodScorer extends BM25Scorer {
      */
     protected double collectionSize;
 
+    /**
+     * Use global statistics.
+     */
+    protected boolean useGlobalStatistics = false;
+
+    /**
+     * Global occurrencies.
+     */
+    protected LongArrayList occurrencies;
+
     public QueryLikelihoodScorer() {
     }
 
     public QueryLikelihoodScorer(double mu) {
         this.mu = mu;
+    }
+
+    public void setGlobalMetrics(double collectionSize, final LongArrayList occurrencies) {
+        this.useGlobalStatistics = true;
+        this.collectionSize = collectionSize;
+        this.occurrencies = occurrencies;
     }
 
     @Override
@@ -53,7 +69,7 @@ public class QueryLikelihoodScorer extends BM25Scorer {
                 if (actualIndexIterator[i].document() == document) {
 
                     final double documentCount = actualIndexIterator[i].count();
-                    final double collectionCount = AccessHelper.getOccurrency(actualIndexIterator[i]);
+                    final double collectionCount = IndexAccessHelper.getOccurrency(actualIndexIterator[i]);
 
                     final double numerator = documentCount + mu * collectionCount / collectionSize;
                     final double denominator = documentSize + mu;

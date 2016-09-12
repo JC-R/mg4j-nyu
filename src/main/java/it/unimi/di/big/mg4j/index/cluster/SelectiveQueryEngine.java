@@ -5,6 +5,7 @@ import edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy;
 import edu.nyu.tandon.query.PrunedQueryEngine;
 import edu.nyu.tandon.query.QueryEngine;
 import edu.nyu.tandon.search.score.BM25PrunedScorer;
+import edu.nyu.tandon.search.score.QueryLikelihoodScorer;
 import edu.nyu.tandon.shard.csi.CentralSampleIndex;
 import edu.nyu.tandon.shard.ranking.ShardSelector;
 import edu.nyu.tandon.shard.ranking.redde.ReDDEShardSelector;
@@ -132,16 +133,26 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
         engine.setWeights(index2Weight);
 
         Scorer scorer = this.scorer != null ? this.scorer.copy() : new BM25Scorer();
+        setGlobalStatistics(scorer);
+        engine.score(scorer);
+        LOGGER.debug(String.format("Cluster engine using scorer %s", scorer.getClass().getName()));
+
+        return engine;
+    }
+
+    protected void setGlobalStatistics(Scorer scorer) throws IOException {
         if (scorer instanceof BM25PrunedScorer) {
             BM25PrunedScorer prunedScorer = (BM25PrunedScorer) scorer;
             long[] globalStats = loadGlobalStats(basename);
             LongArrayList globalFrequencies = loadGlobalFrequencies(basename);
             prunedScorer.setGlobalMetrics(globalStats[0], globalStats[1], globalFrequencies);
         }
-        engine.score(scorer);
-        LOGGER.debug(String.format("Cluster engine using scorer %s", scorer.getClass().getName()));
-
-        return engine;
+        else if (scorer instanceof QueryLikelihoodScorer) {
+            QueryLikelihoodScorer qlScorer = (QueryLikelihoodScorer) scorer;
+            long[] globalStats = loadGlobalStats(basename);
+            LongArrayList globalOccurrencies = loadGlobalOccurrencies(basename);
+            qlScorer.setGlobalMetrics(globalStats[1], globalOccurrencies);
+        }
     }
 
     @Override
