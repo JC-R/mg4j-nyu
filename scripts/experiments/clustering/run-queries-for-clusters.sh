@@ -69,4 +69,5 @@ do
             -i "${outputDir}/${number}/${inputBase}.top10.global" \
             --num-bins 10 \
             --num-docs `wc -l ${file} | cut -d" " -f1` \
+            --column "results-global"
 done

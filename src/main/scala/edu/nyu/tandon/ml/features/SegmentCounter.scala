@@ -43,6 +43,7 @@ object SegmentCounter {
     case class Config(input: File = null,
                       numBins: Int = -1,
                       numDocs: Int = -1,
+                      column: String = "",
                       sparkMaster: String = "local[*]")
 
     val parser = new OptionParser[Config](this.getClass.getSimpleName) {
@@ -62,6 +63,11 @@ object SegmentCounter {
         .text("the number of documents")
         .required()
 
+      opt[String]('c', "column")
+        .action((x, c) => c.copy(column = x))
+        .text("the column containing results")
+        .required()
+
       opt[String]('M', "spark-master")
         .action((x, c) => c.copy(sparkMaster = x))
         .text("spark master (default: local[*])")
@@ -76,7 +82,7 @@ object SegmentCounter {
         val sqlContext = SQLContextSingleton.getInstance(sparkContext)
 
         val output = segment(loadFeatureFile(sqlContext)(config.input),
-          "results",
+          config.column,
           config.numDocs,
           config.numBins)
 
