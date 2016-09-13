@@ -63,7 +63,6 @@ public class ExtractClusterFeatures {
                         new FlaggedOption("listLengthsOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'l', "list-lengths-output", "The output file to store inverted list lengths."),
                         new FlaggedOption("queryLengthOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'q', "query-length-output", "The output file to store query lengths."),
                         new FlaggedOption("topK", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'k', "top-k", "The engine will limit the result set to top k results. k=10 by default."),
-                        new FlaggedOption("cluster", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'c', "cluster", "The cluster number."),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index.")
                 });
 
@@ -97,7 +96,6 @@ public class ExtractClusterFeatures {
         engine.score(scorer);
 
         int k = jsapResult.userSpecified("topK") ? jsapResult.getInt("topK") : 10;
-        int cluster = jsapResult.getInt("cluster");
 
         List<EventLogger> eventLoggers = new ArrayList<>();
 

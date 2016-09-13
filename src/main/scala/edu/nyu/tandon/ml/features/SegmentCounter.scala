@@ -23,15 +23,15 @@ object SegmentCounter {
       .mapValues(_.length)
   }
 
-  def binsToRows(numBins: Int)(id: Long, cluster: Int, chunks: Map[Int, Int]): Seq[(Int, Int)] = {
+  def binsToRows(numBins: Int)(id: Long,chunks: Map[Int, Int]): Seq[(Int, Int)] = {
     val c = chunks.withDefaultValue(0)
     for (i <- 0 until numBins) yield (i, c(i))
   }
 
-  def segment(data: DataFrame, column: String, numDocs: Long, numBins: Int, cluster: Int): DataFrame = {
+  def segment(data: DataFrame, column: String, numDocs: Long, numBins: Int): DataFrame = {
     data.explode(data(IdCol), data(column)) {
       case Row(id: Int, line: String) =>
-        binsToRows(numBins)(id, cluster, countByBin(numDocs, numBins)(lineToLongs(line.toString)))
+        binsToRows(numBins)(id, countByBin(numDocs, numBins)(lineToLongs(line.toString)))
     }
       .drop(column)
       .withColumnRenamed("_1", "segment")
@@ -43,7 +43,6 @@ object SegmentCounter {
     case class Config(input: File = null,
                       numBins: Int = -1,
                       numDocs: Int = -1,
-                      cluster: Int = -1,
                       sparkMaster: String = "local[*]")
 
     val parser = new OptionParser[Config](this.getClass.getSimpleName) {
@@ -63,11 +62,6 @@ object SegmentCounter {
         .text("the number of documents")
         .required()
 
-      opt[Int]('c', "cluster")
-        .action((x, c) => c.copy(cluster = x))
-        .text("cluster number")
-        .required()
-
       opt[String]('M', "spark-master")
         .action((x, c) => c.copy(sparkMaster = x))
         .text("spark master (default: local[*])")
@@ -84,8 +78,7 @@ object SegmentCounter {
         val output = segment(loadFeatureFile(sqlContext)(config.input),
           "results",
           config.numDocs,
-          config.numBins,
-          config.cluster)
+          config.numBins)
 
         saveFeatureFile(output, config.input.getAbsolutePath + ".segmented")
 

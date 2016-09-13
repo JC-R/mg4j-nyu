@@ -58,7 +58,6 @@ do
             -t "${outputDir}/${number}/${inputBase}.time" \
             -r "${outputDir}/${number}/${inputBase}.top10" \
             -l "${outputDir}/${number}/${inputBase}.listlengths" \
-            -c ${number} \
             ${clusterBase}
 
         java -Xmx4g edu.nyu.tandon.experiments.TranslateToGlobalIds \
@@ -67,8 +66,7 @@ do
             -c ${number}
 
         java -Xmx4g edu.nyu.tandon.ml.features.SegmentCounter \
-            -i "${outputDir}/${number}/${inputBase}.top10" \
-            -b 10 \
-            -d `wc -l ${file} | cut -d" " -f1` \
-            -c ${number}
+            -i "${outputDir}/${number}/${inputBase}.top10.global" \
+            --num-bins 10 \
+            --num-docs `wc -l ${file} | cut -d" " -f1` \
 done
