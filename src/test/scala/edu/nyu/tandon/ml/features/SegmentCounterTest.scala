@@ -55,7 +55,8 @@ class SegmentCounterTest extends FunSuite {
     val it = Seq(
       "id,results",
       "0,1 2 10 54",
-      "1,48 77 89"
+      "1,48 77 89",
+      "2,"
     ).toIterator
 
     // when
@@ -71,7 +72,11 @@ class SegmentCounterTest extends FunSuite {
       "1,0",
       "1,1",
       "1,0",
-      "1,2"
+      "1,2",
+      "2,0",
+      "2,0",
+      "2,0",
+      "2,0"
     ))
   }
 

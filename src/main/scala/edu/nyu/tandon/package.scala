@@ -33,7 +33,7 @@ package object tandon {
   def save(file: String)(data: Iterator[String]): Unit = {
     val writer = new BufferedWriter(new FileWriter(file))
     for (line <- data) {
-      writer.append(line)
+      writer.append(s"$line\n")
     }
     writer.close()
   }

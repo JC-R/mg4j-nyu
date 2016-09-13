@@ -30,8 +30,8 @@ object SegmentCounter {
   }
 
   def expandRow(resultsColumnId: Int, columnCount: Int, numDocs: Long, numBins: Int)(row: String): Seq[String] = {
-    val fields: Seq[String] = row.split(",")
-    assert(columnCount == fields.length, "Mismatch in number of columns")
+    val fields: Seq[String] = row.split(",", -1)
+    assert(columnCount == fields.length, s"Mismatch in number of columns: $columnCount != ${fields.length}")
 
     val results = lineToLongs(fields(resultsColumnId))
     val countsByBin = countByBin(numDocs, numBins)(results).withDefaultValue(0)
