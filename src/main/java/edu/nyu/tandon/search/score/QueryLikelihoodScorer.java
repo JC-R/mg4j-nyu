@@ -46,6 +46,11 @@ public class QueryLikelihoodScorer extends BM25Scorer {
         this.mu = mu;
     }
 
+    public QueryLikelihoodScorer withGlobalMetrics(double collectionSize, final LongArrayList occurrencies) {
+        this.setGlobalMetrics(collectionSize, occurrencies);
+        return this;
+    }
+
     public void setGlobalMetrics(double collectionSize, final LongArrayList occurrencies) {
         this.useGlobalStatistics = true;
         this.collectionSize = collectionSize;

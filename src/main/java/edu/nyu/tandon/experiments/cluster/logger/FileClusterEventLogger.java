@@ -18,7 +18,7 @@ public abstract class FileClusterEventLogger implements EventLogger {
 
     private void init(BufferedWriter writer) throws IOException {
         this.writer = writer;
-        this.writer.append("id,cluster,")
+        this.writer.append("id,")
                 .append(column())
                 .append('\n')
                 .flush();
@@ -28,12 +28,10 @@ public abstract class FileClusterEventLogger implements EventLogger {
         init(new BufferedWriter(new FileWriter(f)));
     }
 
-    protected void log(long id, int cluster, String columnValue) {
+    protected void log(long id, String columnValue) {
         try {
             writer
                     .append(String.valueOf(id))
-                    .append(',')
-                    .append(String.valueOf(cluster))
                     .append(',')
                     .append(columnValue)
                     .append('\n')

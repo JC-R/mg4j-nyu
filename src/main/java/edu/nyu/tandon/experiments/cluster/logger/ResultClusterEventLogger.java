@@ -24,11 +24,11 @@ public class ResultClusterEventLogger extends FileClusterEventLogger {
     }
 
     @Override
-    public void onStart(long id, int cluster, Iterable<String> query) {
+    public void onStart(long id, Iterable<String> query) {
     }
 
     @Override
-    public void onEnd(long id, int cluster, Iterable<Object> results) {
-        log(id, cluster, Joiner.on(" ").join(results));
+    public void onEnd(long id, Iterable<Object> results) {
+        log(id, Joiner.on(" ").join(results));
     }
 }

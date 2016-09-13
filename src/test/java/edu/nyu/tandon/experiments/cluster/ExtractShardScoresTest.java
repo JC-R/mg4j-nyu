@@ -37,12 +37,11 @@ public class ExtractShardScoresTest extends BaseTest {
         // Then
         int count = 0;
         for (String t : Files.readAllLines(outputTime.toPath())) {
-            if (count == 0) assertThat(t, equalTo("id,cluster,time"));
+            if (count == 0) assertThat(t, equalTo("id,time"));
             else {
                 String[] l = t.split(",");
                 assertThat(tryParse(l[0]), notNullValue(Integer.class));
                 assertThat(tryParse(l[1]), notNullValue(Integer.class));
-                assertThat(tryParse(l[2]), notNullValue(Integer.class));
             }
             count++;
         }
@@ -70,12 +69,11 @@ public class ExtractShardScoresTest extends BaseTest {
         // Then
         int count = 0;
         for (String t : Files.readAllLines(outputTime.toPath())) {
-            if (count == 0) assertThat(t, equalTo("id,cluster,time"));
+            if (count == 0) assertThat(t, equalTo("id,time"));
             else {
                 String[] l = t.split(",");
                 assertThat(tryParse(l[0]), notNullValue(Integer.class));
                 assertThat(tryParse(l[1]), notNullValue(Integer.class));
-                assertThat(tryParse(l[2]), notNullValue(Integer.class));
             }
             count++;
         }

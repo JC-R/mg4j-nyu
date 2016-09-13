@@ -21,13 +21,13 @@ public class TimeClusterEventLogger extends FileClusterEventLogger {
     }
 
     @Override
-    public void onStart(long id, int cluster, Iterable<String> query) {
+    public void onStart(long id, Iterable<String> query) {
         timestamp = System.currentTimeMillis();
     }
 
     @Override
-    public void onEnd(long id, int cluster, Iterable<Object> results) {
+    public void onEnd(long id, Iterable<Object> results) {
         long elapsed = System.currentTimeMillis() - timestamp;
-        log(id, cluster, String.valueOf(elapsed));
+        log(id, String.valueOf(elapsed));
     }
 }

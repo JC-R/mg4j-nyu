@@ -40,22 +40,20 @@ public class ExtractClusterFeaturesTest extends BaseTest {
         // Then
         int count = 0;
         for (String t : Files.readAllLines(outputTime.toPath())) {
-            if (count == 0) assertThat(t, equalTo("id,cluster,time"));
+            if (count == 0) assertThat(t, equalTo("id,time"));
             else {
                 String[] l = t.split(",");
                 assertThat(tryParse(l[0]), notNullValue(Integer.class));
                 assertThat(tryParse(l[1]), notNullValue(Integer.class));
-                assertThat(tryParse(l[2]), notNullValue(Integer.class));
             }
             count++;
         }
         assertThat(count, equalTo(151));
         count = 0;
         for (String line : Files.readAllLines(outputResult.toPath())) {
-            if (count == 0) assertThat(line, equalTo("id,cluster,results"));
+            if (count == 0) assertThat(line, equalTo("id,results"));
             else {
                 Iterator<String> l = Splitter.on(",").split(line).iterator();
-                assertThat(tryParse(l.next()), notNullValue(Integer.class));
                 assertThat(tryParse(l.next()), notNullValue(Integer.class));
                 String s = l.next();
                 for (String doc : Splitter.on(" ").omitEmptyStrings().split(s)) {
@@ -68,14 +66,13 @@ public class ExtractClusterFeaturesTest extends BaseTest {
         assertThat(count, equalTo(151));
         count = 0;
         for (String line : Files.readAllLines(outputListLengths.toPath())) {
-            if (count == 0) assertThat(line, equalTo("id,cluster,list-lengths"));
+            if (count == 0) assertThat(line, equalTo("id,list-lengths"));
             else {
                 String[] l = line.split(",");
                 assertThat(tryParse(l[0]), notNullValue(Integer.class));
-                assertThat(tryParse(l[1]), notNullValue(Integer.class));
-                for (String length : Splitter.on(" ").omitEmptyStrings().split(l[2])) {
+                for (String length : Splitter.on(" ").omitEmptyStrings().split(l[1])) {
                     Integer len = tryParse(length);
-                    assertThat(String.format("Problem parsing list of integers: %s", l[2]),
+                    assertThat(String.format("Problem parsing list of integers: %s", l[1]),
                             tryParse(length), notNullValue(Integer.class));
                     assertThat(String.format("There is a -1 value (exception during running queries) at line %d", count),
                             len, CoreMatchers.not(equalTo(-1l)));

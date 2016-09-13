@@ -79,14 +79,14 @@ public class ExtractShardScores {
                 try {
 
                     for (EventLogger l : eventLoggers) {
-                        for (int i = 0; i < clusters; i++) l.onStart(id, i, Splitter.on(" ").split(query));
+                        for (int i = 0; i < clusters; i++) l.onStart(id, Splitter.on(" ").split(query));
                     }
 
                     Map<Integer, Double> shardScores = shardSelector.shardScores(query);
 
                     for (EventLogger l : eventLoggers) {
                         for (int i = 0; i < clusters; i++) {
-                            l.onEnd(id, i, Arrays.asList(shardScores.getOrDefault(i, 0.0)));
+                            l.onEnd(id, Arrays.asList(shardScores.getOrDefault(i, 0.0)));
                         }
                     }
 

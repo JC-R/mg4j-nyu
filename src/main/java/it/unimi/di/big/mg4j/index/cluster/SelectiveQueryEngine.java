@@ -133,24 +133,24 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
         engine.setWeights(index2Weight);
 
         Scorer scorer = this.scorer != null ? this.scorer.copy() : new BM25Scorer();
-        setGlobalStatistics(scorer);
+        setGlobalStatistics(scorer, basename);
         engine.score(scorer);
         LOGGER.debug(String.format("Cluster engine using scorer %s", scorer.getClass().getName()));
 
         return engine;
     }
 
-    protected void setGlobalStatistics(Scorer scorer) throws IOException {
+    protected void setGlobalStatistics(Scorer scorer, String shardBasename) throws IOException {
         if (scorer instanceof BM25PrunedScorer) {
             BM25PrunedScorer prunedScorer = (BM25PrunedScorer) scorer;
-            long[] globalStats = loadGlobalStats(basename);
-            LongArrayList globalFrequencies = loadGlobalFrequencies(basename);
+            long[] globalStats = loadGlobalStats(shardBasename);
+            LongArrayList globalFrequencies = loadGlobalFrequencies(shardBasename);
             prunedScorer.setGlobalMetrics(globalStats[0], globalStats[1], globalFrequencies);
         }
         else if (scorer instanceof QueryLikelihoodScorer) {
             QueryLikelihoodScorer qlScorer = (QueryLikelihoodScorer) scorer;
-            long[] globalStats = loadGlobalStats(basename);
-            LongArrayList globalOccurrencies = loadGlobalOccurrencies(basename);
+            long[] globalStats = loadGlobalStats(shardBasename);
+            LongArrayList globalOccurrencies = loadGlobalOccurrencies(shardBasename);
             qlScorer.setGlobalMetrics(globalStats[1], globalOccurrencies);
         }
     }
