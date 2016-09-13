@@ -5,6 +5,8 @@ import java.io.File
 import org.apache.spark.sql.{DataFrame, SQLContext, SaveMode}
 import org.apache.spark.sql.types.DoubleType
 
+import scala.io.Source
+
 /**
   * @author michal.siedlaczek@nyu.edu
   */

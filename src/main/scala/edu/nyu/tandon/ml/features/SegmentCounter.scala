@@ -5,37 +5,47 @@ import java.io._
 import edu.nyu.tandon._
 import edu.nyu.tandon.ml._
 import edu.nyu.tandon.spark.SQLContextSingleton
+import org.apache.log4j.Logger
 import org.apache.spark.sql.{DataFrame, Row}
 import org.apache.spark.{SparkConf, SparkContext}
+import org.slf4j.LoggerFactory
 import scopt.OptionParser
+
+import scala.io.{BufferedSource, Source}
 
 /**
   * @author michal.siedlaczek@nyu.edu
   */
 object SegmentCounter {
 
+  val logger = LoggerFactory.getLogger(SegmentCounter.getClass())
+
   def countByBin(numDocs: Long, numBins: Int)(topResults: Seq[Long]): Map[Int, Int] = {
     def chunkNumber(r: Long): Int = {
-      assert(r < numDocs)
+      assert(r < numDocs, s"Result $r is not smaller than number of documents $numDocs")
       math.floor(r.toDouble / numDocs.toDouble * numBins.toDouble).toInt
     }
     topResults.groupBy(chunkNumber)
       .mapValues(_.length)
   }
 
-  def binsToRows(numBins: Int)(id: Long, chunks: Map[Int, Int]): Seq[(Int, Int)] = {
-    val c = chunks.withDefaultValue(0)
-    for (i <- 0 until numBins) yield (i, c(i))
+  def expandRow(resultsColumnId: Int, columnCount: Int, numDocs: Long, numBins: Int)(row: String): Seq[String] = {
+    val fields: Seq[String] = row.split(",")
+    assert(columnCount == fields.length, "Mismatch in number of columns")
+
+    val results = lineToLongs(fields(resultsColumnId))
+    val countsByBin = countByBin(numDocs, numBins)(results).withDefaultValue(0)
+
+    for (bin <- 0 until numBins) yield fields.updated(resultsColumnId, countsByBin(bin)).mkString(",")
   }
 
-  def segment(data: DataFrame, column: String, numDocs: Long, numBins: Int): DataFrame = {
-    data.explode(data(IdCol), data(column)) {
-      case Row(id: Int, line: String) =>
-        binsToRows(numBins)(id, countByBin(numDocs, numBins)(lineToLongs(line.toString)))
-    }
-      .drop(column)
-      .withColumnRenamed("_1", "segment")
-      .withColumnRenamed("_2", "count")
+  def segment(data: Iterator[String], column: String, numDocs: Long, numBins: Int): Iterator[String] = {
+    val header: String = data.next()
+    val columns: Seq[String] = header.split(",")
+    val resultsColumnId: Int = columns.indexOf(column)
+    assert(resultsColumnId >= 0, s"The column to expand ($column) does not exist")
+    assert(columns.indexOf(column, resultsColumnId + 1) < 0, s"There is more than one columns $column")
+    Seq(header).toIterator ++ (data flatMap expandRow(resultsColumnId, columns.length, numDocs, numBins))
   }
 
   def main(args: Array[String]): Unit = {
@@ -43,8 +53,7 @@ object SegmentCounter {
     case class Config(input: File = null,
                       numBins: Int = -1,
                       numDocs: Int = -1,
-                      column: String = "",
-                      sparkMaster: String = "local[*]")
+                      column: String = "")
 
     val parser = new OptionParser[Config](this.getClass.getSimpleName) {
 
@@ -68,25 +77,19 @@ object SegmentCounter {
         .text("the column containing results")
         .required()
 
-      opt[String]('M', "spark-master")
-        .action((x, c) => c.copy(sparkMaster = x))
-        .text("spark master (default: local[*])")
-
     }
 
     parser.parse(args, Config()) match {
       case Some(config) =>
-        val sparkContext = new SparkContext(new SparkConf()
-          .setAppName(this.getClass.toString)
-          .setMaster(config.sparkMaster))
-        val sqlContext = SQLContextSingleton.getInstance(sparkContext)
 
-        val output = segment(loadFeatureFile(sqlContext)(config.input),
+        logger.info(s"Segmenting ${config.input} for ${config.numDocs} documents and ${config.numBins} bins...")
+        val output = segment(Source.fromFile(config.input).getLines(),
           config.column,
           config.numDocs,
           config.numBins)
 
-        saveFeatureFile(output, config.input.getAbsolutePath + ".segmented")
+        save(config.input.getAbsolutePath + ".segmented")(output)
+        logger.info(s"Segmenting done.")
 
       case None =>
     }

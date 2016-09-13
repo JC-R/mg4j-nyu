@@ -48,41 +48,31 @@ class SegmentCounterTest extends FunSuite {
     }
   }
 
-  test("binsToRow") {
-
-    val numChunks = 10
-    val chunks = Map(0 -> 1, 2 -> 3, 9 -> 5, 2000 -> 111)
-
-    assertResult(Seq(
-      (0, 1),
-      (1, 0),
-      (2, 3),
-      (3, 0),
-      (4, 0),
-      (5, 0),
-      (6, 0),
-      (7, 0),
-      (8, 0),
-      (9, 5)
-    )) {
-      SegmentCounter.binsToRows(numChunks)(0, chunks)
-    }
-  }
-
   test("segment") {
     // given
     val numDocs = 100
     val numBins = 4
-    val df = sqlContext.createDataFrame(List(
-      (0, "1 2 10 54"),
-      (1, "48 77 89")
-    )).toDF("id", "results")
+    val it = Seq(
+      "id,results",
+      "0,1 2 10 54",
+      "1,48 77 89"
+    ).toIterator
 
     // when
-    SegmentCounter.segment(df, "results", numDocs, numBins)
+    val segmented = SegmentCounter.segment(it, "results", numDocs, numBins).toList
 
     // then
-    // TODO
+    assert(segmented === List(
+      "id,results",
+      "0,3",
+      "0,0",
+      "0,1",
+      "0,0",
+      "1,0",
+      "1,1",
+      "1,0",
+      "1,2"
+    ))
   }
 
 }

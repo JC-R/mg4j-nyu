@@ -27,6 +27,8 @@ if [ -z "${csiBase}" ]; then echo "You have to define CSI."; exit 1; fi;
 inputBase=`basename ${input}`
 base="${dir}/`ls ${dir} | egrep '\.strategy' | sed 's/\.strategy//'`"
 
+starttime=$(date +%s)
+
 java -Xmx3g edu.nyu.tandon.experiments.cluster.ExtractShardScores \
     -s redde \
     -i ${input} \
@@ -60,14 +62,13 @@ do
             -l "${outputDir}/${number}/${inputBase}.listlengths" \
             ${clusterBase}
 
-        java -Xmx4g edu.nyu.tandon.experiments.TranslateToGlobalIds \
-            -i "${outputDir}/${number}/${inputBase}.top10" \
-            -s "${base}.strategy" \
-            -c ${number}
-
         java -Xmx4g edu.nyu.tandon.ml.features.SegmentCounter \
-            -i "${outputDir}/${number}/${inputBase}.top10.global" \
+            -i "${outputDir}/${number}/${inputBase}.top10" \
             --num-bins 10 \
             --num-docs `wc -l ${file} | cut -d" " -f1` \
-            --column "results-global"
+            --column "results"
 done
+
+endtime=$(date +%s)
+
+echo "Extracting time: $((endtime-starttime))s"

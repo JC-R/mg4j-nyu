@@ -1,6 +1,6 @@
 package edu.nyu
 
-import java.io.File
+import java.io.{BufferedWriter, File, FileWriter}
 
 import org.apache.commons.io.FileUtils._
 
@@ -29,5 +29,13 @@ package object tandon {
 
   def cp(oldName: String, newName: String): Boolean =
     Try(copyFile(new File(oldName), new File(newName))).isSuccess
+
+  def save(file: String)(data: Iterator[String]): Unit = {
+    val writer = new BufferedWriter(new FileWriter(file))
+    for (line <- data) {
+      writer.append(line)
+    }
+    writer.close()
+  }
 
 }

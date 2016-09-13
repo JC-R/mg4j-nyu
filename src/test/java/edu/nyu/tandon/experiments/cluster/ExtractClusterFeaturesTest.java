@@ -26,7 +26,7 @@ public class ExtractClusterFeaturesTest extends BaseTest {
         File outputTime = newTemporaryFile();
         File outputResult = newTemporaryFile();
         File outputListLengths = newTemporaryFile();
-        String[] args = String.format("-i %s -t %s -r %s -l %s -k 15 -c 0 %s",
+        String[] args = String.format("-i %s -t %s -r %s -l %s -k 15 %s",
                 getFileFromResourcePath("queries/gov2-trec_eval-queries.txt").getAbsoluteFile(),
                 outputTime.getAbsoluteFile(),
                 outputResult.getAbsoluteFile(),
@@ -90,7 +90,7 @@ public class ExtractClusterFeaturesTest extends BaseTest {
         File outputTime = newTemporaryFile();
         File outputResult = newTemporaryFile();
         File outputListLengths = newTemporaryFile();
-        String[] args = String.format("-g -i %s -t %s -r %s -l %s -c 0 %s",
+        String[] args = String.format("-g -i %s -t %s -r %s -l %s %s",
                 getFileFromResourcePath("queries/gov2-trec_eval-queries.txt").getAbsoluteFile(),
                 outputTime.getAbsoluteFile(),
                 outputResult.getAbsoluteFile(),
