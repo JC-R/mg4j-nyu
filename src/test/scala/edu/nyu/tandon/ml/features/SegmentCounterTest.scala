@@ -65,7 +65,7 @@ class SegmentCounterTest extends FunSuite {
       (8, 0),
       (9, 5)
     )) {
-      SegmentCounter.binsToRows(numChunks)(0, 1, chunks)
+      SegmentCounter.binsToRows(numChunks)(0, chunks)
     }
   }
 
@@ -79,7 +79,7 @@ class SegmentCounterTest extends FunSuite {
     )).toDF("id", "results")
 
     // when
-    SegmentCounter.segment(df, "results", numDocs, numBins, 0)
+    SegmentCounter.segment(df, "results", numDocs, numBins)
 
     // then
     // TODO

@@ -23,7 +23,7 @@ object SegmentCounter {
       .mapValues(_.length)
   }
 
-  def binsToRows(numBins: Int)(id: Long,chunks: Map[Int, Int]): Seq[(Int, Int)] = {
+  def binsToRows(numBins: Int)(id: Long, chunks: Map[Int, Int]): Seq[(Int, Int)] = {
     val c = chunks.withDefaultValue(0)
     for (i <- 0 until numBins) yield (i, c(i))
   }
