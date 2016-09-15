@@ -45,6 +45,7 @@ public class BM25PrunedScorer extends BM25Scorer {
     protected long g_numberOfDocuments;
     protected long g_numberOfOccurrences;
     protected boolean globalScoring;
+    /* TODO: This should be LongBigArrayBigList */
     protected LongArrayList globalTermFrequencies;
 
     public void setGlobalMetrics(final long numdocs, final long numOcc, final LongArrayList list) {
@@ -55,52 +56,6 @@ public class BM25PrunedScorer extends BM25Scorer {
     }
 
     public LongArrayList getGlobalTermFrequencies() { return this.globalTermFrequencies;}
-
-//    @Override
-    public void wraps(DocumentIterator d) throws IOException {
-
-        long numDocs = this.g_numberOfDocuments;
-        long numOccurrences = this.g_numberOfOccurrences;
-
-        super.wrap(d);
-
-        // need access to global term frequencies
-        final Index[] index = termVisitor.indices();
-        if (indexIterator != null && index.length == 1 && (documentIterator instanceof AbstractIntersectionDocumentIterator || indexIterator.length < MAX_FLAT_DISJUNCTS)) {
-			/* This code is a flat, simplified duplication of what a CounterSetupVisitor would do. It is here just for efficiency. */
-
-            if (flatIndexIterator.length != 0) {
-
-                // index is pruned if global metrics are available
-                if (!globalScoring) {
-                    numDocs = flatIndexIterator[0].index().numberOfDocuments;
-                    numOccurrences = flatIndexIterator[0].index().numberOfOccurrences;
-                }
-
-                // Some caching of frequently-used values
-                k1TimesBDividedByAverageDocumentSize = k1 * b * numDocs / numOccurrences;
-                if ((this.sizes = flatIndexIterator[0].index().sizes) == null)
-                    throw new IllegalStateException("A BM25 scorer requires document sizes");
-
-                // We do all logs here, and multiply by the weight
-                for (int i = 0; i < numberOfPairs; i++) {
-                    if (globalScoring) {
-                        final long frequency = globalTermFrequencies.getLong((int)flatIndexIterator[i].termNumber());
-                        k1Plus1TimesWeightedIdfPart[i] = (k1 + 1) * Math.max(EPSILON_SCORE,
-                                Math.log((numDocs - frequency + 0.5) / (frequency + 0.5))) * index2Weight.getDouble(flatIndexIterator[i].index());
-                    } else {
-                        final long frequency = flatIndexIterator[i].frequency();
-                        k1Plus1TimesWeightedIdfPart[i] = (k1 + 1) * Math.max(EPSILON_SCORE,
-                                Math.log((numDocs - frequency + 0.5) / (frequency + 0.5))) * index2Weight.getDouble(flatIndexIterator[i].index());
-                    }
-                }
-            }
-        } else {
-            // TODO: the OR greatest OR threat OR to OR the OR existence OR of OR the OR bald OR eagle OR came OR from OR the OR extensive OR use OR of OR ddt OR and OR other OR pesticides OR after OR world OR war OR ii
-            throw new IllegalArgumentException("Multiple index queries not supported.");
-        }
-
-    }
 
     @Override
     public void wrap(DocumentIterator d) throws IOException {
@@ -171,7 +126,39 @@ public class BM25PrunedScorer extends BM25Scorer {
                 }
             }
         } else {
-            throw new IllegalArgumentException("Multiple index queries not supported.");
+
+            if (index.length != 1) throw new IllegalArgumentException("Multiple index queries not supported.");
+
+            // Some caching of frequently-used values
+            final double[] k1TimesBDividedByAverageDocumentSize = new double[index.length];
+            for (int i = index.length; i-- != 0; )
+                k1TimesBDividedByAverageDocumentSize[i] = k1 * b *
+                        (globalScoring ? g_numberOfDocuments : index[i].numberOfDocuments) /
+                        (globalScoring ? g_numberOfOccurrences : index[i].numberOfOccurrences);
+
+            if (DEBUG) LOGGER.debug("Average document sizes: " + Arrays.toString(k1TimesBDividedByAverageDocumentSize));
+            final IntBigList[] sizes = new IntBigList[index.length];
+            for (int i = index.length; i-- != 0; )
+                if ((sizes[i] = index[i].sizes) == null)
+                    throw new IllegalStateException("A BM25 scorer requires document sizes");
+
+            setupVisitor.prepare();
+            d.accept(setupVisitor);
+            final long[] frequency = setupVisitor.frequency;
+            final int[] indexNumber = setupVisitor.indexNumber;
+
+            // We do all logs here, and multiply by the weight
+            k1Plus1TimesWeightedIdfPart = new double[frequency.length];
+            for (int i = k1Plus1TimesWeightedIdfPart.length; i-- != 0; ) {
+
+                numDocs = (globalScoring ? g_numberOfDocuments : index[indexNumber[i]].numberOfDocuments);
+                long freq = globalScoring ? globalTermFrequencies.getLong((int) index[indexNumber[i]].termMap.getLong(setupVisitor.offset2Term[i])) : frequency[i];
+
+                k1Plus1TimesWeightedIdfPart[i] = (k1 + 1) * Math.max(EPSILON_SCORE,
+                        Math.log((numDocs - freq + 0.5) / (freq + 0.5))) * index2Weight.getDouble(index[indexNumber[i]]);
+            }
+
+            visitor = new Visitor(k1Times1MinusB, k1Plus1TimesWeightedIdfPart, k1TimesBDividedByAverageDocumentSize, termVisitor.indices().length, indexNumber, sizes);
         }
 
     }

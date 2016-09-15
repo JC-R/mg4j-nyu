@@ -75,33 +75,29 @@ public class SelectiveQueryEngineTest extends BaseTest {
     }
 
     @Test
-    public void sameAsGlobal() throws QueryParserException, QueryBuilderVisitorException, IOException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
-        ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> results =
-                new ObjectArrayList<>();
-        selectiveQueryEngine.score(new BM25PrunedScorer());
-        selectiveQueryEngine.process("us oil industry", 0, 10, results);
-
-        ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> globalResults =
-                new ObjectArrayList<>();
-        globalEngine().process("us oil industry", 0, 10, globalResults);
-
-        assertThat(results.size(), equalTo(globalResults.size()));
-        for (int i = 0; i < results.size(); i++) {
-            assertThat(results.get(i).document, equalTo(globalResults.get(i).document));
-            assertThat(results.get(i).score, equalTo(globalResults.get(i).score));
-        }
+    public void sameAsGlobalShortConjuctive() throws QueryParserException, QueryBuilderVisitorException, IOException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
+        sameAsGlobal("us oil industry");
     }
 
     @Test
-    public void sameAsGlobalForLongDisjunctive() throws QueryParserException, QueryBuilderVisitorException, IOException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
+    public void sameAsGlobalLongDisjunctive() throws QueryParserException, QueryBuilderVisitorException, IOException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
+        sameAsGlobal("the OR greatest OR threat OR to OR the OR existence OR of OR the OR bald OR eagle OR came OR from OR the OR extensive OR use OR of OR ddt OR and OR other OR pesticides OR after OR world OR war OR ii");
+    }
+
+    @Test
+    public void sameAsGlobalTree() throws QueryParserException, QueryBuilderVisitorException, IOException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
+        sameAsGlobal("the OR (greatest OR threat)");
+    }
+
+    public void sameAsGlobal(String query) throws QueryParserException, QueryBuilderVisitorException, IOException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
         ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> results =
                 new ObjectArrayList<>();
         selectiveQueryEngine.score(new BM25PrunedScorer());
-        selectiveQueryEngine.process("the OR greatest OR threat OR to OR the OR existence OR of OR the OR bald OR eagle OR came OR from OR the OR extensive OR use OR of OR ddt OR and OR other OR pesticides OR after OR world OR war OR ii", 0, 10, results);
+        selectiveQueryEngine.process(query, 0, 10, results);
 
         ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> globalResults =
                 new ObjectArrayList<>();
-        globalEngine().process("the OR greatest OR threat OR to OR the OR existence OR of OR the OR bald OR eagle OR came OR from OR the OR extensive OR use OR of OR ddt OR and OR other OR pesticides OR after OR world OR war OR ii", 0, 10, globalResults);
+        globalEngine().process(query, 0, 10, globalResults);
 
         assertThat(results.size(), equalTo(globalResults.size()));
         for (int i = 0; i < results.size(); i++) {
