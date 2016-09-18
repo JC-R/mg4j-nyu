@@ -1,5 +1,6 @@
 package edu.nyu.tandon.test;
 
+import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import edu.nyu.tandon.shard.csi.CentralSampleIndex;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalPartitioningStrategy;
@@ -70,7 +71,8 @@ public class BaseTest {
         return new CentralSampleIndex(
                 csiDir.getAbsolutePath() + "/csi-0",
                 (DocumentalClusteringStrategy) loadObject(getFileFromResourcePath("csi/csi.strategy")),
-                (DocumentalPartitioningStrategy) loadObject(getFileFromResourcePath("clusters/gov2C.strategy")));
+                (DocumentalPartitioningStrategy) loadObject(getFileFromResourcePath("clusters/gov2C.strategy")),
+                new BM25PrunedScorer());
     }
 
 }

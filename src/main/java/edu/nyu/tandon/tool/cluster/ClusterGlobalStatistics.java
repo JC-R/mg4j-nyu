@@ -6,6 +6,7 @@ import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.IndexReader;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalMergedCluster;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongBigArrayBigList;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
@@ -22,6 +23,7 @@ import java.net.URISyntaxException;
 import static it.unimi.di.big.mg4j.index.DiskBasedIndex.TERMS_EXTENSION;
 import static it.unimi.di.big.mg4j.index.Index.getInstance;
 import static it.unimi.dsi.fastutil.io.BinIO.loadLongs;
+import static it.unimi.dsi.fastutil.io.BinIO.loadLongsBig;
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -38,8 +40,8 @@ public class ClusterGlobalStatistics {
         return new LongArrayList(loadLongs(basename + GLOB_FREQ_EXTENSION));
     }
 
-    public static LongArrayList loadGlobalOccurrencies(String basename) throws IOException {
-        return new LongArrayList(loadLongs(basename + GLOB_OCC_EXTENSION));
+    public static LongBigArrayBigList loadGlobalOccurrencies(String basename) throws IOException {
+        return new LongBigArrayBigList(loadLongsBig(basename + GLOB_OCC_EXTENSION));
     }
 
     public static long[] loadGlobalStats(String basename) throws IOException {

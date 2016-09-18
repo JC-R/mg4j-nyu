@@ -102,7 +102,7 @@ public class SelectiveQueryEngineTest extends BaseTest {
         assertThat(results.size(), equalTo(globalResults.size()));
         for (int i = 0; i < results.size(); i++) {
             assertThat(results.get(i).document, equalTo(globalResults.get(i).document));
-            assertEquals(globalResults.get(i).score, results.get(i).score, 0.0001);
+            assertEquals(globalResults.get(i).score, results.get(i).score, 0.0000000000001);
         }
     }
 

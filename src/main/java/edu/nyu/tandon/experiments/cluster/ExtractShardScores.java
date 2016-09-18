@@ -6,6 +6,7 @@ import edu.nyu.tandon.experiments.cluster.logger.EventLogger;
 import edu.nyu.tandon.experiments.cluster.logger.ResultClusterEventLogger;
 import edu.nyu.tandon.experiments.cluster.logger.TimeClusterEventLogger;
 import edu.nyu.tandon.query.Query;
+import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import edu.nyu.tandon.shard.csi.CentralSampleIndex;
 import edu.nyu.tandon.shard.ranking.ShardSelector;
 import edu.nyu.tandon.shard.ranking.redde.ReDDEShardSelector;
@@ -49,7 +50,7 @@ public class ExtractShardScores {
         int clusters = jsapResult.getInt("clusters");
 
         LOGGER.info("Loading CSI...");
-        CentralSampleIndex csi = CentralSampleIndex.loadCSI(jsapResult.getString("csi"), jsapResult.getString("basename"));
+        CentralSampleIndex csi = CentralSampleIndex.loadCSI(jsapResult.getString("csi"), jsapResult.getString("basename"), new BM25PrunedScorer());
 
         ShardSelector shardSelector;
 

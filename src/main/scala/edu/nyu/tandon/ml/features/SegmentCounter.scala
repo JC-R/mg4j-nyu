@@ -3,15 +3,10 @@ package edu.nyu.tandon.ml.features
 import java.io._
 
 import edu.nyu.tandon._
-import edu.nyu.tandon.ml._
-import edu.nyu.tandon.spark.SQLContextSingleton
-import org.apache.log4j.Logger
-import org.apache.spark.sql.{DataFrame, Row}
-import org.apache.spark.{SparkConf, SparkContext}
 import org.slf4j.LoggerFactory
 import scopt.OptionParser
 
-import scala.io.{BufferedSource, Source}
+import scala.io.Source
 
 /**
   * @author michal.siedlaczek@nyu.edu

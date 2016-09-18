@@ -24,6 +24,7 @@ import it.unimi.di.big.mg4j.search.score.Scorer;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongBigArrayBigList;
 import it.unimi.dsi.fastutil.objects.*;
 import org.apache.commons.configuration.ConfigurationException;
 import org.slf4j.Logger;
@@ -79,7 +80,6 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
             throw new RuntimeException(
                     String.format("Expected DocumentalMergedCluster, got %s", i.getClass().getName()));
         }
-        loadClusterEngines(index, basename);
     }
 
     protected void init(DocumentalMergedCluster index, String basename, String csiBasename)
@@ -90,9 +90,9 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
 
         csiStrategy = (DocumentalClusteringStrategy) BinIO.loadObject(csiBasename + STRATEGY);
         clusterStrategy = (SelectiveDocumentalIndexStrategy) BinIO.loadObject(basename + STRATEGY);
-        csi = new CentralSampleIndex(csiBasename + "-0", csiStrategy, clusterStrategy);
-        shardSelector = new ReDDEShardSelector(csi);
         eventLoggers = new ArrayList<>();
+        loadCsi(scorer, csiBasename + "-0");
+        loadClusterEngines(index, basename);
     }
 
     public void setShardSelector(ShardSelector s) {
@@ -132,7 +132,7 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
         return engine;
     }
 
-    protected void setGlobalStatistics(Scorer scorer, String shardBasename) throws IOException {
+    public static void setGlobalStatistics(Scorer scorer, String shardBasename) throws IOException {
         if (scorer instanceof BM25PrunedScorer) {
             BM25PrunedScorer prunedScorer = (BM25PrunedScorer) scorer;
             long[] globalStats = loadGlobalStats(shardBasename);
@@ -142,14 +142,13 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
         else if (scorer instanceof QueryLikelihoodScorer) {
             QueryLikelihoodScorer qlScorer = (QueryLikelihoodScorer) scorer;
             long[] globalStats = loadGlobalStats(shardBasename);
-            LongArrayList globalOccurrencies = loadGlobalOccurrencies(shardBasename);
+            LongBigArrayBigList globalOccurrencies = loadGlobalOccurrencies(shardBasename);
             qlScorer.setGlobalMetrics(globalStats[1], globalOccurrencies);
         }
     }
 
     @Override
     public synchronized void score(final Scorer[] scorer, final double[] weight) {
-//        LOGGER.debug(String.format("Setting scorer %s", scorer[0].getClass().getName()));
         super.score(scorer, weight);
         try {
             if (scorer.length > 0) loadClusterEngines(index, basename);
@@ -163,6 +162,7 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
         super.score(scorer);
         try {
             loadClusterEngines(index, basename);
+            loadCsi(scorer, csi.getBasename());
         } catch (Exception e) {
             throw new RuntimeException("Unable to load cluster engines", e);
         }
@@ -173,6 +173,11 @@ public class SelectiveQueryEngine<T> extends QueryEngine<T> {
         for (int i = 0; i < index.allIndices.length; i++) {
             clusterEngines[i] = loadClusterEngine(index.localIndex[i], basename + "-" + String.valueOf(i));
         }
+    }
+
+    protected void loadCsi(Scorer scorer, String csiBasename) throws IllegalAccessException, URISyntaxException, IOException, InstantiationException, NoSuchMethodException, ConfigurationException, InvocationTargetException, ClassNotFoundException {
+        csi = new CentralSampleIndex(csiBasename, csiStrategy, clusterStrategy, scorer);
+        shardSelector = new ReDDEShardSelector(csi);
     }
 
     protected void convertLocalToGlobal(int shardId, ObjectArrayList<DocumentScoreInfo<T>> results) {
