@@ -44,4 +44,4 @@ ${SPARK_HOME}/bin/spark-submit \
     ${MG4J_NYU_CLASSPATH} \
     --input ${allFeatures} \
     --output ${output} \
-    --label-col count
+    --label-col results

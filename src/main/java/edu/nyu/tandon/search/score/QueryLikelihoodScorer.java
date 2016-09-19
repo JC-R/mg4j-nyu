@@ -68,7 +68,7 @@ public class QueryLikelihoodScorer extends BM25Scorer {
         } else {
             final double documentSize = sizes.getInt(document);
 
-            double score = numberOfPairs > 0 ? 1 : 0;
+            double score = 0;
             final IndexIterator[] actualIndexIterator = this.flatIndexIterator;
 
             for (int i = numberOfPairs; i-- != 0; ) {
@@ -85,7 +85,7 @@ public class QueryLikelihoodScorer extends BM25Scorer {
 
                     final double numerator = documentCount + mu * collectionCount / collectionSize;
                     final double denominator = documentSize + mu;
-                    score *= numerator / denominator;
+                    score += Math.log(numerator / denominator);
                 }
                 else {
                     score = 0;
