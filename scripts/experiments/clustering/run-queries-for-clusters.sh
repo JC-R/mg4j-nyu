@@ -55,11 +55,12 @@ do
 
         mkdir -p "${outputDir}/${number}"
 
+        mv "${outputDir}/${inputBase}.redde.scores.${number}" "${outputDir}/${number}/${inputBase}.redde.scores"
+        mv "${outputDir}/${inputBase}.redde.scores.${number}" "${outputDir}/${number}/${inputBase}.shrkc.scores"
+
         java -Xmx4g edu.nyu.tandon.experiments.cluster.ExtractClusterFeatures -g \
             -i ${input} \
-            -t "${outputDir}/${number}/${inputBase}.time" \
             -r "${outputDir}/${number}/${inputBase}.top10" \
-            -l "${outputDir}/${number}/${inputBase}.listlengths" \
             ${clusterBase}
 
         java -Xmx4g edu.nyu.tandon.ml.features.SegmentCounter \

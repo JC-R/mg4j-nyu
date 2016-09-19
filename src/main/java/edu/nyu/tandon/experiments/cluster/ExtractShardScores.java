@@ -4,6 +4,7 @@ import com.google.common.base.Splitter;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.experiments.cluster.logger.EventLogger;
 import edu.nyu.tandon.experiments.cluster.logger.ResultClusterEventLogger;
+import edu.nyu.tandon.experiments.cluster.logger.ShardEventLogger;
 import edu.nyu.tandon.experiments.cluster.logger.TimeClusterEventLogger;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.search.score.BM25PrunedScorer;
@@ -59,19 +60,29 @@ public class ExtractShardScores {
         else if ("shrkc".equals(selectorType)) shardSelector = new RankS(csi, 2).withC(-1.0);
         else throw new IllegalArgumentException("You need to define a proper selector: redde, shrkc");
 
-        List<EventLogger> eventLoggers = new ArrayList<>();
+        List<ShardEventLogger> eventLoggers = new ArrayList<>();
 
-        if (jsapResult.userSpecified("timeOutput")) {
-            eventLoggers.add(new TimeClusterEventLogger(jsapResult.getString("timeOutput")));
-        }
+//        if (jsapResult.userSpecified("timeOutput")) {
+//            eventLoggers.add(new TimeClusterEventLogger(jsapResult.getString("timeOutput")));
+//        }
 
         if (jsapResult.userSpecified("scoresOutput")) {
-            eventLoggers.add(new ResultClusterEventLogger(jsapResult.getString("scoresOutput")) {
-                @Override
-                public String column() {
-                    return selectorType + "-score";
-                }
-            });
+            for (int i = 0; i < clusters; i++) {
+                final int j = i;
+                eventLoggers.add(new ShardEventLogger(
+                        String.format("%s.%d", jsapResult.getString("scoresOutput"), i)) {
+
+                    @Override
+                    public String column() {
+                        return selectorType + "-score";
+                    }
+
+                    @Override
+                    public void onEnd(long id, Map<Integer, Double> shardScores) {
+                        log(id, shardScores.getOrDefault(j, 0.0).toString());
+                    }
+                });
+            }
         }
 
         try (BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
@@ -79,16 +90,14 @@ public class ExtractShardScores {
             for (String query; (query = br.readLine()) != null; ) {
                 try {
 
-                    for (EventLogger l : eventLoggers) {
-                        for (int i = 0; i < clusters; i++) l.onStart(id, Splitter.on(" ").split(query));
+                    for (ShardEventLogger l : eventLoggers) {
+                        l.onStart(id, Splitter.on(" ").split(query));
                     }
 
                     Map<Integer, Double> shardScores = shardSelector.shardScores(query);
 
-                    for (EventLogger l : eventLoggers) {
-                        for (int i = 0; i < clusters; i++) {
-                            l.onEnd(id, Arrays.asList(shardScores.getOrDefault(i, 0.0)));
-                        }
+                    for (ShardEventLogger l : eventLoggers) {
+                        l.onEnd(id, shardScores);
                     }
 
                 } catch (QueryParserException | QueryBuilderVisitorException | IOException e) {

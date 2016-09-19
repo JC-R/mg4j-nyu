@@ -31,7 +31,8 @@ object SegmentCounter {
     val results = lineToLongs(fields(resultsColumnId))
     val countsByBin = countByBin(numDocs, numBins)(results).withDefaultValue(0)
 
-    for (bin <- 0 until numBins) yield fields.updated(resultsColumnId, countsByBin(bin)).mkString(",")
+    for (bin <- 0 until numBins) yield (fields.updated(resultsColumnId, countsByBin(bin)) :+ bin)
+      .mkString(",")
   }
 
   def segment(data: Iterator[String], column: String, numDocs: Long, numBins: Int): Iterator[String] = {
@@ -40,7 +41,7 @@ object SegmentCounter {
     val resultsColumnId: Int = columns.indexOf(column)
     assert(resultsColumnId >= 0, s"The column to expand ($column) does not exist")
     assert(columns.indexOf(column, resultsColumnId + 1) < 0, s"There is more than one columns $column")
-    Seq(header).toIterator ++ (data flatMap expandRow(resultsColumnId, columns.length, numDocs, numBins))
+    Seq((columns :+ "bin").mkString(",")).toIterator ++ (data flatMap expandRow(resultsColumnId, columns.length, numDocs, numBins))
   }
 
   def main(args: Array[String]): Unit = {

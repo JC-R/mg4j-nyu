@@ -12,7 +12,6 @@ import java.io.OutputStream;
 public class ResultClusterEventLogger extends FileClusterEventLogger {
 
     private long queriesProcessed = 0;
-    private String clusterHeader = ",cluster";
 
     @Override
     public String column() {

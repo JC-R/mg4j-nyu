@@ -66,30 +66,30 @@ public class QueryLikelihoodScorer extends BM25Scorer {
         if (flatIndexIterator == null) {
             throw new UnsupportedOperationException();
         } else {
+
             final double documentSize = sizes.getInt(document);
 
             double score = 0;
             final IndexIterator[] actualIndexIterator = this.flatIndexIterator;
 
             for (int i = numberOfPairs; i-- != 0; ) {
+
+                double documentCount = 0;
                 if (actualIndexIterator[i].document() == document) {
+                    documentCount = actualIndexIterator[i].count();
+                }
 
-                    final double documentCount = actualIndexIterator[i].count();
-                    double collectionCount;
-                    if (useGlobalStatistics) {
-                        collectionCount = occurrencies.getLong(actualIndexIterator[i].termNumber());
-                    }
-                    else {
-                        collectionCount = IndexAccessHelper.getOccurrency(actualIndexIterator[i]);
-                    }
-
-                    final double numerator = documentCount + mu * collectionCount / collectionSize;
-                    final double denominator = documentSize + mu;
-                    score += Math.log(numerator / denominator);
+                double collectionCount;
+                if (useGlobalStatistics) {
+                    collectionCount = occurrencies.getLong(actualIndexIterator[i].termNumber());
                 }
                 else {
-                    score = 0;
+                    collectionCount = IndexAccessHelper.getOccurrency(actualIndexIterator[i]);
                 }
+
+                final double numerator = documentCount + mu * collectionCount / collectionSize;
+                final double denominator = documentSize + mu;
+                score += Math.log(numerator) - Math.log(denominator);
             }
             return score;
         }

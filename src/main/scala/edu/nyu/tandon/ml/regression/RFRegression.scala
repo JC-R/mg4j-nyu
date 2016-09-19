@@ -56,6 +56,7 @@ class RFRegression(val numTrees: Int,
       stages(trainingData),
       numFolds
     )
+
 }
 
 object RFRegression {
@@ -110,7 +111,8 @@ object RFRegression {
       case Some(config) =>
 
         val sparkContext = new SparkContext(new SparkConf()
-          .setAppName("Random Forest Regression"))
+          .setAppName("Random Forest Regression")
+          .setMaster("local[*]"))
         val sqlContext = SQLContextSingleton.getInstance(sparkContext)
 
         val r = new RFRegression(config.numTrees, config.maxBins, config.maxDepth, config.labelCol)
@@ -121,6 +123,7 @@ object RFRegression {
         val m = r.model(trainingData, config.numFolds)
 
         val testPredictions = m.transform(testData)
+
         val eval = new RegressionEvaluator()
           .setLabelCol(config.labelCol)
           .evaluate(testPredictions)
