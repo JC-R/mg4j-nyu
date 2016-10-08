@@ -1,13 +1,13 @@
 package edu.nyu.tandon.experiments.cluster;
 
+import com.google.common.primitives.Doubles;
 import edu.nyu.tandon.test.BaseTest;
 import org.junit.Test;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 
-import static com.google.common.primitives.Ints.tryParse;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
@@ -20,13 +20,11 @@ public class ExtractShardScoresTest extends BaseTest {
     public void redde() throws Exception {
 
         // Given
-        File input = newTemporaryFileWithContent("the\n");
-        File outputTime = newTemporaryFile();
-        File outputScores = newTemporaryFile();
-        String[] args = String.format("-i %s -t %s -r %s -c 11 -s redde %s %s",
+        File input = newTemporaryFileWithContent("the\na\n");
+        String outputBasename = temporaryFolder.getRoot().getAbsolutePath() + "/test";
+        String[] args = String.format("-i %s -o %s -c 11 -s redde %s %s",
                 input.getAbsoluteFile(),
-                outputTime.getAbsoluteFile(),
-                outputScores.getAbsoluteFile(),
+                outputBasename,
                 getFileFromResourcePath("clusters").getAbsoluteFile() + "/gov2C",
                 getFileFromResourcePath("csi").getAbsoluteFile() + "/csi")
                 .split(" ");
@@ -35,30 +33,22 @@ public class ExtractShardScoresTest extends BaseTest {
         ExtractShardScores.main(args);
 
         // Then
-//        int count = 0;
-//        for (String t : Files.readAllLines(outputTime.toPath())) {
-//            if (count == 0) assertThat(t, equalTo("id,time"));
-//            else {
-//                String[] l = t.split(",");
-//                assertThat(tryParse(l[0]), notNullValue(Integer.class));
-//                assertThat(tryParse(l[1]), notNullValue(Integer.class));
-//            }
-//            count++;
-//        }
-//        assertThat(count, equalTo(12));
+        for (int i = 0; i < 11; i++) {
+            for (String l : Files.readAllLines(Paths.get(String.format("%s#%d.redde", outputBasename, i)))) {
+                assertThat(Doubles.tryParse(l), notNullValue());
+            }
+        }
     }
 
     @Test
     public void shrkc() throws Exception {
 
         // Given
-        File input = newTemporaryFileWithContent("the\n");
-        File outputTime = newTemporaryFile();
-        File outputScores = newTemporaryFile();
-        String[] args = String.format("-i %s -t %s -r %s -c 11 -s shrkc %s %s",
+        File input = newTemporaryFileWithContent("the\na\n");
+        String outputBasename = temporaryFolder.getRoot().getAbsolutePath() + "/test";
+        String[] args = String.format("-i %s -o %s -c 11 -s shrkc %s %s",
                 input.getAbsoluteFile(),
-                outputTime.getAbsoluteFile(),
-                outputScores.getAbsoluteFile(),
+                outputBasename,
                 getFileFromResourcePath("clusters").getAbsoluteFile() + "/gov2C",
                 getFileFromResourcePath("csi").getAbsoluteFile() + "/csi")
                 .split(" ");
@@ -67,17 +57,11 @@ public class ExtractShardScoresTest extends BaseTest {
         ExtractShardScores.main(args);
 
         // Then
-//        int count = 0;
-//        for (String t : Files.readAllLines(outputTime.toPath())) {
-//            if (count == 0) assertThat(t, equalTo("id,time"));
-//            else {
-//                String[] l = t.split(",");
-//                assertThat(tryParse(l[0]), notNullValue(Integer.class));
-//                assertThat(tryParse(l[1]), notNullValue(Integer.class));
-//            }
-//            count++;
-//        }
-//        assertThat(count, equalTo(12));
+        for (int i = 0; i < 11; i++) {
+            for (String l : Files.readAllLines(Paths.get(String.format("%s#%d.shrkc", outputBasename, i)))) {
+                assertThat(Doubles.tryParse(l), notNullValue());
+            }
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)

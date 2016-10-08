@@ -1,16 +1,11 @@
 package edu.nyu.tandon.experiments.cluster;
 
-import com.google.common.base.Splitter;
 import com.martiansoftware.jsap.*;
-import edu.nyu.tandon.experiments.cluster.logger.EventLogger;
-import edu.nyu.tandon.experiments.cluster.logger.ResultClusterEventLogger;
-import edu.nyu.tandon.experiments.cluster.logger.ShardEventLogger;
-import edu.nyu.tandon.experiments.cluster.logger.TimeClusterEventLogger;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import edu.nyu.tandon.shard.csi.CentralSampleIndex;
 import edu.nyu.tandon.shard.ranking.ShardSelector;
-import edu.nyu.tandon.shard.ranking.redde.ReDDEShardSelector;
+import edu.nyu.tandon.shard.ranking.redde.ModifiedReDDEShardSelector;
 import edu.nyu.tandon.shard.ranking.shrkc.RankS;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
@@ -19,10 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,13 +25,18 @@ public class ExtractShardScores {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ExtractShardScores.class);
 
+    private static ShardSelector resolveShardSelector(String name, CentralSampleIndex csi) {
+        if ("redde".equals(name)) return new ModifiedReDDEShardSelector(csi);
+        else if ("shrkc".equals(name)) return new RankS(csi, 2).withC(-1.0);
+        else throw new IllegalArgumentException("You need to define a proper selector: redde, shrkc");
+    }
+
     public static void main(String[] args) throws Exception {
 
         SimpleJSAP jsap = new SimpleJSAP(Query.class.getName(), "Loads indices relative to a collection, possibly loads the collection, and answers to queries.",
                 new Parameter[]{
                         new FlaggedOption("input", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'i', "input", "The input file with queries delimited by new lines."),
-                        new FlaggedOption("timeOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 't', "time-output", "The output file to store execution times."),
-                        new FlaggedOption("scoresOutput", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'r', "scores-output", "The output file to store scores."),
+                        new FlaggedOption("output", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "output", "The output files basename."),
                         new FlaggedOption("clusters", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'c', "clusters", "The number of clusters."),
                         new FlaggedOption("selector", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 's', "selector", "Selector type (redde or shrkc)"),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the cluster indices (not including number suffixes). In other words, the basename of the partitioned index as if loaded as a DocumentalMergedCluster."),
@@ -53,59 +51,33 @@ public class ExtractShardScores {
         LOGGER.info("Loading CSI...");
         CentralSampleIndex csi = CentralSampleIndex.loadCSI(jsapResult.getString("csi"), jsapResult.getString("basename"), new BM25PrunedScorer());
 
-        ShardSelector shardSelector;
+        ShardSelector shardSelector = resolveShardSelector(jsapResult.getString("selector"), csi);
 
-        String selectorType = jsapResult.getString("selector");
-        if ("redde".equals(selectorType)) shardSelector = new ReDDEShardSelector(csi);
-        else if ("shrkc".equals(selectorType)) shardSelector = new RankS(csi, 2).withC(-1.0);
-        else throw new IllegalArgumentException("You need to define a proper selector: redde, shrkc");
-
-        List<ShardEventLogger> eventLoggers = new ArrayList<>();
-
-//        if (jsapResult.userSpecified("timeOutput")) {
-//            eventLoggers.add(new TimeClusterEventLogger(jsapResult.getString("timeOutput")));
-//        }
-
-        if (jsapResult.userSpecified("scoresOutput")) {
-            for (int i = 0; i < clusters; i++) {
-                final int j = i;
-                eventLoggers.add(new ShardEventLogger(
-                        String.format("%s.%d", jsapResult.getString("scoresOutput"), i)) {
-
-                    @Override
-                    public String column() {
-                        return selectorType + "-score";
-                    }
-
-                    @Override
-                    public void onEnd(long id, Map<Integer, Double> shardScores) {
-                        log(id, shardScores.getOrDefault(j, 0.0).toString());
-                    }
-                });
-            }
-        }
+        FileWriter[] writers = new FileWriter[clusters];
+        for (int i = 0; i < clusters; i++) writers[i] =
+                new FileWriter(jsapResult.getString("output") + "#" + i + "." + jsapResult.getString("selector"));
 
         try (BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
-            long id = 0;
             for (String query; (query = br.readLine()) != null; ) {
                 try {
-
-                    for (ShardEventLogger l : eventLoggers) {
-                        l.onStart(id, Splitter.on(" ").split(query));
-                    }
-
                     Map<Integer, Double> shardScores = shardSelector.shardScores(query);
-
-                    for (ShardEventLogger l : eventLoggers) {
-                        l.onEnd(id, shardScores);
+                    for (int i = 0; i < clusters; i++) {
+                        writers[i]
+                                .append(shardScores.getOrDefault(i, 0.0).toString())
+                                .append("\n");
                     }
-
                 } catch (QueryParserException | QueryBuilderVisitorException | IOException e) {
                     LOGGER.error(String.format("There was an error while processing query: %s", query), e);
-                } finally {
-                    id++;
+                    throw e;
                 }
             }
+        } finally {
+            for (int i = 0; i < clusters; i++)
+                try {
+                    writers[i].close();
+                } catch (IOException e) {
+                    LOGGER.error(String.format("Couldn't close writer for shard %d", i));
+                }
         }
     }
 

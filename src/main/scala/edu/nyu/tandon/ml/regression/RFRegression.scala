@@ -5,12 +5,11 @@ import java.io.{File, FileWriter}
 import edu.nyu.tandon.ml._
 import edu.nyu.tandon.ml.features._
 import edu.nyu.tandon.spark.SQLContextSingleton
-import org.apache.log4j.{Level, Logger}
 import org.apache.spark.ml.evaluation.RegressionEvaluator
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.regression.RandomForestRegressor
 import org.apache.spark.ml.{Pipeline, PipelineModel, PipelineStage}
-import org.apache.spark.sql.{DataFrame, SQLContext}
+import org.apache.spark.sql.DataFrame
 import org.apache.spark.{SparkConf, SparkContext}
 import scopt.OptionParser
 
@@ -122,7 +121,7 @@ object RFRegression {
 
         val m = r.model(trainingData, config.numFolds)
 
-        val testPredictions = m.transform(testData)
+          val testPredictions = m.transform(testData)
 
         val eval = new RegressionEvaluator()
           .setLabelCol(config.labelCol)

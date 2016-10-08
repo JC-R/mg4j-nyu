@@ -55,8 +55,11 @@ do
 
         mkdir -p "${outputDir}/${number}"
 
-        mv "${outputDir}/${inputBase}.redde.scores.${number}" "${outputDir}/${number}/${inputBase}.redde.scores"
-        mv "${outputDir}/${inputBase}.redde.scores.${number}" "${outputDir}/${number}/${inputBase}.shrkc.scores"
+        redde="${outputDir}/${number}/${inputBase}.redde.scores"
+        shrkc="${outputDir}/${number}/${inputBase}.shrkc.scores"
+
+        mv "${outputDir}/${inputBase}.redde.scores.${number}" redde
+        mv "${outputDir}/${inputBase}.shrkc.scores.${number}" shrkc
 
         java -Xmx4g edu.nyu.tandon.experiments.cluster.ExtractClusterFeatures -g \
             -i ${input} \
@@ -68,7 +71,18 @@ do
             --num-bins 10 \
             --num-docs `wc -l ${file} | cut -d" " -f1` \
             --column "results"
+
+        segmented="${outputDir}/${number}/${inputBase}.top10.segmented"
+        dataset="${outputDir}/${number}/${inputBase}.dataset"
+
+        join -t, <(join -t, <(head -1 ${redde}) <(head -1 ${shrkc})) <(head -1 ${segmented}) > ${dataset}
+        join -t, <(join -t, <(tail -n +2 ${redde} | sort -t, -k 1b,1) <(tail -n +2 ${shrkc} | sort -t, -k 1b,1)) \
+            <(tail -n +2 ${segmented} | sort -t, -k 1b,1) >> ${dataset}
+
 done
+
+head -1 "${outputDir}/0/${inputBase}.dataset" > "${inputBase}.data"
+find ${outputDir} -type f -name "${inputBase}.dataset" -exec tail -n +2 {} \; >> "${inputBase}.data"
 
 endtime=$(date +%s)
 

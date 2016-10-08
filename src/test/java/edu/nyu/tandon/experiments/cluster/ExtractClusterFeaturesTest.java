@@ -1,13 +1,11 @@
 package edu.nyu.tandon.experiments.cluster;
 
-import com.google.common.base.Splitter;
+import com.google.common.primitives.Doubles;
 import edu.nyu.tandon.test.BaseTest;
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
-import java.io.File;
 import java.nio.file.Files;
-import java.util.Iterator;
+import java.nio.file.Paths;
 
 import static com.google.common.primitives.Ints.tryParse;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -23,14 +21,10 @@ public class ExtractClusterFeaturesTest extends BaseTest {
     public void runQueriesAndCheckFileFormat() throws Exception {
 
         // Given
-        File outputTime = newTemporaryFile();
-        File outputResult = newTemporaryFile();
-        File outputListLengths = newTemporaryFile();
-        String[] args = String.format("-i %s -t %s -r %s -l %s -k 15 %s",
+        String outputBasename = temporaryFolder.getRoot().getAbsolutePath() + "/test";
+        String[] args = String.format("-i %s -o %s -k 15 %s",
                 getFileFromResourcePath("queries/gov2-trec_eval-queries.txt").getAbsoluteFile(),
-                outputTime.getAbsoluteFile(),
-                outputResult.getAbsoluteFile(),
-                outputListLengths.getAbsoluteFile(),
+                outputBasename,
                 getFileFromResourcePath("index").getAbsoluteFile() + "/gov2-text")
                 .split(" ");
 
@@ -39,63 +33,35 @@ public class ExtractClusterFeaturesTest extends BaseTest {
 
         // Then
         int count = 0;
-        for (String t : Files.readAllLines(outputTime.toPath())) {
-            if (count == 0) assertThat(t, equalTo("id,time"));
-            else {
-                String[] l = t.split(",");
-                assertThat(tryParse(l[0]), notNullValue(Integer.class));
-                assertThat(tryParse(l[1]), notNullValue(Integer.class));
+        for (String t : Files.readAllLines(Paths.get(outputBasename + ".results"))) {
+            if (!"".equals(t)) {
+                String[] l = t.split(" ");
+                for (String r : l) assertThat(tryParse(r), notNullValue(Integer.class));
             }
             count++;
         }
-        assertThat(count, equalTo(151));
+        assertThat(count, equalTo(150));
         count = 0;
-        for (String line : Files.readAllLines(outputResult.toPath())) {
-            if (count == 0) assertThat(line, equalTo("id,results"));
-            else {
-                Iterator<String> l = Splitter.on(",").split(line).iterator();
-                assertThat(tryParse(l.next()), notNullValue(Integer.class));
-                String s = l.next();
-                for (String doc : Splitter.on(" ").omitEmptyStrings().split(s)) {
-                    assertThat(String.format("Problem parsing list of integers: %s", s),
-                            tryParse(doc), notNullValue(Integer.class));
-                }
+        for (String t : Files.readAllLines(Paths.get(outputBasename + ".scores"))) {
+            if (!"".equals(t)) {
+                String[] l = t.split(" ");
+                for (String r : l) assertThat(Doubles.tryParse(r), notNullValue(Double.class));
             }
             count++;
         }
-        assertThat(count, equalTo(151));
-        count = 0;
-        for (String line : Files.readAllLines(outputListLengths.toPath())) {
-            if (count == 0) assertThat(line, equalTo("id,list-lengths"));
-            else {
-                String[] l = line.split(",");
-                assertThat(tryParse(l[0]), notNullValue(Integer.class));
-                for (String length : Splitter.on(" ").omitEmptyStrings().split(l[1])) {
-                    Integer len = tryParse(length);
-                    assertThat(String.format("Problem parsing list of integers: %s", l[1]),
-                            tryParse(length), notNullValue(Integer.class));
-                    assertThat(String.format("There is a -1 value (exception during running queries) at line %d", count),
-                            len, CoreMatchers.not(equalTo(-1l)));
-                }
-            }
-            count++;
-        }
-        assertThat(count, equalTo(151));
+        assertThat(count, equalTo(150));
     }
 
     @Test
     public void globalStatistics() throws Exception {
 
         // Given
-        File outputTime = newTemporaryFile();
-        File outputResult = newTemporaryFile();
-        File outputListLengths = newTemporaryFile();
-        String[] args = String.format("-g -i %s -t %s -r %s -l %s %s",
+        String outputBasename = temporaryFolder.getRoot().getAbsolutePath() + "/test";
+        String[] args = String.format("-g -i %s -o %s -k 15 -s %d %s",
                 getFileFromResourcePath("queries/gov2-trec_eval-queries.txt").getAbsoluteFile(),
-                outputTime.getAbsoluteFile(),
-                outputResult.getAbsoluteFile(),
-                outputListLengths.getAbsoluteFile(),
-                getFileFromResourcePath("clusters").getAbsoluteFile() + "/gov2C-5")
+                outputBasename,
+                0,
+                getFileFromResourcePath("clusters").getAbsoluteFile() + "/gov2C-0")
                 .split(" ");
 
         // When
@@ -103,10 +69,23 @@ public class ExtractClusterFeaturesTest extends BaseTest {
 
         // Then
         int count = 0;
-        for (String t : Files.readAllLines(outputTime.toPath())) {
+        for (String t : Files.readAllLines(Paths.get(outputBasename + "#0.results"))) {
+            if (!"".equals(t)) {
+                String[] l = t.split(" ");
+                for (String r : l) assertThat(tryParse(r), notNullValue(Integer.class));
+            }
             count++;
         }
-        assertThat(count, equalTo(151));
+        assertThat(count, equalTo(150));
+        count = 0;
+        for (String t : Files.readAllLines(Paths.get(outputBasename + "#0.scores"))) {
+            if (!"".equals(t)) {
+                String[] l = t.split(" ");
+                for (String r : l) assertThat(Doubles.tryParse(r), notNullValue(Double.class));
+            }
+            count++;
+        }
+        assertThat(count, equalTo(150));
     }
 
 }
