@@ -28,8 +28,8 @@ class TranslateToGlobalIdsTest extends FunSuite {
     }
 
     /** create a new file in the temp directory */
-    def createNewFile = {
-      val f = new File(temporaryFolder.getPath + "/" + UUID.randomUUID.toString)
+    def createNewFile(suffix: String = "") = {
+      val f = new File(temporaryFolder.getPath + "/" + UUID.randomUUID.toString + suffix)
       f.createNewFile
       f
     }
@@ -60,27 +60,22 @@ class TranslateToGlobalIdsTest extends FunSuite {
     val input = Seq(
       "0 1",
       "1 2",
-      "2 0"
+      "2 0",
+      ""
     )
     val expected0 = Seq(
       "0 1",
       "1 2",
-      "2 0"
+      "2 0",
+      ""
     )
     val expected1 = Seq(
       "3 4",
       "4 5",
-      "5 3"
+      "5 3",
+      ""
     )
   }
-
-//  trait DataFrames {
-//    val df = sqlContext.createDataFrame(List(
-//      (0, "0 1"),
-//      (1, "1 2"),
-//      (2, "2 0")
-//    )).toDF("id", "results")
-//  }
 
   test("toGlobal") {
     new Strategy {
@@ -96,7 +91,7 @@ class TranslateToGlobalIdsTest extends FunSuite {
     new Strategy with Results with TemporaryFolder {
 
       // given
-      val f = createNewFile
+      val f = createNewFile(".local")
       val writer = new FileWriter(f)
       for (line <- input) writer.append(s"$line\n")
       writer.close()
@@ -106,7 +101,7 @@ class TranslateToGlobalIdsTest extends FunSuite {
 
       // then
       assertResult(expected0) {
-        Source.fromFile(f).getLines().toSeq
+        Source.fromFile(f.getAbsolutePath.replace("local", "global")).getLines().toSeq
       }
 
     }
@@ -117,7 +112,7 @@ class TranslateToGlobalIdsTest extends FunSuite {
     new Strategy with Results with TemporaryFolder {
 
       // given
-      val f = createNewFile
+      val f = createNewFile(".local")
       val writer = new FileWriter(f)
       for (line <- input) writer.append(s"$line\n")
       writer.close()
@@ -127,7 +122,7 @@ class TranslateToGlobalIdsTest extends FunSuite {
 
       // then
       assertResult(expected1) {
-        Source.fromFile(f).getLines().toSeq
+        Source.fromFile(f.getAbsolutePath.replace("local", "global")).getLines().toSeq
       }
 
     }

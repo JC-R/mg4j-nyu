@@ -33,9 +33,6 @@ public class ExtractClusterFeatures {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ExtractClusterFeatures.class);
 
-    // TODO: Should be more general and support other kinds of aliases.
-//    private static final String ALIAS = "text";
-
     public static void main(String[] args) throws Exception {
 
         SimpleJSAP jsap = new SimpleJSAP(Query.class.getName(), ".",
@@ -82,22 +79,11 @@ public class ExtractClusterFeatures {
                 String.format("%s#%d", jsapResult.getString("output"), jsapResult.getInt("shardId")) :
                 jsapResult.getString("output");
 
-        FileWriter resultWriter = new FileWriter(String.format("%s.results", outputBasename));
-        FileWriter scoreWriter = new FileWriter(String.format("%s.scores", outputBasename));
+        FileWriter resultWriter = new FileWriter(String.format("%s.results.local", outputBasename));
+        FileWriter scoreWriter = new FileWriter(String.format("%s.results.scores", outputBasename));
 
         try(BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
             for (String query; (query = br.readLine()) != null; ) {
-
-//                TermProcessor termProcessor = termProcessors.get(ALIAS);
-//                List<String> processedTerms =
-//                        Lists.newArrayList(Splitter.on(' ').omitEmptyStrings().split(query))
-//                                .stream()
-//                                .map(t -> {
-//                                    MutableString m = new MutableString(t);
-//                                    termProcessor.processTerm(m);
-//                                    return m.toString();
-//                                })
-//                                .collect(Collectors.toList());
 
                 ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r =
                         new ObjectArrayList<>();

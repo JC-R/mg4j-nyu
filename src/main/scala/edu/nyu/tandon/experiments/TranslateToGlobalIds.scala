@@ -22,17 +22,17 @@ object TranslateToGlobalIds {
      * We're going to replace the old file with the new one
      * containing global IDs.
      */
-    val inputFile = input.toPath
-    val tempFile = Paths.get(s"${input.toString}.local")
-    Files.move(inputFile, tempFile)
+    val localFile = input.toPath
+    val globalFile = Paths.get(input.toString.replace("local", "global"))
+    Files.move(localFile, localFile)
 
     /* Translate */
-    val globalIds = Source.fromFile(tempFile.toFile).getLines()
-      .map(_.split("\\s+").map(_.toLong).toSeq)
+    val globalIds = Source.fromFile(localFile.toFile).getLines()
+      .map(_.split("\\s+").filter(_.length > 0).map(_.toLong).toSeq)
       .map(toGlobal(strategy, cluster))
 
     /* Write to the original file */
-    val writer = new FileWriter(inputFile.toFile)
+    val writer = new FileWriter(globalFile.toFile)
     try {
       for (line <- globalIds) writer.append(line.mkString(" ")).append("\n")
     } finally {

@@ -33,7 +33,7 @@ public class ExtractClusterFeaturesTest extends BaseTest {
 
         // Then
         int count = 0;
-        for (String t : Files.readAllLines(Paths.get(outputBasename + ".results"))) {
+        for (String t : Files.readAllLines(Paths.get(outputBasename + ".results.local"))) {
             if (!"".equals(t)) {
                 String[] l = t.split(" ");
                 for (String r : l) assertThat(tryParse(r), notNullValue(Integer.class));
@@ -42,7 +42,7 @@ public class ExtractClusterFeaturesTest extends BaseTest {
         }
         assertThat(count, equalTo(150));
         count = 0;
-        for (String t : Files.readAllLines(Paths.get(outputBasename + ".scores"))) {
+        for (String t : Files.readAllLines(Paths.get(outputBasename + ".results.scores"))) {
             if (!"".equals(t)) {
                 String[] l = t.split(" ");
                 for (String r : l) assertThat(Doubles.tryParse(r), notNullValue(Double.class));
@@ -69,7 +69,7 @@ public class ExtractClusterFeaturesTest extends BaseTest {
 
         // Then
         int count = 0;
-        for (String t : Files.readAllLines(Paths.get(outputBasename + "#0.results"))) {
+        for (String t : Files.readAllLines(Paths.get(outputBasename + "#0.results.local"))) {
             if (!"".equals(t)) {
                 String[] l = t.split(" ");
                 for (String r : l) assertThat(tryParse(r), notNullValue(Integer.class));
@@ -78,7 +78,7 @@ public class ExtractClusterFeaturesTest extends BaseTest {
         }
         assertThat(count, equalTo(150));
         count = 0;
-        for (String t : Files.readAllLines(Paths.get(outputBasename + "#0.scores"))) {
+        for (String t : Files.readAllLines(Paths.get(outputBasename + "#0.results.scores"))) {
             if (!"".equals(t)) {
                 String[] l = t.split(" ");
                 for (String r : l) assertThat(Doubles.tryParse(r), notNullValue(Double.class));
