@@ -67,8 +67,8 @@ public class ExtractShardScoresTest extends BaseTest {
     @Test(expected = IllegalArgumentException.class)
     public void unknownSelector() throws Exception {
 
-        String[] args = String.format("-i %s -c 11 -s unknown %s %s",
-                "",
+        String[] args = String.format("-i %s -o x -c 11 -s unknown %s %s",
+                "x",
                 getFileFromResourcePath("clusters").getAbsoluteFile() + "/gov2C",
                 getFileFromResourcePath("csi").getAbsoluteFile() + "/csi")
                 .split(" ");

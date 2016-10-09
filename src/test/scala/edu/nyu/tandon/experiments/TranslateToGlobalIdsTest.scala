@@ -1,18 +1,45 @@
 package edu.nyu.tandon.experiments
 
+import java.io.{File, FileWriter}
+import java.util.UUID
+
 import edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy
-import edu.nyu.tandon.test._
 import org.junit.runner.RunWith
 import org.mockito.Mockito.when
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.mock.MockitoSugar._
 
+import scala.io.Source
+
 /**
   * @author michal.siedlaczek@nyu.edu
   */
 @RunWith(classOf[JUnitRunner])
 class TranslateToGlobalIdsTest extends FunSuite {
+
+  trait TemporaryFolder {
+
+    lazy val temporaryFolder = {
+      val dir = File.createTempFile("test", "")
+      dir.delete
+      dir.mkdir
+      dir
+    }
+
+    /** create a new file in the temp directory */
+    def createNewFile = {
+      val f = new File(temporaryFolder.getPath + "/" + UUID.randomUUID.toString)
+      f.createNewFile
+      f
+    }
+
+    /** delete each file in the directory and the directory itself */
+    def delete = {
+      Option(temporaryFolder.listFiles).map(_.toList).getOrElse(Nil).foreach(_.delete)
+      temporaryFolder.delete
+    }
+  }
 
   trait Strategy {
     val strategy = mock[SelectiveDocumentalIndexStrategy]
@@ -29,13 +56,31 @@ class TranslateToGlobalIdsTest extends FunSuite {
     def c1 = TranslateToGlobalIds.toGlobal(strategy, 1)_
   }
 
-  trait DataFrames {
-    val df = sqlContext.createDataFrame(List(
-      (0, "0 1"),
-      (1, "1 2"),
-      (2, "2 0")
-    )).toDF("id", "results")
+  trait Results {
+    val input = Seq(
+      "0 1",
+      "1 2",
+      "2 0"
+    )
+    val expected0 = Seq(
+      "0 1",
+      "1 2",
+      "2 0"
+    )
+    val expected1 = Seq(
+      "3 4",
+      "4 5",
+      "5 3"
+    )
   }
+
+//  trait DataFrames {
+//    val df = sqlContext.createDataFrame(List(
+//      (0, "0 1"),
+//      (1, "1 2"),
+//      (2, "2 0")
+//    )).toDF("id", "results")
+//  }
 
   test("toGlobal") {
     new Strategy {
@@ -47,30 +92,44 @@ class TranslateToGlobalIdsTest extends FunSuite {
   }
 
   test("translate cluster 0") {
-    new Strategy with DataFrames {
-      assertResult(
-        sqlContext.createDataFrame(List(
-          (0, "0 1"),
-          (1, "1 2"),
-          (2, "2 0")
-        )).toDF("id", "results-global").head(3)
-      ) {
-        TranslateToGlobalIds.translate(df, 0, strategy).head(3)
+
+    new Strategy with Results with TemporaryFolder {
+
+      // given
+      val f = createNewFile
+      val writer = new FileWriter(f)
+      for (line <- input) writer.append(s"$line\n")
+      writer.close()
+
+      // when
+      TranslateToGlobalIds.translate(f, 0, strategy)
+
+      // then
+      assertResult(expected0) {
+        Source.fromFile(f).getLines().toSeq
       }
+
     }
   }
 
   test("translate cluster 1") {
-    new Strategy with DataFrames {
-      assertResult(
-        sqlContext.createDataFrame(List(
-          (0, "3 4"),
-          (1, "4 5"),
-          (2, "5 3")
-        )).toDF("id", "results-global").head(3)
-      ) {
-        TranslateToGlobalIds.translate(df, 1, strategy).head(3)
+
+    new Strategy with Results with TemporaryFolder {
+
+      // given
+      val f = createNewFile
+      val writer = new FileWriter(f)
+      for (line <- input) writer.append(s"$line\n")
+      writer.close()
+
+      // when
+      TranslateToGlobalIds.translate(f, 1, strategy)
+
+      // then
+      assertResult(expected1) {
+        Source.fromFile(f).getLines().toSeq
       }
+
     }
   }
 

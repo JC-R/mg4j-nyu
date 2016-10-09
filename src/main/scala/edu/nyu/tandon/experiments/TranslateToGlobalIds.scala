@@ -1,14 +1,9 @@
 package edu.nyu.tandon.experiments
 
-import java.io.{File, FileInputStream, ObjectInputStream, PrintWriter}
+import java.io._
+import java.nio.file.{Files, Paths}
 
-import edu.nyu.tandon._
 import edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy
-import edu.nyu.tandon.ml.features._
-import edu.nyu.tandon.spark.SQLContextSingleton
-import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.functions.udf
-import org.apache.spark.{SparkConf, SparkContext}
 import scopt.OptionParser
 
 import scala.io.Source
@@ -21,17 +16,28 @@ object TranslateToGlobalIds {
   def toGlobal(strategy: SelectiveDocumentalIndexStrategy, cluster: Int)(localIds: Seq[Long]): Seq[Long] =
     localIds map (strategy.globalPointer(cluster, _))
 
-  def columnToGlobal(strategy: SelectiveDocumentalIndexStrategy, cluster: Int) = udf {
-    line: String => {
-      longsToLine(toGlobal(strategy, cluster)(lineToLongs(line)))
-    }
-  }
+  def translate(input: File, cluster: Int, strategy: SelectiveDocumentalIndexStrategy): Unit = {
+    /*
+     * Move the current file to temp file.
+     * We're going to replace the old file with the new one
+     * containing global IDs.
+     */
+    val inputFile = input.toPath
+    val tempFile = Paths.get(s"${input.toString}.local")
+    Files.move(inputFile, tempFile)
 
-  def translate(input: DataFrame, cluster: Int, strategy: SelectiveDocumentalIndexStrategy): DataFrame = {
-    input
-      .withColumn("results-global",
-        columnToGlobal(strategy, cluster)(input("results")))
-      .drop("results")
+    /* Translate */
+    val globalIds = Source.fromFile(tempFile.toFile).getLines()
+      .map(_.split("\\s+").map(_.toLong).toSeq)
+      .map(toGlobal(strategy, cluster))
+
+    /* Write to the original file */
+    val writer = new FileWriter(inputFile.toFile)
+    try {
+      for (line <- globalIds) writer.append(line.mkString(" ")).append("\n")
+    } finally {
+      writer.close()
+    }
   }
 
   def main(args: Array[String]): Unit = {
@@ -58,37 +64,22 @@ object TranslateToGlobalIds {
         .text("cluster number")
         .required()
 
-      opt[String]('M', "spark-master")
-        .action((x, c) => c.copy(sparkMaster = x))
-        .text("spark master (default: local[*])")
-
     }
 
     parser.parse(args, Config()) match {
       case Some(config) =>
 
-        val sparkContext = new SparkContext(
-          new SparkConf().setAppName(this.getClass.toString).setMaster(config.sparkMaster)
-        )
-        val sqlContext = SQLContextSingleton.getInstance(sparkContext)
-
         val strategy = new ObjectInputStream(new FileInputStream(config.strategy)).readObject()
           .asInstanceOf[SelectiveDocumentalIndexStrategy]
 
         try {
-          val translated = translate(
-            loadFeatureFile(sqlContext)(config.input),
-            config.cluster,
-            strategy
-          )
-
-          saveFeatureFile(translated, config.input.getAbsolutePath + ".global")
+          translate(config.input, config.cluster, strategy)
         }
         catch {
           case e: Exception => throw new RuntimeException(
             "A fatal error occurred while processing " +
-              s"input=${config.input.getAbsolutePath()}; " +
-              s"strategy=${config.strategy.getAbsolutePath()}; " +
+              s"input=${config.input.getAbsolutePath}; " +
+              s"strategy=${config.strategy.getAbsolutePath}; " +
               s"cluster=${config.cluster}",
             e)
         }

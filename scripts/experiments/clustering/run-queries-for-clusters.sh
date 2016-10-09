@@ -32,7 +32,7 @@ starttime=$(date +%s)
 java -Xmx3g edu.nyu.tandon.experiments.cluster.ExtractShardScores \
     -s redde \
     -i ${input} \
-    -r "${outputDir}/${inputBase}.redde.scores" \
+    -o "${outputDir}/${inputBase}" \
     -c `ls ${dir}/*-*titles | wc -l` \
     ${base} \
     ${csiBase}
@@ -40,7 +40,7 @@ java -Xmx3g edu.nyu.tandon.experiments.cluster.ExtractShardScores \
 java -Xmx3g edu.nyu.tandon.experiments.cluster.ExtractShardScores \
     -s shrkc \
     -i ${input} \
-    -r "${outputDir}/${inputBase}.shrkc.scores" \
+    -o "${outputDir}/${inputBase}" \
     -c `ls ${dir}/*-*titles | wc -l` \
     ${base} \
     ${csiBase}
@@ -53,36 +53,13 @@ do
         number=`basename ${file} | sed "s/.*-//" | sed "s/\..*//"`
         echo "${number}"
 
-        mkdir -p "${outputDir}/${number}"
-
-        redde="${outputDir}/${number}/${inputBase}.redde.scores"
-        shrkc="${outputDir}/${number}/${inputBase}.shrkc.scores"
-
-        mv "${outputDir}/${inputBase}.redde.scores.${number}" redde
-        mv "${outputDir}/${inputBase}.shrkc.scores.${number}" shrkc
-
         java -Xmx4g edu.nyu.tandon.experiments.cluster.ExtractClusterFeatures -g \
             -i ${input} \
-            -r "${outputDir}/${number}/${inputBase}.top10" \
+            -o "${outputDir}/${inputBase}" \
+            -s ${number} \
             ${clusterBase}
 
-        java -Xmx4g edu.nyu.tandon.ml.features.SegmentCounter \
-            -i "${outputDir}/${number}/${inputBase}.top10" \
-            --num-bins 10 \
-            --num-docs `wc -l ${file} | cut -d" " -f1` \
-            --column "results"
-
-        segmented="${outputDir}/${number}/${inputBase}.top10.segmented"
-        dataset="${outputDir}/${number}/${inputBase}.dataset"
-
-        join -t, <(join -t, <(head -1 ${redde}) <(head -1 ${shrkc})) <(head -1 ${segmented}) > ${dataset}
-        join -t, <(join -t, <(tail -n +2 ${redde} | sort -t, -k 1b,1) <(tail -n +2 ${shrkc} | sort -t, -k 1b,1)) \
-            <(tail -n +2 ${segmented} | sort -t, -k 1b,1) >> ${dataset}
-
 done
-
-head -1 "${outputDir}/0/${inputBase}.dataset" > "${inputBase}.data"
-find ${outputDir} -type f -name "${inputBase}.dataset" -exec tail -n +2 {} \; >> "${inputBase}.data"
 
 endtime=$(date +%s)
 
