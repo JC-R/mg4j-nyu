@@ -4,18 +4,23 @@ set -e
 # Script to generate raw docHits
 # ------------------------------
 
-version=5.4.1
+WORK_DIR=~/work/data/experiments/
+INDEX_DIR=~/work/data/IR/Gov2/index/mg4j/qs-xdoc/
 
-WORK_DIR=/home/juan/work/IR/Gov2
+pwd=`pwd`
+cd $WORK_DIR
 
-export CLASSPATH=.:/home/juan/sandbox/mg4j-nyu/*:/home/juan/sandbox/mg4j-nyu/lib/*
+export CLASSPATH=.:~/work/sandbox/mg4j-nyu/*
 
 starttime=$(date +%s)
 
-java -Xmx32g edu.nyu.tandon.experiments.RawDocHits \
--r 1280 -I 100M-s.txt -d $WORK_DIR/docHits-raw.txt $WORK_DIR/index/qs-xdoc/gov2-text?inmemory=1
+# $1 = queries
+# $2 = output file
 
+for s in AND OR; do
+java -Xmx32g edu.nyu.tandon.tool.RawDocHits -r 1280 -I queries/100K.$s.train -d tmp/gov2-100K-dh-$s.txt $INDEX_DIR/gov2-text?inmemory=1 &
+done
 
-
+cd $pwd
 
 

@@ -28,10 +28,7 @@ val d = (for (i<-1 to 55) yield row.getDouble(i)).toArray
 }).toDF("label","features")
 
 val splits = data.randomSplit(Array(0.6, 0.4))
-val (trainingData, testData) = (splits(0), splits(1))
-
-val rf = new RandomForestRegressor().setNumTrees(50).setMaxBins(20).setMaxDepth(15)
-val evaluator = new RegressionEvaluator()
+ val evaluator = new RegressionEvaluator()
 val cv = new CrossValidator().
 setEstimator(rf).
 setEvaluator(evaluator).

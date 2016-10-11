@@ -13,15 +13,18 @@ scoring = ARGV[10]
 
 # load the baseline
 n = 0
+last = -1
 baseline = Array.new(q_size) { |a| Array.new() }
 while not f_baseline.eof
 	line=f_baseline.readline.chomp.strip
-	if line == '' 
-		n += 1
-		next
-	end
-	break if n>q_size
-	baseline[n] << line.to_i if line.size>0
+	next if line == ''
+  tokens = line.split(' ')
+	break if n>=q_size
+  query = tokens[0].to_i
+  last = query if last == -1
+  n += 1 if query != last
+  last = query
+	baseline[n] << tokens[2]
 end
 # q_size.times do |q|
 # 	puts baseline[q].size
@@ -29,15 +32,17 @@ end
 
 # load the result set
 n = 0
+last = -1
 results = Array.new(q_size) { |a| Array.new() }
 while not f_in.eof
 	line=f_in.readline.chomp.strip
 	if line == ''
-		n += 1
-		next
+    n += 1
+    next
   end
-  break if n>q_size
-  results[n] << line.to_i if line.size>0
+	break if n>=q_size
+  tokens = line.split(' ')
+	results[n] << tokens[1]
 end
  # q_size.times do |q|
  # 	puts results[q].size
@@ -45,24 +50,25 @@ end
 
 # compute overlap 
 
-overlap10 = 0
-overlap100 = 0
-overlap1k = 0
-tot10 = 0
-tot100 = 0
-tot1k = 0
+overlap10 = 0.0
+overlap100 = 0.0
+overlap1k = 0.0
 
 q_size.times do |i|
-	overlap10 += (results[i][0..9] & baseline[i][0..9]).size
-	tot10 += (baseline[i][0..9]).size
+  over = (results[i][0..9] & baseline[i][0..9]).size
+  tot = (baseline[i][0..9]).size
+	overlap10 += (1.0 * over / tot)
 
-	overlap100 += (results[i][0..99] & baseline[i][0..99]).size
-	tot100 += (baseline[i][0..99]).size
+	over = (results[i][0..99] & baseline[i][0..99]).size
+	tot = (baseline[i][0..99]).size
+	overlap100 += (1.0 * over / tot)
 
-	overlap1k += (results[i] & baseline[i]).size
-	tot1k += baseline[i].size
+  over = (results[i] & baseline[i]).size
+	tot = (baseline[i]).size
+	overlap1k += (1.0 * over / tot)
 end
+
 #puts "#{overlap10},#{overlap100},#{overlap1k},#{tot10},#{tot100},#{tot1k},#{"%.4f" % ((1.0 * overlap10)/tot10)},#{"%.4f" % ((1.0 * overlap100)/tot100)},#{"%.4f" % ((1.0 * overlap1k)/tot1k)},#{dataset},#{train},#{model},#{target},#{index_size},overlap,#{semantics}"
-puts "ph,#{dataset},#{target},#{index_size},#{semantics},#{scoring},overlap@10,#{"%.4f" % ((1.0 * overlap10)/tot10)}"
-puts "ph,#{dataset},#{target},#{index_size},#{semantics},#{scoring},overlap@100,#{"%.4f" % ((1.0 * overlap100)/tot100)}"
-puts "ph,#{dataset},#{target},#{index_size},#{semantics},#{scoring},overlap@1k,#{"%.4f" % ((1.0 * overlap1k)/tot1k)}"
+puts "ph,#{dataset},#{target},#{index_size},#{semantics},#{scoring},overlap@10,#{"%.4f" % (overlap10/n)}"
+puts "ph,#{dataset},#{target},#{index_size},#{semantics},#{scoring},overlap@100,#{"%.4f" % (overlap100/n)}"
+puts "ph,#{dataset},#{target},#{index_size},#{semantics},#{scoring},overlap@1k,#{"%.4f" % (overlap1k/n)}"

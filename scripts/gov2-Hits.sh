@@ -7,8 +7,8 @@
 # $3 = dump every $3 queries
 #
 
-WORK_DIR=/home/juan/work/IR/Gov2
-export CLASSPATH=.:/home/juan/sandbox/mg4j-nyu/*:/home/juan/work/runtime/*
+WORK_DIR=~/work/data/IR/Gov2
+export CLASSPATH=.:~/work/sandbox/mg4j-nyu/*
 
 java -Xmx16g -DlogbackConfigurationFile=~/logback.xml edu.nyu.tandon.tool.RawHits -r 1280 -I $1 -d $2 -D $3 $WORK_DIR/index/mg4j/qs-xdoc/gov2-text
 
