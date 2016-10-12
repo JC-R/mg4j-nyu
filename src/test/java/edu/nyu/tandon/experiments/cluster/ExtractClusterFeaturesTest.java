@@ -33,7 +33,7 @@ public class ExtractClusterFeaturesTest extends BaseTest {
 
         // Then
         int count = 0;
-        for (String t : Files.readAllLines(Paths.get(outputBasename + ".results.local"))) {
+        for (String t : Files.readAllLines(Paths.get(outputBasename + ".results.global"))) {
             if (!"".equals(t)) {
                 String[] l = t.split(" ");
                 for (String r : l) assertThat(tryParse(r), notNullValue(Integer.class));

@@ -78,8 +78,9 @@ public class ExtractClusterFeatures {
         String outputBasename = jsapResult.userSpecified("shardId") ?
                 String.format("%s#%d", jsapResult.getString("output"), jsapResult.getInt("shardId")) :
                 jsapResult.getString("output");
+        String type = jsapResult.userSpecified("shardId") ? ".local" : ".global";
 
-        FileWriter resultWriter = new FileWriter(String.format("%s.results.local", outputBasename));
+        FileWriter resultWriter = new FileWriter(String.format("%s.results%s", outputBasename, type));
         FileWriter scoreWriter = new FileWriter(String.format("%s.results.scores", outputBasename));
 
         try(BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
