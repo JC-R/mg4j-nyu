@@ -2,18 +2,16 @@ package edu.nyu.tandon.experiments;
 
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.index.cluster.PostingPruningStrategy;
-import edu.nyu.tandon.search.score.BM25PrunedScorer;
-import edu.nyu.tandon.query.PrunedQueryEngine;
+import edu.nyu.tandon.query.PrunedHitsQueryEngine;
+
 import edu.nyu.tandon.query.Query;
+import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import it.unimi.di.big.mg4j.document.AbstractDocumentSequence;
 import it.unimi.di.big.mg4j.document.Document;
 import it.unimi.di.big.mg4j.document.DocumentCollection;
 import it.unimi.di.big.mg4j.document.DocumentFactory;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
-import it.unimi.di.big.mg4j.index.cluster.DocumentalPartitioningStrategy;
-import it.unimi.di.big.mg4j.index.cluster.DocumentalStrategies;
-import it.unimi.di.big.mg4j.index.cluster.IndexCluster;
 import it.unimi.di.big.mg4j.query.*;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.di.big.mg4j.query.parser.SimpleParser;
@@ -30,6 +28,7 @@ import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.lang.ObjectParser;
 import it.unimi.dsi.sux4j.io.FileLinesBigList;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,19 +38,20 @@ import java.util.Comparator;
 
 // TODO: this entire code does not track multiple indeces
 
-public class PrunedQuery extends Query {
+public class RawPostingsPrunedQuery extends Query {
 
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PrunedQuery.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RawPostingsPrunedQuery.class);
+    public static BM25PrunedScorer mainScorer;
 
-    public PrunedQuery(final PrunedQueryEngine queryEngine) {
+    public RawPostingsPrunedQuery(final PrunedHitsQueryEngine queryEngine) {
         super(queryEngine);
     }
 
     @SuppressWarnings("unchecked")
     public static void main(final String[] arg) throws Exception {
 
-        SimpleJSAP jsap = new SimpleJSAP(PrunedQuery.class.getName(), "Loads indices relative to a collection, possibly loads the collection, and answers to queries.",
+        SimpleJSAP jsap = new SimpleJSAP(RawPostingsPrunedQuery.class.getName(), "Loads indices relative to a collection, possibly loads the collection, and answers to queries.",
                 new Parameter[]{
                         new FlaggedOption("collection", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'c', "collection", "The collection of documents indexed by the given indices."),
                         new FlaggedOption("objectCollection", new ObjectParser(DocumentCollection.class, MG4JClassParser.PACKAGE), JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'o', "object-collection", "An object specification describing a document collection."),
@@ -72,17 +72,16 @@ public class PrunedQuery extends Query {
                         new FlaggedOption("divert", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'd', "divert", "output file"),
                         new Switch("prune", 'e', "prune", "Enable pruned list"),
                         new Switch("globalScoring", 'G', "globalScoring", "Enable global metric scoring"),
-                        new Switch("localID",'D',"localID","document IDs are locally numbered"),
+                        new Switch("localID", 'D', "localID", "document IDs are locally numbered"),
 
                         new FlaggedOption("prunelist", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'L', "prunelist", "prune list"),
                         new FlaggedOption("threshold", JSAP.INTEGER_PARSER, "100", JSAP.NOT_REQUIRED, 'S', "threshold", "prune threshold percentage"),
 
                         new Switch("trec", 'E', "trec", "trec"),
                         new FlaggedOption("trec-runtag", JSAP.STRING_PARSER, "NYU_TANDON", JSAP.NOT_REQUIRED, 'g', "trec-runtag", "runtag for TREC output"),
-                        new Switch("trecQueries",'Q',"trecQueries","trecQueries"),
+                        new Switch("trecQueries", 'Q', "trecQueries", "trecQueries"),
                         new FlaggedOption("strategy", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 's', "strategy", "A serialised partitioning strategy, with local-global ID mappings"),
 
-                        new Switch("postings", 'N', "postings", "postings"),
                         new UnflaggedOption("basenameWeight", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.GREEDY, "The indices that the servlet will use. Indices are specified using their basename, optionally followed by a colon and a double representing the weight used to score results from that index. Indices without a specified weight are weighted 1.")
                 });
 
@@ -97,8 +96,9 @@ public class PrunedQuery extends Query {
         final Object2ReferenceLinkedOpenHashMap<String, Index> indexMap = new Object2ReferenceLinkedOpenHashMap<String, Index>(Hash.DEFAULT_INITIAL_SIZE, .5f);
         final Reference2DoubleOpenHashMap<Index> index2Weight = new Reference2DoubleOpenHashMap<Index>();
         final boolean verbose = jsapResult.getBoolean("verbose");
+
         final boolean loadSizes = !jsapResult.getBoolean("noSizes");
-        PrunedQuery.loadIndicesFromSpec(basenameWeight, loadSizes, documentCollection, indexMap, index2Weight);
+        RawPostingsPrunedQuery.loadIndicesFromSpec(basenameWeight, loadSizes, documentCollection, indexMap, index2Weight);
 
         final long numberOfDocuments = indexMap.values().iterator().next().numberOfDocuments;
         final Object2ObjectOpenHashMap<String, TermProcessor> termProcessors = new Object2ObjectOpenHashMap<String, TermProcessor>(indexMap.size());
@@ -108,37 +108,39 @@ public class PrunedQuery extends Query {
 
         boolean disallowScorer = false;
 
-        final PrunedQueryEngine queryEngine = new PrunedQueryEngine(simpleParser, new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING), indexMap);
+        final PrunedHitsQueryEngine<ObjectArrayList<Byte>> queryEngine = new PrunedHitsQueryEngine<ObjectArrayList<Byte>>(
+                simpleParser,
+                new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING),
+                indexMap);
 
         // use local or global metrics during scoring: can be overriden in the input query stream via $score command
+        mainScorer = new BM25PrunedScorer(1.2, 0.3);
         if (jsapResult.getBoolean("globalScoring")) {
-            queryEngine.loadGlobalTermFrequencies(basenameWeight[0]+".globaltermfreq");
-            BM25PrunedScorer scorer = new BM25PrunedScorer(1.2,0.3);
-            scorer.setGlobalMetrics(
+            queryEngine.loadGlobalTermFrequencies(basenameWeight[0] + ".globaltermfreq");
+            mainScorer.setGlobalMetrics(
                     indexMap.get(indexMap.firstKey()).properties.getLong(globalPropertyKeys.G_DOCUMENTS),
                     indexMap.get(indexMap.firstKey()).properties.getLong(globalPropertyKeys.G_OCCURRENCES),
                     queryEngine.globalTermFrequencies);
-            queryEngine.score(new Scorer[]{scorer, new VignaScorer()}, new double[]{1, 1});
+            queryEngine.score(new Scorer[]{mainScorer, new VignaScorer()}, new double[]{1, 1});
             if (queryEngine.globalTermFrequencies.size() != indexMap.get(indexMap.firstKey()).numberOfTerms)
                 throw new IllegalArgumentException("The number of global term frequencies (" + queryEngine.globalTermFrequencies.size() + " and the number of local terms do not match");
             disallowScorer = true;
 
             //  disable cache *** or global stat will fail
             queryEngine.equalize(0);
-
-        }
-        else {
+        } else {
             // can be overriden in the input query stream via $score command
-            queryEngine.score(new Scorer[]{new BM25PrunedScorer(1.2,0.3), new VignaScorer()}, new double[]{1, 1});
-            disallowScorer = false;
+            queryEngine.score(new Scorer[]{mainScorer, new VignaScorer()}, new double[]{1, 1});
+            disallowScorer = true;
 
             //  enable cache with lcocal stats
             queryEngine.equalize(0);
         }
+        queryEngine.mainScorer = mainScorer;
 
         // maps between local-global IDs
-        String strategyFilename = jsapResult.getString("strategy",null);
-        PostingPruningStrategy strategy = (strategyFilename == null)? null : (PostingPruningStrategy) BinIO.loadObject(strategyFilename);
+        String strategyFilename = jsapResult.getString("strategy", null);
+        PostingPruningStrategy strategy = (strategyFilename == null) ? null : (PostingPruningStrategy) BinIO.loadObject(strategyFilename);
 
         queryEngine.setWeights(index2Weight);
 
@@ -153,7 +155,7 @@ public class PrunedQuery extends Query {
             queryEngine.loadDocumentPrunedList(jsapResult.getString("prunelist"), (int) ((jsapResult.getInt("threshold", 100) / 100.0) * (float) numberOfDocuments));
         }
 
-        PrunedQuery query = new PrunedQuery(queryEngine);
+        RawPostingsPrunedQuery query = new RawPostingsPrunedQuery(queryEngine);
         query.maxOutput = jsapResult.getInt("results", 1000);
 
         // divert output to a file?
@@ -184,11 +186,13 @@ public class PrunedQuery extends Query {
 
         System.err.println("Please type $ for help.");
         String prompt = indexMap.keySet().toString() + ">";
-        int n;
+        int n, numQueries;
 
+        numQueries = 0;
         try {
             final BufferedReader br = new BufferedReader(new InputStreamReader(jsapResult.userSpecified("input") ? new FileInputStream(jsapResult.getString("input")) : System.in));
-            final ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> results = new ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>>();
+
+            final ObjectArrayList<DocumentScoreInfo<ObjectArrayList<Byte>>> results = new ObjectArrayList<DocumentScoreInfo<ObjectArrayList<Byte>>>();
 
             for (; ; ) {
 
@@ -222,7 +226,9 @@ public class PrunedQuery extends Query {
                 // start query timing
                 long time = -System.nanoTime();
 
+                numQueries++;
                 try {
+
                     n = queryEngine.process(q, 0, query.maxOutput, results);
                 } catch (QueryParserException e) {
                     if (verbose) e.getCause().printStackTrace(System.err);
@@ -236,7 +242,7 @@ public class PrunedQuery extends Query {
 
                 time += System.nanoTime();
 
-                query.output(results, strategy, documentCollection, titleList, TextMarker.TEXT_BOLDFACE);
+                query.output(numQueries, results, strategy, documentCollection, titleList, TextMarker.TEXT_BOLDFACE);
 
                 System.err.println(results.size() + " results; " + n + " documents examined; " + time / 1000000. + " ms; " + Util.format((n * 1000000000.0) / time) + " documents/s, " + Util.format(time / (double) n) + " ns/document");
             }
@@ -256,83 +262,52 @@ public class PrunedQuery extends Query {
      * @return the number of documents scanned.
      */
     @SuppressWarnings("boxing")
-    public int output(final ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> results, final PostingPruningStrategy strategy, final DocumentCollection documentCollection, final BigList<? extends CharSequence> titleList, final Marker marker) throws IOException {
-        int i;
-        DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi;
+    public int output(final int qNumber, final ObjectArrayList<DocumentScoreInfo<ObjectArrayList<Byte>>> results, final PostingPruningStrategy strategy, final DocumentCollection documentCollection, final BigList<? extends CharSequence> titleList, final Marker marker) throws IOException {
 
-        if (displayMode == OutputType.TREC) {
-            if (titleList == null) throw new IllegalStateException("You cannot use TREC mode without a title list");
-            for (i = 0; i < results.size(); i++) {
+        int i = 0, term;
+        DocumentScoreInfo<ObjectArrayList<Byte>> dsi;
+
+        if (displayMode == OutputType.TREC && titleList == null)
+            throw new IllegalStateException("You cannot use TREC mode without a title list");
+
+        int count = results.size();
+        if (count > 0) {
+            for (i = 0; i < count; i++) {
+
                 dsi = results.get(i);
-                output.println(trecTopicNumber + " Q0 " + titleList.get(dsi.document) + " " + i + " " + FORMATTER.format(dsi.score) + " " + trecRunTag);
-            }
-
-            // Horrible patch for no-answer queries (a workaround for TREC necessity of at least one result per query)
-            if (results.size() == 0) output.println(trecTopicNumber + " Q0 GX000-00-0000000 1 0 " + trecRunTag);
-        } else {
-
-            for (i = 0; i < results.size(); i++) {
-                dsi = results.get(i);
+                long document = dsi.document;
 
                 // check whether this is a pruned index and we need global IDs
-                final long document =  dsi.document;
-                if (strategy == null) {
-                    output.print(document);
+                if (strategy != null)
+                    document = strategy.globalPointer(0, document);
+
+                if (displayMode == OutputType.TREC) {
+                    // doc Titles, postings
+                    for (int j = 0; j < dsi.info.size(); j++) {
+
+                        output.printf("%d,%s,%s,%d\n",
+                                trecTopicNumber,
+                                titleList.get(document),
+                                mainScorer.flatIndexIterator[dsi.info.get(j)].term(),
+                                i + 1);
+                    }
+                } else {
+                    // docID, postings
+                    for (int j = 0; j < dsi.info.size(); j++) {
+                        output.printf("%d,%d,%d,%d\n",
+                                qNumber,
+                                document,
+                                (int) mainScorer.flatIndexIterator[dsi.info.get(j)].termNumber(),
+                                i + 1);
+                    }
                 }
-                else {
-                    long globalID = strategy.globalPointer(0,document);
-                    output.print(globalID);
-                }
-
-                Document d = null; // Filled lazily
-
-                // We try to print a title, preferring the supplied title list if present
-                if (titleList != null) output.println(" " + titleList.get(document));
-                else if (documentCollection != null) {
-                    d = documentCollection.document(document);
-                    output.println(" " + d.title().toString().trim());
-                } else output.println();
-
-                if ((displayMode == OutputType.LONG || displayMode == OutputType.SNIPPET) && dsi.info != null && queryEngine.intervalSelector != null) {
-                    final Index[] sortedIndex = dsi.info.keySet().toArray(new Index[0]);
-                    if (documentCollection != null) Arrays.sort(sortedIndex, new Comparator<Index>() {
-                        public int compare(final Index i0, final Index i1) {
-                            return documentCollection.factory().fieldIndex(i0.field) - documentCollection.factory().fieldIndex(i1.field);
-                        }
-                    });
-                    for (Index index : sortedIndex)
-                        if (index.hasPositions) {
-                            SelectedInterval[] interval = dsi.info.get(index);
-                            if (interval == SelectedInterval.TRUE_ARRAY) output.println(index.field + ": TRUE");
-                            else if (interval == SelectedInterval.FALSE_ARRAY) output.println(index.field + ": FALSE");
-                            else if (displayMode == OutputType.LONG || documentCollection == null)
-                                output.println(index.field + ": " + Arrays.toString(interval));
-                            else { // SNIPPET_MODE
-                                final MarkingMutableString s = new MarkingMutableString(marker);
-                                s.startField(interval);
-                                // TODO: this must be in increasing field order
-                                if (d == null) d = documentCollection.document(document);
-                                int fieldIndex = documentCollection.factory().fieldIndex(index.field);
-                                if (fieldIndex == -1 || documentCollection.factory().fieldType(fieldIndex) != DocumentFactory.FieldType.TEXT)
-                                    continue;
-                                final Reader reader = (Reader) d.content(fieldIndex);
-                                s.appendAndMark(d.wordReader(fieldIndex).setReader(reader));
-                                s.endField();
-                                output.println(index.field + ": " + s.toString());
-                            }
-                        } else if (index.hasPayloads && dsi.info.get(index) == SelectedInterval.TRUE_ARRAY) {
-                            if (d == null) d = documentCollection.document(document);
-                            int fieldIndex = documentCollection.factory().fieldIndex(index.field);
-                            if (fieldIndex == -1) continue;
-                            output.println(d.content(fieldIndex));
-                        }
-                    output.println();
-                }
-
-                if (d != null) d.close();
             }
+        } else {
+            if (displayMode == OutputType.TREC)
+                output.printf("%d,null,null,null,null\n", trecTopicNumber);
+            else
+                output.printf("%d,null,null,null,null\n", qNumber);
         }
-        if (displayMode != OutputType.TREC) output.println();
         return i;
     }
 

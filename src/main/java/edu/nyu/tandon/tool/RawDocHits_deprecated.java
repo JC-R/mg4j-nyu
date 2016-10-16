@@ -72,10 +72,10 @@ import java.net.URISyntaxException;
  * <p><strong>Warning:</strong> This class is <strong>highly experimental</strong> (it is the
  * place that we tweak to experiment every kind of new indexing/ranking method).
  */
-public class RawDocHits {
+public class RawDocHits_deprecated {
 
     public final static int MAX_STEMMING = 2048;
-    private static final Logger LOGGER = LoggerFactory.getLogger(RawDocHits.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RawDocHits_deprecated.class);
     /**
      * A formatter for TREC results.
      */
@@ -112,7 +112,7 @@ public class RawDocHits {
      */
     private PrintStream output = System.out;
 
-    public RawDocHits(final QueryEngine queryEngine) {
+    public RawDocHits_deprecated(final QueryEngine queryEngine) {
         this.queryEngine = queryEngine;
     }
 
@@ -130,7 +130,7 @@ public class RawDocHits {
             bins[i - 1] = binIndex(i);
     }
 
-    private static void dumpBatch(RawDocHits query, long numDocs) {
+    private static void dumpBatch(RawDocHits_deprecated query, long numDocs) {
         // docHits
         for (int i = 0; i < numDocs; i++) {
 
@@ -226,7 +226,7 @@ public class RawDocHits {
     @SuppressWarnings("unchecked")
     public static void main(final String[] arg) throws Exception {
 
-        SimpleJSAP jsap = new SimpleJSAP(RawDocHits.class.getName(), "Loads indices relative to a collection, possibly loads the collection, and answers to queries.",
+        SimpleJSAP jsap = new SimpleJSAP(RawDocHits_deprecated.class.getName(), "Loads indices relative to a collection, possibly loads the collection, and answers to queries.",
                 new Parameter[]{
                         new FlaggedOption("collection", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'c', "collection", "The collection of documents indexed by the given indices."),
                         new FlaggedOption("objectCollection", new ObjectParser(DocumentCollection.class, MG4JClassParser.PACKAGE), JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'o', "object-collection", "An object specification describing a document collection."),
@@ -264,7 +264,7 @@ public class RawDocHits {
         final Reference2DoubleOpenHashMap<Index> index2Weight = new Reference2DoubleOpenHashMap<Index>();
         final boolean verbose = jsapResult.getBoolean("verbose");
         final boolean loadSizes = !jsapResult.getBoolean("noSizes");
-        RawDocHits.loadIndicesFromSpec(basenameWeight, loadSizes, documentCollection, indexMap, index2Weight);
+        RawDocHits_deprecated.loadIndicesFromSpec(basenameWeight, loadSizes, documentCollection, indexMap, index2Weight);
 
         final long numberOfDocuments = indexMap.values().iterator().next().numberOfDocuments;
         if (titleList != null && titleList.size64() != numberOfDocuments)
@@ -294,7 +294,7 @@ public class RawDocHits {
 
         queryEngine.equalize(1000);
 
-        RawDocHits query = new RawDocHits(queryEngine);
+        RawDocHits_deprecated query = new RawDocHits_deprecated(queryEngine);
 
         // start docHits with at least 10K results
         query.interpretCommand("$score BM25Scorer");

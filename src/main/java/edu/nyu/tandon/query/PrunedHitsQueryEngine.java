@@ -20,22 +20,33 @@ package edu.nyu.tandon.query;
  *
  */
 
+import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import it.unimi.di.big.mg4j.index.Index;
+import it.unimi.di.big.mg4j.index.IndexIterator;
 import it.unimi.di.big.mg4j.query.SelectedInterval;
 import it.unimi.di.big.mg4j.query.nodes.Query;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitor;
 import it.unimi.di.big.mg4j.query.parser.QueryParser;
 import it.unimi.di.big.mg4j.search.DocumentIterator;
 import it.unimi.di.big.mg4j.search.score.*;
+
+import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.Reference2DoubleMap;
+import it.unimi.dsi.io.InputBitStream;
 import it.unimi.dsi.lang.FlyweightPrototype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.HashSet;
+import java.util.Set;
 
 import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
 
@@ -90,9 +101,15 @@ import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
  * @since 1.0
  */
 
-public class HitsQueryEngine<T> extends QueryEngine<T> {
+public class PrunedHitsQueryEngine<T> extends QueryEngine<T> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HitsQueryEngine.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PrunedHitsQueryEngine.class);
+
+    public boolean prunedIndex;                     // index is pruned
+    public boolean docPrunning;                     // use document pruning
+    public Set<Long> DocumentList;                  // document pruning
+    public LongArrayList globalTermFrequencies;     // posting pruning
+    public Scorer mainScorer;
 
     /**
      * Creates a new query engine.
@@ -101,9 +118,77 @@ public class HitsQueryEngine<T> extends QueryEngine<T> {
      * @param builderVisitor a builder visitor to transform {@linkplain Query queries} into {@linkplain DocumentIterator document iterators}.
      * @param indexMap       a map from symbolic name to indices (used for multiplexing and default weight initialisation).
      */
-    public HitsQueryEngine(QueryParser queryParser, QueryBuilderVisitor<DocumentIterator> builderVisitor, Object2ReferenceMap<String, Index> indexMap) {
+    public PrunedHitsQueryEngine(QueryParser queryParser, QueryBuilderVisitor<DocumentIterator> builderVisitor, Object2ReferenceMap<String, Index> indexMap) {
         super(queryParser, builderVisitor, indexMap);
+        this.DocumentList = new HashSet<Long>();
+        this.globalTermFrequencies = new LongArrayList();
+        prunedIndex = false;
     }
+
+    /**
+     * load the document ID list for document pruned index
+     *
+     * @param basename filename of the sorted document list
+     * @param threshod the number of document IDs to load
+     * @return this object
+     * @throws Exception
+     */
+    public PrunedHitsQueryEngine<T> loadDocumentPrunedList(final String basename, final int threshod) throws Exception {
+        DocumentList.clear();
+        String line;
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(basename), Charset.forName("UTF-8")));
+        int n = 0;
+        while ((line = br.readLine()) != null) {
+            DocumentList.add(Long.parseLong(line));
+            if (n++ > threshod) break;
+        }
+        return this;
+    }
+
+    /**
+     * load the global term frequencies used for scoring in a posting pruned index
+     *
+     * @param basename filename for gamma encoded term frequencies
+     * @return this object
+     * @throws Exception IOException
+     */
+    public PrunedHitsQueryEngine<T> loadGlobalTermFrequencies(final String basename) throws Exception {
+        globalTermFrequencies.clear();
+        globalTermFrequencies.trim();
+        String line;
+
+        InputBitStream tf = new InputBitStream(basename);
+        int n = 0;
+        while (tf.hasNext()) {
+            try {
+                globalTermFrequencies.add(tf.readLongGamma());
+            } catch (IOException ex) {
+                break;
+            }
+        }
+        prunedIndex = true;
+        return this;
+    }
+
+    protected boolean isDocumentPruned(long docID) {
+        boolean res = false;
+        res = !this.docPrunning || this.DocumentList.contains(docID);
+        return res;
+    }
+
+    // create document term indeces list; T must be a number type
+    protected ObjectArrayList<Byte> getTermIndeces(long document) {
+
+        ObjectArrayList<Byte> termList = new ObjectArrayList<Byte>();
+
+        for (int i = 0; i < ((BM25Scorer) mainScorer).flatIndexIterator.length; i++) {
+            if (document == ((BM25Scorer) mainScorer).flatIndexIterator[i].document()) {
+                termList.add((byte) i);
+            }
+        }
+        return termList;
+    }
+
 
     @Override
     protected int getScoredResults(final DocumentIterator documentIterator, final int offset, final int length,
@@ -119,36 +204,16 @@ public class HitsQueryEngine<T> extends QueryEngine<T> {
         // TODO: we should avoid enqueueing until we really know we shall use the values
         if (alreadySeen != null)
             while ((document = scorer.nextDocument()) != END_OF_LIST) {
-                if (alreadySeen.add(document)) continue;
+                if (!alreadySeen.add(document)) continue;
+                if (this.docPrunning && isDocumentPruned(document) == false) continue;
                 count++;
-
-                // save the positions for terms in this result
-                // NOTE*** this implementation assumes there are no more than
-                //  byte (127) terms per query !!!
-                //
-                ObjectArrayList<Byte> termList = new ObjectArrayList<Byte>();
-                for (int i = 0; i < ((BM25Scorer) scorer).flatIndexIterator.length; i++) {
-                    if (document == ((BM25Scorer) scorer).flatIndexIterator[i].document()) {
-                        termList.add((byte) i);
-                    }
-                }
-                top.enqueue(document, scorer.score(), termList);
+                top.enqueue(document, scorer.score(), getTermIndeces(document));
             }
         else
             while ((document = scorer.nextDocument()) != END_OF_LIST) {
-
-                // save the positions for terms in this result
-                // NOTE*** this implementation assumes there are no more than
-                //  byte (127) terms per query !!!
-                //
-                ObjectArrayList<Byte> termList = new ObjectArrayList<Byte>();
-                for (int i = 0; i < ((BM25Scorer) scorer).flatIndexIterator.length; i++) {
-                    if (document == ((BM25Scorer) scorer).flatIndexIterator[i].document()) {
-                        termList.add((byte) i);
-                    }
-                }
+                if (this.docPrunning && isDocumentPruned(document) == false) continue;
                 count++;
-                top.enqueue(document, scorer.score(), termList);
+                top.enqueue(document, scorer.score(), getTermIndeces(document));
             }
 
         final int n = Math.max(top.size() - offset, 0); // Number of actually useful documents, if any
@@ -158,12 +223,50 @@ public class HitsQueryEngine<T> extends QueryEngine<T> {
             results.size(s + n);
             final Object[] elements = results.elements();
             // We scale all newly inserted item so that scores are always decreasing
-            for (int i = n; i-- != 0; ) elements[i + s] = top.dequeue();
+            for (int i = n; i-- != 0; )
+                elements[i + s] = top.dequeue();
             // The division by the maximum score was missing in previous versions; can be removed to reproduce regressions.
             // TODO: this will change scores if offset leaves out an entire query
-            final double adjustment = lastMinScore / (s != 0 ? ((DocumentScoreInfo<?>) elements[s]).score : 1.0);
-            for (int i = n; i-- != 0; ) ((DocumentScoreInfo<?>) elements[i + s]).score *= adjustment;
+            final double adjustment = lastMinScore / (s != 0 ? ((DocumentScoreInfo<ObjectArrayList<Byte>>) elements[s]).score : 1.0);
+            for (int i = n; i-- != 0; )
+                ((DocumentScoreInfo<ObjectArrayList<Byte>>) elements[i + s]).score *= adjustment;
         }
+        return count;
+    }
+
+    @Override
+    protected int getResults(final DocumentIterator documentIterator, final int offset, final int length, final ObjectArrayList<DocumentScoreInfo<T>> results, final LongSet alreadySeen) throws IOException {
+        long document;
+        int count = 0; // Number of not-already-seen documents
+
+        // We ignore parameter T; force it to our list of bytes
+        ObjectArrayList<DocumentScoreInfo<ObjectArrayList<Byte>>> localResults = new ObjectArrayList<DocumentScoreInfo<ObjectArrayList<Byte>>>();
+
+        // Unfortunately, to provide the exact count of results we have to scan the whole iterator.
+        if (alreadySeen != null)
+            while ((document = documentIterator.nextDocument()) != END_OF_LIST) {
+                if (!alreadySeen.add(document)) continue;
+                if (this.docPrunning && isDocumentPruned(document) == false) continue;
+                if (count >= offset && count < offset + length) {
+                    localResults.add(new DocumentScoreInfo<ObjectArrayList<Byte>>(document, -1, getTermIndeces(document)));
+                }
+                count++;
+            }
+        else if (length != 0)
+            while ((document = documentIterator.nextDocument()) != END_OF_LIST) {
+                if (this.docPrunning && isDocumentPruned(document) == false) continue;
+                if (count < offset + length && count >= offset)
+                    localResults.add(new DocumentScoreInfo<ObjectArrayList<Byte>>(document, -1, getTermIndeces(document)));
+                count++;
+            }
+        else while ((document = documentIterator.nextDocument()) != END_OF_LIST) count++;
+
+        final int s = results.size();
+        results.size(s + count);
+        final Object[] elements = results.elements();
+        // We scale all newly inserted item so that scores are always decreasing
+        for (int i = 0; i < count; i++)
+            elements[i + s] = localResults.get(i);
         return count;
     }
 }
