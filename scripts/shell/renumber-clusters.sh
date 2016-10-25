@@ -8,5 +8,5 @@ MAPPING_PREFIX=/mnt/eldysk/web/gov2c/map
 
 for i in $(seq 1 ${NO_CLUSTERS}); do
     echo "Renumbering cluster ${i}"
-    ./renumber.sh "${INPUT_PREFIX}-${i}" "${OUTPUT_PREFIX}-${i}" ${FIELD} "${MAPPING_PREFIX}-${i}"
+    renumber.sh "${INPUT_PREFIX}-${i}" "${OUTPUT_PREFIX}-${i}" ${FIELD} "${MAPPING_PREFIX}-${i}"
 done

@@ -6,37 +6,41 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f5c1c26e-bcf1-41c8-9bd8-e8503886c18f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/scripts/scala/genDH-features.scala" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/DocumentPruningStrategy.java" />
+    <list default="true" id="f5c1c26e-bcf1-41c8-9bd8-e8503886c18f" name="Default" comment="posthits trec output for overlap computations">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/scripts/zeppelin/Static Pruning - overlap.json" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/PH-prunedIndex-trec-eval.sh" afterPath="$PROJECT_DIR$/scripts/shell/PH-prunedIndex-trec-eval.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/PostHits.sh" afterPath="$PROJECT_DIR$/scripts/shell/PostHits.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/PrunedIndex.sh" afterPath="$PROJECT_DIR$/scripts/shell/PrunedIndex.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/PruningStrategy.sh" afterPath="$PROJECT_DIR$/scripts/shell/PruningStrategy.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/SingletonPrunedIndex.sh" afterPath="$PROJECT_DIR$/scripts/shell/SingletonPrunedIndex.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/cluster-ordering.sh" afterPath="$PROJECT_DIR$/scripts/shell/cluster-ordering.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/cluster-orderings.sh" afterPath="$PROJECT_DIR$/scripts/shell/cluster-orderings.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/computePostingsOverlap.sh" afterPath="$PROJECT_DIR$/scripts/shell/computePostingsOverlap.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/create-pruned-cluster.sh" afterPath="$PROJECT_DIR$/scripts/shell/create-pruned-cluster.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/cw09-corpus.sh" afterPath="$PROJECT_DIR$/scripts/shell/cw09-corpus.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/cw09-docHits.sh" afterPath="$PROJECT_DIR$/scripts/shell/cw09-docHits.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/cw09-index-NYU.sh" afterPath="$PROJECT_DIR$/scripts/shell/cw09-index-NYU.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/cw09-index-pos.sh" afterPath="$PROJECT_DIR$/scripts/shell/cw09-index-pos.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/cw09-index.sh" afterPath="$PROJECT_DIR$/scripts/shell/cw09-index.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/extract-overlap.sh" afterPath="$PROJECT_DIR$/scripts/shell/extract-overlap.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/gov2-Hits.sh" afterPath="$PROJECT_DIR$/scripts/shell/gov2-Hits.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/gov2-clusters.sh" afterPath="$PROJECT_DIR$/scripts/shell/gov2-clusters.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/gov2-docHits.sh" afterPath="$PROJECT_DIR$/scripts/shell/gov2-docHits.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/gov2-index-NYU.sh" afterPath="$PROJECT_DIR$/scripts/shell/gov2-index-NYU.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/gov2-index-pos.sh" afterPath="$PROJECT_DIR$/scripts/shell/gov2-index-pos.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/gov2-index.sh" afterPath="$PROJECT_DIR$/scripts/shell/gov2-index.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/postings-topKprunedIndexTopKOverlap.sh" afterPath="$PROJECT_DIR$/scripts/shell/postings-topKprunedIndexTopKOverlap.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/prunedIndexFeatures.sh" afterPath="$PROJECT_DIR$/scripts/shell/prunedIndexFeatures.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/prunedIndexOverlap.sh" afterPath="$PROJECT_DIR$/scripts/shell/prunedIndexOverlap.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/query.sh" afterPath="$PROJECT_DIR$/scripts/shell/query.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/renumber-clusters.sh" afterPath="$PROJECT_DIR$/scripts/shell/renumber-clusters.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/renumber.sh" afterPath="$PROJECT_DIR$/scripts/shell/renumber.sh" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/scripts/run-input-queries.sh" afterPath="$PROJECT_DIR$/scripts/shell/run-input-queries.sh" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mg4j-nyu.jar" afterPath="$PROJECT_DIR$/mg4j-nyu.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_classic_1_1_7.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_classic_1_1_7.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_core_1_1_7.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_core_1_1_7.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_guava_guava_19_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_guava_guava_19_0.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_martiansoftware_jsap_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_martiansoftware_jsap_2_1.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_collections_commons_collections_20040616.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_collections_commons_collections_20040616.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_configuration_commons_configuration_1_10.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_configuration_commons_configuration_1_10.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_io_commons_io_2_4.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_io_commons_io_2_4.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_lang_commons_lang_2_6.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_lang_commons_lang_2_6.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_logging_commons_logging_1_1_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_logging_commons_logging_1_1_1.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__it_unimi_dsi_dsiutils_2_3_2.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__it_unimi_dsi_dsiutils_2_3_2.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__it_unimi_dsi_fastutil_7_0_10.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__it_unimi_dsi_fastutil_7_0_10.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_java_dev_jna_jna_3_2_3.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_java_dev_jna_jna_3_2_3.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_java_dev_jna_platform_3_4_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_java_dev_jna_platform_3_4_0.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_lang3_3_3_2.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_lang3_3_3_2.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_math3_3_6_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_math3_3_6_1.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpcore_4_3.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpcore_4_3.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_codehaus_plexus_plexus_io_2_1_3.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_codehaus_plexus_plexus_io_2_1_3.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_codehaus_plexus_plexus_utils_3_0_18.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_codehaus_plexus_plexus_utils_3_0_18.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_21.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_21.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/mg4j_nyu_jar.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/mg4j_nyu_jar.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mg4j-nyu.iml" afterPath="$PROJECT_DIR$/mg4j-nyu.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/PH-prunedIndex-trec-eval.sh" afterPath="$PROJECT_DIR$/scripts/PH-prunedIndex-trec-eval.sh" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/gov2-Hits.sh" afterPath="$PROJECT_DIR$/scripts/gov2-Hits.sh" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/gov2-docHits.sh" afterPath="$PROJECT_DIR$/scripts/gov2-docHits.sh" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/ruby/extractOverlap.rb" afterPath="$PROJECT_DIR$/scripts/ruby/extractOverlap.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/scala/job-learn.scala" afterPath="$PROJECT_DIR$/scripts/scala/job-learn.scala" />
     </list>
+    <list id="69ad20b2-a629-42d9-ac95-948d523298de" name="Rejected commit: Default" comment="posthits trec output for overlap computations" />
     <ignored path="mg4j-nyu.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -58,31 +62,54 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="PH-prunedIndex-trec-eval.sh" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/scripts/PH-prunedIndex-trec-eval.sh">
+      <file leaf-file-name="PrunedIndexOverlap.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/PrunedIndexOverlap.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="19" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+            <state relative-caret-position="336">
+              <caret line="112" column="0" selection-start-line="112" selection-start-column="0" selection-end-line="112" selection-end-column="0" />
+              <folding>
+                <element signature="e#3350#3380#0" expanded="true" />
+                <element signature="e#10501#10528#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Static Pruning - overlap.json" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/scripts/zeppelin/Static Pruning - overlap.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="extract-overlap.sh" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/scripts/extract-overlap.sh">
+      <file leaf-file-name="Object2LongArrayMap.class" pinned="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/fastutil/7.0.10/fastutil-7.0.10.jar!/it/unimi/dsi/fastutil/objects/Object2LongArrayMap.class">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="14" column="2" selection-start-line="14" selection-start-column="2" selection-end-line="14" selection-end-column="2" />
+            <state relative-caret-position="87">
+              <caret line="154" column="0" selection-start-line="154" selection-start-column="0" selection-end-line="154" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="extractOverlap.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/scripts/ruby/extractOverlap.rb">
+      <file leaf-file-name="RandomAccess.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/RandomAccess.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="13" column="19" selection-start-line="13" selection-start-column="19" selection-end-line="13" selection-end-column="19" />
+            <state relative-caret-position="-375">
+              <caret line="125" column="51" selection-start-line="125" selection-start-column="51" selection-end-line="125" selection-end-column="51" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="prunedIndexOverlap.sh" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/scripts/shell/prunedIndexOverlap.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="240">
+              <caret line="25" column="24" selection-start-line="25" selection-start-column="24" selection-end-line="25" selection-end-column="24" />
               <folding />
             </state>
           </provider>
@@ -100,11 +127,15 @@
   <component name="Git.Settings">
     <option name="PREVIOUS_COMMIT_AUTHORS">
       <list>
+        <option value="juan &lt;jcr365@nyu.edu&gt;" />
         <option value="juan" />
         <option value="Juan" />
       </list>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <push-targets>
+      <push-target-info repo="$PROJECT_DIR$" source="master" target-remote="origin" target-branch="Juan" />
+    </push-targets>
   </component>
   <component name="GradleLocalSettings">
     <option name="externalProjectsViewState">
@@ -124,20 +155,15 @@
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/score/BM25PrunedScorer.java" />
         <option value="$PROJECT_DIR$/scripts/SingletonPrunedIndex.sh" />
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/RawHits.java" />
-        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/HitsQueryEngine.java" />
         <option value="$PROJECT_DIR$/src/main/scala/generateFeatures.scala" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/PrunedPartition.java" />
         <option value="$PROJECT_DIR$/scripts/PruningStrategy.sh" />
         <option value="$PROJECT_DIR$/scripts/PrunedIndex.sh" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/PostingPruningStrategy.java" />
         <option value="$PROJECT_DIR$/mg4j-nyu.jar!/edu/nyu/tandon/query/PrunedQueryEngine.class" />
-        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/Query.java" />
         <option value="$PROJECT_DIR$/scripts/extractOverlap.rb" />
         <option value="$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/search/score/BM25Scorer.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/BM25PrunedScorer.java" />
-        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedQueryEngine.java" />
-        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/PrunedQuery.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/DocumentPruningStrategy.java" />
         <option value="$PROJECT_DIR$/scripts/scala/job-learn.scala" />
         <option value="$PROJECT_DIR$/scripts/scala/genDH-features.scala" />
@@ -146,6 +172,30 @@
         <option value="$PROJECT_DIR$/scripts/ruby/extractOverlap.rb" />
         <option value="$PROJECT_DIR$/scripts/PH-prunedIndex-trec-eval.sh" />
         <option value="$PROJECT_DIR$/scripts/extract-overlap.sh" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/HitsPrunedQueryEngine.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/RawHits.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedQueryEngine.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/HitsQueryEngine.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/RawHitsPrunedQuery.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/PrunedQuery.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/AbstractScorer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/AbstractAggregator.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/Query.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedHitsQueryEngine.java" />
+        <option value="$PROJECT_DIR$/scripts/postings-prunedIndex.sh" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/IndexPostingsDump.java" />
+        <option value="$PROJECT_DIR$/scripts/postings-FullprunedIndexTopKOverlap.sh" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/IndexFeatures.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/IndexFeatures2.java" />
+        <option value="$PROJECT_DIR$/scripts/ruby/extractPostingsOverlap.rb" />
+        <option value="$PROJECT_DIR$/scripts/computePostingsOverlap.sh" />
+        <option value="$PROJECT_DIR$/scripts/postings-topKprunedIndexTopKOverlap.sh" />
+        <option value="$PROJECT_DIR$/scripts/prunedIndexFeatures.sh" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/PrunedIndexFeatures.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/RawPostingsPrunedQuery.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/PrunedIndexOverlap.java" />
+        <option value="$PROJECT_DIR$/scripts/prunedIndexOverlap.sh" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/PrunedIndexOverlap.java" />
       </list>
     </option>
   </component>
@@ -168,10 +218,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="190" />
-    <option name="y" value="47" />
-    <option name="width" value="1594" />
-    <option name="height" value="926" />
+    <option name="x" value="398" />
+    <option name="y" value="67" />
+    <option name="width" value="1575" />
+    <option name="height" value="981" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -180,7 +230,7 @@
     <OptionsSetting value="true" id="Update" />
     <OptionsSetting value="true" id="Status" />
     <OptionsSetting value="true" id="Edit" />
-    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="2" id="Add" />
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectView">
@@ -198,7 +248,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -227,76 +277,22 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="scripts" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="org.jetbrains.plugins.ruby.settings.RubyActiveModuleSdkConfigurable" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.other" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../data" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15293041" />
     <property name="project.structure.side.proportion" value="0.37716264" />
     <property name="js-jscs-nodeInterpreter" value="C:\Program Files (x86)\nodejs\node.exe" />
@@ -304,24 +300,70 @@
     <property name="GenerateAntBuildDialog.forceTargetJdk" value="true" />
     <property name="GenerateAntBuildDialog.backupFiles" value="true" />
     <property name="GenerateAntBuildDialog.outputFileNameProperty" value="mg4j-nyu" />
+    <property name="aspect.path.notification.shown" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/scripts/zeppelin" />
+      <recent name="$PROJECT_DIR$/scripts" />
+      <recent name="$PROJECT_DIR$/scripts/ruby" />
+      <recent name="$PROJECT_DIR$/scripts/spark" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="edu.nyu.tandon.experiments" />
+      <recent name="edu.nyu.tandon.tool" />
+      <recent name="edu.nyu.tandon.query" />
+      <recent name="edu.nyu.tandon.index.cluster" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/scripts/shell" />
       <recent name="$PROJECT_DIR$/scripts/ruby" />
       <recent name="$PROJECT_DIR$/scripts" />
       <recent name="$PROJECT_DIR$/src" />
       <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/src/main" />
-    </key>
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="edu.nyu.tandon.index.cluster" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/scripts" />
-      <recent name="$PROJECT_DIR$/scripts/spark" />
     </key>
   </component>
-  <component name="RunManager" selected="Ruby.extractOverlap">
+  <component name="RunManager" selected="Application.PrunedIndexOverlap">
+    <configuration default="false" name="PrunedIndexFeatures" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="edu.nyu.tandon.tool.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.tool.PrunedIndexFeatures" />
+      <option name="VM_PARAMETERS" value="" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/../../data/experiments" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="mg4j-nyu" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="PrunedIndexOverlap" type="Application" factoryName="Application" temporary="true" show_console_on_std_out="true" show_console_on_std_err="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="edu.nyu.tandon.experiments.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.experiments.PrunedIndexOverlap" />
+      <option name="VM_PARAMETERS" value="-Xmx10g -server -Dlogback.configurationFile=$PROJECT_DIR$/../../data/experiments/logback.xml" />
+      <option name="PROGRAM_PARAMETERS" value="--verbose --results 10 -I lists/gov2.trec_eval.OR.txt -d $PROJECT_DIR$/../../data/experiments/tmp/gov2.trecEval.10.OR.01.overlap.txt -i $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/pruned/gov2-top10-01-0?inmemory=1 -t $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/pruned/gov2-top10-01.titles -T $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/qs-xdoc/gov2.titles $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/qs-xdoc/gov2-text" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/../../data/experiments" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="mg4j-nyu" />
+      <envs />
+      <method />
+    </configuration>
     <configuration default="false" name="extractOverlap" type="RubyRunConfigurationType" factoryName="Ruby" temporary="true">
       <module name="mg4j-nyu" />
       <RUBY_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
@@ -872,7 +914,7 @@
       </extension>
       <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.index.cluster.PostingPruningStrategy" />
       <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="-t 0.01 -t 0.02 -t 0.03 -t 0.04 -t 0.05 -t 0.10 -t 0.15 -t 0.20 -t 0.25 -t 0.30 -t 0.35 -t 0.40 -t 0.50 $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/qs-xdoc/gov2-text $PROJECT_DIR$/../PreditPHTopK/cli/gov2-top10.s $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/pruned/gov2-test-top10 $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/qs-xdoc/gov2.titles $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/pruned/gov2-test-top10" />
+      <option name="PROGRAM_PARAMETERS" value="-t 0.01 -t 0.02 -t 0.03 -t 0.04 -t 0.05 -t 0.10 -t 0.15 -t 0.20 -t 0.25 -t 0.30 -t 0.35 -t 0.40 -t 0.50 D:/data/IR/Gov2/index/mg4j/qs-xdoc/gov2-text $PROJECT_DIR$/../PreditPHTopK/cli/gov2-top10.s D:/data/IR/Gov2/index/mg4j/pruned/gov2-test-top10 D:/data/IR/Gov2/index/mg4j/qs-xdoc/gov2.titles D:/data/IR/Gov2/index/mg4j/pruned/gov2-test-top10" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/tmp" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
@@ -892,7 +934,7 @@
       </extension>
       <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.tool.PrunedPartition" />
       <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="-s $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/pruned/prune-gov2-top10-01.strategy $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/qs-xdoc/gov2-text gov2-top10-01-test" />
+      <option name="PROGRAM_PARAMETERS" value="-s D:/data/IR/Gov2/index/mg4j/pruned/prune-gov2-top10-01.strategy D:/data/IR/Gov2/index/mg4j/qs-xdoc/gov2-text gov2-top10-01-test" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/tmp" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
@@ -912,7 +954,47 @@
       </extension>
       <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.experiments.PrunedQuery" />
       <option name="VM_PARAMETERS" value="-server -Dlogback.configurationFile=~/logback.xml" />
-      <option name="PROGRAM_PARAMETERS" value="--trecQueries --globalScoring -I lists/gov2.trec_eval.AND.txt -d results/gov2-top10-pruned-01.txt.test -T -S $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/pruned.old/gov2-top10-01.titles $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/pruned.old/gov2-top10-01-0" />
+      <option name="PROGRAM_PARAMETERS" value="--trecQueries --globalScoring -I lists/gov2.trec_eval.AND.txt -d tmp/gov2-top10-pruned-01.txt.test -T $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/pruned/gov2-top10-01.titles $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/pruned/gov2-top10-01-0" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/../../data/experiments" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="mg4j-nyu" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="RawPostingsPrunedQuery" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="edu.nyu.tandon.experiments.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.experiments.RawPostingsPrunedQuery" />
+      <option name="VM_PARAMETERS" value="-server -Dlogback.configurationFile=~/logback.xml" />
+      <option name="PROGRAM_PARAMETERS" value="--trecQueries --trec --globalScoring --results 1000 -I lists/gov2.trec_eval.AND.txt -d tmp/gov2-top10-pruned-01.postings.txt -T $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/pruned/gov2-top10-01.titles $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/pruned/gov2-top10-01-0" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/../../data/experiments" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="mg4j-nyu" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="RawPostingsPrunedQuery - baseline" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="edu.nyu.tandon.experiments.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.experiments.RawPostingsPrunedQuery" />
+      <option name="VM_PARAMETERS" value="-server -Dlogback.configurationFile=~/logback.xml" />
+      <option name="PROGRAM_PARAMETERS" value="--trecQueries --trec --results 1000 -I lists/gov2.trec_eval.AND.txt -d results/gov2-baseline-AND.postings.txt -T $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/qs-xdoc/gov2.titles $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/qs-xdoc/gov2-text" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/../../data/experiments" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
@@ -932,8 +1014,8 @@
       </extension>
       <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.experiments.PrunedQuery" />
       <option name="VM_PARAMETERS" value="-server -Dlogback.configurationFile=~/logback.xml" />
-      <option name="PROGRAM_PARAMETERS" value="--trecQueries --globalScoring -I lists/gov2.trec_eval.OR.txt -d results/gov2-top10-pruned-05.txt.OR.test -s $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/pruned/prune-gov2-top10-05.strategy $PROJECT_DIR$/../../data/IR/Gov2/index/mg4j/pruned/gov2-top10-05-0" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/../../data/experiments" />
+      <option name="PROGRAM_PARAMETERS" value="--trecQueries --globalScoring -I lists/gov2.trec_eval.OR.txt -d tmp/gov2-top10-pruned-05.txt.OR.test -s D:/data/IR/Gov2/index/mg4j/pruned/prune-gov2-top10-05.strategy D:/data/IR/Gov2/index/mg4j/pruned/gov2-top10-05-0" />
+      <option name="WORKING_DIRECTORY" value="file://D:/data/experiments" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
@@ -943,7 +1025,7 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="RawHits" type="Application" factoryName="Application" nameIsGenerated="true">
+    <configuration default="false" name="RawHits" type="Application" factoryName="Application">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
           <option name="PATTERN" value="edu.nyu.tandon.tool.*" />
@@ -952,8 +1034,8 @@
       </extension>
       <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.tool.RawHits" />
       <option name="VM_PARAMETERS" value="-Xmx32g" />
-      <option name="PROGRAM_PARAMETERS" value="-r 1280 -I queries/100M-s.txt -d tmp/gov2-raw -D 100000 $PROJECT_DIR$/../../IR/Gov2/index/mg4j/qs-xdoc/gov2-text" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/../../experiments" />
+      <option name="PROGRAM_PARAMETERS" value="-r 1000 -I lists/gov2.trec_eval.AND.txt -d tmp/gov2.1K-eval-Q.AND.txt -D 1000000 D:/data/IR/Gov2/index/mg4j/pruned/gov2-top1k-01-0" />
+      <option name="WORKING_DIRECTORY" value="file://D:/experiments" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
@@ -963,17 +1045,63 @@
       <envs />
       <method />
     </configuration>
-    <list size="6">
+    <configuration default="false" name="RawHits - pruned" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="edu.nyu.tandon.tool.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.tool.RawHits" />
+      <option name="VM_PARAMETERS" value="-Xmx32g" />
+      <option name="PROGRAM_PARAMETERS" value="-r 1000 --globalScoring -I lists/gov2.trec_eval.AND.txt -d tmp/gov2.1K-eval-Q.AND.txt -D 1000000 -g D:/data/IR/Gov2/index/mg4j/pruned/gov2-top1k-01-0" />
+      <option name="WORKING_DIRECTORY" value="file://D:/data/experiments" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="mg4j-nyu" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="Unnamed" type="RubyRunConfigurationType" factoryName="Ruby">
+      <module name="mg4j-nyu" />
+      <RUBY_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <RUBY_RUN_CONFIG NAME="WORK DIR" VALUE="$PROJECT_DIR$/../../data" />
+      <RUBY_RUN_CONFIG NAME="SHOULD_USE_SDK" VALUE="false" />
+      <RUBY_RUN_CONFIG NAME="ALTERN_SDK_NAME" VALUE="" />
+      <RUBY_RUN_CONFIG NAME="myPassParentEnvs" VALUE="true" />
+      <envs />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
+      <RUBY_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="$PROJECT_DIR$/scripts/ruby/extractPostingsOverlap.rb" />
+      <RUBY_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="results/gov2-baseline-AND-.postings.txt results/gov2-top10-01-AND-global.1k.postings.txt 10 gov2_top10_01_AND_global" />
+      <method />
+    </configuration>
+    <list size="12">
       <item index="0" class="java.lang.String" itemvalue="Application.PostingPruningStrategy" />
       <item index="1" class="java.lang.String" itemvalue="Application.PrunedPartition" />
       <item index="2" class="java.lang.String" itemvalue="Application.PrunedQuery" />
-      <item index="3" class="java.lang.String" itemvalue="Application.PrunedQuery - strategy" />
-      <item index="4" class="java.lang.String" itemvalue="Application.RawHits" />
-      <item index="5" class="java.lang.String" itemvalue="Ruby.extractOverlap" />
+      <item index="3" class="java.lang.String" itemvalue="Application.RawPostingsPrunedQuery" />
+      <item index="4" class="java.lang.String" itemvalue="Application.RawPostingsPrunedQuery - baseline" />
+      <item index="5" class="java.lang.String" itemvalue="Application.PrunedQuery - strategy" />
+      <item index="6" class="java.lang.String" itemvalue="Application.RawHits" />
+      <item index="7" class="java.lang.String" itemvalue="Application.RawHits - pruned" />
+      <item index="8" class="java.lang.String" itemvalue="Ruby.Unnamed" />
+      <item index="9" class="java.lang.String" itemvalue="Application.PrunedIndexFeatures" />
+      <item index="10" class="java.lang.String" itemvalue="Application.PrunedIndexOverlap" />
+      <item index="11" class="java.lang.String" itemvalue="Ruby.extractOverlap" />
     </list>
     <recent_temporary>
-      <list size="1">
-        <item index="0" class="java.lang.String" itemvalue="Ruby.extractOverlap" />
+      <list size="2">
+        <item index="0" class="java.lang.String" itemvalue="Application.PrunedIndexOverlap" />
+        <item index="1" class="java.lang.String" itemvalue="Application.PrunedIndexFeatures" />
       </list>
     </recent_temporary>
   </component>
@@ -1060,7 +1188,17 @@
       <workItem from="1475412432134" duration="12000" />
       <workItem from="1475412461385" duration="1173000" />
       <workItem from="1475439643268" duration="605000" />
-      <workItem from="1476125689401" duration="4439000" />
+      <workItem from="1476125689401" duration="7223000" />
+      <workItem from="1476316639084" duration="2094000" />
+      <workItem from="1476356928061" duration="9000" />
+      <workItem from="1476357016715" duration="1219000" />
+      <workItem from="1476534946319" duration="20381000" />
+      <workItem from="1476578766718" duration="1248000" />
+      <workItem from="1476580217689" duration="18410000" />
+      <workItem from="1476641844352" duration="9762000" />
+      <workItem from="1476751671516" duration="600000" />
+      <workItem from="1477251819867" duration="9000" />
+      <workItem from="1477251849972" duration="56728000" />
     </task>
     <task id="LOCAL-00001" summary="fixed pruning runtime; in memory list buiild">
       <created>1460342015022</created>
@@ -1139,44 +1277,98 @@
       <option name="project" value="LOCAL" />
       <updated>1466464292312</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="eval scripts">
+      <created>1476148262962</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1476148262962</updated>
+    </task>
+    <task id="LOCAL-00013" summary="posthits trec output for overlap computations">
+      <created>1476624991409</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1476624991409</updated>
+    </task>
+    <task id="LOCAL-00014" summary="posthits trec output for overlap computations">
+      <created>1477361378234</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1477361378234</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="215224000" />
+    <option name="totallyTimeSpent" value="328468000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="190" y="47" width="1594" height="926" extended-state="0" />
+    <frame x="398" y="67" width="1575" height="981" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5005325" sideWeight="0.49791667" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.55981416" sideWeight="0.61856323" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26802886" sideWeight="0.15615793" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.55981416" sideWeight="0.38143674" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40833333" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.37630662" sideWeight="0.5899555" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32977587" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19346733" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24856961" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3143483" sideWeight="0.48697916" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25251257" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15625" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4017857" sideWeight="0.8438421" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6078861" sideWeight="0.5625" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="IvyIDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34166667" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.44195953" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21577218" sideWeight="0.33645833" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="IvyIDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15625" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.54654986" sideWeight="0.61822915" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39649507" sideWeight="0.6635417" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45783132" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34166667" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32977587" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24166666" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28328007" sideWeight="0.49114582" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
@@ -1196,7 +1388,11 @@
     <MESSAGE value="scala genFeatures" />
     <MESSAGE value="rebuilds" />
     <MESSAGE value="maven integration;&#10;evaluation scritps;&#10;fixed global pruned scoring" />
-    <option name="LAST_COMMIT_MESSAGE" value="maven integration;&#10;evaluation scritps;&#10;fixed global pruned scoring" />
+    <MESSAGE value="eval scripts" />
+    <MESSAGE value="posthits trec output for overlap computations" />
+    <option name="LAST_COMMIT_MESSAGE" value="posthits trec output for overlap computations" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1208,102 +1404,97 @@
           <option name="timeStamp" value="225" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/PrunedQuery.java</url>
-          <line>292</line>
-          <properties />
-          <option name="timeStamp" value="230" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/QueryEngine.java</url>
-          <line>376</line>
-          <properties />
-          <option name="timeStamp" value="232" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/PrunedQuery.java</url>
-          <line>238</line>
-          <properties />
-          <option name="timeStamp" value="233" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>jar://$PROJECT_DIR$/lib/mg4j-big-5.4.1.jar!/it/unimi/di/big/mg4j/search/score/AbstractAggregator.class</url>
-          <line>65</line>
-          <properties />
-          <option name="timeStamp" value="238" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/search/score/BM25Scorer.java</url>
           <line>271</line>
           <properties />
           <option name="timeStamp" value="248" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedQueryEngine.java</url>
-          <line>123</line>
-          <properties />
-          <option name="timeStamp" value="260" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedQueryEngine.java</url>
-          <line>119</line>
-          <properties />
-          <option name="timeStamp" value="261" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
+        <line-breakpoint type="java-line">
           <url>jar://$PROJECT_DIR$/lib/mg4j-big-5.4.1.jar!/it/unimi/di/big/mg4j/search/score/AbstractAggregator.class</url>
           <line>57</line>
           <properties />
           <option name="timeStamp" value="262" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
+        <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/BM25PrunedScorer.java</url>
           <line>35</line>
           <properties />
           <option name="timeStamp" value="263" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/BM25PrunedScorer.java</url>
-          <line>31</line>
-          <properties />
-          <option name="timeStamp" value="264" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
+        <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/BM25PrunedScorer.java</url>
           <line>27</line>
           <properties />
           <option name="timeStamp" value="266" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
+        <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/BM25PrunedScorer.java</url>
           <line>61</line>
           <properties />
           <option name="timeStamp" value="267" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/scripts/ruby/extractOverlap.rb</url>
-          <line>24</line>
-          <option name="timeStamp" value="269" />
+        <line-breakpoint type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/BM25PrunedScorer.java</url>
+          <line>31</line>
+          <properties />
+          <option name="timeStamp" value="272" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/PrunedQuery.java</url>
+          <line>238</line>
+          <properties />
+          <option name="timeStamp" value="276" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/RawHits.java</url>
+          <line>435</line>
+          <properties />
+          <option name="timeStamp" value="279" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedQueryEngine.java</url>
+          <line>111</line>
+          <properties />
+          <option name="timeStamp" value="281" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/PrunedQuery.java</url>
+          <line>100</line>
+          <properties />
+          <option name="timeStamp" value="294" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/RawPostingsPrunedQuery.java</url>
+          <line>289</line>
+          <properties />
+          <option name="timeStamp" value="324" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/QueryEngine.java</url>
+          <line>387</line>
+          <properties />
+          <option name="timeStamp" value="345" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/scripts/ruby/extractOverlap.rb</url>
-          <line>35</line>
-          <option name="timeStamp" value="270" />
+          <line>33</line>
+          <option name="timeStamp" value="327" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/scripts/ruby/extractPostingsOverlap.rb</url>
+          <line>69</line>
+          <option name="timeStamp" value="328" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="271" />
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <option name="time" value="401" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
-        <watch expression="flatIndexIterator[0].index().numberOfDocuments " />
-        <watch expression="flatIndexIterator[0].index().numberOfDocuments" />
-        <watch expression="flatIndexIterator[i].termNumber()" language="JAVA" custom="" />
-        <watch expression="globalTermFrequencies.getLong((int)flatIndexIterator[i].termNumber())" language="JAVA" custom="" />
-        <watch expression="flatIndexIterator[i].frequency()" language="JAVA" custom="" />
-        <watch expression="flatIndexIterator[i].index().numberOfDocuments" />
-        <watch expression="index2Weight.getDouble(flatIndexIterator[i].index())" />
-        <watch expression="Math.log((numDocs - frequency + 0.5) / (frequency + 0.5))) " />
-        <watch expression="Math.log((numDocs - frequency + 0.5) / (frequency + 0.5))" />
-        <watch expression="Math.log((flatIndexIterator[i].index().numberOfDocuments - frequency + 0.5) / (frequency + 0.5))" />
+        <watch expression="prunedTitleList" language="JAVA" />
+        <watch expression="baseTitleList.get(baseDocID)" language="JAVA" />
       </configuration>
     </watches-manager>
   </component>
@@ -1312,239 +1503,142 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../mg4j-big-5.4.1/src/it/unimi/di/big/mg4j/index/QuasiSuccinctIndexReader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="391" column="0" selection-start-line="391" selection-start-column="0" selection-end-line="391" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../mg4j-big-5.4.1/src/it/unimi/di/big/mg4j/index/Index.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="370">
-          <caret line="145" column="19" selection-start-line="131" selection-start-column="4" selection-end-line="145" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/renumber/Renumber.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2115">
-          <caret line="169" column="0" selection-start-line="167" selection-start-column="0" selection-end-line="169" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/IndexFeatures.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="41" column="13" selection-start-line="41" selection-start-column="13" selection-end-line="41" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tmp/sample.txt">
+    <entry file="file://$PROJECT_DIR$/scripts/shell/run-input-queries.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../experiments/results/eval.gov2-top10-02-OR" />
-    <entry file="file://$PROJECT_DIR$/../mg4j-big-5.4.1/src/it/unimi/di/big/mg4j/search/score/Scorer.java">
+    <entry file="file://$PROJECT_DIR$/scripts/scala/gen_full_gov2_features.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="163">
-          <caret line="59" column="18" selection-start-line="59" selection-start-column="18" selection-end-line="59" selection-end-column="18" />
+        <state relative-caret-position="1320">
+          <caret line="94" column="15" selection-start-line="94" selection-start-column="15" selection-end-line="94" selection-end-column="15" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../mg4j-big-5.4.1/src/it/unimi/di/big/mg4j/search/score/ScoredDocumentBoundedSizeQueue.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/PostingPruningStrategy.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="49">
-          <caret line="48" column="13" selection-start-line="48" selection-start-column="13" selection-end-line="48" selection-end-column="13" />
+        <state relative-caret-position="350">
+          <caret line="182" column="34" selection-start-line="182" selection-start-column="34" selection-end-line="182" selection-end-column="34" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/fastutil/7.0.10/fastutil-7.0.10.jar!/it/unimi/dsi/fastutil/objects/Object2ReferenceLinkedOpenHashMap.class" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/DocumentPruningStrategy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="38" column="7" selection-start-line="38" selection-start-column="7" selection-end-line="38" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/shell/PruningStrategy.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" column="10" selection-start-line="21" selection-start-column="10" selection-end-line="21" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/shell/gov2-Hits.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="89" selection-start-line="12" selection-start-column="86" selection-end-line="12" selection-end-column="89" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/shell/extract-overlap.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="435">
+          <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/RawDocHits_deprecated.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1021">
+          <caret line="264" column="63" selection-start-line="264" selection-start-column="63" selection-end-line="264" selection-end-column="63" />
+          <caret line="265" column="63" selection-start-line="265" selection-start-column="63" selection-end-line="265" selection-end-column="63" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///usr/lib/jvm/java-8-oracle/src.zip!/java/lang/Byte.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="229">
+          <caret line="43" column="19" selection-start-line="43" selection-start-column="19" selection-end-line="43" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/mg4j-big-5.4.1.jar!/it/unimi/di/big/mg4j/search/score/ScoredDocumentBoundedSizeQueue.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-180">
+          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/HitsQueryEngine.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="880">
-          <caret line="116" column="0" selection-start-line="116" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/main.iml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="9" selection-start-line="11" selection-start-column="9" selection-end-line="11" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../mg4j-big-5.4.1/src/it/unimi/di/big/mg4j/index/payload/Payload.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="35" selection-start-line="19" selection-start-column="35" selection-end-line="19" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../mg4j-big-5.4.1/src/it/unimi/di/big/mg4j/index/QuasiSuccinctIndexWriter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="169">
-          <caret line="648" column="16" selection-start-line="648" selection-start-column="16" selection-end-line="648" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../mg4j-big-5.4.1/src/it/unimi/di/big/mg4j/search/score/AbstractAggregator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="173" column="0" selection-start-line="173" selection-start-column="0" selection-end-line="173" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/mg4j-nyu.jar!/it/unimi/dsi/fastutil/longs/LongOpenHashSet.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-9">
-          <caret line="169" column="0" selection-start-line="169" selection-start-column="0" selection-end-line="169" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/mg4j-nyu.jar!/edu/nyu/tandon/query/PrunedQueryEngine.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="282">
-          <caret line="95" column="35" selection-start-line="95" selection-start-column="35" selection-end-line="95" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/Query.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="487">
-          <caret line="80" column="13" selection-start-line="80" selection-start-column="13" selection-end-line="80" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/gov2-top10" />
-    <entry file="file://$PROJECT_DIR$/scripts/PrunedIndex.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="27" column="4" selection-start-line="27" selection-start-column="4" selection-end-line="27" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/SingletonPrunedIndex.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="25" selection-start-line="9" selection-start-column="25" selection-end-line="9" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/PrunedPartition.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="504" column="31" selection-start-line="504" selection-start-column="31" selection-end-line="504" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/mg4j-big-5.4.1.jar!/it/unimi/di/big/mg4j/search/AbstractCompositeDocumentIterator.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8">
-          <caret line="58" column="0" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/mg4j-big-5.4.1.jar!/it/unimi/di/big/mg4j/search/score/AbstractWeightedScorer.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="507">
-          <caret line="79" column="0" selection-start-line="79" selection-start-column="0" selection-end-line="79" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/mg4j-big-5.4.1.jar!/it/unimi/di/big/mg4j/search/score/Scorer.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="14" column="11" selection-start-line="14" selection-start-column="11" selection-end-line="14" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/PrunedQuery.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="238" column="0" selection-start-line="238" selection-start-column="0" selection-end-line="238" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/BM25PrunedScorer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="61" column="0" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/search/score/BM25Scorer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="126" column="68" selection-start-line="126" selection-start-column="65" selection-end-line="126" selection-end-column="68" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/QueryEngine.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="268">
-          <caret line="335" column="32" selection-start-line="335" selection-start-column="32" selection-end-line="335" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedQueryEngine.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="120" column="0" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
-          <folding>
-            <element signature="e#4163#4211#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="365">
+          <caret line="111" column="0" selection-start-line="111" selection-start-column="0" selection-end-line="111" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/mg4j-big-5.4.1.jar!/it/unimi/di/big/mg4j/search/score/AbstractAggregator.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="366">
-          <caret line="72" column="39" selection-start-line="72" selection-start-column="39" selection-end-line="72" selection-end-column="39" />
+        <state relative-caret-position="15">
+          <caret line="1" column="39" selection-start-line="1" selection-start-column="39" selection-end-line="1" selection-end-column="39" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/create-pruned-cluster.sh">
+    <entry file="jar://$PROJECT_DIR$/lib/mg4j-big-5.4.1.jar!/it/unimi/di/big/mg4j/search/score/AbstractScorer.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="16" column="22" selection-start-line="16" selection-start-column="22" selection-end-line="16" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/mg4j-big-5.4.1.jar!/it/unimi/di/big/mg4j/search/score/AbstractWeightedScorer.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="19" column="62" selection-start-line="19" selection-start-column="62" selection-end-line="19" selection-end-column="62" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/mg4j-big-5.4.1.jar!/it/unimi/di/big/mg4j/search/DocumentIterator.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="14" column="17" selection-start-line="14" selection-start-column="17" selection-end-line="14" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/AbstractAggregator.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/search/score/BM25Scorer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="261">
+          <caret line="128" column="27" selection-start-line="128" selection-start-column="27" selection-end-line="128" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/AbstractScorer.java" />
+    <entry file="jar://$PROJECT_DIR$/lib/mg4j-big-5.4.1.jar!/it/unimi/di/big/mg4j/search/score/LinearAggregator.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="251">
+          <caret line="30" column="0" selection-start-line="21" selection-start-column="4" selection-end-line="30" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/BM25PrunedScorer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="130">
+          <caret line="21" column="40" selection-start-line="21" selection-start-column="40" selection-end-line="21" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/ruby/CollectTopK.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/cluster-ordering.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-20">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/PostHits.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/scala/job-learn.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="25" column="57" selection-start-line="25" selection-start-column="57" selection-end-line="25" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/scala/generateFeatures.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-150">
-          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="44" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="15" />
         </state>
       </provider>
     </entry>
@@ -1555,121 +1649,230 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/scala/genDH-features.scala">
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/IndexPostingsDump.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ListSpeed.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="18" column="35" selection-start-line="18" selection-start-column="35" selection-end-line="18" selection-end-column="35" />
+        <state relative-caret-position="-1268">
+          <caret line="25" column="13" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/gov2-docHits.sh">
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedHitsQueryEngine.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="137" selection-start-line="20" selection-start-column="137" selection-end-line="20" selection-end-column="137" />
+        <state relative-caret-position="150">
+          <caret line="103" column="54" selection-start-line="103" selection-start-column="54" selection-end-line="103" selection-end-column="54" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/gov2-clusters.sh">
+    <entry file="file://$PROJECT_DIR$/scripts/ruby/extractPostingsOverlap.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/query.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/run-input-queries.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/scala/gen_full_gov2_features.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1320">
-          <caret line="94" column="15" selection-start-line="94" selection-start-column="15" selection-end-line="94" selection-end-column="15" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/PostingPruningStrategy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="182" column="34" selection-start-line="182" selection-start-column="34" selection-end-line="182" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/DocumentPruningStrategy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="38" column="7" selection-start-line="38" selection-start-column="7" selection-end-line="38" selection-end-column="7" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/PruningStrategy.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="10" selection-start-line="21" selection-start-column="10" selection-end-line="21" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/RawDocHits.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="529">
-          <caret line="264" column="63" selection-start-line="264" selection-start-column="63" selection-end-line="264" selection-end-column="63" />
-          <caret line="265" column="63" selection-start-line="265" selection-start-column="63" selection-end-line="265" selection-end-column="63" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/RawHits.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="529">
-          <caret line="481" column="22" selection-start-line="481" selection-start-column="22" selection-end-line="481" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/gov2-Hits.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="89" selection-start-line="12" selection-start-column="86" selection-end-line="12" selection-end-column="89" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/PH-prunedIndex-trec-eval.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+        <state relative-caret-position="-13">
+          <caret line="39" column="20" selection-start-line="39" selection-start-column="20" selection-end-line="39" selection-end-column="20" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/scripts/ruby/extractOverlap.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" column="19" selection-start-line="13" selection-start-column="19" selection-end-line="13" selection-end-column="19" />
+        <state relative-caret-position="375">
+          <caret line="25" column="14" selection-start-line="25" selection-start-column="14" selection-end-line="25" selection-end-column="14" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/extract-overlap.sh">
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/IndexFeatures.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="2" selection-start-line="14" selection-start-column="2" selection-end-line="14" selection-end-column="2" />
+        <state relative-caret-position="615">
+          <caret line="53" column="0" selection-start-line="53" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/shell/computePostingsOverlap.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" column="0" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/shell/postings-topKprunedIndexTopKOverlap.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="15" selection-start-line="9" selection-start-column="15" selection-end-line="9" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/mg4j-big-5.4.1.jar!/it/unimi/di/big/mg4j/search/score/Scorer.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="14" column="11" selection-start-line="14" selection-start-column="11" selection-end-line="14" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedQueryEngine.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="690">
+          <caret line="95" column="0" selection-start-line="95" selection-start-column="0" selection-end-line="95" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/PrunedIndexOverlap1.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="381">
+          <caret line="287" column="0" selection-start-line="287" selection-start-column="0" selection-end-line="287" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/mg4j-big-5.4.1.jar!/it/unimi/di/big/mg4j/search/score/DocumentScoreInfo.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="9" column="38" selection-start-line="9" selection-start-column="37" selection-end-line="9" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/mg4j-big-5.4.1.jar!/it/unimi/di/big/mg4j/index/Index.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="295">
+          <caret line="153" column="24" selection-start-line="153" selection-start-column="24" selection-end-line="153" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/PrunedQuery.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="257">
+          <caret line="185" column="59" selection-start-line="185" selection-start-column="7" selection-end-line="185" selection-end-column="59" />
+          <folding>
+            <element signature="e#12815#12882#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/RawHits.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1875">
+          <caret line="86" column="33" selection-start-line="86" selection-start-column="33" selection-end-line="86" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/PrunedIndexFeatures.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="121" column="0" selection-start-line="121" selection-start-column="0" selection-end-line="121" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/shell/prunedIndexFeatures.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="480">
+          <caret line="32" column="60" selection-start-line="32" selection-start-column="60" selection-end-line="32" selection-end-column="60" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/Query.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-101">
+          <caret line="88" column="32" selection-start-line="88" selection-start-column="32" selection-end-line="88" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/shell/PH-prunedIndex-trec-eval.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="27" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/QueryEngine.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-590">
+          <caret line="327" column="0" selection-start-line="327" selection-start-column="0" selection-end-line="327" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/RandomAccess.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-375">
+          <caret line="125" column="51" selection-start-line="125" selection-start-column="51" selection-end-line="125" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/TerminatingQueryEngine.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/RawPostingsPrunedQuery.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1875">
+          <caret line="161" column="0" selection-start-line="161" selection-start-column="0" selection-end-line="161" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/mg4j-big-5.4.1.jar!/it/unimi/di/big/mg4j/query/nodes/MultiTerm.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/fastutil/7.0.10/fastutil-7.0.10.jar!/it/unimi/dsi/fastutil/objects/Object2LongArrayMap.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="87">
+          <caret line="154" column="0" selection-start-line="154" selection-start-column="0" selection-end-line="154" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/dsiutils/2.3.2/dsiutils-2.3.2.jar!/it/unimi/dsi/lang/MutableString.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="29" column="13" selection-start-line="29" selection-start-column="13" selection-end-line="29" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/shell/prunedIndexOverlap.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="25" column="24" selection-start-line="25" selection-start-column="24" selection-end-line="25" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/PrunedIndexOverlap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="112" column="0" selection-start-line="112" selection-start-column="0" selection-end-line="112" selection-end-column="0" />
+          <folding>
+            <element signature="e#3350#3380#0" expanded="true" />
+            <element signature="e#10501#10528#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/zeppelin/Static Pruning - overlap.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1693,7 +1896,7 @@
       </state>
       <state key="FacetStructureConfigurable.UI">
         <settings>
-          <last-edited>No facets are configured</last-edited>
+          <last-edited>JRuby</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
