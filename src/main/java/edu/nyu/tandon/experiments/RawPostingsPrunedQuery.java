@@ -53,6 +53,7 @@ public class RawPostingsPrunedQuery extends Query {
 
         SimpleJSAP jsap = new SimpleJSAP(RawPostingsPrunedQuery.class.getName(), "Loads indices relative to a collection, possibly loads the collection, and answers to queries.",
                 new Parameter[]{
+
                         new FlaggedOption("collection", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'c', "collection", "The collection of documents indexed by the given indices."),
                         new FlaggedOption("objectCollection", new ObjectParser(DocumentCollection.class, MG4JClassParser.PACKAGE), JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'o', "object-collection", "An object specification describing a document collection."),
                         new FlaggedOption("titleList", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 't', "title-list", "A serialized big list of titles (will override collection titles if specified)."),
@@ -98,6 +99,7 @@ public class RawPostingsPrunedQuery extends Query {
         final boolean verbose = jsapResult.getBoolean("verbose");
 
         final boolean loadSizes = !jsapResult.getBoolean("noSizes");
+
         RawPostingsPrunedQuery.loadIndicesFromSpec(basenameWeight, loadSizes, documentCollection, indexMap, index2Weight);
 
         final long numberOfDocuments = indexMap.values().iterator().next().numberOfDocuments;

@@ -4,6 +4,10 @@ f_baseline = open ARGV[0]
 f_in = open ARGV[1]
 topk = ARGV[2].to_i
 dataset = ARGV[3]
+target = ARGV[4]
+index_size = ARGV[5]
+semantics = ARGV[6]
+scoring = ARGV[7]
 
 # load the baseline
 baseline = {}
@@ -54,17 +58,19 @@ results.each_key { |k| results[k][0].uniq! }
 doc_overlap = 0.0
 posting_overlap = 0.0
 
+range = 0..(topk-1)
+
 # compute overlap
 baseline.each_key do |i|
 
   if results.has_key? i
 
-    over = (results[i][0][0..topk] & baseline[i][0][0..topk]).size
-    tot = (baseline[i][0][0..topk]).size
+    over = (results[i][0][range] & baseline[i][0][0..topk]).size
+    tot = (baseline[i][0][range]).size
     doc_overlap += (1.0 * over / tot)
 
-    over = (results[i][1][0..topk] & baseline[i][1][0..topk]).size
-    tot = (baseline[i][1][0..topk]).size
+    over = (results[i][1][range] & baseline[i][1][0..topk]).size
+    tot = (baseline[i][1][range]).size
     posting_overlap += (1.0 * over / tot)
 
   end
@@ -72,4 +78,15 @@ baseline.each_key do |i|
 end
 
 n = baseline.size * 1.0
-puts "#{topk},#{"%.4f" % (doc_overlap/n)},#{"%.4f" % (posting_overlap/n)},"+dataset.gsub(/-/, ',')
+
+if (topk == 1000)
+  tk = "1k"
+else
+  tk = "10"
+end
+
+# training_set,model,hits_mode,dataset,learned_label,prune_size,query_semantics,bm25_scoring,metric,value,eval_set
+# puts "#{topk},#{"%.4f" % (doc_overlap/n)},#{"%.4f" % (posting_overlap/n)},"+dataset.gsub(/-/, ',')
+puts "100K_AND,xgboost,ph,#{dataset},#{target},#{index_size},#{semantics},#{scoring},r_kept@#{tk},#{"%.4f" % (doc_overlap/n)},701-750"
+puts "100K_AND,xgboost,ph,#{dataset},#{target},#{index_size},#{semantics},#{scoring},p_kept@#{tk},#{"%.4f" % (posting_overlap/n)},701-750"
+
