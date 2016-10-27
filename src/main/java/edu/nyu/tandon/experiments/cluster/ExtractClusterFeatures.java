@@ -141,9 +141,9 @@ public class ExtractClusterFeatures {
                         .append('\n');
 
                 try {
-                    long start = System.nanoTime();
+                    long start = System.currentTimeMillis();
                     engine.process(query, 0, k, r);
-                    long elapsed = System.nanoTime() - start;
+                    long elapsed = System.currentTimeMillis() - start;
                     costWriter.append(String.valueOf(elapsed)).append('\n');
                 } catch (Exception e) {
                     LOGGER.error(String.format("There was an error while processing query: %s", query), e);
