@@ -1,6 +1,8 @@
 package edu.nyu.tandon.experiments.cluster;
 
 import com.google.common.base.CharMatcher;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.query.QueryEngine;
@@ -14,13 +16,17 @@ import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.objects.*;
+import it.unimi.dsi.lang.MutableString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static edu.nyu.tandon.query.Query.MAX_STEMMING;
 import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.loadGlobalFrequencies;
@@ -33,6 +39,7 @@ public class ExtractClusterFeatures {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ExtractClusterFeatures.class);
 
+    @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception {
 
         SimpleJSAP jsap = new SimpleJSAP(Query.class.getName(), ".",
@@ -82,6 +89,13 @@ public class ExtractClusterFeatures {
 
         FileWriter resultWriter = new FileWriter(String.format("%s.results%s", outputBasename, type));
         FileWriter scoreWriter = new FileWriter(String.format("%s.results.scores", outputBasename));
+        FileWriter costWriter = new FileWriter(String.format("%s.cost", outputBasename));
+        FileWriter maxListLen1Writer = new FileWriter(String.format("%s.maxlist1", outputBasename));
+        FileWriter maxListLen2Writer = new FileWriter(String.format("%s.maxlist2", outputBasename));
+        FileWriter minListLen1Writer = new FileWriter(String.format("%s.minlist1", outputBasename));
+        FileWriter minListLen2Writer = new FileWriter(String.format("%s.minlist2", outputBasename));
+        FileWriter sumListLenWriter = new FileWriter(String.format("%s.sumlist", outputBasename));
+
 
         try(BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
             for (String query; (query = br.readLine()) != null; ) {
@@ -90,8 +104,47 @@ public class ExtractClusterFeatures {
                         new ObjectArrayList<>();
                 query = CharMatcher.is(',').replaceFrom(query, "");
 
+                Index index = indexMap.get(indexMap.firstKey());
+                TermProcessor termProcessor = termProcessors.get(indexMap.firstKey());
+                List<String> processedTerms =
+                        Lists.newArrayList(Splitter.on(' ').omitEmptyStrings().split(query))
+                                .stream()
+                                .map(t -> {
+                                    MutableString m = new MutableString(t);
+                                    termProcessor.processTerm(m);
+                                    return m.toString();
+                                })
+                                .collect(Collectors.toList());
+                List<Long> listLengths = processedTerms.stream().map(term -> {
+                    try {
+                        return index.documents(term).frequency();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).collect(Collectors.toList());
+                if (listLengths.isEmpty()) {
+                    maxListLen1Writer.append("0\n");
+                    maxListLen2Writer.append("0\n");
+                    minListLen1Writer.append("0\n");
+                    minListLen2Writer.append("0\n");
+                }
+                else {
+                    maxListLen1Writer.append(String.valueOf(listLengths.get(0))).append('\n');
+                    minListLen1Writer.append(String.valueOf(listLengths.get(listLengths.size() - 1))).append('\n');
+                    if (listLengths.size() > 1) {
+                        maxListLen2Writer.append(String.valueOf(listLengths.get(1))).append('\n');
+                        minListLen2Writer.append(String.valueOf(listLengths.get(listLengths.size() - 2))).append('\n');
+                    }
+                }
+                sumListLenWriter
+                        .append(String.valueOf(listLengths.stream().mapToLong(Long::longValue).sum()))
+                        .append('\n');
+
                 try {
+                    long start = System.nanoTime();
                     engine.process(query, 0, k, r);
+                    long elapsed = System.nanoTime() - start;
+                    costWriter.append(String.valueOf(elapsed)).append('\n');
                 } catch (Exception e) {
                     LOGGER.error(String.format("There was an error while processing query: %s", query), e);
                     throw e;
@@ -116,6 +169,12 @@ public class ExtractClusterFeatures {
 
         resultWriter.close();
         scoreWriter.close();
+        costWriter.close();
+        maxListLen1Writer.close();
+        maxListLen2Writer.close();
+        minListLen1Writer.close();
+        minListLen2Writer.close();
+        sumListLenWriter.close();
 
     }
 
