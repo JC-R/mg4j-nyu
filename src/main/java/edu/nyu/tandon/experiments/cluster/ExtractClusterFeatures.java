@@ -89,7 +89,8 @@ public class ExtractClusterFeatures {
 
         FileWriter resultWriter = new FileWriter(String.format("%s.results%s", outputBasename, type));
         FileWriter scoreWriter = new FileWriter(String.format("%s.results.scores", outputBasename));
-        FileWriter costWriter = new FileWriter(String.format("%s.cost", outputBasename));
+        FileWriter timeWriter = new FileWriter(String.format("%s.time", outputBasename));
+        FileWriter avgTimeWriter = new FileWriter(String.format("%s.time.avg", outputBasename));
         FileWriter maxListLen1Writer = new FileWriter(String.format("%s.maxlist1", outputBasename));
         FileWriter maxListLen2Writer = new FileWriter(String.format("%s.maxlist2", outputBasename));
         FileWriter minListLen1Writer = new FileWriter(String.format("%s.minlist1", outputBasename));
@@ -97,6 +98,8 @@ public class ExtractClusterFeatures {
         FileWriter sumListLenWriter = new FileWriter(String.format("%s.sumlist", outputBasename));
 
 
+        long totalTime = 0;
+        long queryCount = 0;
         try(BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
             for (String query; (query = br.readLine()) != null; ) {
 
@@ -144,7 +147,9 @@ public class ExtractClusterFeatures {
                     long start = System.currentTimeMillis();
                     engine.process(query, 0, k, r);
                     long elapsed = System.currentTimeMillis() - start;
-                    costWriter.append(String.valueOf(elapsed)).append('\n');
+                    totalTime += elapsed;
+                    queryCount++;
+                    timeWriter.append(String.valueOf(elapsed)).append('\n');
                 } catch (Exception e) {
                     LOGGER.error(String.format("There was an error while processing query: %s", query), e);
                     throw e;
@@ -167,9 +172,12 @@ public class ExtractClusterFeatures {
             }
         }
 
+        avgTimeWriter.append(String.valueOf(totalTime / queryCount));
+        avgTimeWriter.close();
+
         resultWriter.close();
         scoreWriter.close();
-        costWriter.close();
+        timeWriter.close();
         maxListLen1Writer.close();
         maxListLen2Writer.close();
         minListLen1Writer.close();
