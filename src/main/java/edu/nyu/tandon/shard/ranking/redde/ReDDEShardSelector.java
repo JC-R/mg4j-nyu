@@ -23,7 +23,7 @@ import static java.util.stream.Collectors.groupingBy;
 public class ReDDEShardSelector implements ShardSelector {
 
     protected CentralSampleIndex csi;
-    protected Int2LongOpenHashMap sampleSizes;
+    protected long[] sampleSizes;
     protected int T = -1;
 
     public ReDDEShardSelector(CentralSampleIndex csi) {
@@ -36,29 +36,26 @@ public class ReDDEShardSelector implements ShardSelector {
         return this;
     }
 
-    protected Int2LongOpenHashMap computeSampleSizes() {
-        Int2LongOpenHashMap sampleSizes = new Int2LongOpenHashMap();
+    protected long[] computeSampleSizes() {
+        long[] sampleSizes = new long[csi.getClustersStrategy().numberOfLocalIndices()];
         for (int i = 0; i < csi.getCsiStrategy().numberOfDocuments(0); i++) {
             long globalId = csi.getCsiStrategy().globalPointer(0, i);
             int shardId = csi.getClustersStrategy().localIndex(globalId);
-            sampleSizes.put(shardId, sampleSizes.getOrDefault(shardId, 0L) + 1);
+            sampleSizes[shardId]++;
         }
         return sampleSizes;
     }
 
     protected Map<Integer, Long> computeShardCounts(List<Result> results) {
         Map<Integer, Long> resultCounts = results.stream().collect(groupingBy(result -> result.shardId, counting()));
-        sampleSizes.forEach((key, value) -> {
-            if (!resultCounts.containsKey(key)) resultCounts.put(key, 0L);
-        });
+        for (int shard = 0; shard < sampleSizes.length; shard++) {
+            if (!resultCounts.containsKey(shard)) resultCounts.put(shard, 0L);
+        }
         return resultCounts;
     }
 
     protected double shardWeight(int shardId) {
-        if (!sampleSizes.containsKey(shardId)) {
-            throw new IllegalArgumentException("Cannot get weight of this shard: its metadata has not been loaded.");
-        }
-        return (double) csi.numberOfDocuments(shardId) / (double) sampleSizes.get(shardId);
+        return (double) csi.numberOfDocuments(shardId) / (double) sampleSizes[shardId];
     }
 
     protected double computeShardScore(int shardId, long count) {
