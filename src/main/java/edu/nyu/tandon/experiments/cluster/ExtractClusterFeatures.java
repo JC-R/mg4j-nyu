@@ -138,6 +138,10 @@ public class ExtractClusterFeatures {
                         maxListLen2Writer.append(String.valueOf(listLengths.get(1))).append('\n');
                         minListLen2Writer.append(String.valueOf(listLengths.get(listLengths.size() - 2))).append('\n');
                     }
+                    else {
+                        maxListLen2Writer.append("0\n");
+                        minListLen2Writer.append("0\n");
+                    }
                 }
                 sumListLenWriter
                         .append(String.valueOf(listLengths.stream().mapToLong(Long::longValue).sum()))
