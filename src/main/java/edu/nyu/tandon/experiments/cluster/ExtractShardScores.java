@@ -2,10 +2,10 @@ package edu.nyu.tandon.experiments.cluster;
 
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.query.Query;
-import edu.nyu.tandon.search.score.BM25PrunedScorer;
+import edu.nyu.tandon.search.score.QueryLikelihoodScorer;
 import edu.nyu.tandon.shard.csi.CentralSampleIndex;
 import edu.nyu.tandon.shard.ranking.ShardSelector;
-import edu.nyu.tandon.shard.ranking.redde.ModifiedReDDEShardSelector;
+import edu.nyu.tandon.shard.ranking.redde.ReDDEShardSelector;
 import edu.nyu.tandon.shard.ranking.shrkc.RankS;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
@@ -26,7 +26,7 @@ public class ExtractShardScores {
     public static final Logger LOGGER = LoggerFactory.getLogger(ExtractShardScores.class);
 
     private static ShardSelector resolveShardSelector(String name, CentralSampleIndex csi) {
-        if ("redde".equals(name)) return new ModifiedReDDEShardSelector(csi);
+        if ("redde".equals(name)) return new ReDDEShardSelector(csi);
         else if ("shrkc".equals(name)) return new RankS(csi, 2).withC(-1.0);
         else throw new IllegalArgumentException("You need to define a proper selector: redde, shrkc");
     }
@@ -50,7 +50,7 @@ public class ExtractShardScores {
         int clusters = jsapResult.getInt("clusters");
 
         LOGGER.info("Loading CSI...");
-        CentralSampleIndex csi = CentralSampleIndex.loadCSI(jsapResult.getString("csi"), jsapResult.getString("basename"), new BM25PrunedScorer());
+        CentralSampleIndex csi = CentralSampleIndex.loadCSI(jsapResult.getString("csi"), jsapResult.getString("basename"), new QueryLikelihoodScorer());
         if (jsapResult.userSpecified("csiMaxOutput")) csi.setMaxOutput(jsapResult.getInt("csiMaxOutput"));
 
         ShardSelector shardSelector = resolveShardSelector(jsapResult.getString("selector"), csi);

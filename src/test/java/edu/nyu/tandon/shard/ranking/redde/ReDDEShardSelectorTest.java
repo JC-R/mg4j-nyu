@@ -55,9 +55,9 @@ public class ReDDEShardSelectorTest extends BaseTest {
         // Given
         ReDDEShardSelector selector = reddeSelector;
         List<Result> results = Arrays.asList(
-                new Result(1, 1., 1),
+                new Result(1, -1., 1),
                 new Result(2, 1., 1),
-                new Result(3, 1., 1),
+                new Result(3, 0., 1),
                 new Result(4, 1., 2),
                 new Result(5, 1., 2),
                 new Result(6, 1., 3)

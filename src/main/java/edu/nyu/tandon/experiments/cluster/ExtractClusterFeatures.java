@@ -7,6 +7,7 @@ import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.query.QueryEngine;
 import edu.nyu.tandon.search.score.BM25PrunedScorer;
+import edu.nyu.tandon.search.score.QueryLikelihoodScorer;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
 import it.unimi.di.big.mg4j.query.SelectedInterval;
@@ -15,6 +16,7 @@ import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
 import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongBigArrayBigList;
 import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.lang.MutableString;
 import org.slf4j.Logger;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
 
 import static edu.nyu.tandon.query.Query.MAX_STEMMING;
 import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.loadGlobalFrequencies;
+import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.loadGlobalOccurrencies;
 import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.loadGlobalStats;
 
 /**
@@ -72,12 +75,12 @@ public class ExtractClusterFeatures {
                 new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING),
                 indexMap);
         engine.setWeights(index2Weight);
-        BM25PrunedScorer scorer = new BM25PrunedScorer();
+        QueryLikelihoodScorer scorer = new QueryLikelihoodScorer();
         if (jsapResult.userSpecified("globalStatistics")) {
             LOGGER.info("Running queries with global statistics.");
-            LongArrayList frequencies = loadGlobalFrequencies(basename);
             long[] globalStats = loadGlobalStats(basename);
-            scorer.setGlobalMetrics(globalStats[0], globalStats[1], frequencies);
+            LongBigArrayBigList globalOccurrencies = loadGlobalOccurrencies(basename);
+            scorer.setGlobalMetrics(globalStats[1], globalOccurrencies);
         }
         engine.score(scorer);
 

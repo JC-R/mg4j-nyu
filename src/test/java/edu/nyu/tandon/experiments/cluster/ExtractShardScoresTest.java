@@ -8,7 +8,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -35,7 +35,9 @@ public class ExtractShardScoresTest extends BaseTest {
         // Then
         for (int i = 0; i < 11; i++) {
             for (String l : Files.readAllLines(Paths.get(String.format("%s#%d.redde", outputBasename, i)))) {
-                assertThat(Doubles.tryParse(l), notNullValue());
+                Double score = Doubles.tryParse(l);
+                assertThat(score, notNullValue());
+                assertThat(score >= 0, equalTo(Boolean.TRUE));
             }
         }
     }
