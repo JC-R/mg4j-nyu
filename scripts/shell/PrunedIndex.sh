@@ -7,31 +7,52 @@
 # Index 0 is the pruned index; Index 1 is the rest of the postings, Index 1 is not physically manifested.
 #
 # Requires: PostingPruningStrategies must exist in serialized format
+# A strategy is a POJO serialized to disk; that implements the strategy interface
 #
 #
+# Parameters
 #
-export CLASSPATH=/home/juan/work/sandbox/mg4j-nyu/mg4j-nyu.jar
+#  CORPUS
+#  OUTPUT_& STRATEGY_DIR
+#  BASELINE_INDEX
+#  MODEL NAME
+#
+if [ "$#" -ne 4 ]; then
+    echo "Illegal number of parameters: PrunedIndex.sh CORPUS STRATEGY_DIR BASELINE_INDEX MODEL"
+    exit 1
+fi
 
-CORPUS=gov2
-INDECES=/home/juan/work/data/IR/Gov2/index/mg4j
-FULL_INDEX=$INDECES/qs-xdoc/$CORPUS-text
-INDEX_DIR=$INDECES/pruned
+CWD=`pwd`
+MY_PATH="`dirname \"$0\"`"              # relative
+MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
+if [ -z "$MY_PATH" ] ; then
+  # error; for some reason, the path is not accessible
+  # to the script (e.g. permissions re-evaled after suid)
+  exit 1  # fail
+fi
+cd $CWD
 
-export _JAVA_OPTIONS="-Xmx10g -XX:-UseConcMarkSweepGC"
+CORPUS=$1
+STRATEGY_DIR=$2
+FULL_INDEX=$3
+MODEL=$4
 
-#for k in top10 top1k; do
-for k in top10 top1k; do
+export _JAVA_OPTIONS="-Xmx15g -XX:-UseConcMarkSweepGC -Dlogback.configurationFile=logback.xml"
+export CLASSPATH=/home/juan/work/code/mg4j-nyu/mg4j-nyu.jar:CLASSPATH
+
+# these can be done all at once on a 64Gb RAM machine
 for n in 01 02 03 04; do
-~/work/sandbox/mg4j-nyu/scripts/SingletonPrunedIndex.sh $INDEX_DIR/prune-$CORPUS-$k-$n.strategy $FULL_INDEX $INDEX_DIR/$CORPUS-$k-$n &
+fname=$CORPUS-$MODEL-$n
+$MY_PATH/SingletonPrunedIndex.sh $STRATEGY_DIR/$fname $FULL_INDEX &
 done
 wait
-done
 
-export _JAVA_OPTIONS="-Xmx30g -XX:-UseConcMarkSweepGC"
-for n in 05 10 15 20 25 30 35; do
-for k in top10 top1k; do
-~/work/sandbox/mg4j-nyu/scripts/SingletonPrunedIndex.sh $INDEX_DIR/prune-$CORPUS-$k-$n.strategy $FULL_INDEX $INDEX_DIR/$CORPUS-$k-$n &
-done
-wait
+
+# do these one by one (not enough RAM)
+export _JAVA_OPTIONS="-Xmx60g -XX:-UseConcMarkSweepGC -Dlogback.configurationFile=logback.xml"
+
+for n in 05 10 15 20 25 30; do
+fname=$CORPUS-$MODEL-$n
+$MY_PATH/SingletonPrunedIndex.sh $STRATEGY_DIR/$fname $FULL_INDEX
 done
 

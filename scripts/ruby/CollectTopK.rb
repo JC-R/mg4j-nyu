@@ -1,21 +1,30 @@
 #!/usr/bin/ruby
 #
 
+# consolidate/aggregate hits files
+# input files are assumed to be sorted by hits descending
+#
+# format is assumed: 
 
-# input files(s)
+# parameters
+# arg 0: input file pattern
+# arg 1: tot postings
+# arg 2: output file
+
 totPostings = ARGV[1].to_i
 thresholds = []
 files = []
+candidates = []
+i = 0
+
+# input files(s)
 Dir.glob(ARGV[0]).each do |f|
   files.push(open f)
 end
 
-
 fout = open ARGV[2],'w'
-candidates = []
-i = 0
 
-# open all input files; emulate a max value heap
+# emulate a max value heap with the input
 n=0
 files.each do |fin|
   next if fin.eof

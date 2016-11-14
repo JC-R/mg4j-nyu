@@ -2,13 +2,12 @@
 #
 # Juan jcr365@nyu.edu
 #
-# $1 = strategy (input)
+# $1 = strategy and output naming
 # $2 = full index (input)
-# $3 = pruned index basename (output)
 
 # pruned index
-java edu.nyu.tandon.tool.PrunedPartition -s $1 $2 $3 > $3.log
+java -server edu.nyu.tandon.tool.PrunedPartition -s $1.strategy -o $1 $2
 
-# term mappings for the pruned terms
-java -Xmx6096M -server it.unimi.dsi.sux4j.mph.MWHCFunction -s 32 $3-0.mwhc $3-0.terms
-java -Xmx6096M -server it.unimi.dsi.sux4j.util.SignedFunctionStringMap $3-0.mwhc $3-0.termmap
+# remap terms
+java -Xmx6G -server it.unimi.dsi.sux4j.mph.MWHCFunction -s 32 $1-0.mwhc $1-0.terms
+java -Xmx6G -server it.unimi.dsi.sux4j.util.SignedFunctionStringMap $1-0.mwhc $1-0.termmap

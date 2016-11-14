@@ -1,3 +1,12 @@
+/*
+*
+* Create a posting pruning strategy
+*
+* parameter:
+*    -t threshold, [-t th2, []]   (one or more of these
+ *
+*
+ */
 package edu.nyu.tandon.index.cluster;
 
 import com.martiansoftware.jsap.*;
@@ -75,11 +84,10 @@ public class DocumentPruningStrategy implements DocumentalPartitioningStrategy, 
         final SimpleJSAP jsap = new SimpleJSAP(DocumentPruningStrategy.class.getName(), "Builds a documental partitioning strategy based on a prune list.",
                 new Parameter[]{
                         new FlaggedOption("threshold", JSAP.DOUBLE_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 't', "threshold", "Prune threshold for the index (may be specified several times).").setAllowMultipleDeclarations(true),
-                        new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index."),
-                        new UnflaggedOption("prunelist", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The ordered postings_Global list"),
-                        new UnflaggedOption("strategy", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The filename for the strategy."),
-                        new UnflaggedOption("titles", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The filename for the source titles."),
-                        new UnflaggedOption("strategy-titles", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The filename for the output titles.")
+                        new FlaggedOption("pruningList", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'p', "pruningList", "A file of newline-separated, UTF-8 sorted postings"),
+                        new FlaggedOption("strategy", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 's', "The filename for the strategy."),
+                        new FlaggedOption("titles", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'T', "The filename for the source titles."),
+                        new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index.")
                 });
 
         JSAPResult jsapResult = jsap.parse(arg);
@@ -96,6 +104,7 @@ public class DocumentPruningStrategy implements DocumentalPartitioningStrategy, 
             threshold[i] = Math.ceil(((double) index.numberOfPostings) * t_list[i]);
             strategies[i] = true;
         }
+
         final Long2ObjectOpenHashMap<LongOpenHashSet> postings = new Long2ObjectOpenHashMap<LongOpenHashSet>();
         final Long2LongOpenHashMap terms = new Long2LongOpenHashMap();
         final Long2LongOpenHashMap documentsGlobal = new Long2LongOpenHashMap();
@@ -107,7 +116,7 @@ public class DocumentPruningStrategy implements DocumentalPartitioningStrategy, 
         LOGGER.info("Generating posting prunning strategy for " + jsapResult.getString("basename"));
 
         // read the prune list up to 50%
-        BufferedReader prunelist = new BufferedReader(new InputStreamReader(new FileInputStream(jsapResult.getString("prunelist")), Charset.forName("UTF-8")));
+        BufferedReader prunelist = new BufferedReader(new InputStreamReader(new FileInputStream(jsapResult.getString("pruningList")), Charset.forName("UTF-8")));
         double n = 0;
         long totPostings = 0;
         String line;
@@ -144,7 +153,7 @@ public class DocumentPruningStrategy implements DocumentalPartitioningStrategy, 
                 if (strategies[i] && n >= threshold[i]) {
                     strategies[i] = false;
                     String level = String.format("%02d", (int) (t_list[i] * 100));
-                    BinIO.storeObject(new DocumentPruningStrategy(jsapResult.getString("titles"), jsapResult.getString("strategy-titles")+"-"+ level , terms, postings, documentsGlobal, documentsLocal), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[i] * 100)) + ".strategy");
+                    BinIO.storeObject(new DocumentPruningStrategy(jsapResult.getString("titles"), jsapResult.getString("strategy") + "-" + level, terms, postings, documentsGlobal, documentsLocal), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[i] * 100)) + ".strategy");
                     LOGGER.info(String.valueOf(t_list[i]) + " strategy serialized : " + String.valueOf(documentsGlobal.size()) + " documents, " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings");
                 }
             }

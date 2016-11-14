@@ -1,18 +1,34 @@
 #!/bin/bash
-#set -e
+set -e
+
+MY_PATH="`dirname \"$0\"`"              # relative
+MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
+if [ -z "$MY_PATH" ] ; then
+  # error; for some reason, the path is not accessible
+  # to the script (e.g. permissions re-evaled after suid)
+  exit 1  # fail
+fi
 
 # Runs the MG4J k-out-of-n queries and performs evaluation
-export CLASSPATH=/home/juan/work/code/mg4j-nyu/*
+export CLASSPATH=$MY_PATH/../../*
 export PATH=.:$PATH
 
 # parameters
-CORPUS=gov2
-RESULTS=results
-HOME_DIR=/home/juan/work/data
-WORK_DIR=$HOME_DIR/experiments
-INDEX_DIR=$HOME_DIR/IR/$CORPUS/index/mg4j/
-BASELINE_INDEX=$INDEX_DIR/qs-xdoc/$CORPUS-text
-PRUNED_DIR=$INDEX_DIR/pruned
+#CORPUS=gov2
+#RESULTS=results
+#HOME_DIR=/home/juan/work/data
+#WORK_DIR=$HOME_DIR/experiments
+#INDEX_DIR=$HOME_DIR/IR/$CORPUS/index/mg4j/
+#BASELINE_INDEX=$INDEX_DIR/qs-xdoc/$CORPUS-text
+#PRUNED_DIR=$INDEX_DIR/pruned
+
+CORPUS=$1
+RESULTS=$2
+HOME_DIR=$3
+WORK_DIR=$4
+INDEX_DIR=$5
+BASELINE_INDEX=$6
+PRUNED_DIR=$7
 
 # clear previous results
 PWD=`pwd`

@@ -76,11 +76,10 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
         final SimpleJSAP jsap = new SimpleJSAP(PostingPruningStrategy.class.getName(), "Builds a documental partitioning strategy based on a prune list.",
                 new Parameter[]{
                         new FlaggedOption("threshold", JSAP.DOUBLE_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 't', "threshold", "Prune threshold for the index (may be specified several times).").setAllowMultipleDeclarations(true),
-                        new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index."),
-                        new UnflaggedOption("prunelist", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The ordered postings_Global list"),
-                        new UnflaggedOption("strategy", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The filename for the strategy."),
-                        new UnflaggedOption("titles", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The filename for the source titles."),
-                        new UnflaggedOption("strategy-titles", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The filename for the output titles.")
+                        new FlaggedOption("pruningList", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'p', "pruningList", "A file of newline-separated, UTF-8 sorted postings"),
+                        new FlaggedOption("strategy", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 's', "The filename for the strategy."),
+                        new FlaggedOption("titles", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'T', "The filename for the source titles."),
+                        new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index.")
                 });
 
         JSAPResult jsapResult = jsap.parse(arg);
@@ -108,14 +107,22 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
         LOGGER.info("Generating posting prunning strategy for " + jsapResult.getString("basename"));
 
         // read the prune list up to 50%
-        BufferedReader prunelist = new BufferedReader(new InputStreamReader(new FileInputStream(jsapResult.getString("prunelist")), Charset.forName("UTF-8")));
+        BufferedReader prunelist = new BufferedReader(new InputStreamReader(new FileInputStream(jsapResult.getString("pruningList")), Charset.forName("UTF-8")));
         double n = 0;
         long totPostings = 0;
         String line;
+        int j = 0;
         while ((line = prunelist.readLine()) != null) {
 
             String[] tokens = line.split(",");
             if (tokens.length < 2) continue;
+
+            long term = Long.parseLong(tokens[0]);
+            long localTerm = terms.get(term);
+            if (localTerm == -1) {
+                localTerm = terms.size();
+                terms.put(term, localTerm);
+            }
 
             long doc = Long.parseLong(tokens[1]);
             long localDoc = documentsGlobal.get(doc);
@@ -123,13 +130,6 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
                 localDoc = documentsGlobal.size();
                 documentsGlobal.put(doc, localDoc);
                 documentsLocal.put(localDoc, doc);
-            }
-
-            long term = Long.parseLong(tokens[0]);
-            long localTerm = terms.get(term);
-            if (localTerm == -1) {
-                localTerm = terms.size();
-                terms.put(term, localTerm);
             }
 
             // add to term list
@@ -143,24 +143,25 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
             // dispatch intermediate strategies if we reached their thresholds
             for (int i = 0; i < t_list.length - 1; i++) {
                 if (strategies[i] && n >= threshold[i]) {
+                    j++;
                     strategies[i] = false;
                     String level = String.format("%02d", (int) (t_list[i] * 100));
-                    BinIO.storeObject(new PostingPruningStrategy(jsapResult.getString("titles"), jsapResult.getString("strategy-titles")+"-"+ level , terms, postings, documentsGlobal, documentsLocal), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[i] * 100)) + ".strategy");
+                    BinIO.storeObject(new PostingPruningStrategy(jsapResult.getString("titles"), jsapResult.getString("strategy") + "-" + level, terms, postings, documentsGlobal, documentsLocal), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[i] * 100)) + ".strategy");
                     LOGGER.info(String.valueOf(t_list[i]) + " strategy serialized : " + String.valueOf(documentsGlobal.size()) + " documents, " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings");
                 }
             }
             if (n++ >= threshold[threshold.length - 1]) break;
 
             if ((n % 10000000.0) == 0.0)
-                LOGGER.info(jsapResult.getString("prunelist") + "... " + (int) Math.ceil(n / 1000000.0) + "M");
+                LOGGER.debug(jsapResult.getString("pruneList") + "... " + (int) Math.ceil(n / 1000000.0) + "M");
         }
-
+        if (j >= t_list.length) j--;
         prunelist.close();
 
-        // dump last one
-        String level = String.format("%02d", (int) (t_list[t_list.length - 1] * 100));
-        BinIO.storeObject(new PostingPruningStrategy(jsapResult.getString("titles"), jsapResult.getString("strategy-titles")+"-"+level, terms, postings, documentsGlobal, documentsLocal), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[t_list.length - 1] * 100)) + ".strategy");
-        LOGGER.info(String.valueOf(t_list[t_list.length - 1]) + " strategy serialized : " + String.valueOf(documentsGlobal.size()) + " documents, " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings");
+        // ran out of input; dump last one
+        String level = String.format("%02d", (int) (t_list[j] * 100));
+        BinIO.storeObject(new PostingPruningStrategy(jsapResult.getString("titles"), jsapResult.getString("strategy") + "-" + level, terms, postings, documentsGlobal, documentsLocal), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[t_list.length - 1] * 100)) + ".strategy");
+        LOGGER.info(String.valueOf(t_list[j]) + " strategy serialized : " + String.valueOf(documentsGlobal.size()) + " documents, " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings");
 
     }
 

@@ -110,7 +110,7 @@ public class PrunedIndexOverlap extends Query {
         while (it.hasNext()) {
             prunedTitleMap.put((MutableString) it.next(), n++);
         }
-        prunedTitleList.clear();
+
 
         trecMode = jsapResult.userSpecified("trec") ? true : false;
         verbose = jsapResult.userSpecified("verbose") ? true : false;
