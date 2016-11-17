@@ -95,29 +95,30 @@ public class PrunedQueryEngine<T> extends QueryEngine<T> {
     }
 
     @Override
-    protected int getScoredResults(final DocumentIterator documentIterator, final int offset, final int length, final double lastMinScore, final ObjectArrayList<DocumentScoreInfo<T>> results, final LongSet alreadySeen) throws IOException {
+    protected int getScoredResults(final DocumentIterator documentIterator, final int offset, final int length,
+                                   final double lastMinScore, final ObjectArrayList<DocumentScoreInfo<T>> results, final LongSet alreadySeen) throws IOException {
 
         final ScoredDocumentBoundedSizeQueue<Reference2ObjectMap<Index, SelectedInterval[]>> top = new ScoredDocumentBoundedSizeQueue<Reference2ObjectMap<Index, SelectedInterval[]>>(offset + length);
+
         long document;
         int count = 0; // Number of not-already-seen documents
-
-        System.out.print(".");
 
         scorer.wrap(documentIterator);
 
         // TODO: we should avoid enqueueing until we really know we shall use the values
         if (alreadySeen != null)
             while ((document = scorer.nextDocument()) != END_OF_LIST) {
-                if (alreadySeen.add(document)) continue;
-                if (!isDocumentPruned(document)) continue;
+                if (!alreadySeen.add(document)) continue;
+                if (this.docPrunning && isDocumentPruned(document)==false) continue;
                 count++;
                 top.enqueue(document, scorer.score());
             }
         else
             while ((document = scorer.nextDocument()) != END_OF_LIST) {
-                if (!isDocumentPruned(document)) continue;
+                if (this.docPrunning && isDocumentPruned(document)==false) continue;
                 count++;
-                top.enqueue(document, scorer.score());
+                double s = scorer.score();
+                top.enqueue(document, s);
             }
 
         final int n = Math.max(top.size() - offset, 0); // Number of actually useful documents, if any
@@ -142,19 +143,17 @@ public class PrunedQueryEngine<T> extends QueryEngine<T> {
         long document;
         int count = 0; // Number of not-already-seen documents
 
-        System.out.print(".");
-
         // Unfortunately, to provide the exact count of results we have to scan the whole iterator.
         if (alreadySeen != null)
             while ((document = documentIterator.nextDocument()) != END_OF_LIST) {
                 if (!alreadySeen.add(document)) continue;
-                if (!isDocumentPruned(document)) continue;
+                if (this.docPrunning && isDocumentPruned(document) == false) continue;
                 if (count >= offset && count < offset + length) results.add(new DocumentScoreInfo<T>(document, -1));
                 count++;
             }
         else if (length != 0)
             while ((document = documentIterator.nextDocument()) != END_OF_LIST) {
-                if (!isDocumentPruned(document)) continue;
+                if (this.docPrunning && isDocumentPruned(document) == false) continue;
                 if (count < offset + length && count >= offset) results.add(new DocumentScoreInfo<T>(document, -1));
                 count++;
             }

@@ -1,0 +1,177 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\n## 1. Create raw hits\n\nUse the <strong>edu.nyu.tandon.tool.RawHits</strong> class in mg4j-nyu. \n\n<strong>Dochits</strong> and <strong>Posthits</strong> are generated in ASCII format by this class. The format of the raw files is as follows:\n\n  \"docID,termID,partial_count,rank\"\n\nwhere docID, termID are index-local IDs, and rank = position of this document in the ranked results (1, 2, ... 1K)\n\n\n### This step will probably run for many days ...........\n    \n    \n",
+      "user": "anonymous",
+      "dateUpdated": "2016-10-29T23:25:39-0400",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "jobName": "paragraph_1477676296232_-870536130",
+      "id": "20161028-133816_160362077",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "<h2>1. Create raw hits</h2>\n<p>Use the <strong>edu.nyu.tandon.tool.RawHits</strong> class in mg4j-nyu.</p>\n<p><strong>Dochits</strong> and <strong>Posthits</strong> are generated in ASCII format by this class. The format of the raw files is as follows:</p>\n<p>&ldquo;docID,termID,partial_count,rank&rdquo;</p>\n<p>where docID, termID are index-local IDs, and rank = position of this document in the ranked results (1, 2, &hellip; 1K)</p>\n<h3>This step will probably run for many days &hellip;&hellip;&hellip;..</h3>\n"
+      },
+      "dateCreated": "2016-10-28T13:38:16-0400",
+      "dateStarted": "2016-10-29T23:25:37-0400",
+      "dateFinished": "2016-10-29T23:25:37-0400",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "focus": true,
+      "$$hashKey": "object:654"
+    },
+    {
+      "text": "%md\n## 2. Aggregating raw hits\n\nTo aggregate the raw hits from step 1, use the stand-alone (C++ V11) command <strong>binnedPostHits</strong> .\n\ne.g.: for ClueWeb hits @1K: binnedPostHits ~/work/work-sandbox/hits cw09b.60M_OR_.*ph.txt 50025795 1000 cw09b.1K 700000000\n\nParameters:\n\n1. Hits directory: the folder with the input files to process\n2. File pattern: a regex pattern for the input files to process\n3. number of documents: the total number of documents in the corpus. For clueweb, 50025795\n4. number of results to process (10 = top10, 1000 = top1k)\n5. Output file naming pattern.\n6. Max postings per dump. (to control memory usage). For this PC with 64G RAM, aboput 800K postings are possible on clueweb before dumping to disk.\n    \nThe ouput of this program will be a set of ASCI files using the naming pattern in parameter 5. One for doc-hits with name (5).dh.bins.csv, and one or more for post-hits with names (5).ph.bin-??. The post-hit files need to be post-processed (reduced) into a single list afterwards.\n\nThe output ASCII files follow this format (even for top 10 processing):\n\n<strong>termID,docID,h@1,h@2,h@3,h@4,h@5,h@6,h@7,h@8,h@9,h@10,h@20,h@40,h@80,h@160,h@320,h@640,h@1280,top10,top1K</strong>\n\nwhere h@n = number of hits at rank n, for ranks <10 \nand h@n = number of hits for rank ranges n/2 and n, for n>10. For example h@80 = number of hits in rank 41 to 80\n",
+      "user": "anonymous",
+      "dateUpdated": "2016-10-31T07:37:31-0400",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "jobName": "paragraph_1477672882985_462349551",
+      "id": "20161028-124122_1453132297",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "<h2>2. Aggregating raw hits</h2>\n<p>To aggregate the raw hits from step 1, use the stand-alone (C++ V11) command <strong>binnedPostHits</strong> .</p>\n<p>e.g.: for ClueWeb hits @1K: binnedPostHits ~/work/work-sandbox/hits cw09b.60M_OR_.*ph.txt 50025795 1000 cw09b.1K 700000000</p>\n<p>Parameters:</p>\n<ol>\n<li>Hits directory: the folder with the input files to process</li>\n<li>File pattern: a regex pattern for the input files to process</li>\n<li>number of documents: the total number of documents in the corpus. For clueweb, 50025795</li>\n<li>number of results to process (10 = top10, 1000 = top1k)</li>\n<li>Output file naming pattern.</li>\n<li>Max postings per dump. (to control memory usage). For this PC with 64G RAM, aboput 800K postings are possible on clueweb before dumping to disk.</li>\n</ol>\n<p>The ouput of this program will be a set of ASCI files using the naming pattern in parameter 5. One for doc-hits with name (5).dh.bins.csv, and one or more for post-hits with names (5).ph.bin-??. The post-hit files need to be post-processed (reduced) into a single list afterwards.</p>\n<p>The output ASCII files follow this format (even for top 10 processing):</p>\n<p><strong>termID,docID,h@1,h@2,h@3,h@4,h@5,h@6,h@7,h@8,h@9,h@10,h@20,h@40,h@80,h@160,h@320,h@640,h@1280,top10,top1K</strong></p>\n<p>where h@n = number of hits at rank n, for ranks <10\n<br  />and h@n = number of hits for rank ranges n/2 and n, for n>10. For example h@80 = number of hits in rank 41 to 80</p>\n"
+      },
+      "dateCreated": "2016-10-28T12:41:22-0400",
+      "dateStarted": "2016-10-31T07:37:29-0400",
+      "dateFinished": "2016-10-31T07:37:29-0400",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:655",
+      "focus": true
+    },
+    {
+      "text": "%md\n\n%sh\n#### #aggregate raw hits for gov2 and cw09b\n#### #this currently takes about 12 hours on a single process pipeline\n\nWORK=/home/juan/work/work-sandbox\nHITS=$WORK/hits\nPROGRAM=/home/juan/work/code/binnedPostHits/Release/binnedPostHits\nAGGREGATOR=/home/juan/RubymineProjects/rawHits/aggregateTopK.rb\n\ncd $WORK\n\n$PROGRAM $HITS gov2.60M_OR_.*ph.txt 25205179 10 gov2.10 700000000 > gov2.hits10.log\n$PROGRAM $HITS gov2.60M_OR_.*ph.txt 25205179 1000 gov2.1K 700000000 > gov2.hits1k.log\n\n$PROGRAM $HITS cw09b.60M_OR_.*ph.txt 50025795 10 cw09b.10 700000000 > cw09b.hits10.log\n$PROGRAM $HITS cw09b.60M_OR_.*ph.txt 50025795 1000 cw09b.1K 700000000 > cw09b.hits1k.log\n\n#### #note the first parameter must be in quotes; otherwise linux expands prior to passing it\nruby $AGGREGATOR \"gov2.1K.bins-*\" gov2.1K.ph.bins.csv\nruby $AGGREGATOR \"gov2.1K.bins-*\" gov2.1K.ph.bins.csv\n",
+      "user": "anonymous",
+      "dateUpdated": "2016-10-31T07:45:06-0400",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "jobName": "paragraph_1477674114357_1260846370",
+      "id": "20161028-130154_2087771616",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "<p>%sh</p>\n<h4>#aggregate raw hits for gov2 and cw09b</h4>\n<h4>#this currently takes about 12 hours on a single process pipeline</h4>\n<p>WORK=/home/juan/work/work-sandbox\n<br  />HITS=$WORK/hits\n<br  />PROGRAM=/home/juan/work/code/binnedPostHits/Release/binnedPostHits\n<br  />AGGREGATOR=/home/juan/RubymineProjects/rawHits/aggregateTopK.rb</p>\n<p>cd $WORK</p>\n<p>$PROGRAM $HITS gov2.60M_OR_.<em>ph.txt 25205179 10 gov2.10 700000000 > gov2.hits10.log\n<br  />$PROGRAM $HITS gov2.60M_OR_.</em>ph.txt 25205179 1000 gov2.1K 700000000 > gov2.hits1k.log</p>\n<p>$PROGRAM $HITS cw09b.60M_OR_.<em>ph.txt 50025795 10 cw09b.10 700000000 > cw09b.hits10.log\n<br  />$PROGRAM $HITS cw09b.60M_OR_.</em>ph.txt 50025795 1000 cw09b.1K 700000000 > cw09b.hits1k.log</p>\n<h4>#note the first parameter must be in quotes; otherwise linux expands prior to passing it</h4>\n<p>ruby $AGGREGATOR &ldquo;gov2.1K.bins-<em>&rdquo; gov2.1K.ph.bins.csv\n<br  />ruby $AGGREGATOR &ldquo;gov2.1K.bins-</em>&rdquo; gov2.1K.ph.bins.csv</p>\n"
+      },
+      "dateCreated": "2016-10-28T13:01:54-0400",
+      "dateStarted": "2016-10-31T07:45:07-0400",
+      "dateFinished": "2016-10-31T07:45:07-0400",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:656",
+      "focus": true
+    },
+    {
+      "text": "%sh\n",
+      "dateUpdated": "2016-10-29T23:43:28-0400",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "jobName": "paragraph_1477799008027_1089807370",
+      "id": "20161029-234328_929209028",
+      "dateCreated": "2016-10-29T23:43:28-0400",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:657"
+    }
+  ],
+  "name": "Static Pruning/Collecting Hits",
+  "id": "2C35KFDDK",
+  "angularObjects": {
+    "2BZ8E37FP:shared_process": [],
+    "2BZMQUNWF:shared_process": [],
+    "2BXWXFJCS:shared_process": [],
+    "2C2CPHSZR:shared_process": [],
+    "2BZSUXG9Z:shared_process": [],
+    "2C1KG5A2U:shared_process": [],
+    "2BZX862V4:shared_process": [],
+    "2C178RV4A:shared_process": [],
+    "2BYXVB79B:shared_process": [],
+    "2BYWY2U3G:shared_process": [],
+    "2BXZW4F65:shared_process": [],
+    "2C2HK9HHV:shared_process": [],
+    "2C1MG23GF:shared_process": [],
+    "2C2EECUN3:shared_process": [],
+    "2BY4CRWWH:shared_process": [],
+    "2BXXY9VU5:shared_process": [],
+    "2BZZH5JK8:shared_process": [],
+    "2C22N27YG:shared_process": [],
+    "2C1C8TBY6:shared_process": []
+  },
+  "config": {
+    "looknfeel": "default"
+  },
+  "info": {}
+}

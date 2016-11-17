@@ -115,12 +115,17 @@ public class HitsQueryEngine<T> extends QueryEngine<T> {
         int count = 0; // Number of not-already-seen documents
 
         scorer.wrap(documentIterator);
+
         // TODO: we should avoid enqueueing until we really know we shall use the values
         if (alreadySeen != null)
             while ((document = scorer.nextDocument()) != END_OF_LIST) {
                 if (alreadySeen.add(document)) continue;
                 count++;
-                // save the terms involved in this score
+
+                // save the positions for terms in this result
+                // NOTE*** this implementation assumes there are no more than
+                //  byte (127) terms per query !!!
+                //
                 ObjectArrayList<Byte> termList = new ObjectArrayList<Byte>();
                 for (int i = 0; i < ((BM25Scorer) scorer).flatIndexIterator.length; i++) {
                     if (document == ((BM25Scorer) scorer).flatIndexIterator[i].document()) {
@@ -131,7 +136,11 @@ public class HitsQueryEngine<T> extends QueryEngine<T> {
             }
         else
             while ((document = scorer.nextDocument()) != END_OF_LIST) {
-                // save the terms involved in this score
+
+                // save the positions for terms in this result
+                // NOTE*** this implementation assumes there are no more than
+                //  byte (127) terms per query !!!
+                //
                 ObjectArrayList<Byte> termList = new ObjectArrayList<Byte>();
                 for (int i = 0; i < ((BM25Scorer) scorer).flatIndexIterator.length; i++) {
                     if (document == ((BM25Scorer) scorer).flatIndexIterator[i].document()) {
