@@ -2,6 +2,7 @@ package edu.nyu.tandon.experiments.cluster;
 
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.query.Query;
+import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import edu.nyu.tandon.search.score.QueryLikelihoodScorer;
 import edu.nyu.tandon.shard.csi.CentralSampleIndex;
 import edu.nyu.tandon.shard.ranking.ShardSelector;
@@ -50,7 +51,7 @@ public class ExtractShardScores {
         int clusters = jsapResult.getInt("clusters");
 
         LOGGER.info("Loading CSI...");
-        CentralSampleIndex csi = CentralSampleIndex.loadCSI(jsapResult.getString("csi"), jsapResult.getString("basename"), new QueryLikelihoodScorer());
+        CentralSampleIndex csi = CentralSampleIndex.loadCSI(jsapResult.getString("csi"), jsapResult.getString("basename"), new BM25PrunedScorer());
         if (jsapResult.userSpecified("csiMaxOutput")) csi.setMaxOutput(jsapResult.getInt("csiMaxOutput"));
 
         ShardSelector shardSelector = resolveShardSelector(jsapResult.getString("selector"), csi);

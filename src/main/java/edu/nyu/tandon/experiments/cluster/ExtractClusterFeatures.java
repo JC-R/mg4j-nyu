@@ -75,12 +75,12 @@ public class ExtractClusterFeatures {
                 new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING),
                 indexMap);
         engine.setWeights(index2Weight);
-        QueryLikelihoodScorer scorer = new QueryLikelihoodScorer();
+        BM25PrunedScorer scorer = new BM25PrunedScorer();
         if (jsapResult.userSpecified("globalStatistics")) {
             LOGGER.info("Running queries with global statistics.");
+            LongArrayList frequencies = loadGlobalFrequencies(basename);
             long[] globalStats = loadGlobalStats(basename);
-            LongBigArrayBigList globalOccurrencies = loadGlobalOccurrencies(basename);
-            scorer.setGlobalMetrics(globalStats[1], globalOccurrencies);
+            scorer.setGlobalMetrics(globalStats[0], globalStats[1], frequencies);
         }
         engine.score(scorer);
 
