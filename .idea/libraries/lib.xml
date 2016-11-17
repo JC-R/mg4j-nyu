@@ -4,7 +4,11 @@
       <root url="file://$PROJECT_DIR$/lib" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ideaLibSources/mg4j-big-5.4.1-sources.jar!/slow" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/mg4j-big-5.4.1-sources.jar!/src" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/mg4j-big-5.4.1-sources.jar!/test" />
+    </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/lib" recursive="false" />
   </library>
 </component>
