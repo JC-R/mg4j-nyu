@@ -21,6 +21,7 @@ package edu.nyu.tandon.tool;
  */
 
 import com.martiansoftware.jsap.*;
+import edu.nyu.tandon.index.cluster.DocumentPruningStrategy;
 import edu.nyu.tandon.index.cluster.PostingPruningStrategy;
 import it.unimi.di.big.mg4j.index.*;
 import it.unimi.di.big.mg4j.index.CompressionFlags.Coding;
@@ -225,6 +226,7 @@ public class PrunedPartition {
      * pruned index ignores second index; track the # documents here
      */
     private final long[] numberOfDocuments;
+    private final boolean docPruning;
     /**
      * A copy of {@link #indexWriter} which is non-<code>null</code> if {@link #indexWriter} is an instance of {@link QuasiSuccinctIndexWriter}[].
      */
@@ -242,7 +244,8 @@ public class PrunedPartition {
                            final int quantum,
                            final int height,
                            final int skipBufferOrCacheSize,
-                           final long logInterval) throws ConfigurationException, IOException, ClassNotFoundException, SecurityException, InstantiationException, IllegalAccessException, URISyntaxException, InvocationTargetException, NoSuchMethodException {
+                           final long logInterval,
+                           final boolean docPruning) throws ConfigurationException, IOException, ClassNotFoundException, SecurityException, InstantiationException, IllegalAccessException, URISyntaxException, InvocationTargetException, NoSuchMethodException {
 
         this.inputBasename = inputBasename;
         this.outputBasename = outputBasename;
@@ -252,6 +255,7 @@ public class PrunedPartition {
         this.bufferSize = bufferSize;
         this.logInterval = logInterval;
         this.bloomFilterPrecision = BloomFilterPrecision;
+        this.docPruning = docPruning;
 
         numIndices = strategy.numberOfLocalIndices();
         if (numIndices != 2) throw new ConfigurationException("Invalid number of indeces returnd from the strategy.");
@@ -335,6 +339,7 @@ public class PrunedPartition {
                         new FlaggedOption("height", JSAP.INTSIZE_PARSER, Integer.toString(BitStreamIndex.DEFAULT_HEIGHT), JSAP.NOT_REQUIRED, 'H', "height", "The skip height."),
                         new FlaggedOption("skipBufferSize", JSAP.INTSIZE_PARSER, Util.formatBinarySize(SkipBitStreamIndexWriter.DEFAULT_TEMP_BUFFER_SIZE), JSAP.NOT_REQUIRED, JSAP.NO_SHORTFLAG, "skip-buffer-size", "The size of the internal temporary buffer used while creating an index with skips."),
                         new UnflaggedOption("inputBasename", JSAP.STRING_PARSER, JSAP.REQUIRED, "The basename of the global index."),
+                        new Switch("documentPruning", 'd', "documentPruning", "Documental pruning strategy (no term based decisions)."),
                         new FlaggedOption("outputBasename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "The basename of the local indices.")
                 });
 
@@ -353,6 +358,7 @@ public class PrunedPartition {
             strategy = (DocumentalPartitioningStrategy) BinIO.loadObject(strategyFilename);
         else throw new IllegalArgumentException("You must specify a partitioning strategy");
 
+        final boolean docPruning = jsapResult.getBoolean("documentPruning");
         final boolean skips = !jsapResult.getBoolean("noSkips");
         final boolean interleaved = jsapResult.getBoolean("interleaved");
         final boolean highPerformance = jsapResult.getBoolean("highPerformance");
@@ -381,7 +387,8 @@ public class PrunedPartition {
                 jsapResult.getInt("quantum"),
                 jsapResult.getInt("height"),
                 indexType == IndexType.QUASI_SUCCINCT ? jsapResult.getInt("cacheSize") : jsapResult.getInt("skipBufferSize"),
-                jsapResult.getLong("logInterval")).run();
+                jsapResult.getLong("logInterval"),
+                docPruning).run();
     }
 
     private void partitionSizes() throws IOException {
@@ -490,15 +497,19 @@ public class PrunedPartition {
 
             IntegerPayload payload1;
 
-            // if the term never made it to the pruned index; skip it
-            if ((lID = ((PostingPruningStrategy) strategy).localTermId(termID)) == -1) continue;
+            // if posting pruning, and the term never made it to the pruned index; skip it
+            if (!docPruning && (lID = ((PostingPruningStrategy) strategy).localTermId(termID)) == -1) continue;
 
             for (long j = 0; j < frequency; j++) {
 
                 globalPointer = indexIterator.nextDocument();
 
-                // (term,doc) in the pruned index?
-                if ((localIndex = ((PostingPruningStrategy) strategy).localIndex(termID, globalPointer)) == 0) {
+                // prune accoring to type
+                localIndex = (docPruning) ? strategy.localIndex(globalPointer) :
+                        ((PostingPruningStrategy) strategy).localIndex(termID, globalPointer);
+
+                // (term,doc) or doc in the pruned index?
+                if (localIndex == 0) {
 
                     // First time this term is seen
                     if (localFrequency == 0) {

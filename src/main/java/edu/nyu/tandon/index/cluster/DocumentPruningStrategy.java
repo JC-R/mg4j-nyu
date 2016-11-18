@@ -79,7 +79,7 @@ public class DocumentPruningStrategy implements DocumentalPartitioningStrategy, 
             URISyntaxException, ClassNotFoundException, InstantiationException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
 
-        final SimpleJSAP jsap = new SimpleJSAP(PostingPruningStrategy.class.getName(), "Builds a documental partitioning strategy based on a prune list.",
+        final SimpleJSAP jsap = new SimpleJSAP(DocumentPruningStrategy.class.getName(), "Builds a documental partitioning strategy based on a prune list.",
                 new Parameter[]{
                         new FlaggedOption("threshold", JSAP.DOUBLE_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 't', "threshold", "Prune threshold for the index (may be specified several times).").setAllowMultipleDeclarations(true),
                         new FlaggedOption("pruningList", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'p', "pruningList", "A file of newline-separated, UTF-8 sorted postings"),
