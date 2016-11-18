@@ -104,7 +104,7 @@ public class PrunedIndexOverlap extends Query {
 
         BigList<? extends CharSequence> prunedTitleList;
         prunedTitleList = (BigList<? extends CharSequence>) new FileLinesBigList(jsapResult.getString("prunedtitleFile"), "UTF-8");
-        prunedTitleMap = new Object2LongOpenHashMap<>(prunedTitleList.size());
+        prunedTitleMap = new Object2LongOpenHashMap<MutableString>(prunedTitleList.size());
         BigListIterator it = prunedTitleList.listIterator();
         int n = 0;
         while (it.hasNext()) {
