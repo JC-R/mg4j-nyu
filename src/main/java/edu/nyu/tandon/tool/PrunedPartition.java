@@ -230,23 +230,6 @@ public class PrunedPartition {
      */
     private QuasiSuccinctIndexWriter[] quasiSuccinctIndexWriter;
 
-    /** Symbolic names for global metrics */
-    public static enum globalPropertyKeys {
-        /** The number of documents in the collection. */
-        G_DOCUMENTS,
-        /** The number of terms in the collection. */
-        G_TERMS,
-        /** The number of occurrences in the collection, or -1 if the number of occurrences is not known. */
-        G_OCCURRENCES,
-        /** The number of postings (pairs term/document) in the collection. */
-        G_POSTINGS,
-        /** The number of batches this index was (or should be) built from. */
-        G_MAXCOUNT,
-        /** The maximum size (in words) of a document, or -1 if the maximum document size is not known. */
-        G_MAXDOCSIZE
-    }
-
-
     public PrunedPartition(final String inputBasename,
                            final String outputBasename,
                            final DocumentalPartitioningStrategy strategy,
@@ -352,7 +335,7 @@ public class PrunedPartition {
                         new FlaggedOption("height", JSAP.INTSIZE_PARSER, Integer.toString(BitStreamIndex.DEFAULT_HEIGHT), JSAP.NOT_REQUIRED, 'H', "height", "The skip height."),
                         new FlaggedOption("skipBufferSize", JSAP.INTSIZE_PARSER, Util.formatBinarySize(SkipBitStreamIndexWriter.DEFAULT_TEMP_BUFFER_SIZE), JSAP.NOT_REQUIRED, JSAP.NO_SHORTFLAG, "skip-buffer-size", "The size of the internal temporary buffer used while creating an index with skips."),
                         new UnflaggedOption("inputBasename", JSAP.STRING_PARSER, JSAP.REQUIRED, "The basename of the global index."),
-                        new UnflaggedOption("outputBasename", JSAP.STRING_PARSER, JSAP.REQUIRED, "The basename of the local indices.")
+                        new FlaggedOption("outputBasename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "The basename of the local indices.")
                 });
 
         JSAPResult jsapResult = jsap.parse(arg);
@@ -361,6 +344,7 @@ public class PrunedPartition {
         String outputBasename = jsapResult.getString("outputBasename");
         String strategyFilename = jsapResult.getString("strategy");
         DocumentalPartitioningStrategy strategy = null;
+
 
         if (jsapResult.userSpecified("uniformStrategy")) {
             strategy = DocumentalStrategies.uniform(jsapResult.getInt("uniformStrategy"), Index.getInstance(inputBasename).numberOfDocuments);
@@ -688,5 +672,23 @@ public class PrunedPartition {
         globalProperties.save(outputBasename + DiskBasedIndex.PROPERTIES_EXTENSION);
         LOGGER.debug("Properties for clustered index " + outputBasename + ": " + new ConfigurationMap(globalProperties));
 
+    }
+
+    /**
+     * Symbolic names for global metrics
+     */
+    public static enum globalPropertyKeys {
+        /** The number of documents in the collection. */
+        G_DOCUMENTS,
+        /** The number of terms in the collection. */
+        G_TERMS,
+        /** The number of occurrences in the collection, or -1 if the number of occurrences is not known. */
+        G_OCCURRENCES,
+        /** The number of postings (pairs term/document) in the collection. */
+        G_POSTINGS,
+        /** The number of batches this index was (or should be) built from. */
+        G_MAXCOUNT,
+        /** The maximum size (in words) of a document, or -1 if the maximum document size is not known. */
+        G_MAXDOCSIZE
     }
 }

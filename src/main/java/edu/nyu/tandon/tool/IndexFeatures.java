@@ -47,17 +47,20 @@ public class IndexFeatures {
         long document = 0;
         double score = 0;
 
+        if (arg.length != 1) {
+            System.out.println("Missing argument: IndexFeatures <index>");
+        }
+
         Logger LOGGER = LoggerFactory.getLogger(IndexFeatures.class);
 
         Scorer scorer = new BM25Scorer();
 
         /** First we open our index. The booleans tell that we want random access to
          * the inverted lists, and we are going to use document sizes (for scoring--see below). */
-        final Index text = Index.getInstance(arg[0] + "-text", true, true);
+        final Index text = Index.getInstance(arg[0], true, true);
         final IndexReader reader = text.getReader();
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(arg[0] + "-text.terms"), Charset.forName("UTF-8")));
-
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(arg[0] + ".terms"), Charset.forName("UTF-8")));
         IndexIterator iterator;
         while ((iterator = reader.nextIterator()) != null) {
             // for each term in the index, extract the term features: termID,docID,term-freq,doc-term-freq,bm25
@@ -67,6 +70,5 @@ public class IndexFeatures {
                 System.out.printf("%d,%d,%d,%d,%f\n", iterator.termNumber(), document, iterator.frequency(), iterator.count(), scorer.score());
             }
         }
-
     }
 }

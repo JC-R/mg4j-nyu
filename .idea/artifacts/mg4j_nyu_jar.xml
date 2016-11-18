@@ -14,7 +14,6 @@
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-utils/3.0.18/plexus-utils-3.0.18.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/ch/qos/logback/logback-core/1.1.7/logback-core-1.1.7.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/it/unimi/dsi/dsiutils/2.3.2/dsiutils-2.3.2.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/mg4j-nyu.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/ch/qos/logback/logback-classic/1.1.7/logback-classic-1.1.7.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/commons-configuration/commons-configuration/1.10/commons-configuration-1.10.jar" path-in-jar="/" />
