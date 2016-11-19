@@ -6,8 +6,6 @@ import com.google.common.collect.Lists;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.query.QueryEngine;
-import edu.nyu.tandon.search.score.BM25PrunedScorer;
-import edu.nyu.tandon.search.score.QueryLikelihoodScorer;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
 import it.unimi.di.big.mg4j.index.cluster.SelectiveQueryEngine;
@@ -15,9 +13,8 @@ import it.unimi.di.big.mg4j.query.SelectedInterval;
 import it.unimi.di.big.mg4j.query.parser.SimpleParser;
 import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
 import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
+import it.unimi.di.big.mg4j.search.score.Scorer;
 import it.unimi.dsi.fastutil.Hash;
-import it.unimi.dsi.fastutil.longs.LongArrayList;
-import it.unimi.dsi.fastutil.longs.LongBigArrayBigList;
 import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.lang.MutableString;
 import org.slf4j.Logger;
@@ -32,9 +29,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static edu.nyu.tandon.query.Query.MAX_STEMMING;
-import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.loadGlobalFrequencies;
-import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.loadGlobalOccurrencies;
-import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.loadGlobalStats;
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -53,6 +47,7 @@ public class ExtractClusterFeatures {
                         new FlaggedOption("output", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "output", "The output files basename."),
                         new FlaggedOption("topK", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'k', "top-k", "The engine will limit the result set to top k results. k=10 by default."),
                         new FlaggedOption("shardId", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 's', "shard-id", "The shard ID."),
+                        new FlaggedOption("scorer", JSAP.STRING_PARSER, "bm25", JSAP.NOT_REQUIRED, 'S', "scorer", "Scorer type (bm25 or ql)"),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index.")
                 });
 
@@ -76,7 +71,7 @@ public class ExtractClusterFeatures {
                 new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING),
                 indexMap);
         engine.setWeights(index2Weight);
-        BM25PrunedScorer scorer = new BM25PrunedScorer();
+        Scorer scorer = ExtractShardScores.resolveScorer(jsapResult.getString("scorer"));
         if (jsapResult.userSpecified("globalStatistics")) {
             LOGGER.info("Running queries with global statistics.");
             SelectiveQueryEngine.setGlobalStatistics(scorer, basename);

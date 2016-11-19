@@ -10,6 +10,7 @@ import edu.nyu.tandon.shard.ranking.redde.ReDDEShardSelector;
 import edu.nyu.tandon.shard.ranking.shrkc.RankS;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
+import it.unimi.di.big.mg4j.search.score.Scorer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,12 @@ public class ExtractShardScores {
         else throw new IllegalArgumentException("You need to define a proper selector: redde, shrkc");
     }
 
+    public static Scorer resolveScorer(String name) {
+        if ("bm25".equals(name)) return new BM25PrunedScorer();
+        else if ("ql".equals(name)) return new QueryLikelihoodScorer();
+        else throw new IllegalArgumentException("You need to define a proper scorer: bm25, ql");
+    }
+
     public static void main(String[] args) throws Exception {
 
         SimpleJSAP jsap = new SimpleJSAP(Query.class.getName(), "Loads indices relative to a collection, possibly loads the collection, and answers to queries.",
@@ -40,6 +47,7 @@ public class ExtractShardScores {
                         new FlaggedOption("output", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "output", "The output files basename."),
                         new FlaggedOption("clusters", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'c', "clusters", "The number of clusters."),
                         new FlaggedOption("selector", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 's', "selector", "Selector type (redde or shrkc)"),
+                        new FlaggedOption("scorer", JSAP.STRING_PARSER, "bm25", JSAP.NOT_REQUIRED, 'S', "scorer", "Scorer type (bm25 or ql)"),
                         new FlaggedOption("csiMaxOutput", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'L', "csi-max-output", "CSI maximal number of results")
                                 .setAllowMultipleDeclarations(true),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the cluster indices (not including number suffixes). In other words, the basename of the partitioned index as if loaded as a DocumentalMergedCluster."),
@@ -52,7 +60,8 @@ public class ExtractShardScores {
         int clusters = jsapResult.getInt("clusters");
 
         LOGGER.info("Loading CSI...");
-        CentralSampleIndex csi = CentralSampleIndex.loadCSI(jsapResult.getString("csi"), jsapResult.getString("basename"), new BM25PrunedScorer());
+        CentralSampleIndex csi = CentralSampleIndex.loadCSI(jsapResult.getString("csi"),
+                jsapResult.getString("basename"), resolveScorer(jsapResult.getString("scorer")));
 
         int[] csiMaxOutputs;
         if (jsapResult.userSpecified("csiMaxOutput")) csiMaxOutputs = jsapResult.getIntArray("csiMaxOutput");
