@@ -5,7 +5,6 @@ import edu.nyu.tandon.shard.csi.Result;
 import edu.nyu.tandon.shard.ranking.ShardSelector;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
-import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,7 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 
 /**
@@ -64,8 +63,14 @@ public class ReDDEShardSelector implements ShardSelector {
 
     protected Map<Integer, Double> computeShardScores(Map<Integer, Long> shardCounts) {
         Map<Integer, Double> shardScores = new HashMap<>();
+        double scoreSum = 0.0;
         for (Integer shardId : shardCounts.keySet()) {
-            shardScores.put(shardId, computeShardScore(shardId, shardCounts.get(shardId)));
+            double score = computeShardScore(shardId, shardCounts.get(shardId));
+            shardScores.put(shardId, score);
+            scoreSum += score;
+        }
+        for (Integer shardId : shardCounts.keySet()) {
+            shardScores.put(shardId, shardScores.get(shardId) / scoreSum);
         }
         return shardScores;
     }

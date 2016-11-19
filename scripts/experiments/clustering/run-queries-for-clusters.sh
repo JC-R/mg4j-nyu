@@ -37,6 +37,7 @@ java -Xmx3g edu.nyu.tandon.experiments.cluster.ExtractShardScores \
     -i ${input} \
     -o "${outputDir}/${inputBase}" \
     -c `ls ${dir}/*-*titles | wc -l` \
+    -L 50 \
     ${base} \
     ${csiBase}
 
