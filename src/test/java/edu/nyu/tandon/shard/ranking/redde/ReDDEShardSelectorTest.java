@@ -114,9 +114,9 @@ public class ReDDEShardSelectorTest extends BaseTest {
 
         // Then
         assertThat(actualShardScores, equalTo(ImmutableMap.of(
-                0, 1.,
-                1, 2.,
-                2, 3.
+                0, 0.16666666666666666,
+                1, 0.3333333333333333,
+                2, 0.5
         )));
     }
 

@@ -40,7 +40,8 @@ public class ExtractShardScores {
                         new FlaggedOption("output", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "output", "The output files basename."),
                         new FlaggedOption("clusters", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'c', "clusters", "The number of clusters."),
                         new FlaggedOption("selector", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 's', "selector", "Selector type (redde or shrkc)"),
-                        new FlaggedOption("csiMaxOutput", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'L', "csi-max-output", "CSI maximal number of results"),
+                        new FlaggedOption("csiMaxOutput", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'L', "csi-max-output", "CSI maximal number of results")
+                                .setAllowMultipleDeclarations(true),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the cluster indices (not including number suffixes). In other words, the basename of the partitioned index as if loaded as a DocumentalMergedCluster."),
                         new UnflaggedOption("csi", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the central sample index.")
                 });
@@ -52,35 +53,44 @@ public class ExtractShardScores {
 
         LOGGER.info("Loading CSI...");
         CentralSampleIndex csi = CentralSampleIndex.loadCSI(jsapResult.getString("csi"), jsapResult.getString("basename"), new BM25PrunedScorer());
-        if (jsapResult.userSpecified("csiMaxOutput")) csi.setMaxOutput(jsapResult.getInt("csiMaxOutput"));
 
-        ShardSelector shardSelector = resolveShardSelector(jsapResult.getString("selector"), csi);
+        int[] csiMaxOutputs;
+        if (jsapResult.userSpecified("csiMaxOutput")) csiMaxOutputs = jsapResult.getIntArray("csiMaxOutput");
+        else csiMaxOutputs = new int[] { 100 };
 
-        FileWriter[] writers = new FileWriter[clusters];
-        for (int i = 0; i < clusters; i++) writers[i] =
-                new FileWriter(jsapResult.getString("output") + "#" + i + "." + jsapResult.getString("selector"));
+        for (int L : csiMaxOutputs) {
 
-        try (BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
-            for (String query; (query = br.readLine()) != null; ) {
-                try {
-                    Map<Integer, Double> shardScores = shardSelector.shardScores(query);
-                    for (int i = 0; i < clusters; i++) {
-                        writers[i]
-                                .append(shardScores.getOrDefault(i, 0.0).toString())
-                                .append("\n");
-                    }
-                } catch (QueryParserException | QueryBuilderVisitorException | IOException e) {
-                    LOGGER.error(String.format("There was an error while processing query: %s", query), e);
-                    throw e;
-                }
-            }
-        } finally {
+            LOGGER.info(String.format("Extracting shard scores for L = %d", L));
+            csi.setMaxOutput(L);
+            ShardSelector shardSelector = resolveShardSelector(jsapResult.getString("selector"), csi);
+
+            FileWriter[] writers = new FileWriter[clusters];
             for (int i = 0; i < clusters; i++)
-                try {
-                    writers[i].close();
-                } catch (IOException e) {
-                    LOGGER.error(String.format("Couldn't close writer for shard %d", i));
+                writers[i] =
+                        new FileWriter(jsapResult.getString("output") + "#" + i + "." + jsapResult.getString("selector"));
+
+            try (BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
+                for (String query; (query = br.readLine()) != null; ) {
+                    try {
+                        Map<Integer, Double> shardScores = shardSelector.shardScores(query);
+                        for (int i = 0; i < clusters; i++) {
+                            writers[i]
+                                    .append(shardScores.getOrDefault(i, 0.0).toString())
+                                    .append("\n");
+                        }
+                    } catch (QueryParserException | QueryBuilderVisitorException | IOException e) {
+                        LOGGER.error(String.format("There was an error while processing query: %s", query), e);
+                        throw e;
+                    }
                 }
+            } finally {
+                for (int i = 0; i < clusters; i++)
+                    try {
+                        writers[i].close();
+                    } catch (IOException e) {
+                        LOGGER.error(String.format("Couldn't close writer for shard %d", i));
+                    }
+            }
         }
     }
 

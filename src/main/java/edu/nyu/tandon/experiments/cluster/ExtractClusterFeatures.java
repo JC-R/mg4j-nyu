@@ -10,6 +10,7 @@ import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import edu.nyu.tandon.search.score.QueryLikelihoodScorer;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
+import it.unimi.di.big.mg4j.index.cluster.SelectiveQueryEngine;
 import it.unimi.di.big.mg4j.query.SelectedInterval;
 import it.unimi.di.big.mg4j.query.parser.SimpleParser;
 import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
@@ -78,9 +79,7 @@ public class ExtractClusterFeatures {
         BM25PrunedScorer scorer = new BM25PrunedScorer();
         if (jsapResult.userSpecified("globalStatistics")) {
             LOGGER.info("Running queries with global statistics.");
-            LongArrayList frequencies = loadGlobalFrequencies(basename);
-            long[] globalStats = loadGlobalStats(basename);
-            scorer.setGlobalMetrics(globalStats[0], globalStats[1], frequencies);
+            SelectiveQueryEngine.setGlobalStatistics(scorer, basename);
         }
         engine.score(scorer);
 
