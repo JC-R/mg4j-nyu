@@ -67,7 +67,7 @@ public class ExtractShardScores {
             FileWriter[] writers = new FileWriter[clusters];
             for (int i = 0; i < clusters; i++)
                 writers[i] =
-                        new FileWriter(jsapResult.getString("output") + "#" + i + "." + jsapResult.getString("selector"));
+                        new FileWriter(jsapResult.getString("output") + "#" + i + "." + jsapResult.getString("selector") + "." + L);
 
             try (BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
                 for (String query; (query = br.readLine()) != null; ) {

@@ -34,7 +34,7 @@ public class ExtractShardScoresTest extends BaseTest {
 
         // Then
         for (int i = 0; i < 11; i++) {
-            for (String l : Files.readAllLines(Paths.get(String.format("%s#%d.redde", outputBasename, i)))) {
+            for (String l : Files.readAllLines(Paths.get(String.format("%s#%d.redde.100", outputBasename, i)))) {
                 Double score = Doubles.tryParse(l);
                 assertThat(score, notNullValue());
                 assertThat(score >= 0, equalTo(Boolean.TRUE));
@@ -60,7 +60,7 @@ public class ExtractShardScoresTest extends BaseTest {
 
         // Then
         for (int i = 0; i < 11; i++) {
-            for (String l : Files.readAllLines(Paths.get(String.format("%s#%d.shrkc", outputBasename, i)))) {
+            for (String l : Files.readAllLines(Paths.get(String.format("%s#%d.shrkc.100", outputBasename, i)))) {
                 assertThat(Doubles.tryParse(l), notNullValue());
             }
         }
