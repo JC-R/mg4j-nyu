@@ -6,239 +6,7 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0844f41b-037f-49f5-8817-1b80a7fcf4fc" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/scala/edu/nyu/tandon/experiments/ml/PrecisionEvaluatorTest.scala" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/scala/edu/nyu/tandon/experiments/ml/TranslateToGlobalIdsTest.scala" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/scala/edu/nyu/tandon/ml/features/FeatureJoinTest.scala" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/scala/edu/nyu/tandon/ml/features/SegmentCounterTest.scala" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/scala/edu/nyu/tandon/ml/regression/RFRegressionTest.scala" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/scala/edu/nyu/tandon/test/package.scala" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/scala/edu/nyu/tandon/utils/BulkIteratorTest.scala" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/mg4j-nyu.jar" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/java/edu/nyu/tandon/experiments/cluster/ExctractShardScoresTest.java" afterPath="$PROJECT_DIR$/test/java/edu/nyu/tandon/experiments/ml/cluster/ExctractShardScoresTest.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/java/edu/nyu/tandon/experiments/cluster/ExtractClusterFeaturesTest.java" afterPath="$PROJECT_DIR$/test/java/edu/nyu/tandon/experiments/ml/cluster/ExtractClusterFeaturesTest.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/java/edu/nyu/tandon/index/cluster/SelectiveDocumentalIndexStrategyTest.java" afterPath="$PROJECT_DIR$/test/java/edu/nyu/tandon/index/cluster/SelectiveDocumentalIndexStrategyTest.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/java/edu/nyu/tandon/query/SelectiveQueryEngineTest.java" afterPath="$PROJECT_DIR$/test/java/edu/nyu/tandon/query/SelectiveQueryEngineTest.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/java/edu/nyu/tandon/shard/csi/CentralSampleIndexTest.java" afterPath="$PROJECT_DIR$/test/java/edu/nyu/tandon/shard/csi/CentralSampleIndexTest.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/java/edu/nyu/tandon/shard/ranking/redde/ReDDEShardSelectorTest.java" afterPath="$PROJECT_DIR$/test/java/edu/nyu/tandon/shard/ranking/redde/ReDDEShardSelectorTest.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/java/edu/nyu/tandon/shard/ranking/shire/RankSTest.java" afterPath="$PROJECT_DIR$/test/java/edu/nyu/tandon/shard/ranking/shire/RankSTest.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/java/edu/nyu/tandon/shard/ranking/shire/ShireShardSelectorTest.java" afterPath="$PROJECT_DIR$/test/java/edu/nyu/tandon/shard/ranking/shire/ShireShardSelectorTest.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/java/edu/nyu/tandon/test/BaseTest.java" afterPath="$PROJECT_DIR$/test/java/edu/nyu/tandon/test/BaseTest.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/java/edu/nyu/tandon/tool/cluster/ClusterGlobalStatisticsTest.java" afterPath="$PROJECT_DIR$/test/java/edu/nyu/tandon/tool/cluster/ClusterGlobalStatisticsTest.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/java/edu/nyu/tandon/tool/renumber/RenumberTest.java" afterPath="$PROJECT_DIR$/test/java/edu/nyu/tandon/tool/renumber/RenumberTest.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-0.counts" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-0.counts" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-0.countsoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-0.countsoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-0.frequencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-0.frequencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-0.globfreq" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-0.globfreq" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-0.globstat" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-0.globstat" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-0.mwhc" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-0.mwhc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-0.occurrencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-0.occurrencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-0.pointers" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-0.pointers" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-0.pointersoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-0.pointersoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-0.properties" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-0.properties" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-0.sizes" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-0.sizes" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-0.termmap" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-0.termmap" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-0.terms" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-0.terms" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-1.counts" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-1.counts" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-1.countsoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-1.countsoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-1.frequencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-1.frequencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-1.globfreq" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-1.globfreq" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-1.globstat" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-1.globstat" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-1.mwhc" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-1.mwhc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-1.occurrencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-1.occurrencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-1.pointers" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-1.pointers" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-1.pointersoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-1.pointersoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-1.properties" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-1.properties" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-1.sizes" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-1.sizes" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-1.termmap" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-1.termmap" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-1.terms" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-1.terms" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-10.counts" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-10.counts" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-10.countsoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-10.countsoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-10.frequencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-10.frequencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-10.globfreq" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-10.globfreq" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-10.globstat" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-10.globstat" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-10.mwhc" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-10.mwhc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-10.occurrencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-10.occurrencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-10.pointers" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-10.pointers" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-10.pointersoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-10.pointersoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-10.properties" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-10.properties" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-10.sizes" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-10.sizes" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-10.termmap" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-10.termmap" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-10.terms" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-10.terms" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-2.counts" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-2.counts" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-2.countsoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-2.countsoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-2.frequencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-2.frequencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-2.globfreq" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-2.globfreq" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-2.globstat" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-2.globstat" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-2.mwhc" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-2.mwhc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-2.occurrencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-2.occurrencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-2.pointers" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-2.pointers" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-2.pointersoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-2.pointersoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-2.properties" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-2.properties" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-2.sizes" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-2.sizes" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-2.termmap" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-2.termmap" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-2.terms" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-2.terms" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-3.counts" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-3.counts" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-3.countsoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-3.countsoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-3.frequencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-3.frequencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-3.globfreq" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-3.globfreq" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-3.globstat" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-3.globstat" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-3.mwhc" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-3.mwhc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-3.occurrencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-3.occurrencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-3.pointers" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-3.pointers" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-3.pointersoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-3.pointersoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-3.properties" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-3.properties" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-3.sizes" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-3.sizes" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-3.termmap" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-3.termmap" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-3.terms" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-3.terms" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-4.counts" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-4.counts" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-4.countsoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-4.countsoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-4.frequencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-4.frequencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-4.globfreq" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-4.globfreq" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-4.globstat" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-4.globstat" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-4.mwhc" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-4.mwhc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-4.occurrencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-4.occurrencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-4.pointers" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-4.pointers" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-4.pointersoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-4.pointersoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-4.properties" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-4.properties" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-4.sizes" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-4.sizes" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-4.termmap" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-4.termmap" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-4.terms" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-4.terms" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-5.counts" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-5.counts" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-5.countsoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-5.countsoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-5.frequencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-5.frequencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-5.globfreq" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-5.globfreq" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-5.globstat" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-5.globstat" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-5.mwhc" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-5.mwhc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-5.occurrencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-5.occurrencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-5.pointers" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-5.pointers" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-5.pointersoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-5.pointersoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-5.properties" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-5.properties" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-5.sizes" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-5.sizes" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-5.termmap" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-5.termmap" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-5.terms" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-5.terms" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-6.counts" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-6.counts" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-6.countsoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-6.countsoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-6.frequencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-6.frequencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-6.globfreq" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-6.globfreq" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-6.globstat" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-6.globstat" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-6.mwhc" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-6.mwhc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-6.occurrencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-6.occurrencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-6.pointers" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-6.pointers" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-6.pointersoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-6.pointersoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-6.properties" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-6.properties" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-6.sizes" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-6.sizes" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-6.termmap" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-6.termmap" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-6.terms" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-6.terms" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-7.counts" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-7.counts" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-7.countsoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-7.countsoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-7.frequencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-7.frequencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-7.globfreq" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-7.globfreq" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-7.globstat" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-7.globstat" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-7.mwhc" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-7.mwhc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-7.occurrencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-7.occurrencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-7.pointers" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-7.pointers" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-7.pointersoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-7.pointersoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-7.properties" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-7.properties" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-7.sizes" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-7.sizes" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-7.termmap" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-7.termmap" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-7.terms" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-7.terms" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-8.counts" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-8.counts" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-8.countsoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-8.countsoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-8.frequencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-8.frequencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-8.globfreq" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-8.globfreq" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-8.globstat" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-8.globstat" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-8.mwhc" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-8.mwhc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-8.occurrencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-8.occurrencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-8.pointers" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-8.pointers" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-8.pointersoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-8.pointersoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-8.properties" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-8.properties" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-8.sizes" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-8.sizes" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-8.termmap" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-8.termmap" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-8.terms" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-8.terms" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-9.counts" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-9.counts" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-9.countsoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-9.countsoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-9.frequencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-9.frequencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-9.globfreq" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-9.globfreq" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-9.globstat" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-9.globstat" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-9.mwhc" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-9.mwhc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-9.occurrencies" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-9.occurrencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-9.pointers" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-9.pointers" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-9.pointersoffsets" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-9.pointersoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-9.properties" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-9.properties" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-9.sizes" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-9.sizes" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-9.termmap" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-9.termmap" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C-9.terms" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C-9.terms" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C.properties" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C.properties" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/gov2C.strategy" afterPath="$PROJECT_DIR$/test/resources/clusters/gov2C.strategy" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/numbers/01" afterPath="$PROJECT_DIR$/test/resources/clusters/numbers/01" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/numbers/02" afterPath="$PROJECT_DIR$/test/resources/clusters/numbers/02" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/numbers/03" afterPath="$PROJECT_DIR$/test/resources/clusters/numbers/03" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/numbers/04" afterPath="$PROJECT_DIR$/test/resources/clusters/numbers/04" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/numbers/05" afterPath="$PROJECT_DIR$/test/resources/clusters/numbers/05" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/numbers/06" afterPath="$PROJECT_DIR$/test/resources/clusters/numbers/06" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/numbers/07" afterPath="$PROJECT_DIR$/test/resources/clusters/numbers/07" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/numbers/08" afterPath="$PROJECT_DIR$/test/resources/clusters/numbers/08" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/numbers/09" afterPath="$PROJECT_DIR$/test/resources/clusters/numbers/09" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/numbers/10" afterPath="$PROJECT_DIR$/test/resources/clusters/numbers/10" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/numbers/11" afterPath="$PROJECT_DIR$/test/resources/clusters/numbers/11" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/titles/01" afterPath="$PROJECT_DIR$/test/resources/clusters/titles/01" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/titles/02" afterPath="$PROJECT_DIR$/test/resources/clusters/titles/02" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/titles/03" afterPath="$PROJECT_DIR$/test/resources/clusters/titles/03" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/titles/04" afterPath="$PROJECT_DIR$/test/resources/clusters/titles/04" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/titles/05" afterPath="$PROJECT_DIR$/test/resources/clusters/titles/05" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/titles/06" afterPath="$PROJECT_DIR$/test/resources/clusters/titles/06" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/titles/07" afterPath="$PROJECT_DIR$/test/resources/clusters/titles/07" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/titles/08" afterPath="$PROJECT_DIR$/test/resources/clusters/titles/08" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/titles/09" afterPath="$PROJECT_DIR$/test/resources/clusters/titles/09" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/titles/10" afterPath="$PROJECT_DIR$/test/resources/clusters/titles/10" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/clusters/titles/11" afterPath="$PROJECT_DIR$/test/resources/clusters/titles/11" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-0.counts" afterPath="$PROJECT_DIR$/test/resources/csi/csi-0.counts" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-0.countsoffsets" afterPath="$PROJECT_DIR$/test/resources/csi/csi-0.countsoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-0.frequencies" afterPath="$PROJECT_DIR$/test/resources/csi/csi-0.frequencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-0.mwhc" afterPath="$PROJECT_DIR$/test/resources/csi/csi-0.mwhc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-0.occurrencies" afterPath="$PROJECT_DIR$/test/resources/csi/csi-0.occurrencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-0.pointers" afterPath="$PROJECT_DIR$/test/resources/csi/csi-0.pointers" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-0.pointersoffsets" afterPath="$PROJECT_DIR$/test/resources/csi/csi-0.pointersoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-0.properties" afterPath="$PROJECT_DIR$/test/resources/csi/csi-0.properties" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-0.sizes" afterPath="$PROJECT_DIR$/test/resources/csi/csi-0.sizes" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-0.termmap" afterPath="$PROJECT_DIR$/test/resources/csi/csi-0.termmap" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-0.terms" afterPath="$PROJECT_DIR$/test/resources/csi/csi-0.terms" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-1.counts" afterPath="$PROJECT_DIR$/test/resources/csi/csi-1.counts" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-1.countsoffsets" afterPath="$PROJECT_DIR$/test/resources/csi/csi-1.countsoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-1.frequencies" afterPath="$PROJECT_DIR$/test/resources/csi/csi-1.frequencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-1.mwhc" afterPath="$PROJECT_DIR$/test/resources/csi/csi-1.mwhc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-1.occurrencies" afterPath="$PROJECT_DIR$/test/resources/csi/csi-1.occurrencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-1.pointers" afterPath="$PROJECT_DIR$/test/resources/csi/csi-1.pointers" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-1.pointersoffsets" afterPath="$PROJECT_DIR$/test/resources/csi/csi-1.pointersoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-1.properties" afterPath="$PROJECT_DIR$/test/resources/csi/csi-1.properties" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-1.sizes" afterPath="$PROJECT_DIR$/test/resources/csi/csi-1.sizes" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-1.termmap" afterPath="$PROJECT_DIR$/test/resources/csi/csi-1.termmap" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi-1.terms" afterPath="$PROJECT_DIR$/test/resources/csi/csi-1.terms" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi.properties" afterPath="$PROJECT_DIR$/test/resources/csi/csi.properties" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/csi.strategy" afterPath="$PROJECT_DIR$/test/resources/csi/csi.strategy" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/numbers/0" afterPath="$PROJECT_DIR$/test/resources/csi/numbers/0" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/numbers/1" afterPath="$PROJECT_DIR$/test/resources/csi/numbers/1" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/csi/titles/0" afterPath="$PROJECT_DIR$/test/resources/csi/titles/0" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/index/gov2-text.counts" afterPath="$PROJECT_DIR$/test/resources/index/gov2-text.counts" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/index/gov2-text.countsoffsets" afterPath="$PROJECT_DIR$/test/resources/index/gov2-text.countsoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/index/gov2-text.frequencies" afterPath="$PROJECT_DIR$/test/resources/index/gov2-text.frequencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/index/gov2-text.mwhc" afterPath="$PROJECT_DIR$/test/resources/index/gov2-text.mwhc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/index/gov2-text.occurrencies" afterPath="$PROJECT_DIR$/test/resources/index/gov2-text.occurrencies" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/index/gov2-text.pointers" afterPath="$PROJECT_DIR$/test/resources/index/gov2-text.pointers" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/index/gov2-text.pointersoffsets" afterPath="$PROJECT_DIR$/test/resources/index/gov2-text.pointersoffsets" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/index/gov2-text.properties" afterPath="$PROJECT_DIR$/test/resources/index/gov2-text.properties" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/index/gov2-text.sizes" afterPath="$PROJECT_DIR$/test/resources/index/gov2-text.sizes" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/index/gov2-text.stats" afterPath="$PROJECT_DIR$/test/resources/index/gov2-text.stats" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/index/gov2-text.termmap" afterPath="$PROJECT_DIR$/test/resources/index/gov2-text.termmap" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/index/gov2-text.terms" afterPath="$PROJECT_DIR$/test/resources/index/gov2-text.terms" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/index/gov2.titles" afterPath="$PROJECT_DIR$/test/resources/index/gov2.titles" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/log4j.properties" afterPath="$PROJECT_DIR$/test/resources/log4j.properties" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/queries/cw09b-trec_eval-queries.txt" afterPath="$PROJECT_DIR$/test/resources/queries/cw09b-trec_eval-queries.txt" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/queries/gov2-trec_eval-queries-OR.txt" afterPath="$PROJECT_DIR$/test/resources/queries/gov2-trec_eval-queries-OR.txt" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/queries/gov2-trec_eval-queries.txt" afterPath="$PROJECT_DIR$/test/resources/queries/gov2-trec_eval-queries.txt" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/resources/renumber/mapping" afterPath="$PROJECT_DIR$/test/resources/renumber/mapping" />
-    </list>
+    <list default="true" id="0844f41b-037f-49f5-8817-1b80a7fcf4fc" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/target/" />
     <ignored path=".idea/dataSources.local.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -264,6 +32,7 @@
   <component name="Git.Settings">
     <option name="PREVIOUS_COMMIT_AUTHORS">
       <list>
+        <option value="ju" />
         <option value="juan rodriguez &lt;jcr365@nyu.edu&gt;" />
       </list>
     </option>
@@ -956,7 +725,7 @@
       <updated>1479906267192</updated>
       <workItem from="1479906268708" duration="1073000" />
       <workItem from="1479907846370" duration="2000" />
-      <workItem from="1479907914725" duration="1550000" />
+      <workItem from="1479907914725" duration="1644000" />
     </task>
     <task id="LOCAL-00001" summary="Build environment; scala ML">
       <created>1479909389931</created>
@@ -965,11 +734,18 @@
       <option name="project" value="LOCAL" />
       <updated>1479909389931</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Build environment; scala ML">
+      <created>1479909554971</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1479909554971</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2625000" />
+    <option name="totallyTimeSpent" value="2719000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="24" width="1922" height="1033" extended-state="6" />
