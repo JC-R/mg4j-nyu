@@ -69,6 +69,6 @@ q_size.times do |i|
 end
 
 #puts "#{overlap10},#{overlap100},#{overlap1k},#{tot10},#{tot100},#{tot1k},#{"%.4f" % ((1.0 * overlap10)/tot10)},#{"%.4f" % ((1.0 * overlap100)/tot100)},#{"%.4f" % ((1.0 * overlap1k)/tot1k)},#{dataset},#{train},#{model},#{target},#{index_size},overlap,#{semantics}"
-puts "ph,#{dataset},#{target},#{index_size},#{semantics},#{scoring},overlap@10,#{"%.4f" % (overlap10/n)}"
-puts "ph,#{dataset},#{target},#{index_size},#{semantics},#{scoring},overlap@100,#{"%.4f" % (overlap100/n)}"
-puts "ph,#{dataset},#{target},#{index_size},#{semantics},#{scoring},overlap@1k,#{"%.4f" % (overlap1k/n)}"
+puts "#{model},#{dataset},#{target},#{index_size},#{semantics},#{scoring},overlap@10,#{"%.4f" % (overlap10/n)}"
+puts "#{model},#{dataset},#{target},#{index_size},#{semantics},#{scoring},overlap@100,#{"%.4f" % (overlap100/n)}"
+puts "#{model},#{dataset},#{target},#{index_size},#{semantics},#{scoring},overlap@1k,#{"%.4f" % (overlap1k/n)}"

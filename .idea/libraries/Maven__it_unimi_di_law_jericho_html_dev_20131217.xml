@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: it.unimi.di.law:jericho-html-dev:20131217">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/it/unimi/di/law/jericho-html-dev/20131217/jericho-html-dev-20131217.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/it/unimi/di/law/jericho-html-dev/20131217/jericho-html-dev-20131217-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/it/unimi/di/law/jericho-html-dev/20131217/jericho-html-dev-20131217-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

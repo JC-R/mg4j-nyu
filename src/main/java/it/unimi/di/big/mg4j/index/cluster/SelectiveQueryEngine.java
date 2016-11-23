@@ -1,6 +1,6 @@
 package it.unimi.di.big.mg4j.index.cluster;
 
-import edu.nyu.tandon.experiments.cluster.logger.EventLogger;
+import edu.nyu.tandon.experiments.ml.cluster.logger.EventLogger;
 import edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy;
 import edu.nyu.tandon.query.PrunedQueryEngine;
 import edu.nyu.tandon.query.QueryEngine;

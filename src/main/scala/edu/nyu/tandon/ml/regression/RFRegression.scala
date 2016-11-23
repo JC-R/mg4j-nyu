@@ -2,15 +2,16 @@ package edu.nyu.tandon.ml.regression
 
 import java.io.{File, FileWriter}
 
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SQLContext}
 import edu.nyu.tandon.ml._
 import edu.nyu.tandon.ml.features.FeatureJoin
 import org.apache.spark.ml.evaluation.RegressionEvaluator
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.regression.RandomForestRegressor
 import org.apache.spark.ml.{Pipeline, PipelineModel, PipelineStage}
-import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
 import scopt.OptionParser
+import com.github.fommil.netlib
 
 /**
   * @author michal.siedlaczek@nyu.edu
@@ -19,21 +20,12 @@ class RFRegression(val numTrees: Int,
                    val maxBins: Int,
                    val maxDepth: Int) {
 
-  def excludedFromFeatures: Set[String] = Set(LabelCol, FeaturesCol, IdCol)
-
-  def featureAssembler(df: DataFrame): VectorAssembler =
-    if (df.schema.fieldNames.contains(FeaturesCol))
-      throw new IllegalStateException(s"Can't assemble features: column '$FeaturesCol' already exists")
-    else new VectorAssembler()
-      .setInputCols(df.columns.filterNot(excludedFromFeatures.contains))
-      .setOutputCol(FeaturesCol)
-
-  def regressor(numTrees: Int, maxBins: Int, maxDepth: Int): RandomForestRegressor = new RandomForestRegressor()
-    .setNumTrees(numTrees)
-    .setMaxBins(maxBins)
-    .setMaxDepth(maxDepth)
-    .setLabelCol(LabelCol)
-    .setFeaturesCol(FeaturesCol)
+  def model(trainingData: DataFrame, numFolds: Int): PipelineModel =
+    fit(
+      trainingData,
+      stages(trainingData),
+      numFolds
+    )
 
   def fit(trainingData: DataFrame, stages: Array[PipelineStage], numFolds: Int): PipelineModel = {
     //    val paramGrid = new ParamGridBuilder()
@@ -56,23 +48,24 @@ class RFRegression(val numTrees: Int,
       regressor(numTrees, maxBins, maxDepth)
     )
 
-  def model(trainingData: DataFrame, numFolds: Int): PipelineModel =
-    fit(
-      trainingData,
-      stages(trainingData),
-      numFolds
-    )
+  def featureAssembler(df: DataFrame): VectorAssembler =
+    if (df.schema.fieldNames.contains(FeaturesCol))
+      throw new IllegalStateException(s"Can't assemble features: column '$FeaturesCol' already exists")
+    else new VectorAssembler()
+      .setInputCols(df.columns.filterNot(excludedFromFeatures.contains))
+      .setOutputCol(FeaturesCol)
+
+  def excludedFromFeatures: Set[String] = Set(LabelCol, FeaturesCol, IdCol)
+
+  def regressor(numTrees: Int, maxBins: Int, maxDepth: Int): RandomForestRegressor = new RandomForestRegressor()
+    .setNumTrees(numTrees)
+    .setMaxBins(maxBins)
+    .setMaxDepth(maxDepth)
+    .setLabelCol(LabelCol)
+    .setFeaturesCol(FeaturesCol)
 }
 
 object RFRegression {
-
-  case class Config(dataFiles: Seq[File] = List(),
-                    outputFile: File = null,
-                    numFolds: Int = 10,
-                    numTrees: Int = 50,
-                    maxBins: Int = 20,
-                    maxDepth: Int = 15,
-                    labelCol: String = LabelCol)
 
   def main(args: Array[String]): Unit = {
 
@@ -135,5 +128,13 @@ object RFRegression {
     }
 
   }
+
+  case class Config(dataFiles: Seq[File] = List(),
+                    outputFile: File = null,
+                    numFolds: Int = 10,
+                    numTrees: Int = 50,
+                    maxBins: Int = 20,
+                    maxDepth: Int = 15,
+                    labelCol: String = LabelCol)
 
 }

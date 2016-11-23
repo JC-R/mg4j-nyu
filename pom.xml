@@ -171,7 +171,7 @@
         <dependency>
             <groupId>it.unimi.di</groupId>
             <artifactId>mg4j-big</artifactId>
-            <version>5.4.1</version>
+            <version>5.4.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.jboss.netty</groupId>
@@ -183,6 +183,7 @@
             <groupId>it.unimi.dsi</groupId>
             <artifactId>sux4j</artifactId>
             <version>4.0.0</version>
+
         </dependency>
         <dependency>
             <groupId>it.unimi.di.law</groupId>

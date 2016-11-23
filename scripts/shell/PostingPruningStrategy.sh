@@ -10,7 +10,7 @@
 #        $3    corpus main directory
 #        $4    output name
 
-CP=/home/juan/work/code/mg4j-nyu/mg4j-nyu.jar
+CP=/home/juan/work/code/mg4j-nyu/target/mg4j-nyu-1.0.jar
 export _JAVA_OPTIONS="-Xmx60g -XX:-UseConcMarkSweepGC -Dlogback.configurationFile=~/logback.xml"
 
 # Parameter -t = prunning ratio; can specify multiple times to generate multiple pruned indeces

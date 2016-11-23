@@ -44,7 +44,7 @@
       <root url="jar://$MAVEN_REPOSITORY$/org/apache/hadoop/hadoop-common/0.23.6/hadoop-common-0.23.6.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/apache/hadoop/hadoop-annotations/0.23.6/hadoop-annotations-0.23.6.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/jdiff/jdiff/1.0.9/jdiff-1.0.9.jar!/" />
-      <root url="jar://C:/Program Files/Java/jdk1.8.0_92/jre/../lib/tools.jar!/" />
+      <root url="jar://$APPLICATION_HOME_DIR$/jre/lib/tools.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/commons-cli/commons-cli/1.2/commons-cli-1.2.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-math/2.2/commons-math-2.2.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/xmlenc/xmlenc/0.52/xmlenc-0.52.jar!/" />
@@ -161,7 +161,7 @@
       <root url="jar://$MAVEN_REPOSITORY$/com/sleepycat/je/5.0.73/je-5.0.73.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/dnsjava/dnsjava/2.1.7/dnsjava-2.1.7.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/umlgraph/umlgraph/5.6.6/umlgraph-5.6.6.jar!/" />
-      <root url="jar://C:/Program Files/Java/jdk1.8.0_92/jre/../lib/tools.jar!/" />
+      <root url="jar://$APPLICATION_HOME_DIR$/jre/lib/tools.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$MAVEN_REPOSITORY$/it/unimi/di/law/bubing/0.9.11/bubing-0.9.11-javadoc.jar!/" />
