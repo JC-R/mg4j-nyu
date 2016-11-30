@@ -14,30 +14,6 @@ import scopt.OptionParser
   */
 object SegmentCounter {
 
-  def countByBin(numDocs: Long, numBins: Int)(topResults: Seq[Long]): Map[Int, Int] = {
-    def chunkNumber(r: Long): Int = {
-      assert(r < numDocs)
-      math.floor(r.toDouble / numDocs.toDouble * numBins.toDouble).toInt
-    }
-    topResults.groupBy(chunkNumber)
-      .mapValues(_.length)
-  }
-
-  def binsToRows(numBins: Int)(id: Long, cluster: Int, chunks: Map[Int, Int]): Seq[(Int, Int)] = {
-    val c = chunks.withDefaultValue(0)
-    for (i <- 0 until numBins) yield (i, c(i))
-  }
-
-  def segment(data: DataFrame, column: String, numDocs: Long, numBins: Int, cluster: Int): DataFrame = {
-    data.explode(data(IdCol), data(column)) {
-      case Row(id: Int, line: String) =>
-        binsToRows(numBins)(id, cluster, countByBin(numDocs, numBins)(lineToLongs(line.toString)))
-    }
-      .drop(column)
-      .withColumnRenamed("_1", "segment")
-      .withColumnRenamed("_2", "count")
-  }
-
   def main(args: Array[String]): Unit = {
 
     case class Config(input: File = null,
@@ -85,6 +61,30 @@ object SegmentCounter {
       case None =>
     }
 
+  }
+
+  def segment(data: DataFrame, column: String, numDocs: Long, numBins: Int, cluster: Int): DataFrame = {
+    data.explode(data(IdCol), data(column)) {
+      case Row(id: Int, line: String) =>
+        binsToRows(numBins)(id, cluster, countByBin(numDocs, numBins)(lineToLongs(line.toString)))
+    }
+      .drop(column)
+      .withColumnRenamed("_1", "segment")
+      .withColumnRenamed("_2", "count")
+  }
+
+  def countByBin(numDocs: Long, numBins: Int)(topResults: Seq[Long]): Map[Int, Int] = {
+    def chunkNumber(r: Long): Int = {
+      assert(r < numDocs)
+      math.floor(r.toDouble / numDocs.toDouble * numBins.toDouble).toInt
+    }
+    topResults.groupBy(chunkNumber)
+      .mapValues(_.length)
+  }
+
+  def binsToRows(numBins: Int)(id: Long, cluster: Int, chunks: Map[Int, Int]): Seq[(Int, Int)] = {
+    val c = chunks.withDefaultValue(0)
+    for (i <- 0 until numBins) yield (i, c(i))
   }
 
 }

@@ -2,8 +2,8 @@ package edu.nyu.tandon.ml
 
 import java.io.File
 
-import org.apache.spark.sql.{DataFrame, SQLContext, SaveMode}
 import org.apache.spark.sql.types.DoubleType
+import org.apache.spark.sql.{DataFrame, SQLContext, SaveMode}
 
 /**
   * @author michal.siedlaczek@nyu.edu
@@ -27,13 +27,13 @@ package object features {
       .mode(SaveMode.Overwrite)
       .save(file)
 
+  def convertColumnsToDouble(data: DataFrame): DataFrame =
+    data.columns.foldLeft(data)(withColumnRenamedAndCastedToDouble)
+
   def withColumnRenamedAndCastedToDouble(dataFrame: DataFrame, columnName: String): DataFrame =
     dataFrame
       .withColumn(columnName + TempSuffix, dataFrame(columnName).cast(DoubleType))
       .drop(columnName)
       .withColumnRenamed(columnName + TempSuffix, columnName)
-
-  def convertColumnsToDouble(data: DataFrame): DataFrame =
-    data.columns.foldLeft(data)(withColumnRenamedAndCastedToDouble)
 
 }

@@ -2,16 +2,15 @@ package edu.nyu.tandon.ml.regression
 
 import java.io.{File, FileWriter}
 
-import org.apache.spark.sql.{DataFrame, Dataset, Row, SQLContext}
 import edu.nyu.tandon.ml._
 import edu.nyu.tandon.ml.features.FeatureJoin
 import org.apache.spark.ml.evaluation.RegressionEvaluator
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.regression.RandomForestRegressor
 import org.apache.spark.ml.{Pipeline, PipelineModel, PipelineStage}
+import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
 import scopt.OptionParser
-import com.github.fommil.netlib
 
 /**
   * @author michal.siedlaczek@nyu.edu
@@ -113,7 +112,7 @@ object RFRegression {
         val r = new RFRegression(config.numTrees, config.maxBins, config.maxDepth)
 
         val Array(trainingData, testData) = FeatureJoin.join(sqlContext)(config.dataFiles)
-            .randomSplit(Array(0.7, 0.3))
+          .randomSplit(Array(0.7, 0.3))
 
         val m = r.model(trainingData, config.numFolds)
 

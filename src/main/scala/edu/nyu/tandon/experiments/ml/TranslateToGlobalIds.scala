@@ -1,6 +1,6 @@
 package edu.nyu.tandon.experiments.ml
 
-import java.io.{File, FileInputStream, ObjectInputStream, PrintWriter}
+import java.io.{File, FileInputStream, ObjectInputStream}
 
 import edu.nyu.tandon._
 import edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy
@@ -10,8 +10,6 @@ import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions.udf
 import org.apache.spark.{SparkConf, SparkContext}
 import scopt.OptionParser
-
-import scala.io.Source
 
 /**
   * @author michal.siedlaczek@nyu.edu

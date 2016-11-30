@@ -2,24 +2,21 @@ package edu.nyu.tandon.ml.features
 
 import java.io.File
 
+import edu.nyu.tandon.spark.SQLContextSingleton
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
 import scopt.OptionParser
-import edu.nyu.tandon.spark.SQLContextSingleton
 
 /**
   * @author michal.siedlaczek@nyu.edu
   */
 object FeatureJoin {
 
-  def join(features: Seq[DataFrame]): DataFrame =
-    features reduce (_.join(_, "id"))
-
   def join(head: DataFrame, rest: DataFrame*): DataFrame =
     join(head +: rest)
 
-  def join(sqlContext: SQLContext)(features: Seq[File]): DataFrame =
-    join(features map loadFeatureFile(sqlContext))
+  def join(features: Seq[DataFrame]): DataFrame =
+    features reduce (_.join(_, "id"))
 
   def main(args: Array[String]): Unit = {
 
@@ -55,5 +52,8 @@ object FeatureJoin {
     }
 
   }
+
+  def join(sqlContext: SQLContext)(features: Seq[File]): DataFrame =
+    join(features map loadFeatureFile(sqlContext))
 
 }

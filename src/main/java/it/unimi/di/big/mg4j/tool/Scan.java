@@ -1033,12 +1033,12 @@ public class Scan {
                 builder = builderClass != null ? builderClass.getConstructor(IOFactory.class, String.class, DocumentFactory.class, boolean.class).newInstance(
                         ioFactory, jsapResult.getString("buildCollection"),
                         documentSequence.factory().numberOfFields() == indexedField.length ? documentSequence.factory().copy() : new SubDocumentFactory(documentSequence.factory().copy(), indexedField),
-                        Boolean.valueOf(jsapResult.getBoolean("exact"))) : null;
+                        jsapResult.getBoolean("exact")) : null;
             } catch (NoSuchMethodException noIOFactoryConstructor) {
                 builder = builderClass != null ? builderClass.getConstructor(String.class, DocumentFactory.class, boolean.class).newInstance(
                         jsapResult.getString("buildCollection"),
                         documentSequence.factory().numberOfFields() == indexedField.length ? documentSequence.factory().copy() : new SubDocumentFactory(documentSequence.factory().copy(), indexedField),
-                        Boolean.valueOf(jsapResult.getBoolean("exact"))) : null;
+                        jsapResult.getBoolean("exact")) : null;
                 if (builder != null)
                     LOGGER.warn("The builder class " + builderClass.getName() + " has no IOFactory-based constructor");
             }
