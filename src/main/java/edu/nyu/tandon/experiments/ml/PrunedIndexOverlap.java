@@ -36,7 +36,6 @@ import it.unimi.dsi.fastutil.BigList;
 import it.unimi.dsi.fastutil.BigListIterator;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.io.FastBufferedOutputStream;
-import it.unimi.dsi.fastutil.longs.*;
 import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.lang.MutableString;
 import it.unimi.dsi.sux4j.io.FileLinesBigList;
@@ -100,10 +99,10 @@ public class PrunedIndexOverlap extends Query {
         final JSAPResult jsapResult = jsap.parse(arg);
         if (jsap.messagePrinted()) return;
 
-        baseTitleList = (BigList<? extends CharSequence>) new FileLinesBigList(jsapResult.getString("basetitleFile"), "UTF-8");
+        baseTitleList = new FileLinesBigList(jsapResult.getString("basetitleFile"), "UTF-8");
 
         BigList<? extends CharSequence> prunedTitleList;
-        prunedTitleList = (BigList<? extends CharSequence>) new FileLinesBigList(jsapResult.getString("prunedtitleFile"), "UTF-8");
+        prunedTitleList = new FileLinesBigList(jsapResult.getString("prunedtitleFile"), "UTF-8");
         prunedTitleMap = new Object2LongOpenHashMap<MutableString>(prunedTitleList.size());
         BigListIterator it = prunedTitleList.listIterator();
         int n = 0;
@@ -112,8 +111,8 @@ public class PrunedIndexOverlap extends Query {
         }
 
 
-        trecMode = jsapResult.userSpecified("trec") ? true : false;
-        verbose = jsapResult.userSpecified("verbose") ? true : false;
+        trecMode = jsapResult.userSpecified("trec");
+        verbose = jsapResult.userSpecified("verbose");
 
         // redirect output
         output = (jsapResult.userSpecified("divert")) ?
@@ -138,7 +137,7 @@ public class PrunedIndexOverlap extends Query {
         queryEngine.setWeights(index2Weight);
         queryEngine.score(new BM25Scorer(1.2, 0.3));
 
-        queryEngine.multiplex = jsapResult.userSpecified("moPlex") ? jsapResult.getBoolean("noMplex") : true;
+        queryEngine.multiplex = !jsapResult.userSpecified("moPlex") || jsapResult.getBoolean("noMplex");
         queryEngine.intervalSelector = null;
 
         PrunedIndexOverlap query = new PrunedIndexOverlap(queryEngine);
@@ -193,7 +192,7 @@ public class PrunedIndexOverlap extends Query {
                 queryCount++;
             }
         } finally {
-            if (query.output != System.out) query.output.close();
+            if (output != System.out) output.close();
         }
         LOGGER.debug("Processed " + queryCount + " queries");
         System.out.printf("%.4f,%.4f", docsKept / queryCount, postingsKept / queryCount);

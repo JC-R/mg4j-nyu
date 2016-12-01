@@ -2,23 +2,19 @@ package edu.nyu.tandon.experiments.ml;
 
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.index.cluster.PostingPruningStrategy;
-import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import edu.nyu.tandon.query.PrunedQueryEngine;
 import edu.nyu.tandon.query.Query;
+import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import it.unimi.di.big.mg4j.document.AbstractDocumentSequence;
 import it.unimi.di.big.mg4j.document.Document;
 import it.unimi.di.big.mg4j.document.DocumentCollection;
 import it.unimi.di.big.mg4j.document.DocumentFactory;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
-import it.unimi.di.big.mg4j.index.cluster.DocumentalPartitioningStrategy;
-import it.unimi.di.big.mg4j.index.cluster.DocumentalStrategies;
-import it.unimi.di.big.mg4j.index.cluster.IndexCluster;
 import it.unimi.di.big.mg4j.query.*;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.di.big.mg4j.query.parser.SimpleParser;
 import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
-import it.unimi.di.big.mg4j.search.score.BM25Scorer;
 import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
 import it.unimi.di.big.mg4j.search.score.Scorer;
 import it.unimi.di.big.mg4j.search.score.VignaScorer;
@@ -72,14 +68,14 @@ public class PrunedQuery extends Query {
                         new FlaggedOption("divert", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'd', "divert", "output file"),
                         new Switch("prune", 'e', "prune", "Enable pruned list"),
                         new Switch("globalScoring", 'G', "globalScoring", "Enable global metric scoring"),
-                        new Switch("localID",'D',"localID","document IDs are locally numbered"),
+                        new Switch("localID", 'D', "localID", "document IDs are locally numbered"),
 
                         new FlaggedOption("prunelist", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'L', "prunelist", "prune list"),
                         new FlaggedOption("threshold", JSAP.INTEGER_PARSER, "100", JSAP.NOT_REQUIRED, 'S', "threshold", "prune threshold percentage"),
 
                         new Switch("trec", 'E', "trec", "trec"),
                         new FlaggedOption("trec-runtag", JSAP.STRING_PARSER, "NYU_TANDON", JSAP.NOT_REQUIRED, 'g', "trec-runtag", "runtag for TREC output"),
-                        new Switch("trecQueries",'Q',"trecQueries","trecQueries"),
+                        new Switch("trecQueries", 'Q', "trecQueries", "trecQueries"),
                         new FlaggedOption("strategy", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 's', "strategy", "A serialised partitioning strategy, with local-global ID mappings"),
 
                         new Switch("postings", 'N', "postings", "postings"),
@@ -112,8 +108,8 @@ public class PrunedQuery extends Query {
 
         // use local or global metrics during scoring: can be overriden in the input query stream via $score command
         if (jsapResult.getBoolean("globalScoring")) {
-            queryEngine.loadGlobalTermFrequencies(basenameWeight[0]+".globaltermfreq");
-            BM25PrunedScorer scorer = new BM25PrunedScorer(1.2,0.3);
+            queryEngine.loadGlobalTermFrequencies(basenameWeight[0] + ".globaltermfreq");
+            BM25PrunedScorer scorer = new BM25PrunedScorer(1.2, 0.3);
             scorer.setGlobalMetrics(
                     indexMap.get(indexMap.firstKey()).properties.getLong(globalPropertyKeys.G_DOCUMENTS),
                     indexMap.get(indexMap.firstKey()).properties.getLong(globalPropertyKeys.G_OCCURRENCES),
@@ -126,10 +122,9 @@ public class PrunedQuery extends Query {
             //  disable cache *** or global stat will fail
             queryEngine.equalize(0);
 
-        }
-        else {
+        } else {
             // can be overriden in the input query stream via $score command
-            queryEngine.score(new Scorer[]{new BM25PrunedScorer(1.2,0.3), new VignaScorer()}, new double[]{1, 1});
+            queryEngine.score(new Scorer[]{new BM25PrunedScorer(1.2, 0.3), new VignaScorer()}, new double[]{1, 1});
             disallowScorer = false;
 
             //  enable cache with lcocal stats
@@ -137,8 +132,8 @@ public class PrunedQuery extends Query {
         }
 
         // maps between local-global IDs
-        String strategyFilename = jsapResult.getString("strategy",null);
-        PostingPruningStrategy strategy = (strategyFilename == null)? null : (PostingPruningStrategy) BinIO.loadObject(strategyFilename);
+        String strategyFilename = jsapResult.getString("strategy", null);
+        PostingPruningStrategy strategy = (strategyFilename == null) ? null : (PostingPruningStrategy) BinIO.loadObject(strategyFilename);
 
         queryEngine.setWeights(index2Weight);
 
@@ -275,12 +270,11 @@ public class PrunedQuery extends Query {
                 dsi = results.get(i);
 
                 // check whether this is a pruned index and we need global IDs
-                final long document =  dsi.document;
+                final long document = dsi.document;
                 if (strategy == null) {
                     output.print(document);
-                }
-                else {
-                    long globalID = strategy.globalPointer(0,document);
+                } else {
+                    long globalID = strategy.globalPointer(0, document);
                     output.print(globalID);
                 }
 
@@ -339,7 +333,7 @@ public class PrunedQuery extends Query {
     /**
      * Symbolic names for global metrics
      */
-    public static enum globalPropertyKeys {
+    public enum globalPropertyKeys {
         /**
          * The number of documents in the collection.
          */

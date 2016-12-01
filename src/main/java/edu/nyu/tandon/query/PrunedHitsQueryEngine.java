@@ -205,13 +205,13 @@ public class PrunedHitsQueryEngine<T> extends QueryEngine<T> {
         if (alreadySeen != null)
             while ((document = scorer.nextDocument()) != END_OF_LIST) {
                 if (!alreadySeen.add(document)) continue;
-                if (this.docPrunning && isDocumentPruned(document) == false) continue;
+                if (this.docPrunning && !isDocumentPruned(document)) continue;
                 count++;
                 top.enqueue(document, scorer.score(), getTermIndeces(document));
             }
         else
             while ((document = scorer.nextDocument()) != END_OF_LIST) {
-                if (this.docPrunning && isDocumentPruned(document) == false) continue;
+                if (this.docPrunning && !isDocumentPruned(document)) continue;
                 count++;
                 top.enqueue(document, scorer.score(), getTermIndeces(document));
             }
@@ -246,7 +246,7 @@ public class PrunedHitsQueryEngine<T> extends QueryEngine<T> {
         if (alreadySeen != null)
             while ((document = documentIterator.nextDocument()) != END_OF_LIST) {
                 if (!alreadySeen.add(document)) continue;
-                if (this.docPrunning && isDocumentPruned(document) == false) continue;
+                if (this.docPrunning && !isDocumentPruned(document)) continue;
                 if (count >= offset && count < offset + length) {
                     localResults.add(new DocumentScoreInfo<ObjectArrayList<Byte>>(document, -1, getTermIndeces(document)));
                 }
@@ -254,7 +254,7 @@ public class PrunedHitsQueryEngine<T> extends QueryEngine<T> {
             }
         else if (length != 0)
             while ((document = documentIterator.nextDocument()) != END_OF_LIST) {
-                if (this.docPrunning && isDocumentPruned(document) == false) continue;
+                if (this.docPrunning && !isDocumentPruned(document)) continue;
                 if (count < offset + length && count >= offset)
                     localResults.add(new DocumentScoreInfo<ObjectArrayList<Byte>>(document, -1, getTermIndeces(document)));
                 count++;

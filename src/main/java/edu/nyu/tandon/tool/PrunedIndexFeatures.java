@@ -64,7 +64,6 @@ public class PrunedIndexFeatures {
                 break;
             }
         }
-        return;
     }
 
     private static void loadDocumentPrunedList(final String basename, final int threshod) throws Exception {
@@ -76,7 +75,6 @@ public class PrunedIndexFeatures {
             DocumentList.add(Long.parseLong(line));
             if (n++ > threshod) break;
         }
-        return;
     }
 
     public static void main(String arg[]) throws Exception {
@@ -107,11 +105,10 @@ public class PrunedIndexFeatures {
         Logger LOGGER = LoggerFactory.getLogger(PrunedIndexFeatures.class);
         Scorer scorer = new BM25Scorer();
 
-        final BigList<? extends CharSequence> titleList = (BigList<? extends CharSequence>) (
-                jsapResult.userSpecified("titleFile") ? new FileLinesBigList(jsapResult.getString("titleFile"), "UTF-8") :
-                        null);
+        final BigList<? extends CharSequence> titleList = jsapResult.userSpecified("titleFile") ? new FileLinesBigList(jsapResult.getString("titleFile"), "UTF-8") :
+                null;
 
-        final boolean trecMode = jsapResult.userSpecified("trec") ? true : false;
+        final boolean trecMode = jsapResult.userSpecified("trec");
 
         if (titleList == null && trecMode) {
             System.out.println("Error: title file must be specified when chosing trec mode");

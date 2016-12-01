@@ -330,7 +330,7 @@ public class RawHits {
         queryEngine.setWeights(index2Weight);
         queryEngine.score(new Scorer[]{new BM25Scorer(), new VignaScorer()}, new double[]{1, 1});
 
-        queryEngine.multiplex = jsapResult.userSpecified("moPlex") ? jsapResult.getBoolean("noMplex") : true;
+        queryEngine.multiplex = !jsapResult.userSpecified("moPlex") || jsapResult.getBoolean("noMplex");
         queryEngine.intervalSelector = null;
         queryEngine.equalize(1000);
 

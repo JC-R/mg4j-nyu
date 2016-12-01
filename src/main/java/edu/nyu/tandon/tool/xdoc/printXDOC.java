@@ -28,7 +28,7 @@ public class printXDOC {
 
                 docid = ibs.readLongGamma();
                 pos = ibs.readGamma(); //size
-                terms = ibs.readGamma(); // terms
+                terms = ibs.readGamma(); // unique terms
                 xdoc = Float.intBitsToFloat(ibs.readInt(32)); // xdoc
                 System.out.printf("%d,%d,%d,%e\n", docid, pos, terms, xdoc);
             }

@@ -44,9 +44,7 @@ withColumn("d_len",toDouble($"d_len")).
 withColumn("d_terms",toDouble($"d_terms")).
 withColumn("d_b1",toDouble($"d_b1")).
 withColumn("d_b2",toDouble($"d_b2")).
-withColumn("d_b3",toDouble($"d_b3")).
-withColumn("d_b4",toDouble($"d_b4")).
-withColumn("d_b5",toDouble($"d_b5")).
+withColumn("d_b3",toDouble($"d_b5")).
 withColumn("d_b6",toDouble($"d_b6")).
 withColumn("d_b7",toDouble($"d_b7")).
 withColumn("d_b8",toDouble($"d_b8")).
@@ -74,9 +72,7 @@ withColumn("p_b6",toDouble($"p_b6")).
 withColumn("p_b7",toDouble($"p_b7")).
 withColumn("p_b8",toDouble($"p_b8")).
 withColumn("p_b9",toDouble($"p_b9")).
-withColumn("p_b10",toDouble($"p_b10")).
-withColumn("p_b20",toDouble($"p_b20")).
-withColumn("p_b40",toDouble($"p_b40")).
+withColumn("p_b10",toDouble($"p_b40")).
 withColumn("p_b80",toDouble($"p_b80")).
 withColumn("p_b160",toDouble($"p_b160")).
 withColumn("p_b320",toDouble($"p_b320")).
@@ -90,9 +86,9 @@ withColumn("p_top160",toDouble($"p_top160")).
 withColumn("p_top1k",toDouble($"p_top1k")).
 withColumn("termID",toDouble($"termID")).
 withColumn("docID",toDouble($"docID")).
-map(row => { 
+map(row => {
 	val d = (for (i<-0 to 56) yield row.getDouble(i)).toArray
-	LabeledPoint(0.toDouble, Vectors.dense(d).toSparse) 
+	LabeledPoint(0.toDouble, Vectors.dense(d).toSparse)
 })
 //.repartition(20)
 //.randomSplit(Array(0.6, 0.2, 0.2), seed = 11L)
@@ -104,4 +100,3 @@ map(row => {
 // MLUtils.saveAsLibSVMFile(training,work_dir+model_name+".ph.train.libsvm")
 
 MLUtils.saveAsLibSVMFile(data,work_dir+"gov2-ph-full.libsvm")
-

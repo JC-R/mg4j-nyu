@@ -49,7 +49,7 @@ public class SelectiveDocumentalIndexStrategy implements DocumentalPartitioningS
         for (int i = 0; i < numberOfClusters; i++) {
             globalPointers[i] = new LongBigArrayBigList();
         }
-    };
+    }
 
     @Override
     public long globalPointer(int i, long l) {

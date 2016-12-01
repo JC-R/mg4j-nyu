@@ -77,9 +77,9 @@ public class SelectiveDocumentalIndexStrategyTest extends BaseTest {
 
     @Test
     public void localIndex() {
-        assertAllInTheSameCluster(Arrays.asList(new Long[] { 17l, 29l, 37l, 47l, 55l, 1080l, 1088l, 1089l }));
-        assertAllInTheSameCluster(Arrays.asList(new Long[] { 10l, 22l, 24l, 1055l, 1064l, 1069l }));
-        eachInDifferentCluster(Arrays.asList(new Long[] { 17l, 1l, 6l, 19l, 5l, 8l, 10l, 0l, 14l, 7l, 2l }));
+        assertAllInTheSameCluster(Arrays.asList(17l, 29l, 37l, 47l, 55l, 1080l, 1088l, 1089l));
+        assertAllInTheSameCluster(Arrays.asList(10l, 22l, 24l, 1055l, 1064l, 1069l));
+        eachInDifferentCluster(Arrays.asList(17l, 1l, 6l, 19l, 5l, 8l, 10l, 0l, 14l, 7l, 2l));
     }
 
     public void eachInDifferentCluster(List<Long> globalIds) {

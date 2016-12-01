@@ -688,7 +688,7 @@ public class PrunedPartition {
     /**
      * Symbolic names for global metrics
      */
-    public static enum globalPropertyKeys {
+    public enum globalPropertyKeys {
         /** The number of documents in the collection. */
         G_DOCUMENTS,
         /** The number of terms in the collection. */

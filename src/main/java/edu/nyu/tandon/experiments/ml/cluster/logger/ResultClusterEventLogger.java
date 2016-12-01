@@ -2,9 +2,7 @@ package edu.nyu.tandon.experiments.ml.cluster.logger;
 
 import com.google.common.base.Joiner;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * @author michal.siedlaczek@nyu.edu

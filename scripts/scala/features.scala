@@ -20,7 +20,7 @@ val df_terms = df1.
   withColumn("b5",toInt(df1("C6"))).
   withColumn("b6",toInt(df1("C7"))).
   withColumn("b7",toInt(df1("C8"))).
-  withColumn("b8",toInt(df1("C9"))).
+  withColumn("b8",toInt(df1("C9"))).read training queries posthits
   withColumn("b9",toInt(df1("C10"))).
   withColumn("b10",toInt(df1("C11"))).
   withColumn("b20",toInt(df1("C12"))).
@@ -36,9 +36,7 @@ val df_terms = df1.
 
 // read in index features (created by IndexFeatures)
 val df_index_raw = sqlContext.read.format("com.databricks.spark.csv").option("header", "false").load(work_dir+"gov2-postings.features")
-val df_index = df_index_raw.
-  withColumn("term",toInt(df_index_raw("C0"))).
-  withColumn("doc",toInt(df_index_raw("C1"))).
+val df_index = df_inoInt(df_index_raw("C1"))).
   withColumn("term_freq",toDouble(df_index_raw("C2"))).
   withColumn("doc_term_freq",toDouble(df_index_raw("C3"))).
   withColumn("bm25",toDouble(df_index_raw("C4")))
@@ -180,9 +178,7 @@ val df1 = df.
     "p_top40",
     "p_top80",
     "p_top160",
-    "p_top320",
-    "p_top640",
-    "p_top1280",
+    "p_top320(nullable = true0",
     "d_b1",
     "d_b2",
     "d_b3",
@@ -190,9 +186,6 @@ val df1 = df.
     "d_b5",
     "d_b6",
     "d_b7",
-    "d_b8",
-    "d_b9",
-    "d_b10",
     "d_b20",
     "d_b40",
     "d_b80",
@@ -218,4 +211,3 @@ val df1 = df.
     "top1k")
 
 df.write.parquet(work_dir+"postings_features.parquet")
-

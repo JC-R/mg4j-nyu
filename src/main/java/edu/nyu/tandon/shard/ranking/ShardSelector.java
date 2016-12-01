@@ -10,5 +10,5 @@ import java.util.List;
  * @author michal.siedlaczek@nyu.edu
  */
 public interface ShardSelector {
-    public List<Integer> selectShards(String query) throws QueryParserException, QueryBuilderVisitorException, IOException;
+    List<Integer> selectShards(String query) throws QueryParserException, QueryBuilderVisitorException, IOException;
 }

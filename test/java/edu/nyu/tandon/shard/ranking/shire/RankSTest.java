@@ -26,12 +26,10 @@ public class RankSTest extends BaseTest {
 
         // Given
         RankS ranker = new RankS(loadCSI(), 2);
-        List<Result> results = Arrays.asList(new Result[] {
-                new Result(1, 0.9, 1),
+        List<Result> results = Arrays.asList(new Result(1, 0.9, 1),
                 new Result(2, 0.8, 2),
                 new Result(3, 0.7, 3),
-                new Result(4, 0.6, 4)
-        });
+                new Result(4, 0.6, 4));
 
         // When
         Node actualTopRanked = ranker.transform(results);

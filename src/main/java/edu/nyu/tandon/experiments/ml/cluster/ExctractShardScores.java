@@ -4,8 +4,6 @@ import com.google.common.base.Splitter;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.experiments.ml.cluster.logger.EventLogger;
 import edu.nyu.tandon.experiments.ml.cluster.logger.TimeClusterEventLogger;
-import edu.nyu.tandon.experiments.ml.cluster.logger.EventLogger;
-import edu.nyu.tandon.experiments.ml.cluster.logger.TimeClusterEventLogger;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.shard.csi.CentralSampleIndex;
 import edu.nyu.tandon.shard.ranking.ShardSelector;

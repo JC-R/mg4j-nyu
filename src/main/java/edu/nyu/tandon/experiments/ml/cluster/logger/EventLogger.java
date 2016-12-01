@@ -6,6 +6,7 @@ package edu.nyu.tandon.experiments.ml.cluster.logger;
 public interface EventLogger {
 
     void onStart(long id, int cluster, Iterable<String> query);
+
     void onEnd(long id, int cluster, Iterable<Long> results);
 
 }

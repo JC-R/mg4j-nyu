@@ -24,35 +24,35 @@ public class ShireShardSelectorTest extends BaseTest {
     @Test
     public void traverseOneDocumentTree() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
         Node topRanked = new Document(1);
-        traverseTree(topRanked, Arrays.asList(new Integer[] { 1 }));
+        traverseTree(topRanked, Arrays.asList(1));
     }
 
     @Test
     public void traverseTwoDocumentTree() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
         Node topRanked = new Document(1);
         Node root = new Intermediate(topRanked, new Document(2));
-        traverseTree(topRanked, Arrays.asList(new Integer[] { 1, 2 }));
+        traverseTree(topRanked, Arrays.asList(1, 2));
     }
 
     @Test
     public void traverseThreeDocumentTree() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
         Node topRanked = new Document(1);
         Node root = new Intermediate(new Intermediate(topRanked, new Document(2)), new Document(3));
-        traverseTree(topRanked, Arrays.asList(new Integer[] { 1, 2, 3 }));
+        traverseTree(topRanked, Arrays.asList(1, 2, 3));
     }
 
     @Test
     public void traverseTreeWithSecondBetter() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
         Node topRanked = new Document(1);
         Node root = new Intermediate(new Intermediate(topRanked, new Document(2)), new Document(2));
-        traverseTree(topRanked, Arrays.asList(new Integer[] { 2, 1 }));
+        traverseTree(topRanked, Arrays.asList(2, 1));
     }
 
     @Test
     public void traverseTreeWithCutoff() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
         Node topRanked = new Document(1, 1.);
         Node root = new Intermediate(topRanked, new Document(2, .0001));
-        traverseTree(topRanked, Arrays.asList(new Integer[] { 1 }));
+        traverseTree(topRanked, Arrays.asList(1));
     }
 
     public void traverseTree(Node topRanked, List<Integer> expected) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {

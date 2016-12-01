@@ -1,8 +1,6 @@
 package edu.nyu.tandon.experiments.ml.cluster.logger;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * @author michal.siedlaczek@nyu.edu

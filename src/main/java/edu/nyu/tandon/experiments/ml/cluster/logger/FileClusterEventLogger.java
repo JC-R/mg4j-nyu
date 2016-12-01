@@ -3,7 +3,9 @@ package edu.nyu.tandon.experiments.ml.cluster.logger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * @author michal.siedlaczek@nyu.edu

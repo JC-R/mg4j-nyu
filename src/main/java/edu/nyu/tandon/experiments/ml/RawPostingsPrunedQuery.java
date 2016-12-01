@@ -3,20 +3,18 @@ package edu.nyu.tandon.experiments.ml;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.index.cluster.PostingPruningStrategy;
 import edu.nyu.tandon.query.PrunedHitsQueryEngine;
-
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import it.unimi.di.big.mg4j.document.AbstractDocumentSequence;
-import it.unimi.di.big.mg4j.document.Document;
 import it.unimi.di.big.mg4j.document.DocumentCollection;
-import it.unimi.di.big.mg4j.document.DocumentFactory;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
-import it.unimi.di.big.mg4j.query.*;
+import it.unimi.di.big.mg4j.query.IntervalSelector;
+import it.unimi.di.big.mg4j.query.Marker;
+import it.unimi.di.big.mg4j.query.TextMarker;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.di.big.mg4j.query.parser.SimpleParser;
 import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
-import it.unimi.di.big.mg4j.search.score.BM25Scorer;
 import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
 import it.unimi.di.big.mg4j.search.score.Scorer;
 import it.unimi.di.big.mg4j.search.score.VignaScorer;
@@ -28,13 +26,13 @@ import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.lang.ObjectParser;
 import it.unimi.dsi.sux4j.io.FileLinesBigList;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 // TODO: this entire code does not track multiple indeces
 
@@ -316,7 +314,7 @@ public class RawPostingsPrunedQuery extends Query {
     /**
      * Symbolic names for global metrics
      */
-    public static enum globalPropertyKeys {
+    public enum globalPropertyKeys {
         /**
          * The number of documents in the collection.
          */

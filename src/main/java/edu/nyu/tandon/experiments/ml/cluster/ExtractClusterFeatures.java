@@ -8,7 +8,6 @@ import edu.nyu.tandon.experiments.ml.cluster.logger.EventLogger;
 import edu.nyu.tandon.experiments.ml.cluster.logger.FileClusterEventLogger;
 import edu.nyu.tandon.experiments.ml.cluster.logger.ResultClusterEventLogger;
 import edu.nyu.tandon.experiments.ml.cluster.logger.TimeClusterEventLogger;
-import edu.nyu.tandon.experiments.ml.cluster.logger.EventLogger;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.query.QueryEngine;
 import edu.nyu.tandon.search.score.BM25PrunedScorer;
@@ -27,21 +26,16 @@ import org.slf4j.LoggerFactory;
 import org.spark_project.guava.collect.Lists;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static edu.nyu.tandon.query.Query.MAX_STEMMING;
-import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.*;
-import static it.unimi.dsi.fastutil.io.BinIO.loadLongs;
+import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.loadGlobalFrequencies;
+import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.loadGlobalStats;
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -72,7 +66,7 @@ public class ExtractClusterFeatures {
         if (jsap.messagePrinted()) return;
 
         String basename = jsapResult.getString("basename");
-        String[] basenameWeight = new String[] { basename };
+        String[] basenameWeight = new String[]{basename};
 
         final Object2ReferenceLinkedOpenHashMap<String, Index> indexMap = new Object2ReferenceLinkedOpenHashMap<>(Hash.DEFAULT_INITIAL_SIZE, .5f);
         final Reference2DoubleOpenHashMap<Index> index2Weight = new Reference2DoubleOpenHashMap<>();
@@ -157,7 +151,7 @@ public class ExtractClusterFeatures {
             eventLoggers.add(new ResultClusterEventLogger(jsapResult.getString("resultOutput")));
         }
 
-        try(BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
             long id = 0;
             for (String query; (query = br.readLine()) != null; ) {
 
@@ -184,8 +178,9 @@ public class ExtractClusterFeatures {
                     LOGGER.error(String.format("There was an error while processing query: %s", query), e);
                 }
 
-                for (EventLogger l : eventLoggers) l.onEnd(id, cluster,
-                        r.stream().map(dsi -> dsi.document).collect(Collectors.toList()));
+                for (EventLogger l : eventLoggers)
+                    l.onEnd(id, cluster,
+                            r.stream().map(dsi -> dsi.document).collect(Collectors.toList()));
                 id++;
 
             }

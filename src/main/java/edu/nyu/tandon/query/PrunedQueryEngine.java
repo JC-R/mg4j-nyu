@@ -109,13 +109,13 @@ public class PrunedQueryEngine<T> extends QueryEngine<T> {
         if (alreadySeen != null)
             while ((document = scorer.nextDocument()) != END_OF_LIST) {
                 if (!alreadySeen.add(document)) continue;
-                if (this.docPrunning && isDocumentPruned(document)==false) continue;
+                if (this.docPrunning && !isDocumentPruned(document)) continue;
                 count++;
                 top.enqueue(document, scorer.score());
             }
         else
             while ((document = scorer.nextDocument()) != END_OF_LIST) {
-                if (this.docPrunning && isDocumentPruned(document)==false) continue;
+                if (this.docPrunning && !isDocumentPruned(document)) continue;
                 count++;
                 double s = scorer.score();
                 top.enqueue(document, s);
@@ -147,13 +147,13 @@ public class PrunedQueryEngine<T> extends QueryEngine<T> {
         if (alreadySeen != null)
             while ((document = documentIterator.nextDocument()) != END_OF_LIST) {
                 if (!alreadySeen.add(document)) continue;
-                if (this.docPrunning && isDocumentPruned(document) == false) continue;
+                if (this.docPrunning && !isDocumentPruned(document)) continue;
                 if (count >= offset && count < offset + length) results.add(new DocumentScoreInfo<T>(document, -1));
                 count++;
             }
         else if (length != 0)
             while ((document = documentIterator.nextDocument()) != END_OF_LIST) {
-                if (this.docPrunning && isDocumentPruned(document) == false) continue;
+                if (this.docPrunning && !isDocumentPruned(document)) continue;
                 if (count < offset + length && count >= offset) results.add(new DocumentScoreInfo<T>(document, -1));
                 count++;
             }
