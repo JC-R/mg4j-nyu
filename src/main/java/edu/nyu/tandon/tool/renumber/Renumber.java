@@ -2,6 +2,7 @@ package edu.nyu.tandon.tool.renumber;
 
 import com.google.common.math.DoubleMath;
 import com.martiansoftware.jsap.*;
+import edu.nyu.tandon.utils.Utils;
 import it.unimi.di.big.mg4j.index.*;
 import it.unimi.di.big.mg4j.index.payload.Payload;
 import it.unimi.di.big.mg4j.io.IOFactory;
@@ -249,22 +250,11 @@ public class Renumber {
             if (binary) {
                 mapping = new LongBigArrayBigList(loadLongsBig(mapFile));
             } else {
-                mapping = readMapping(mapFile, index.numberOfDocuments);
+                mapping = Utils.readMapping(mapFile, index.numberOfDocuments);
             }
         } catch (IOException e) {
             throw new RuntimeException("Error while reading mapping", e);
         }
-    }
-
-    private LongBigArrayBigList readMapping(String file, long numberOfDocuments) throws IOException {
-        LongBigArrayBigList ints = new LongBigArrayBigList();
-        ints.size(numberOfDocuments);
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            for (int i = 0; i < numberOfDocuments; i++) {
-                ints.set(i, valueOf(reader.readLine()));
-            }
-        }
-        return ints;
     }
 
     private static class Posting {

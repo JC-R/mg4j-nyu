@@ -9,9 +9,13 @@ import it.unimi.di.big.mg4j.query.parser.SimpleParser;
 import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
 import it.unimi.di.big.mg4j.search.score.BM25Scorer;
 import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.longs.LongBigArrayBigList;
 import it.unimi.dsi.fastutil.objects.*;
 import org.apache.commons.configuration.ConfigurationException;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
@@ -20,6 +24,7 @@ import java.util.Random;
 import static edu.nyu.tandon.query.Query.MAX_STEMMING;
 import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.loadGlobalFrequencies;
 import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.loadGlobalStats;
+import static java.lang.Integer.valueOf;
 
 /**
  * Created by RodriguJ on 6/11/2015.
@@ -79,5 +84,28 @@ public class Utils {
         engine.score(scorer);
 
         return engine;
+    }
+
+    public static LongBigArrayBigList readMapping(String file, long numberOfDocuments) throws IOException {
+        LongBigArrayBigList ints = new LongBigArrayBigList();
+        ints.size(numberOfDocuments);
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            for (int i = 0; i < numberOfDocuments; i++) {
+                ints.set(i, valueOf(reader.readLine()));
+            }
+        }
+        return ints;
+    }
+
+    public static LongBigArrayBigList readMapping(File file) throws IOException {
+        LongBigArrayBigList ints = new LongBigArrayBigList();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String val;
+            long id = 0;
+            while ((val = reader.readLine()) != null) {
+                ints.set(id++, valueOf(val));
+            }
+        }
+        return ints;
     }
 }

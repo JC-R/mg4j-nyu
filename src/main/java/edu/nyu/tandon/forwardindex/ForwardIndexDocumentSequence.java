@@ -1,19 +1,20 @@
 package edu.nyu.tandon.forwardindex;
 
 import edu.nyu.tandon.forwardindex.ForwardIndex.TermMap;
+import edu.nyu.tandon.utils.Utils;
 import it.unimi.di.big.mg4j.document.Document;
 import it.unimi.di.big.mg4j.document.*;
 import it.unimi.dsi.big.util.ImmutableExternalPrefixMap;
+import it.unimi.dsi.big.util.PrefixMapHelper;
+import it.unimi.dsi.fastutil.io.BinIO;
+import it.unimi.dsi.fastutil.longs.LongBigArrayBigList;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.apache.commons.configuration.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
@@ -28,20 +29,13 @@ public class ForwardIndexDocumentSequence implements DocumentSequence {
 
     protected IdentityDocumentFactory factory;
     protected ForwardIndexIterator forwardIndexIterator;
-    protected HashMap<Integer, String> termMap;
-    protected ImmutableExternalPrefixMap map;
+    protected LongBigArrayBigList term2rank;
+    protected ImmutableExternalPrefixMap termMap;
 
-    public ForwardIndexDocumentSequence(ForwardIndex forwardIndex) throws ConfigurationException, IOException {
+    public ForwardIndexDocumentSequence(ForwardIndex forwardIndex, File termMapFile) throws ConfigurationException, IOException, ClassNotFoundException {
         forwardIndexIterator = forwardIndex.getReader().getIterator();
-        termMap = new HashMap<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(forwardIndex.termMapFile))) {
-            String term;
-            int i = 0;
-            while ((term = reader.readLine()) != null) {
-                if (i % 100000 == 0) LOGGER.info(String.format("Loaded %9d ", i));
-                termMap.put(i++, term);
-            }
-        }
+        term2rank = Utils.readMapping(forwardIndex.termMapFile);
+        termMap = (ImmutableExternalPrefixMap) BinIO.loadObject(termMapFile);
         factory = new IdentityDocumentFactory();
     }
 
@@ -56,7 +50,7 @@ public class ForwardIndexDocumentSequence implements DocumentSequence {
                 metadata.put(PropertyBasedDocumentFactory.MetadataKeys.ENCODING, StandardCharsets.UTF_8.name());
                 StringBuilder builder = new StringBuilder();
                 for (Long termId : doc) {
-                    builder.append(termMap.get(termId.intValue())).append(" ");
+                    builder.append(PrefixMapHelper.getTerm(termMap, (int) term2rank.getLong(termId))).append(" ");
                 }
                 return factory.getDocument(new ByteArrayInputStream(builder.toString().getBytes(StandardCharsets.UTF_8)),
                         metadata);
