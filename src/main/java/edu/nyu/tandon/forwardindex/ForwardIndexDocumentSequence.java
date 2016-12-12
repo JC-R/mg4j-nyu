@@ -1,31 +1,47 @@
 package edu.nyu.tandon.forwardindex;
 
-import com.google.common.base.Charsets;
 import edu.nyu.tandon.forwardindex.ForwardIndex.TermMap;
-import it.unimi.di.big.mg4j.document.*;
 import it.unimi.di.big.mg4j.document.Document;
+import it.unimi.di.big.mg4j.document.*;
+import it.unimi.dsi.big.util.ImmutableExternalPrefixMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
-import it.unimi.dsi.io.WordReader;
-import it.unimi.dsi.util.Properties;
 import org.apache.commons.configuration.ConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
 /**
  * @author michal.siedlaczek@nyu.edu
  */
 public class ForwardIndexDocumentSequence implements DocumentSequence {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(ForwardIndexDocumentSequence.class);
+
     protected static final int DEFAULT_CAPACITY = 10000;
 
     protected IdentityDocumentFactory factory;
     protected ForwardIndexIterator forwardIndexIterator;
-    protected TermMap termMap;
+    protected HashMap<Integer, String> termMap;
+    protected ImmutableExternalPrefixMap map;
 
     public ForwardIndexDocumentSequence(ForwardIndex forwardIndex) throws ConfigurationException, IOException {
         forwardIndexIterator = forwardIndex.getReader().getIterator();
-        termMap = forwardIndex.getTermMap(DEFAULT_CAPACITY);
+        termMap = new HashMap<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(forwardIndex.termMapFile))) {
+            String term;
+            int i = 0;
+            while ((term = reader.readLine()) != null) {
+                if (i % 100000 == 0) LOGGER.info(String.format("Loaded %9d ", i));
+                termMap.put(i++, term);
+            }
+        }
         factory = new IdentityDocumentFactory();
     }
 
@@ -37,12 +53,12 @@ public class ForwardIndexDocumentSequence implements DocumentSequence {
                 Reference2ObjectMap<Enum<?>,Object> metadata = new Reference2ObjectOpenHashMap<>();
                 edu.nyu.tandon.forwardindex.Document doc = forwardIndexIterator.next();
                 metadata.put(PropertyBasedDocumentFactory.MetadataKeys.TITLE, doc.getMetadata().getTitle());
-                metadata.put(PropertyBasedDocumentFactory.MetadataKeys.ENCODING, Charsets.UTF_8);
+                metadata.put(PropertyBasedDocumentFactory.MetadataKeys.ENCODING, StandardCharsets.UTF_8.name());
                 StringBuilder builder = new StringBuilder();
                 for (Long termId : doc) {
-                    builder.append(termMap.get(termId)).append(" ");
+                    builder.append(termMap.get(termId.intValue())).append(" ");
                 }
-                return factory.getDocument(new ByteArrayInputStream(builder.toString().getBytes(Charsets.UTF_8)),
+                return factory.getDocument(new ByteArrayInputStream(builder.toString().getBytes(StandardCharsets.UTF_8)),
                         metadata);
             }
 
