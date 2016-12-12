@@ -340,6 +340,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="Maven: edu.nyu.tandon:index-utils:1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.github.scopt:scopt_2.10:3.5.0" level="project" />
     <orderEntry type="library" name="Maven: org.scalatest:scalatest_2.10:2.2.6" level="project" />
     <orderEntry type="library" name="Maven: org.scala-lang:scala-reflect:2.10.6" level="project" />
