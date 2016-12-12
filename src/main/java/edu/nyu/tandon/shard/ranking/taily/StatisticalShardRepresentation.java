@@ -6,7 +6,8 @@ import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.IndexAccessHelper;
 import it.unimi.di.big.mg4j.index.IndexIterator;
 import it.unimi.di.big.mg4j.index.IndexReader;
-import it.unimi.dsi.fastutil.longs.LongBigArrayBigList;
+import it.unimi.di.big.mg4j.index.cluster.ClusterAccessHelper;
+import it.unimi.di.big.mg4j.index.cluster.DocumentalMergedCluster;
 import org.apache.commons.configuration.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +18,6 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.loadGlobalOccurrencies;
-import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.loadGlobalStats;
 import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
 
 /**
@@ -26,9 +25,7 @@ import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
  */
 public class StatisticalShardRepresentation {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(StatisticalShardRepresentation.class);
-
-    public static class Term {
+    public class Term {
         public double expectedValue;
         public double variance;
         public double minValue;
@@ -40,10 +37,95 @@ public class StatisticalShardRepresentation {
         }
     }
 
-    protected interface TermIterator extends Iterator<Term> {
+    public interface TermIterator extends Iterator<Term> {
         Term skip(long n) throws IOException;
         void close() throws IOException;
     }
+
+    public class ClusterTermIterator implements TermIterator {
+
+        private DocumentalMergedCluster index;
+        private IndexReader[] shardReaders;
+
+        public ClusterTermIterator(DocumentalMergedCluster index) throws IOException {
+            this.index = index;
+            Index[] shards = ClusterAccessHelper.getLocalIndices(index);
+            IndexReader[] shardReaders = new IndexReader[shards.length];
+            for (int i = 0; i < shards.length; i++) shardReaders[i] = shards[i].getReader();
+        }
+
+        @Override
+        public Term skip(long n) throws IOException {
+            return null;
+        }
+
+        @Override
+        public void close() throws IOException {
+            for (int i = 0; i < shardReaders.length; i++) shardReaders[i].close();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return false;
+//                return remainingTerms > 0;
+        }
+
+        @Override
+        public Term next() {
+            return null;
+        }
+
+    }
+
+    public class SingleIndexTermIterator implements TermIterator {
+
+        private IndexReader indexReader;
+        private IndexIterator iterator;
+
+        public SingleIndexTermIterator(Index index) throws IOException {
+            indexReader = index.getReader();
+            iterator =  indexReader.nextIterator();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return iterator != null;
+        }
+
+        @Override
+        public Term next() {
+            if (iterator == null) return null;
+            try {
+                Term next = termStats(iterator);
+                bufferNext();
+                return next;
+            } catch (IOException e) {
+                throw new RuntimeException(String.format("Error while calculating stats of term: %s",
+                        iterator.term()), e);
+            }
+        }
+
+        @Override
+        public Term skip(long n) throws IOException {
+            for (long i = 0; i < n; i++) bufferNext();
+            return next();
+        }
+
+        @Override
+        public void close() throws IOException {
+            indexReader.close();
+        }
+
+        private void bufferNext() throws IOException {
+            if (iterator != null) {
+                iterator = indexReader.nextIterator();
+                if (iterator == null) indexReader.close();
+            }
+        }
+
+    }
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(StatisticalShardRepresentation.class);
 
     private static final String EXPECTED_V_SUFFIX = ".exp";
     private static final String VARIANCE_SUFFIX = ".var";
@@ -56,20 +138,9 @@ public class StatisticalShardRepresentation {
 
     private String basename;
 
-//    private boolean useGlobalStatistics = false;
-//    private LongBigArrayBigList globalOccurrencies;
-//    private long globalCollectionSize;
-
     public StatisticalShardRepresentation(String basename) {
         this.basename = basename;
     }
-
-//    public StatisticalShardRepresentation withGlobalMetrics(long collectionSize, final LongBigArrayBigList occurrencies) {
-//        this.useGlobalStatistics = true;
-//        this.globalCollectionSize = collectionSize;
-//        this.globalOccurrencies = occurrencies;
-//        return this;
-//    }
 
     protected TermIterator calc() throws IllegalAccessException, URISyntaxException, IOException, InstantiationException, NoSuchMethodException, ConfigurationException, InvocationTargetException, ClassNotFoundException {
         return calc(2500);
@@ -77,61 +148,21 @@ public class StatisticalShardRepresentation {
 
     protected TermIterator calc(double mu) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
         this.mu = mu;
-        return new TermIterator() {
-
-            private IndexReader indexReader = Index.getInstance(basename, true, true).getReader();
-            private IndexIterator iterator = indexReader.nextIterator();
-
-            @Override
-            public boolean hasNext() {
-                return iterator != null;
-            }
-
-            @Override
-            public Term next() {
-                if (iterator == null) return null;
-                try {
-                    Term next = termStats(iterator);
-                    bufferNext();
-                    return next;
-                } catch (IOException e) {
-                    throw new RuntimeException(String.format("Error while calculating stats of term: %s",
-                            iterator.term()), e);
-                }
-            }
-
-            @Override
-            public Term skip(long n) throws IOException {
-                for (long i = 0; i < n; i++) bufferNext();
-                return next();
-            }
-
-            @Override
-            public void close() throws IOException {
-                indexReader.close();
-            }
-
-            private void bufferNext() throws IOException {
-                if (iterator != null) {
-                    iterator = indexReader.nextIterator();
-                    if (iterator == null) indexReader.close();
-                }
-            }
-        };
+        Index index = Index.getInstance(basename, true, true);
+        if (index instanceof DocumentalMergedCluster) {
+            return new ClusterTermIterator((DocumentalMergedCluster) index);
+        }
+        else {
+            return new SingleIndexTermIterator(index);
+        }
     }
 
     protected long occurrency(IndexIterator indexIterator) throws IOException {
         return IndexAccessHelper.getOccurrency(indexIterator);
-//        return useGlobalStatistics
-//                ? globalOccurrencies.getLong(indexIterator.termNumber())
-//                : IndexAccessHelper.getOccurrency(indexIterator);
     }
 
     protected long collectionSize(IndexIterator indexIterator) throws IOException {
         return indexIterator.index().numberOfPostings;
-//        return useGlobalStatistics
-//                ? globalCollectionSize
-//                : indexIterator.index().numberOfPostings;
     }
 
     protected long documentSize(IndexIterator indexIterator) {
@@ -243,7 +274,6 @@ public class StatisticalShardRepresentation {
 
         SimpleJSAP jsap = new SimpleJSAP(Query.class.getName(), ".",
                 new Parameter[]{
-//                        new Switch("globalStatistics", 'g', "global-statistics", "Whether to use global statistics. Note that they need to be calculated: see ClusterGlobalStatistics."),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index.")
                 });
 
