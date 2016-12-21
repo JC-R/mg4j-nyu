@@ -3,12 +3,14 @@ package edu.nyu.tandon.shard.ranking.taily;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import edu.nyu.tandon.shard.ranking.ShardSelector;
+import it.unimi.di.big.mg4j.index.DiskBasedIndex;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
 import it.unimi.di.big.mg4j.index.cluster.ClusterAccessHelper;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalMergedCluster;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
+import it.unimi.dsi.big.util.StringMap;
 import it.unimi.dsi.lang.MutableString;
 import org.apache.commons.configuration.ConfigurationException;
 
@@ -30,7 +32,6 @@ public class TailyShardSelector implements ShardSelector {
     private List<TailyShardEvaluator> shardEvaluators;
     private TailyShardEvaluator fullEvaluator;
     private StatisticalShardRepresentation fullRepresentation;
-//    private DocumentalMergedCluster fullIndex;
 
     private int nc = 400;
     private int v = 50;
@@ -40,11 +41,15 @@ public class TailyShardSelector implements ShardSelector {
         DocumentalMergedCluster fullIndex = (DocumentalMergedCluster) Index.getInstance(basename, true, true, true);
         Index[] shards = ClusterAccessHelper.getLocalIndices(fullIndex);
         fullRepresentation = new StatisticalShardRepresentation(basename);
-        fullEvaluator = new TailyShardEvaluator(fullIndex, fullRepresentation);
+        StringMap<? extends CharSequence> termMap = DiskBasedIndex.loadStringMap(basename + DiskBasedIndex.TERMMAP_EXTENSION);
+        if (termMap == null) {
+            throw new IllegalArgumentException("the cluster has to have term map provided");
+        }
         for (int shardId = 0; shardId < shardCount; shardId++) {
             String shardBasename = String.format("%s-%d", basename, shardId);
             shardEvaluators.add(new TailyShardEvaluator(shards[shardId], new StatisticalShardRepresentation(shardBasename)));
         }
+        fullEvaluator = new TailyFullEvaluator(fullIndex, fullRepresentation, shardEvaluators, termMap);
         termProcessor = fullIndex.termProcessor;
     }
 

@@ -10,7 +10,7 @@
 basename=$1
 if [ -z "${basename}" ]; then echo "You have to define cluster basename (1)."; exit 1; fi;
 
-ls ${dir}/*-*titles | while read file;
+ls "${basename}*-*titles" | while read file;
 do
         number=`basename ${file} | sed "s/.*-//" | sed "s/\..*//"`
         java -cp "${MG4J_NYU_CLASSPATH}" edu.nyu.tandon.shard.ranking.taily.StatisticalShardRepresentation "${basename}-${number}"

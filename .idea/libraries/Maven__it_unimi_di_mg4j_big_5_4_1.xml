@@ -17,6 +17,9 @@
       <root url="jar://$USER_HOME$/Downloads/mg4j-big-5.4.1-sources.jar!/slow" />
       <root url="jar://$USER_HOME$/Downloads/mg4j-big-5.4.1-sources.jar!/src" />
       <root url="jar://$USER_HOME$/Downloads/mg4j-big-5.4.1-sources.jar!/test" />
+      <root url="file://$USER_HOME$/builds/mg4j-big-5.4.3/slow" />
+      <root url="file://$USER_HOME$/builds/mg4j-big-5.4.3/src" />
+      <root url="file://$USER_HOME$/builds/mg4j-big-5.4.3/test" />
     </SOURCES>
   </library>
 </component>
