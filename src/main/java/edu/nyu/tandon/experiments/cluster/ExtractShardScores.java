@@ -14,10 +14,7 @@ import it.unimi.di.big.mg4j.search.score.Scorer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Map;
 
 /**
@@ -37,6 +34,30 @@ public class ExtractShardScores {
         if ("bm25".equals(name)) return new BM25PrunedScorer();
         else if ("ql".equals(name)) return new QueryLikelihoodScorer();
         else throw new IllegalArgumentException("You need to define a proper scorer: bm25, ql");
+    }
+
+    public static void run(File input, FileWriter[] writers, ShardSelector shardSelector) throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader(input))) {
+            for (String query; (query = br.readLine()) != null; ) {
+                try {
+                    Map<Integer, Double> shardScores = shardSelector.shardScores(query);
+                    for (int i = 0; i < writers.length; i++) {
+                        writers[i].append(shardScores.getOrDefault(i, 0.0).toString())
+                                .append("\n");
+                    }
+                } catch (QueryParserException | QueryBuilderVisitorException | IOException e) {
+                    throw new RuntimeException(String.format("There was an error while processing query: %s", query), e);
+                }
+            }
+        } finally {
+            for (int i = 0; i < writers.length; i++) {
+                try {
+                    writers[i].close();
+                } catch (IOException e) {
+                    LOGGER.error(String.format("Couldn't close writer for shard %d", i));
+                }
+            }
+        }
     }
 
     public static void main(String[] args) throws Exception {
@@ -78,28 +99,7 @@ public class ExtractShardScores {
                 writers[i] =
                         new FileWriter(jsapResult.getString("output") + "#" + i + "." + jsapResult.getString("selector") + "." + L);
 
-            try (BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
-                for (String query; (query = br.readLine()) != null; ) {
-                    try {
-                        Map<Integer, Double> shardScores = shardSelector.shardScores(query);
-                        for (int i = 0; i < clusters; i++) {
-                            writers[i]
-                                    .append(shardScores.getOrDefault(i, 0.0).toString())
-                                    .append("\n");
-                        }
-                    } catch (QueryParserException | QueryBuilderVisitorException | IOException e) {
-                        LOGGER.error(String.format("There was an error while processing query: %s", query), e);
-                        throw e;
-                    }
-                }
-            } finally {
-                for (int i = 0; i < clusters; i++)
-                    try {
-                        writers[i].close();
-                    } catch (IOException e) {
-                        LOGGER.error(String.format("Couldn't close writer for shard %d", i));
-                    }
-            }
+            run(new File(jsapResult.getString("input")), writers, shardSelector);
         }
     }
 

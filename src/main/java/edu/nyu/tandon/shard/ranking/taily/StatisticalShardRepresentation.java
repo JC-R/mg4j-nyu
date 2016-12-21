@@ -2,6 +2,7 @@ package edu.nyu.tandon.shard.ranking.taily;
 
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.query.Query;
+import edu.nyu.tandon.utils.LineIterator;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.IndexAccessHelper;
 import it.unimi.di.big.mg4j.index.IndexIterator;
@@ -15,8 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.*;
 
 import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
 
@@ -44,35 +44,102 @@ public class StatisticalShardRepresentation {
 
     public class ClusterTermIterator implements TermIterator {
 
-        private DocumentalMergedCluster index;
-        private IndexReader[] shardReaders;
+        protected IndexReader[] shardReaders;
+        protected LineIterator[] termIterators;
+        protected IndexIterator[] shardIterators;
+        protected String[] currentTerms;
+        protected int shardCount;
+        protected String nextTerm;
 
-        public ClusterTermIterator(DocumentalMergedCluster index) throws IOException {
-            this.index = index;
+        public ClusterTermIterator(DocumentalMergedCluster index, String basename) throws IOException {
             Index[] shards = ClusterAccessHelper.getLocalIndices(index);
-            IndexReader[] shardReaders = new IndexReader[shards.length];
-            for (int i = 0; i < shards.length; i++) shardReaders[i] = shards[i].getReader();
+            shardReaders = new IndexReader[shards.length];
+            shardIterators = new IndexIterator[shards.length];
+            termIterators = new LineIterator[shards.length];
+            currentTerms = new String[shards.length];
+            shardCount = shardReaders.length;
+            for (int i = 0; i < shards.length; i++) {
+                shardReaders[i] = shards[i].getReader();
+                termIterators[i] = LineIterator.fromFile(String.format("%s-%d.terms", basename, i));
+            }
+            ge("");
+        }
+
+        protected void bufferNext(int i) throws IOException {
+            shardIterators[i] = shardReaders[i].nextIterator();
+            currentTerms[i] = termIterators[i].next();
+        }
+
+        protected String ge(int i, String term) throws IOException {
+            assert term != null;
+            if (shardIterators[i] == null) bufferNext(i);
+            while (shardIterators[i] != null && currentTerms[i].compareTo(term) < 0) {
+                bufferNext(i);
+            }
+            return currentTerms[i];
+        }
+
+        /**
+         *
+         * @param term the term we want to process next
+         * @return a list of shards that have <code>term</code> at the pointer after execution
+         * @throws IOException
+         */
+        protected List<Integer> ge(String term) throws IOException {
+            List<Integer> shards = new ArrayList<>(shardCount);
+            nextTerm = null;
+            for (int i = 0; i < shardCount; i++) {
+                String shardTerm = ge(i, term);
+                if (shardTerm != null && shardTerm.equals(term)) {
+                    shards.add(i);
+                }
+                else {
+                    nextTerm = min(nextTerm, shardTerm);
+                }
+            }
+            return shards;
+        }
+
+        protected String min(String s1, String s2) {
+            if (s1 == null) return s2;
+            if (s2 == null) return s1;
+            if (s1.compareTo(s2) <= 0) return s1;
+            return s2;
         }
 
         @Override
         public Term skip(long n) throws IOException {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public void close() throws IOException {
-            for (int i = 0; i < shardReaders.length; i++) shardReaders[i].close();
+            for (IndexReader shardReader : shardReaders) shardReader.close();
+            for (LineIterator termIterator : termIterators) termIterator.close();
         }
 
         @Override
         public boolean hasNext() {
-            return false;
-//                return remainingTerms > 0;
+            return nextTerm != null;
         }
 
         @Override
         public Term next() {
-            return null;
+            try {
+                String currentTerm = nextTerm;
+                List<Integer> shards = ge(currentTerm);
+                IndexIterator[] ii = new IndexIterator[shards.size()];
+                for (int i = 0; i < shards.size(); i++) ii[i] = shardIterators[shards.get(i)];
+                Term t = termStats(ii);
+                for (Integer i : shards) {
+                    String shardTerm = ge(i, currentTerm + Character.MIN_VALUE);
+                    nextTerm = min(nextTerm, shardTerm);
+                }
+                return t;
+            } catch (IOException e) {
+                throw new RuntimeException(String.format("Error while calculating stats of term: %s",
+                        nextTerm), e);
+            }
         }
 
     }
@@ -150,7 +217,7 @@ public class StatisticalShardRepresentation {
         this.mu = mu;
         Index index = Index.getInstance(basename, true, true);
         if (index instanceof DocumentalMergedCluster) {
-            return new ClusterTermIterator((DocumentalMergedCluster) index);
+            return new ClusterTermIterator((DocumentalMergedCluster) index, basename);
         }
         else {
             return new SingleIndexTermIterator(index);
@@ -171,18 +238,25 @@ public class StatisticalShardRepresentation {
     }
 
     protected Term termStats(IndexIterator indexIterator) throws IOException {
+        return termStats(new IndexIterator[] {indexIterator});
+    }
+
+    protected Term termStats(IndexIterator[] indexIterators) throws IOException {
         double sum = 0;
         double sumOfSquares = 0;
-        double frequency = indexIterator.frequency();
+        double frequency = 0;
         double minValue = 0;
-        while (indexIterator.nextDocument() != END_OF_LIST) {
-            double prior = (double) occurrency(indexIterator) / collectionSize(indexIterator);
-            double numerator = (double) indexIterator.count() + mu * prior;
-            double denominator = (double) documentSize(indexIterator) + mu;
-            double score = Math.log(numerator) - Math.log(denominator);
-            minValue = Math.min(minValue, score);
-            sum += score;
-            sumOfSquares += score * score;
+        for (IndexIterator indexIterator : indexIterators) {
+            frequency += indexIterator.frequency();
+            while (indexIterator.nextDocument() != END_OF_LIST) {
+                double prior = (double) occurrency(indexIterator) / collectionSize(indexIterator);
+                double numerator = (double) indexIterator.count() + mu * prior;
+                double denominator = (double) documentSize(indexIterator) + mu;
+                double score = Math.log(numerator) - Math.log(denominator);
+                minValue = Math.min(minValue, score);
+                sum += score;
+                sumOfSquares += score * score;
+            }
         }
         double expectedValue = sum / frequency;
         double expectedSquaredValue = sumOfSquares / frequency;

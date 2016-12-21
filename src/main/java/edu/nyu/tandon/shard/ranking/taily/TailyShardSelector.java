@@ -30,6 +30,8 @@ public class TailyShardSelector implements ShardSelector {
     private String basename;
     private TermProcessor termProcessor = new EnglishStemmer();
     private List<TailyShardEvaluator> shardEvaluators;
+    private TailyShardEvaluator fullEvaluator;
+    private StatisticalShardRepresentation fullRepresentation;
     private DocumentalMergedCluster fullIndex;
 
     private int nc = 400;
@@ -40,6 +42,8 @@ public class TailyShardSelector implements ShardSelector {
         shardEvaluators = new ArrayList<>();
         fullIndex = (DocumentalMergedCluster) Index.getInstance(basename);
         Index[] shards = ClusterAccessHelper.getLocalIndices(fullIndex);
+        fullRepresentation = new StatisticalShardRepresentation(basename);
+        fullEvaluator = new TailyShardEvaluator(fullIndex, fullRepresentation);
         for (int shardId = 0; shardId < shardCount; shardId++) {
             String shardBasename = String.format("%s-%d", basename, shardId);
             shardEvaluators.add(new TailyShardEvaluator(shards[shardId], new StatisticalShardRepresentation(shardBasename)));
@@ -86,10 +90,14 @@ public class TailyShardSelector implements ShardSelector {
     public Map<Integer, Double> shardScores(String query) throws QueryParserException, QueryBuilderVisitorException, IOException {
         Map<Integer, Double> scores = new HashMap<>();
         List<String> terms = processedTerms(query);
-        double pc = nc / all(terms);
-        // TODO: compute E and var for corpus
-        double kc = 0.0;
-        double sc = TailyShardEvaluator.invRegularizedGammaQ(kc, pc);
+        double pc = nc / fullEvaluator.all(terms);
+        StatisticalShardRepresentation.Term fullStats;
+        try {
+            fullStats = fullRepresentation.queryScore(fullEvaluator.termIds(terms));
+        } catch (IllegalAccessException | URISyntaxException | InstantiationException | ConfigurationException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+        double sc = fullEvaluator.icdf(fullStats.expectedValue, fullStats.variance).apply(pc);
         for (int shardId = 0; shardId < shardEvaluators.size(); shardId++) {
             double estimate = shardEvaluators.get(shardId).estimateDocsAboveCutoff(terms, sc);
             scores.put(shardId, estimate);
