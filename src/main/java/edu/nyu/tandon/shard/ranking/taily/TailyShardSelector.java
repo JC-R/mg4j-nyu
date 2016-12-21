@@ -7,7 +7,6 @@ import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
 import it.unimi.di.big.mg4j.index.cluster.ClusterAccessHelper;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalMergedCluster;
-import it.unimi.di.big.mg4j.index.snowball.EnglishStemmer;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.dsi.lang.MutableString;
@@ -27,20 +26,18 @@ import java.util.stream.Collectors;
  */
 public class TailyShardSelector implements ShardSelector {
 
-    private String basename;
-    private TermProcessor termProcessor = new EnglishStemmer();
+    private TermProcessor termProcessor;
     private List<TailyShardEvaluator> shardEvaluators;
     private TailyShardEvaluator fullEvaluator;
     private StatisticalShardRepresentation fullRepresentation;
-    private DocumentalMergedCluster fullIndex;
+//    private DocumentalMergedCluster fullIndex;
 
     private int nc = 400;
     private int v = 50;
 
     public TailyShardSelector(String basename, int shardCount) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
-        this.basename = basename;
         shardEvaluators = new ArrayList<>();
-        fullIndex = (DocumentalMergedCluster) Index.getInstance(basename);
+        DocumentalMergedCluster fullIndex = (DocumentalMergedCluster) Index.getInstance(basename, true, true, true);
         Index[] shards = ClusterAccessHelper.getLocalIndices(fullIndex);
         fullRepresentation = new StatisticalShardRepresentation(basename);
         fullEvaluator = new TailyShardEvaluator(fullIndex, fullRepresentation);
@@ -48,6 +45,17 @@ public class TailyShardSelector implements ShardSelector {
             String shardBasename = String.format("%s-%d", basename, shardId);
             shardEvaluators.add(new TailyShardEvaluator(shards[shardId], new StatisticalShardRepresentation(shardBasename)));
         }
+        termProcessor = fullIndex.termProcessor;
+    }
+
+    public TailyShardSelector withNc(int nc) {
+        this.nc = nc;
+        return this;
+    }
+
+    public TailyShardSelector withV(int v) {
+        this.v = v;
+        return this;
     }
 
     private List<String> processedTerms(String query) {
@@ -61,29 +69,12 @@ public class TailyShardSelector implements ShardSelector {
                 .collect(Collectors.toList());
     }
 
-    private long[] frequencies(List<String> terms) throws IOException {
-        long[] frequencies = new long[terms.size()];
-        for (TailyShardEvaluator evaluator : shardEvaluators) {
-            long[] shardFrequencies = evaluator.frequencies(terms);
-            for (int i = 0; i < frequencies.length; i++) {
-                frequencies[i] += shardFrequencies[i];
-            }
-        }
-        return frequencies;
-    }
-
-//    private double any(long[] frequencies) throws IOException {
-//        return TailyShardEvaluator.any(frequencies, fullIndex.numberOfDocuments);
-//    }
-
-    private double all(List<String> terms) throws IOException {
-        return TailyShardEvaluator.any(frequencies(terms), fullIndex.numberOfDocuments);
-    }
-
     @Override
     public List<Integer> selectShards(String query) throws QueryParserException, QueryBuilderVisitorException, IOException {
-        List<String> terms = processedTerms(query);
-        return null;
+        return shardScores(query).entrySet().stream()
+                .filter(e -> e.getValue() > v)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
     @Override
