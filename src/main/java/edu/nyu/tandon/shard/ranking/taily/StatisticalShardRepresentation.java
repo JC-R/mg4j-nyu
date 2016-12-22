@@ -281,10 +281,12 @@ public class StatisticalShardRepresentation {
         Arrays.sort(termIds);
         double expectedValue = 0;
         double variance = 0;
+        long prev = 0;
         for (long termId : termIds) {
-            Term term = termIterator().skip(termId);
+            Term term = termIterator().skip(termId - prev);
             expectedValue += term.expectedValue + term.minValue;
             variance += term.variance;
+            prev = termId;
         }
         return new Term(expectedValue, variance, 0);
     }

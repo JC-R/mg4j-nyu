@@ -55,8 +55,8 @@ public class TailyShardEvaluator {
             try {
                 return Gamma.regularizedGammaQ(k, s / theta);
             } catch (Exception e) {
-                throw new RuntimeException(String.format("Failed to compute regularizedGammaQ(%f, %f)",
-                        k, s / theta), e);
+                throw new RuntimeException(String.format("Failed to compute regularizedGammaQ(%f, %f): s=%f, theta=%f",
+                        k, s / theta, s, theta), e);
             }
         };
     }
