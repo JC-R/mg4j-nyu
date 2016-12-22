@@ -13,8 +13,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.function.Function;
 
-import static org.apache.commons.math3.special.Gamma.gamma;
-
 /**
  * @author michal.siedlaczek@nyu.edu
  */
@@ -53,7 +51,14 @@ public class TailyShardEvaluator {
     protected Function<Double, Double> cdf(double expectedValue, double variance) {
         double k = expectedValue * expectedValue / variance;
         double theta = variance / expectedValue;
-        return (s) -> Gamma.regularizedGammaQ(k, s / theta);
+        return (s) -> {
+            try {
+                return Gamma.regularizedGammaQ(k, s / theta);
+            } catch (Exception e) {
+                throw new RuntimeException(String.format("Failed to compute regularizedGammaQ(%f, %f)",
+                        k, s / theta), e);
+            }
+        };
     }
 
     protected static double invRegularizedGammaQ(double a, double y) {
