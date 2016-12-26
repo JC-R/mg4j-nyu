@@ -269,9 +269,8 @@ public class StatisticalShardRepresentation {
         final long hr = TimeUnit.MILLISECONDS.toHours(elapsedInMillis);
         final long min = TimeUnit.MILLISECONDS.toMinutes(elapsedInMillis - TimeUnit.HOURS.toMillis(hr));
         final long sec = TimeUnit.MILLISECONDS.toSeconds(elapsedInMillis - TimeUnit.HOURS.toMillis(hr) - TimeUnit.MINUTES.toMillis(min));
-        final long ms = TimeUnit.MILLISECONDS.toMillis(elapsedInMillis - TimeUnit.HOURS.toMillis(hr) - TimeUnit.MINUTES.toMillis(min) - TimeUnit.SECONDS.toMillis(sec));
-        LOGGER.info(String.format("%02d:%02d:%02d.%03d\tProcessed: %d",
-                hr, min, sec, ms,
+        LOGGER.info(String.format("%02d:%02d:%02d\tProcessed: %d",
+                hr, min, sec,
                 processed));
     }
 
@@ -292,7 +291,7 @@ public class StatisticalShardRepresentation {
              DataOutputStream varianceStream = new DataOutputStream(new FileOutputStream(basename + VARIANCE_SUFFIX));
              DataOutputStream minScoreStream = new DataOutputStream(new FileOutputStream(basename + MIN_SCORE_SUFFIX))) {
             ProgressTimerTask timerTask = new ProgressTimerTask();
-            Timer timer = new Timer("Progress");
+            Timer timer = new Timer(basename);
             timer.scheduleAtFixedRate(timerTask, 0, 5000);
             while (terms.hasNext()) {
                 TermStats term = terms.next();
