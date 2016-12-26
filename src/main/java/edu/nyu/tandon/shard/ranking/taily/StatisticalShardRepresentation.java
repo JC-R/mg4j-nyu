@@ -265,15 +265,6 @@ public class StatisticalShardRepresentation {
         return new TermStats(expectedValue, variance, minValue);
     }
 
-    protected void logProgress(long elapsedInMillis, long processed) {
-        final long hr = TimeUnit.MILLISECONDS.toHours(elapsedInMillis);
-        final long min = TimeUnit.MILLISECONDS.toMinutes(elapsedInMillis - TimeUnit.HOURS.toMillis(hr));
-        final long sec = TimeUnit.MILLISECONDS.toSeconds(elapsedInMillis - TimeUnit.HOURS.toMillis(hr) - TimeUnit.MINUTES.toMillis(min));
-        LOGGER.info(String.format("%02d:%02d:%02d\tProcessed: %d",
-                hr, min, sec,
-                processed));
-    }
-
     public class ProgressTimerTask extends TimerTask {
 
         long start = System.currentTimeMillis();
@@ -281,8 +272,17 @@ public class StatisticalShardRepresentation {
 
         @Override
         public void run() {
-            long elapsed = System.currentTimeMillis() - start;
-            logProgress(elapsed, processed);
+            LOGGER.info(String.format("%s\tProcessed terms: %d",
+                    elapsedFormatted(),
+                    processed));
+        }
+
+        public String elapsedFormatted() {
+            long elapsedInMillis = System.currentTimeMillis() - start;
+            final long hr = TimeUnit.MILLISECONDS.toHours(elapsedInMillis);
+            final long min = TimeUnit.MILLISECONDS.toMinutes(elapsedInMillis - TimeUnit.HOURS.toMillis(hr));
+            final long sec = TimeUnit.MILLISECONDS.toSeconds(elapsedInMillis - TimeUnit.HOURS.toMillis(hr) - TimeUnit.MINUTES.toMillis(min));
+            return String.format("%02d:%02d:%02d", hr, min, sec);
         }
     }
 
@@ -300,7 +300,8 @@ public class StatisticalShardRepresentation {
                 minScoreStream.writeDouble(term.minValue);
                 timerTask.processed++;
             }
-            timerTask.cancel();
+            LOGGER.info(String.format("Finished processing %s in %s (%d terms processed)",
+                    basename, timerTask.elapsedFormatted(), timerTask.processed));
         }
     }
 
