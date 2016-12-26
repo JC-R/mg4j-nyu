@@ -1,9 +1,14 @@
 package edu.nyu.tandon.test;
 
+import edu.nyu.tandon.document.StringDocumentSequence;
 import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import edu.nyu.tandon.shard.csi.CentralSampleIndex;
+import it.unimi.di.big.mg4j.document.DocumentSequence;
+import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalPartitioningStrategy;
+import it.unimi.di.big.mg4j.tool.Combine;
+import it.unimi.di.big.mg4j.tool.IndexBuilder;
 import org.apache.commons.configuration.ConfigurationException;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
@@ -14,6 +19,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.List;
 
 import static it.unimi.dsi.fastutil.io.BinIO.loadObject;
 
@@ -73,6 +80,33 @@ public class BaseTest {
                 (DocumentalClusteringStrategy) loadObject(getFileFromResourcePath("csi/csi.strategy")),
                 (DocumentalPartitioningStrategy) loadObject(getFileFromResourcePath("clusters/gov2C.strategy")),
                 new BM25PrunedScorer());
+    }
+
+    public void buildIndex(String basename, List<String> corpus) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
+        new IndexBuilder(basename, new StringDocumentSequence(corpus)).run();
+    }
+
+    /**
+     * Inverted Index:
+     * a | 0[3] 1[1]
+     * b | 0[1]
+     * f | 1[1] 2[1]
+     * g | 0[1] 2[1]
+     * h | 2[2]
+     * x | 1[1]
+     * y | 1[1] 2[1]
+     * z | 1[1]
+     *
+     * Corpus length: 15
+     */
+    public String buildIndexA() throws IllegalAccessException, URISyntaxException, IOException, InstantiationException, NoSuchMethodException, ConfigurationException, InvocationTargetException, ClassNotFoundException {
+        String basename = temporaryFolder.getRoot().getAbsolutePath() + "/A";
+        buildIndex(basename, Arrays.asList(
+                "a b a a g",
+                "x y z a f",
+                "f g h h y"
+        ));
+        return basename + "-text";
     }
 
 }

@@ -229,7 +229,7 @@ public class StatisticalShardRepresentation {
     }
 
     protected long collectionSize(IndexIterator indexIterator) throws IOException {
-        return indexIterator.index().numberOfPostings;
+        return indexIterator.index().numberOfOccurrences;
     }
 
     protected long documentSize(IndexIterator indexIterator) {
