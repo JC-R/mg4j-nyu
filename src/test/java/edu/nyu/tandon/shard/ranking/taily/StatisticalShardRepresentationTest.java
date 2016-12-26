@@ -1,6 +1,6 @@
 package edu.nyu.tandon.shard.ranking.taily;
 
-import edu.nyu.tandon.shard.ranking.taily.StatisticalShardRepresentation.Term;
+import edu.nyu.tandon.shard.ranking.taily.StatisticalShardRepresentation.TermStats;
 import edu.nyu.tandon.shard.ranking.taily.StatisticalShardRepresentation.TermIterator;
 import edu.nyu.tandon.test.BaseTest;
 import it.unimi.di.big.mg4j.index.IndexIterator;
@@ -45,7 +45,7 @@ public class StatisticalShardRepresentationTest extends BaseTest {
         representation.mu = 10.0;
 
         // when
-        Term actual = representation.termStats(indexIterator);
+        TermStats actual = representation.termStats(indexIterator);
 
         // then
         assertEquals(actual.expectedValue, -0.547235724334295, 0.000001);
@@ -87,7 +87,7 @@ public class StatisticalShardRepresentationTest extends BaseTest {
         representation.mu = 10.0;
 
         // when
-        Term actual = representation.termStats(indexIterators);
+        TermStats actual = representation.termStats(indexIterators);
 
         // then
         assertEquals(actual.expectedValue, -0.547235724334295, 0.000001);
@@ -108,7 +108,7 @@ public class StatisticalShardRepresentationTest extends BaseTest {
         int counter = 0;
         while (it.hasNext()) {
             counter++;
-            Term t = it.next();
+            TermStats t = it.next();
             assertThat(t.expectedValue, not(equalTo(0.0)));
             assertThat(t.minValue, not(equalTo(0.0)));
         }
@@ -139,7 +139,7 @@ public class StatisticalShardRepresentationTest extends BaseTest {
          * f_a(0) = -0.6079893722196386
          * f_a(1) = -1.5553706911638245
          */
-        Term t = it.next();
+        TermStats t = it.next();
         assertEquals(-1.5553706911638245, t.minValue, 0.000001);
         assertEquals(-1.0816800316917314, t.expectedValue, 0.000001);
         assertEquals(0.2243828408711066, t.variance, 0.000001);
@@ -164,8 +164,8 @@ public class StatisticalShardRepresentationTest extends BaseTest {
         TermIterator stored = representation.calc(1.0);
         TermIterator calculated = representation.termIterator();
         while (stored.hasNext() && calculated.hasNext()) {
-            Term s = stored.next();
-            Term c = calculated.next();
+            TermStats s = stored.next();
+            TermStats c = calculated.next();
             assertEquals(s.expectedValue, c.expectedValue, 0.1);
             assertEquals(s.minValue, c.minValue, 0.1);
             assertEquals(s.variance, c.variance, 0.1);
@@ -187,7 +187,7 @@ public class StatisticalShardRepresentationTest extends BaseTest {
         int counter = 0;
         while (it.hasNext()) {
             counter++;
-            Term t = it.next();
+            TermStats t = it.next();
             assertThat(t.expectedValue, not(equalTo(0.0)));
             assertThat(t.minValue, not(equalTo(0.0)));
         }
@@ -204,7 +204,7 @@ public class StatisticalShardRepresentationTest extends BaseTest {
         TermIterator it = representation.calc();
 
         // then
-        Term t = it.skip(4193);
+        TermStats t = it.skip(4193);
         assertThat(t.expectedValue, not(equalTo(0.0)));
         assertThat(t.minValue, not(equalTo(0.0)));
         assertThat(it.hasNext(), equalTo(Boolean.FALSE));
@@ -223,7 +223,7 @@ public class StatisticalShardRepresentationTest extends BaseTest {
         int counter = 0;
         while (it.hasNext()) {
             counter++;
-            Term t = it.next();
+            TermStats t = it.next();
             assertThat(t.expectedValue, not(equalTo(0.0)));
             assertThat(t.minValue, not(equalTo(0.0)));
         }
@@ -240,10 +240,27 @@ public class StatisticalShardRepresentationTest extends BaseTest {
         TermIterator it = representation.termIterator();
 
         // then
-        Term t = it.skip(4193);
+        TermStats t = it.skip(4194);
         assertThat(t.expectedValue, not(equalTo(0.0)));
         assertThat(t.minValue, not(equalTo(0.0)));
         assertThat(it.hasNext(), equalTo(Boolean.FALSE));
+    }
+
+    @Test
+    public void queryStats() throws IllegalAccessException, ConfigurationException, IOException, InstantiationException, ClassNotFoundException, URISyntaxException, NoSuchMethodException, InvocationTargetException {
+        // given
+        String basename = buildIndexA();
+        StatisticalShardRepresentation representation = new StatisticalShardRepresentation(basename);
+        TermIterator it = representation.calc(1.0);
+        representation.write(it);
+
+        // when
+        TermStats t = representation.queryStats(new long[] { 0, 1 });
+
+        // then
+        assertEquals(-2.8089009797822153, t.expectedValue, 0.000001);
+        assertEquals(0.2243828408711066, t.variance, 0.000001);
+        assertEquals(-3.282591639254308, t.minValue, 0.000001);
     }
 
 }

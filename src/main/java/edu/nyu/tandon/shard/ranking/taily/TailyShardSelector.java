@@ -87,15 +87,15 @@ public class TailyShardSelector implements ShardSelector {
         Map<Integer, Double> scores = new HashMap<>();
         List<String> terms = processedTerms(query);
         double pc = nc / fullEvaluator.all(terms);
-        StatisticalShardRepresentation.Term fullStats;
+        StatisticalShardRepresentation.TermStats fullStats;
         try {
-            fullStats = fullRepresentation.queryScore(fullEvaluator.termIds(terms));
+            fullStats = fullRepresentation.queryStats(fullEvaluator.termIds(terms));
         } catch (IllegalAccessException | URISyntaxException | InstantiationException | ConfigurationException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
-        double sc = fullEvaluator.icdf(fullStats.expectedValue, fullStats.variance).apply(pc);
+        double sc = fullEvaluator.icdf(fullStats.expectedValue - fullStats.minValue, fullStats.variance).apply(pc);
         for (int shardId = 0; shardId < shardEvaluators.size(); shardId++) {
-            double estimate = shardEvaluators.get(shardId).estimateDocsAboveCutoff(terms, sc);
+            double estimate = shardEvaluators.get(shardId).estimateDocsAboveCutoff(terms, sc, fullStats.minValue);
             scores.put(shardId, estimate);
         }
         return scores;

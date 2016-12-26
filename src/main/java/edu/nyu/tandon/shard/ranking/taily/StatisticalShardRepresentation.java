@@ -17,6 +17,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
 
@@ -25,20 +26,20 @@ import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
  */
 public class StatisticalShardRepresentation {
 
-    public class Term {
+    public class TermStats {
         public double expectedValue;
         public double variance;
         public double minValue;
 
-        public Term(double expectedValue, double variance, double minValue) {
+        public TermStats(double expectedValue, double variance, double minValue) {
             this.expectedValue = expectedValue;
             this.variance = variance;
             this.minValue = minValue;
         }
     }
 
-    public interface TermIterator extends Iterator<Term> {
-        Term skip(long n) throws IOException;
+    public interface TermIterator extends Iterator<TermStats> {
+        TermStats skip(long n) throws IOException;
         void close() throws IOException;
     }
 
@@ -108,7 +109,7 @@ public class StatisticalShardRepresentation {
         }
 
         @Override
-        public Term skip(long n) throws IOException {
+        public TermStats skip(long n) throws IOException {
             throw new UnsupportedOperationException();
         }
 
@@ -124,13 +125,13 @@ public class StatisticalShardRepresentation {
         }
 
         @Override
-        public Term next() {
+        public TermStats next() {
             try {
                 String currentTerm = nextTerm;
                 List<Integer> shards = ge(currentTerm);
                 IndexIterator[] ii = new IndexIterator[shards.size()];
                 for (int i = 0; i < shards.size(); i++) ii[i] = shardIterators[shards.get(i)];
-                Term t = termStats(ii);
+                TermStats t = termStats(ii);
                 for (Integer i : shards) {
                     String shardTerm = ge(i, currentTerm + Character.MIN_VALUE);
                     nextTerm = min(nextTerm, shardTerm);
@@ -160,10 +161,10 @@ public class StatisticalShardRepresentation {
         }
 
         @Override
-        public Term next() {
+        public TermStats next() {
             if (iterator == null) return null;
             try {
-                Term next = termStats(iterator);
+                TermStats next = termStats(iterator);
                 bufferNext();
                 return next;
             } catch (IOException e) {
@@ -173,7 +174,7 @@ public class StatisticalShardRepresentation {
         }
 
         @Override
-        public Term skip(long n) throws IOException {
+        public TermStats skip(long n) throws IOException {
             for (long i = 0; i < n; i++) bufferNext();
             return next();
         }
@@ -237,11 +238,11 @@ public class StatisticalShardRepresentation {
         return indexIterator.index().sizes.getInt(indexIterator.document());
     }
 
-    protected Term termStats(IndexIterator indexIterator) throws IOException {
+    protected TermStats termStats(IndexIterator indexIterator) throws IOException {
         return termStats(new IndexIterator[] {indexIterator});
     }
 
-    protected Term termStats(IndexIterator[] indexIterators) throws IOException {
+    protected TermStats termStats(IndexIterator[] indexIterators) throws IOException {
         double sum = 0;
         double sumOfSquares = 0;
         double frequency = 0;
@@ -261,34 +262,64 @@ public class StatisticalShardRepresentation {
         double expectedValue = sum / frequency;
         double expectedSquaredValue = sumOfSquares / frequency;
         double variance = expectedSquaredValue - expectedValue * expectedValue;
-        return new Term(expectedValue, variance, minValue);
+        return new TermStats(expectedValue, variance, minValue);
     }
 
-    public void write(Iterator<Term> terms) throws IOException {
+    protected void logProgress(long elapsedInMillis, long processed) {
+        final long hr = TimeUnit.MILLISECONDS.toHours(elapsedInMillis);
+        final long min = TimeUnit.MILLISECONDS.toMinutes(elapsedInMillis - TimeUnit.HOURS.toMillis(hr));
+        final long sec = TimeUnit.MILLISECONDS.toSeconds(elapsedInMillis - TimeUnit.HOURS.toMillis(hr) - TimeUnit.MINUTES.toMillis(min));
+        final long ms = TimeUnit.MILLISECONDS.toMillis(elapsedInMillis - TimeUnit.HOURS.toMillis(hr) - TimeUnit.MINUTES.toMillis(min) - TimeUnit.SECONDS.toMillis(sec));
+        LOGGER.info(String.format("%02d:%02d:%02d.%03d\tProcessed: %d",
+                hr, min, sec, ms,
+                processed));
+    }
+
+    public class ProgressTimerTask extends TimerTask {
+
+        long start = System.currentTimeMillis();
+        public long processed = 0;
+
+        @Override
+        public void run() {
+            long elapsed = System.currentTimeMillis() - start;
+            logProgress(elapsed, processed);
+        }
+    }
+
+    public void write(Iterator<TermStats> terms) throws IOException {
         try (DataOutputStream expectedStream = new DataOutputStream(new FileOutputStream(basename + EXPECTED_V_SUFFIX));
              DataOutputStream varianceStream = new DataOutputStream(new FileOutputStream(basename + VARIANCE_SUFFIX));
              DataOutputStream minScoreStream = new DataOutputStream(new FileOutputStream(basename + MIN_SCORE_SUFFIX))) {
+            ProgressTimerTask timerTask = new ProgressTimerTask();
+            Timer timer = new Timer("Progress");
+            timer.scheduleAtFixedRate(timerTask, 0, 5000);
             while (terms.hasNext()) {
-                Term term = terms.next();
+                TermStats term = terms.next();
                 expectedStream.writeDouble(term.expectedValue);
                 varianceStream.writeDouble(term.variance);
                 minScoreStream.writeDouble(term.minValue);
+                timerTask.processed++;
             }
+            timerTask.cancel();
         }
     }
 
-    public Term queryScore(long[] termIds) throws IOException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
+    public TermStats queryStats(long[] termIds) throws IOException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
         Arrays.sort(termIds);
         double expectedValue = 0;
         double variance = 0;
+        double minValue = 0;
         long prev = 0;
+        TermIterator it = termIterator();
         for (long termId : termIds) {
-            Term term = termIterator().skip(termId - prev);
-            expectedValue += term.expectedValue + term.minValue;
+            TermStats term = it.skip(termId - prev);
+            expectedValue += term.expectedValue;
             variance += term.variance;
+            minValue += term.minValue;
             prev = termId;
         }
-        return new Term(expectedValue, variance, 0);
+        return new TermStats(expectedValue, variance, minValue);
     }
 
     public TermIterator termIterator() throws IOException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, URISyntaxException, ConfigurationException, ClassNotFoundException {
@@ -306,13 +337,13 @@ public class StatisticalShardRepresentation {
             }
 
             @Override
-            public Term next() {
+            public TermStats next() {
                 try {
                     remainingTerms--;
                     double expectedValue = expectedStream.readDouble();
                     double variance = varianceStream.readDouble();
                     double minScore = minScoreStream.readDouble();
-                    return new Term(expectedValue, variance, minScore);
+                    return new TermStats(expectedValue, variance, minScore);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -329,11 +360,11 @@ public class StatisticalShardRepresentation {
             }
 
             @Override
-            public Term skip(long n) throws IOException {
-                skipDataInputStream(expectedStream, n);
-                skipDataInputStream(varianceStream, n);
-                skipDataInputStream(minScoreStream, n);
-                remainingTerms -= n;
+            public TermStats skip(long n) throws IOException {
+                skipDataInputStream(expectedStream, n - 1);
+                skipDataInputStream(varianceStream, n - 1);
+                skipDataInputStream(minScoreStream, n - 1);
+                remainingTerms -= n - 1;
                 return next();
             }
 

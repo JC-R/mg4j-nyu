@@ -1,6 +1,6 @@
 package edu.nyu.tandon.shard.ranking.taily;
 
-import edu.nyu.tandon.shard.ranking.taily.StatisticalShardRepresentation.Term;
+import edu.nyu.tandon.shard.ranking.taily.StatisticalShardRepresentation.TermStats;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.IndexReader;
 import it.unimi.dsi.big.util.StringMap;
@@ -39,10 +39,10 @@ public class TailyShardEvaluator {
         this(index, statisticalRepresentation, index.termMap);
     }
 
-    public Function<Double, Double> cdf(long[] terms) {
+    public Function<Double, Double> cdf(long[] terms, double globalMinValue) {
         try {
-            Term t = statisticalRepresentation.queryScore(terms);
-            return cdf(t.expectedValue, t.variance);
+            TermStats t = statisticalRepresentation.queryStats(terms);
+            return cdf(t.expectedValue - globalMinValue, t.variance);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -127,10 +127,10 @@ public class TailyShardEvaluator {
         return ids;
     }
 
-    public double estimateDocsAboveCutoff(List<String> terms, double scoreCutoff) throws IOException {
+    public double estimateDocsAboveCutoff(List<String> terms, double scoreCutoff, double globalMinValue) throws IOException {
         long[] termIds = termIds(terms);
         long[] frequencies = frequencies(termIds);
-        return all(frequencies) * cdf(termIds).apply(scoreCutoff);
+        return all(frequencies) * cdf(termIds, globalMinValue).apply(scoreCutoff);
     }
 
 }
