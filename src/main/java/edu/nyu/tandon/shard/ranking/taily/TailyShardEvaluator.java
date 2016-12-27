@@ -48,7 +48,7 @@ public class TailyShardEvaluator {
         }
     }
 
-    protected Function<Double, Double> cdf(double expectedValue, double variance) {
+    protected static Function<Double, Double> cdf(double expectedValue, double variance) {
         double k = expectedValue * expectedValue / variance;
         double theta = variance / expectedValue;
         return (s) -> {
@@ -75,7 +75,7 @@ public class TailyShardEvaluator {
         return mid;
     }
 
-    public Function<Double, Double> icdf(double expectedValue, double variance) {
+    public static Function<Double, Double> icdf(double expectedValue, double variance) {
         double k = expectedValue * expectedValue / variance;
         double theta = variance / expectedValue;
         return (p) -> invRegularizedGammaQ(k, p) * theta;

@@ -150,8 +150,8 @@ public class StatisticalShardRepresentation {
         private IndexReader indexReader;
         private IndexIterator iterator;
 
-        public SingleIndexTermIterator(Index index) throws IOException {
-            indexReader = index.getReader();
+        public SingleIndexTermIterator(Index index) throws IOException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
+            indexReader = getIndex().getReader();
             iterator =  indexReader.nextIterator();
         }
 
@@ -205,9 +205,20 @@ public class StatisticalShardRepresentation {
     protected double mu;
 
     private String basename;
+    private Index index;
 
-    public StatisticalShardRepresentation(String basename) {
+    public StatisticalShardRepresentation(String basename) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
         this.basename = basename;
+    }
+
+    public StatisticalShardRepresentation(String basename, Index index) {
+        this.basename = basename;
+        this.index = index;
+    }
+
+    protected Index getIndex() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
+        if (index == null) index = Index.getInstance(basename, true, true);
+        return index;
     }
 
     protected TermIterator calc() throws IllegalAccessException, URISyntaxException, IOException, InstantiationException, NoSuchMethodException, ConfigurationException, InvocationTargetException, ClassNotFoundException {
@@ -216,9 +227,8 @@ public class StatisticalShardRepresentation {
 
     protected TermIterator calc(double mu) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
         this.mu = mu;
-        Index index = Index.getInstance(basename, true, true);
-        if (index instanceof DocumentalMergedCluster) {
-            return new ClusterTermIterator((DocumentalMergedCluster) index, basename);
+        if (getIndex() instanceof DocumentalMergedCluster) {
+            return new ClusterTermIterator((DocumentalMergedCluster) getIndex(), basename);
         }
         else {
             return new SingleIndexTermIterator(index);
@@ -330,7 +340,7 @@ public class StatisticalShardRepresentation {
             private DataInputStream varianceStream = new DataInputStream(new FileInputStream(basename + VARIANCE_SUFFIX));
             private DataInputStream minScoreStream = new DataInputStream(new FileInputStream(basename + MIN_SCORE_SUFFIX));
 
-            private long remainingTerms = Index.getInstance(basename).numberOfTerms;
+            private long remainingTerms = getIndex().numberOfTerms;
 
             @Override
             public boolean hasNext() {
@@ -390,12 +400,6 @@ public class StatisticalShardRepresentation {
 
         String basename = jsapResult.getString("basename");
         StatisticalShardRepresentation ssr = new StatisticalShardRepresentation(basename);
-//        if (jsapResult.userSpecified("globalStatistics")) {
-//            LOGGER.info("Running queries with global statistics.");
-//            long[] globalStats = loadGlobalStats(basename);
-//            LongBigArrayBigList globalOccurrencies = loadGlobalOccurrencies(basename);
-//            ssr.withGlobalMetrics(globalStats[1], globalOccurrencies);
-//        }
         ssr.write(ssr.calc());
 
     }

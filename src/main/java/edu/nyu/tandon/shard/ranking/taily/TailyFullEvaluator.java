@@ -17,13 +17,11 @@ import java.util.List;
  */
 public class TailyFullEvaluator extends TailyShardEvaluator {
 
-//    protected  Index[] shards;
     private List<TailyShardEvaluator> shardEvaluators;
 
     public TailyFullEvaluator(DocumentalMergedCluster index, StatisticalShardRepresentation statisticalRepresentation,
                               List<TailyShardEvaluator> shardEvaluators, StringMap<? extends CharSequence> termMap) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
         super(index, statisticalRepresentation, termMap);
-//        shards = ClusterAccessHelper.getLocalIndices(index);
         this.shardEvaluators = shardEvaluators;
     }
 

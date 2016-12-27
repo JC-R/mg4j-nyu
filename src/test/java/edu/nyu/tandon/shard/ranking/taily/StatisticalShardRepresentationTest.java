@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 public class StatisticalShardRepresentationTest extends BaseTest {
 
     @Test
-    public void termStats() throws IOException {
+    public void termStats() throws IOException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
         // given
         IndexIterator indexIterator = mock(IndexIterator.class);
         when(indexIterator.nextDocument())
@@ -54,7 +54,7 @@ public class StatisticalShardRepresentationTest extends BaseTest {
     }
 
     @Test
-    public void termStatsArray() throws IOException {
+    public void termStatsArray() throws IOException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
         // given
         IndexIterator[] indexIterators = new IndexIterator[] {
                 mock(IndexIterator.class),

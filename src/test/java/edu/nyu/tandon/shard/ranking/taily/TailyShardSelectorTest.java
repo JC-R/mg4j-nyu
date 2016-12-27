@@ -18,8 +18,15 @@ public class TailyShardSelectorTest extends BaseTest {
 
     @Test
     public void test() throws IllegalAccessException, URISyntaxException, IOException, InstantiationException, NoSuchMethodException, ConfigurationException, InvocationTargetException, ClassNotFoundException, QueryParserException, QueryBuilderVisitorException {
-        File clusterDir = getFileFromResourcePath("clusters");
-        TailyShardSelector selector = new TailyShardSelector(clusterDir.getAbsolutePath() + "/gov2C", 11);
-        selector.selectShards("dog cat");
+        // given
+        String basename = buildIndexA();
+        StatisticalShardRepresentation representation = new StatisticalShardRepresentation(basename);
+        representation.write(representation.calc());
+
+        // when
+//        TailyShardSelector selector = new TailyShardSelector(clusterDir.getAbsolutePath() + "/gov2C", 11);
+
+        // then
+//        selector.selectShards("dog cat");
     }
 }

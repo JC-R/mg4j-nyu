@@ -5,6 +5,7 @@ import it.unimi.di.big.mg4j.index.Index;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.special.Gamma;
+import org.hamcrest.MatcherAssert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -47,12 +48,12 @@ public class TailyShardEvaluatorTest extends BaseTest {
         long[] ids = evaluator.termIds(Arrays.asList("0", "gain", "русски"));
 
         // then
-        assertThat(ids, equalTo(new long[] { 0, 1761, 4193 }));
+        MatcherAssert.assertThat(ids, equalTo(new long[] { 0, 1761, 4193 }));
     }
 
     @Test
     public void anyWithD() throws IOException {
-        assertThat(TailyShardEvaluator.any(new long[] {10, 5, 2}, 100.0),
+        MatcherAssert.assertThat(TailyShardEvaluator.any(new long[] {10, 5, 2}, 100.0),
                 equalTo(16.21));
     }
 
@@ -60,7 +61,7 @@ public class TailyShardEvaluatorTest extends BaseTest {
     public void any() throws IOException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
         Index index = Index.getInstance(basename0, true, true);
         TailyShardEvaluator evaluator = new TailyShardEvaluator(index, mock(StatisticalShardRepresentation.class));
-        assertThat(evaluator.any(new long[] {10, 5, 2}),
+        MatcherAssert.assertThat(evaluator.any(new long[] {10, 5, 2}),
                 equalTo(16.21));
     }
 

@@ -13,6 +13,8 @@ import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.dsi.big.util.StringMap;
 import it.unimi.dsi.lang.MutableString;
 import org.apache.commons.configuration.ConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -28,6 +30,8 @@ import java.util.stream.Collectors;
  */
 public class TailyShardSelector implements ShardSelector {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(TailyShardSelector.class);
+
     private TermProcessor termProcessor;
     private List<TailyShardEvaluator> shardEvaluators;
     private TailyShardEvaluator fullEvaluator;
@@ -40,14 +44,15 @@ public class TailyShardSelector implements ShardSelector {
         shardEvaluators = new ArrayList<>();
         DocumentalMergedCluster fullIndex = (DocumentalMergedCluster) Index.getInstance(basename, true, true, true);
         Index[] shards = ClusterAccessHelper.getLocalIndices(fullIndex);
-        fullRepresentation = new StatisticalShardRepresentation(basename);
+        fullRepresentation = new StatisticalShardRepresentation(basename, fullIndex);
         StringMap<? extends CharSequence> termMap = DiskBasedIndex.loadStringMap(basename + DiskBasedIndex.TERMMAP_EXTENSION);
         if (termMap == null) {
             throw new IllegalArgumentException("the cluster has to have term map provided");
         }
         for (int shardId = 0; shardId < shardCount; shardId++) {
             String shardBasename = String.format("%s-%d", basename, shardId);
-            shardEvaluators.add(new TailyShardEvaluator(shards[shardId], new StatisticalShardRepresentation(shardBasename)));
+            shardEvaluators.add(new TailyShardEvaluator(shards[shardId],
+                    new StatisticalShardRepresentation(shardBasename, shards[shardId])));
         }
         fullEvaluator = new TailyFullEvaluator(fullIndex, fullRepresentation, shardEvaluators, termMap);
         termProcessor = fullIndex.termProcessor;
@@ -84,6 +89,7 @@ public class TailyShardSelector implements ShardSelector {
 
     @Override
     public Map<Integer, Double> shardScores(String query) throws QueryParserException, QueryBuilderVisitorException, IOException {
+        LOGGER.info(String.format("Processing query: %s", query));
         Map<Integer, Double> scores = new HashMap<>();
         List<String> terms = processedTerms(query);
         double pc = nc / fullEvaluator.all(terms);
@@ -93,7 +99,7 @@ public class TailyShardSelector implements ShardSelector {
         } catch (IllegalAccessException | URISyntaxException | InstantiationException | ConfigurationException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
-        double sc = fullEvaluator.icdf(fullStats.expectedValue - fullStats.minValue, fullStats.variance).apply(pc);
+        double sc = TailyShardEvaluator.icdf(fullStats.expectedValue - fullStats.minValue, fullStats.variance).apply(pc);
         for (int shardId = 0; shardId < shardEvaluators.size(); shardId++) {
             double estimate = shardEvaluators.get(shardId).estimateDocsAboveCutoff(terms, sc, fullStats.minValue);
             scores.put(shardId, estimate);
