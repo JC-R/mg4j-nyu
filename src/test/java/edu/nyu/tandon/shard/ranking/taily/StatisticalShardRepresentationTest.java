@@ -42,12 +42,11 @@ public class StatisticalShardRepresentationTest extends BaseTest {
 
         StatisticalShardRepresentation representation = spy(new StatisticalShardRepresentation("dummy"));
         doReturn(10L).when(representation).occurrency(eq(indexIterator));
-        doReturn(100L).when(representation).collectionSize(eq(indexIterator));
         doReturn(10L).when(representation).documentSize(eq(indexIterator));
         representation.mu = 10.0;
 
         // when
-        TermStats actual = representation.termStats(indexIterator);
+        TermStats actual = representation.termStats(indexIterator, 100L);
 
         // then
         assertEquals(actual.expectedValue, -0.547235724334295, 0.000001);
@@ -81,15 +80,13 @@ public class StatisticalShardRepresentationTest extends BaseTest {
 
         StatisticalShardRepresentation representation = spy(new StatisticalShardRepresentation("dummy"));
         doReturn(10L).when(representation).occurrency(eq(indexIterators[0]));
-        doReturn(100L).when(representation).collectionSize(eq(indexIterators[0]));
         doReturn(10L).when(representation).documentSize(eq(indexIterators[0]));
         doReturn(10L).when(representation).occurrency(eq(indexIterators[1]));
-        doReturn(100L).when(representation).collectionSize(eq(indexIterators[1]));
         doReturn(10L).when(representation).documentSize(eq(indexIterators[1]));
         representation.mu = 10.0;
 
         // when
-        TermStats actual = representation.termStats(indexIterators);
+        TermStats actual = representation.termStats(indexIterators, 100L);
 
         // then
         assertEquals(actual.expectedValue, -0.547235724334295, 0.000001);

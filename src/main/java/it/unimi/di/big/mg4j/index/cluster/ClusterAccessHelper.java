@@ -7,7 +7,7 @@ import it.unimi.di.big.mg4j.index.Index;
  */
 public class ClusterAccessHelper {
 
-    public static Index[] getLocalIndices(DocumentalMergedCluster merged) {
+    public static Index[] getLocalIndices(DocumentalCluster merged) {
         return merged.localIndex;
     }
 

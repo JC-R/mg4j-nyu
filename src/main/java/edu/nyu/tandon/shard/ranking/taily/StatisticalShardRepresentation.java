@@ -8,6 +8,7 @@ import it.unimi.di.big.mg4j.index.IndexAccessHelper;
 import it.unimi.di.big.mg4j.index.IndexIterator;
 import it.unimi.di.big.mg4j.index.IndexReader;
 import it.unimi.di.big.mg4j.index.cluster.ClusterAccessHelper;
+import it.unimi.di.big.mg4j.index.cluster.DocumentalCluster;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalMergedCluster;
 import org.apache.commons.configuration.ConfigurationException;
 import org.slf4j.Logger;
@@ -51,8 +52,10 @@ public class StatisticalShardRepresentation {
         protected String[] currentTerms;
         protected int shardCount;
         protected String nextTerm;
+        protected long collectionSize;
 
-        public ClusterTermIterator(DocumentalMergedCluster index, String basename) throws IOException {
+        public ClusterTermIterator(DocumentalCluster index, String basename) throws IOException {
+            collectionSize = index.numberOfOccurrences;
             Index[] shards = ClusterAccessHelper.getLocalIndices(index);
             shardReaders = new IndexReader[shards.length];
             shardIterators = new IndexIterator[shards.length];
@@ -131,7 +134,7 @@ public class StatisticalShardRepresentation {
                 List<Integer> shards = ge(currentTerm);
                 IndexIterator[] ii = new IndexIterator[shards.size()];
                 for (int i = 0; i < shards.size(); i++) ii[i] = shardIterators[shards.get(i)];
-                TermStats t = termStats(ii);
+                TermStats t = termStats(ii, collectionSize);
                 for (Integer i : shards) {
                     String shardTerm = ge(i, currentTerm + Character.MIN_VALUE);
                     nextTerm = min(nextTerm, shardTerm);
@@ -164,7 +167,7 @@ public class StatisticalShardRepresentation {
         public TermStats next() {
             if (iterator == null) return null;
             try {
-                TermStats next = termStats(iterator);
+                TermStats next = termStats(iterator, iterator.index().numberOfOccurrences);
                 bufferNext();
                 return next;
             } catch (IOException e) {
@@ -227,8 +230,8 @@ public class StatisticalShardRepresentation {
 
     protected TermIterator calc(double mu) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
         this.mu = mu;
-        if (getIndex() instanceof DocumentalMergedCluster) {
-            return new ClusterTermIterator((DocumentalMergedCluster) getIndex(), basename);
+        if (getIndex() instanceof DocumentalCluster) {
+            return new ClusterTermIterator((DocumentalCluster) getIndex(), basename);
         }
         else {
             return new SingleIndexTermIterator(index);
@@ -239,28 +242,28 @@ public class StatisticalShardRepresentation {
         return IndexAccessHelper.getOccurrency(indexIterator);
     }
 
-    protected long collectionSize(IndexIterator indexIterator) throws IOException {
-        return indexIterator.index().numberOfOccurrences;
-    }
-
     protected long documentSize(IndexIterator indexIterator) {
         if (indexIterator.index().sizes == null) throw new IllegalStateException("index has no document sizes");
         return indexIterator.index().sizes.getInt(indexIterator.document());
     }
 
-    protected TermStats termStats(IndexIterator indexIterator) throws IOException {
-        return termStats(new IndexIterator[] {indexIterator});
+    protected TermStats termStats(IndexIterator indexIterator, long collectionSize) throws IOException {
+        return termStats(new IndexIterator[] {indexIterator}, collectionSize);
     }
 
-    protected TermStats termStats(IndexIterator[] indexIterators) throws IOException {
+    protected TermStats termStats(IndexIterator[] indexIterators, long collectionSize) throws IOException {
         double sum = 0;
         double sumOfSquares = 0;
         double frequency = 0;
         double minValue = 0;
+        double occurrency = 0.0;
+        for (IndexIterator indexIterator : indexIterators) {
+            occurrency += (double) occurrency(indexIterator);
+        }
         for (IndexIterator indexIterator : indexIterators) {
             frequency += indexIterator.frequency();
             while (indexIterator.nextDocument() != END_OF_LIST) {
-                double prior = (double) occurrency(indexIterator) / collectionSize(indexIterator);
+                double prior = occurrency / collectionSize;
                 double numerator = (double) indexIterator.count() + mu * prior;
                 double denominator = (double) documentSize(indexIterator) + mu;
                 double score = Math.log(numerator) - Math.log(denominator);

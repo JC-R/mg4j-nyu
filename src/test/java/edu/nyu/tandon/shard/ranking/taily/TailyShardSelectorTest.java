@@ -6,7 +6,6 @@ import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
