@@ -86,7 +86,7 @@ public class StatisticalShardRepresentationTest extends BaseTest {
         representation.mu = 10.0;
 
         // when
-        TermStats actual = representation.termStats(indexIterators, 100L);
+        TermStats actual = representation.termStats(indexIterators, 200L);
 
         // then
         assertEquals(actual.expectedValue, -0.547235724334295, 0.000001);

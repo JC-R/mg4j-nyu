@@ -11,6 +11,10 @@ public class ClusterAccessHelper {
         return merged.localIndex;
     }
 
+    public static Index[] getLocalIndices(DocumentalMergedCluster merged) {
+        return merged.localIndex;
+    }
+
     public static DocumentalMergedCluster getIndex(DocumentalMergedClusterIndexIterator it) {
         return it.index;
     }
