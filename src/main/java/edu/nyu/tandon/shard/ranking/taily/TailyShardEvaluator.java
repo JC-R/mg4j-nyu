@@ -6,6 +6,8 @@ import it.unimi.di.big.mg4j.index.IndexReader;
 import it.unimi.dsi.big.util.StringMap;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.math3.special.Gamma;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -18,6 +20,8 @@ import java.util.function.Function;
  * @author michal.siedlaczek@nyu.edu
  */
 public class TailyShardEvaluator {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(TailyShardEvaluator.class);
 
     protected StatisticalShardRepresentation statisticalRepresentation;
     protected Index index;
@@ -51,6 +55,10 @@ public class TailyShardEvaluator {
     }
 
     protected static Function<Double, Double> cdf(double expectedValue, double variance) {
+        if (variance < epsilon) {
+            variance = epsilon;
+            LOGGER.warn(String.format("variance = %f < %f: falling back to %f", variance, epsilon, epsilon));
+        }
         double k = expectedValue * expectedValue / variance;
         double theta = variance / expectedValue;
         return (s) -> {
