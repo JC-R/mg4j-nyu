@@ -146,7 +146,7 @@ public class StatisticalShardRepresentationTest extends BaseTest {
         TermIterator it = representation.calc();
 
         // then
-        TermStats t = it.skip(4193);
+        TermStats t = it.next(4193);
         assertThat(t.expectedValue, not(equalTo(0.0)));
         assertThat(t.minValue, not(equalTo(0.0)));
         assertThat(it.hasNext(), equalTo(Boolean.FALSE));
@@ -182,7 +182,7 @@ public class StatisticalShardRepresentationTest extends BaseTest {
         TermIterator it = representation.termIterator();
 
         // then
-        TermStats t = it.skip(4194);
+        TermStats t = it.next(4194);
         assertThat(t.expectedValue, not(equalTo(0.0)));
         assertThat(t.minValue, not(equalTo(0.0)));
         assertThat(it.hasNext(), equalTo(Boolean.FALSE));

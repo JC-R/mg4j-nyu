@@ -9,7 +9,6 @@ import it.unimi.di.big.mg4j.index.IndexIterator;
 import it.unimi.di.big.mg4j.index.IndexReader;
 import it.unimi.di.big.mg4j.index.cluster.ClusterAccessHelper;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalCluster;
-import it.unimi.di.big.mg4j.index.cluster.DocumentalMergedCluster;
 import org.apache.commons.configuration.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,7 @@ public class StatisticalShardRepresentation {
     }
 
     public interface TermIterator extends Iterator<TermStats> {
-        TermStats skip(long n) throws IOException;
+        TermStats next(long n) throws IOException;
         void close() throws IOException;
     }
 
@@ -112,7 +111,7 @@ public class StatisticalShardRepresentation {
         }
 
         @Override
-        public TermStats skip(long n) throws IOException {
+        public TermStats next(long n) throws IOException {
             throw new UnsupportedOperationException();
         }
 
@@ -154,7 +153,7 @@ public class StatisticalShardRepresentation {
         private IndexIterator iterator;
 
         public SingleIndexTermIterator(Index index) throws IOException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
-            indexReader = getIndex().getReader();
+            indexReader = index.getReader();
             iterator =  indexReader.nextIterator();
         }
 
@@ -177,7 +176,7 @@ public class StatisticalShardRepresentation {
         }
 
         @Override
-        public TermStats skip(long n) throws IOException {
+        public TermStats next(long n) throws IOException {
             for (long i = 0; i < n; i++) bufferNext();
             return next();
         }
@@ -327,7 +326,7 @@ public class StatisticalShardRepresentation {
         long prev = 0;
         TermIterator it = termIterator();
         for (long termId : termIds) {
-            TermStats term = it.skip(termId - prev);
+            TermStats term = it.next(termId - prev);
             expectedValue += term.expectedValue;
             variance += term.variance;
             minValue += term.minValue;
@@ -364,21 +363,23 @@ public class StatisticalShardRepresentation {
             }
 
             private void skipDataInputStream(DataInputStream in, long n) throws IOException {
-                long skipped = 0;
-                while (skipped < n) {
-                    int intSkip = n <= Integer.MAX_VALUE
+                while (n > 0) {
+                    int intSkip = (n <= Integer.MAX_VALUE
                             ? (int) n
-                            : Integer.MAX_VALUE;
-                    skipped += in.skipBytes(intSkip);
+                            : Integer.MAX_VALUE) * 8;
+                    n -= in.skipBytes(intSkip);
                 }
             }
 
             @Override
-            public TermStats skip(long n) throws IOException {
-                skipDataInputStream(expectedStream, n - 1);
-                skipDataInputStream(varianceStream, n - 1);
-                skipDataInputStream(minScoreStream, n - 1);
-                remainingTerms -= n - 1;
+            public TermStats next(long n) throws IOException {
+                assert n >= 0;
+                if (n > 0) {
+                    skipDataInputStream(expectedStream, n - 1);
+                    skipDataInputStream(varianceStream, n - 1);
+                    skipDataInputStream(minScoreStream, n - 1);
+                    remainingTerms -= n - 1;
+                }
                 return next();
             }
 
