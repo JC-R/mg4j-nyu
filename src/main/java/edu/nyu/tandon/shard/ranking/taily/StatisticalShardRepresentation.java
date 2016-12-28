@@ -332,6 +332,7 @@ public class StatisticalShardRepresentation {
             minValue += term.minValue;
             prev = termId;
         }
+        it.close();
         return new TermStats(expectedValue, variance, minValue);
     }
 

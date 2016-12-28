@@ -56,8 +56,8 @@ public class TailyShardEvaluator {
 
     protected static Function<Double, Double> cdf(double expectedValue, double variance) {
         if (variance < epsilon) {
-            variance = epsilon;
             LOGGER.warn(String.format("variance = %f < %f: falling back to %f", variance, epsilon, epsilon));
+            variance = epsilon;
         }
         double k = expectedValue * expectedValue / variance;
         double theta = variance / expectedValue;
