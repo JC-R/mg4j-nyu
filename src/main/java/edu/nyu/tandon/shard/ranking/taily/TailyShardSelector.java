@@ -19,10 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -89,10 +86,10 @@ public class TailyShardSelector implements ShardSelector {
 
     @Override
     public Map<Integer, Double> shardScores(String query) throws QueryParserException, QueryBuilderVisitorException, IOException {
-        LOGGER.info(String.format("Processing query: %s", query));
         Map<Integer, Double> scores = new HashMap<>();
         List<String> terms = processedTerms(query);
         double pc = nc / fullEvaluator.all(terms);
+        LOGGER.info(String.format("Processing query: %s (%s)", query, Arrays.toString(terms.toArray())));
         StatisticalShardRepresentation.TermStats fullStats;
         try {
             fullStats = fullRepresentation.queryStats(fullEvaluator.termIds(terms));
@@ -101,8 +98,14 @@ public class TailyShardSelector implements ShardSelector {
         }
         double sc = TailyShardEvaluator.icdf(fullStats.expectedValue - fullStats.minValue, fullStats.variance).apply(pc);
         for (int shardId = 0; shardId < shardEvaluators.size(); shardId++) {
-            double estimate = shardEvaluators.get(shardId).estimateDocsAboveCutoff(terms, sc, fullStats.minValue);
-            scores.put(shardId, estimate);
+            try {
+                double estimate = shardEvaluators.get(shardId).estimateDocsAboveCutoff(terms, sc, fullStats.minValue);
+                scores.put(shardId, estimate);
+            } catch (Exception e) {
+                throw new RuntimeException(
+                        String.format("Failed estimating docs above cutoff=%f for shard %d", sc, shardId),
+                        e);
+            }
         }
         return scores;
     }
