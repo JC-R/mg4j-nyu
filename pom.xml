@@ -176,6 +176,11 @@
             <version>2.0.54-beta</version>
         </dependency>
         <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <version>1.3</version>
+        </dependency>
+        <dependency>
             <groupId>it.unimi.di</groupId>
             <artifactId>mg4j-big</artifactId>
             <version>5.4.1</version>

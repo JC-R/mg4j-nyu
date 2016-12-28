@@ -1,7 +1,7 @@
 package edu.nyu.tandon.shard.ranking.taily;
 
-import edu.nyu.tandon.shard.ranking.taily.StatisticalShardRepresentation.TermStats;
 import edu.nyu.tandon.shard.ranking.taily.StatisticalShardRepresentation.TermIterator;
+import edu.nyu.tandon.shard.ranking.taily.StatisticalShardRepresentation.TermStats;
 import edu.nyu.tandon.test.BaseTest;
 import it.unimi.di.big.mg4j.index.IndexIterator;
 import org.apache.commons.configuration.ConfigurationException;
@@ -15,6 +15,8 @@ import java.net.URISyntaxException;
 import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
 import static junit.framework.TestCase.assertEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.mockito.Matchers.eq;
@@ -109,69 +111,11 @@ public class StatisticalShardRepresentationTest extends BaseTest {
         while (it.hasNext()) {
             counter++;
             TermStats t = it.next();
-            assertThat(t.expectedValue, not(equalTo(0.0)));
-            assertThat(t.minValue, not(equalTo(0.0)));
+            assertThat(t.expectedValue, lessThanOrEqualTo(0.0));
+            assertThat(t.minValue, lessThanOrEqualTo(0.0));
+            assertThat(t.variance, greaterThanOrEqualTo(0.0));
         }
         assertEquals(4194, counter);
-    }
-
-    @Test
-    public void calcSmallIndex() throws IllegalAccessException, ConfigurationException, IOException, InstantiationException, ClassNotFoundException, URISyntaxException, NoSuchMethodException, InvocationTargetException {
-        // given
-        String basename = buildIndexA();
-        StatisticalShardRepresentation representation = new StatisticalShardRepresentation(basename);
-
-        // when
-        TermIterator it = representation.calc(1.0);
-
-        // then
-        /**
-         * Inverted Index:
-         * a | 0[3] 1[1]
-         * b | 0[1]
-         * f | 1[1] 2[1]
-         * g | 0[1] 2[1]
-         * h | 2[2]
-         * x | 1[1]
-         * y | 1[1] 2[1]
-         * z | 1[1]
-         *
-         * f_a(0) = -0.6079893722196386
-         * f_a(1) = -1.5553706911638245
-         */
-        TermStats t = it.next();
-        assertEquals(-1.5553706911638245, t.minValue, 0.000001);
-        assertEquals(-1.0816800316917314, t.expectedValue, 0.000001);
-        assertEquals(0.2243828408711066, t.variance, 0.000001);
-
-        t = it.next();
-        assertEquals(-1.7272209480904839, t.minValue, 0.000001);
-        assertEquals(-1.7272209480904839, t.expectedValue, 0.000001);
-        assertEquals(0.0, t.variance, 0.000001);
-    }
-
-    @Test
-    public void writeSmallIndex() throws IllegalAccessException, ConfigurationException, IOException, InstantiationException, ClassNotFoundException, URISyntaxException, NoSuchMethodException, InvocationTargetException {
-        // given
-        String basename = buildIndexA();
-        StatisticalShardRepresentation representation = new StatisticalShardRepresentation(basename);
-
-        // when
-        TermIterator it = representation.calc(1.0);
-        representation.write(it);
-
-        // then
-        TermIterator stored = representation.calc(1.0);
-        TermIterator calculated = representation.termIterator();
-        while (stored.hasNext() && calculated.hasNext()) {
-            TermStats s = stored.next();
-            TermStats c = calculated.next();
-            assertEquals(s.expectedValue, c.expectedValue, 0.1);
-            assertEquals(s.minValue, c.minValue, 0.1);
-            assertEquals(s.variance, c.variance, 0.1);
-        }
-        assertThat(stored.hasNext(), equalTo(false));
-        assertThat(calculated.hasNext(), equalTo(false));
     }
 
     @Test
@@ -188,8 +132,9 @@ public class StatisticalShardRepresentationTest extends BaseTest {
         while (it.hasNext()) {
             counter++;
             TermStats t = it.next();
-            assertThat(t.expectedValue, not(equalTo(0.0)));
-            assertThat(t.minValue, not(equalTo(0.0)));
+            assertThat(t.expectedValue, lessThanOrEqualTo(0.0));
+            assertThat(t.minValue, lessThanOrEqualTo(0.0));
+            assertThat(t.variance, greaterThanOrEqualTo(0.0));
         }
         assertEquals(16741, counter);
     }

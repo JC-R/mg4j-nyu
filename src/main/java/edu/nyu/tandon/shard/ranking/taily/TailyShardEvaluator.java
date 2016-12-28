@@ -10,6 +10,7 @@ import org.apache.commons.math3.special.Gamma;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -44,7 +45,8 @@ public class TailyShardEvaluator {
             TermStats t = statisticalRepresentation.queryStats(terms);
             return cdf(t.expectedValue - globalMinValue, t.variance);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(
+                    String.format("Failed to compute cdf(%s, %f)", Arrays.toString(terms), globalMinValue), e);
         }
     }
 
