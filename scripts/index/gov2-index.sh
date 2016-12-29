@@ -17,7 +17,7 @@ find ${GOV2_LOCATION} -iname \*.gz -type f | \
         -z -f it.unimi.di.big.mg4j.document.HtmlDocumentFactory -p encoding=UTF-8 \
         ${WORK_DIR}/gov2.sequence
 
-java Dit.unimi.di.law.warc.io.version=false -Dit.unimi.di.law.warc.records.useburl=false \
+java \
     it.unimi.di.big.mg4j.tool.IndexBuilder \
     -s 1000000 -S ${WORK_DIR}/gov2.sequence \
     -t EnglishStemmer -I text -c POSITIONS:NONE \

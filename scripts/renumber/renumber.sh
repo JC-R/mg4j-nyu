@@ -38,7 +38,7 @@ paste ${ID} ${INPUT_TITLES} > tmp.b
 join tmp.a tmp.b | cut -d " " -f 2- | sort -n | cut -d " " -f 2 > ${OUTPUT_TITLES}
 rm tmp.*
 
-java -Xmx1G edu.nyu.tandon.tool.renumber.Renumber -i "${INPUT_INDEX}-${FIELD}" -o "${OUTPUT_INDEX}-${FIELD}" -m "${MAP}"
+java edu.nyu.tandon.tool.renumber.Renumber -i "${INPUT_INDEX}-${FIELD}" -o "${OUTPUT_INDEX}-${FIELD}" -m "${MAP}"
 
 endtime=$(date +%s)
 

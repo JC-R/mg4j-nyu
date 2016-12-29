@@ -92,7 +92,9 @@ public class BaseTest {
     }
 
     public void buildIndex(String basename, List<String> corpus) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
-        new IndexBuilder(basename, new StringDocumentSequence(corpus)).run();
+        new IndexBuilder(basename, new StringDocumentSequence(corpus))
+                .quasiSuccinctWriterFlags(CompressionFlags.valueOf(new String[]{"POSITIONS:NONE"}, CompressionFlags.DEFAULT_STANDARD_INDEX))
+                .run();
     }
 
     /**
@@ -135,11 +137,6 @@ public class BaseTest {
         buildIndex(basename, corpusA);
         return basename + "-text";
     }
-    public String buildIndex1() throws IllegalAccessException, URISyntaxException, IOException, InstantiationException, NoSuchMethodException, ConfigurationException, InvocationTargetException, ClassNotFoundException {
-        String basename = temporaryFolder.getRoot().getAbsolutePath() + "/B";
-        buildIndex(basename, corpusB);
-        return basename + "-text";
-    }
 
     public String buildCluster() throws Exception {
 
@@ -161,34 +158,5 @@ public class BaseTest {
                 .run();
 
         return cluster;
-
-//        String a = buildIndexA();
-//        String b = buildIndex1();
-//        String cluster = temporaryFolder.getRoot().getAbsolutePath() + "/index";
-//
-////        List<Long> c0 = Arrays.asList(0L, 1L, 2L);
-////        List<Long> c1 = Arrays.asList(3L, 4L);
-////        SelectiveDocumentalIndexStrategy strategy = SelectiveDocumentalIndexStrategy.constructStrategy(
-////                new Iterator[] { c0.iterator(), c1.iterator() }, 5);
-//        ContiguousDocumentalStrategy strategy = new ContiguousDocumentalStrategy(0, 3);
-//        BinIO.storeObject(strategy, cluster + ".strategy");
-//
-//        Properties properties = new Properties();
-//        properties.setProperty("field", "text");
-//        properties.setProperty("strategy", cluster + ".strategy");
-//        properties.setProperty("localindex", a);
-//        properties.setProperty("localindex", b);
-//        properties.setProperty("bloom", "false");
-//        properties.setProperty("indexclass", "it.unimi.di.big.mg4j.index.cluster.DocumentalMergedCluster");
-//        properties.setProperty("documents", "5");
-//        properties.setProperty("flat", "false");
-//        properties.setProperty("terms", "12");
-//        properties.setProperty("postings", "20");
-//        properties.setProperty("occurrences", "25");
-//        properties.setProperty("maxcount", "2");
-//        properties.setProperty("termprocessor", "it.unimi.di.big.mg4j.index.DowncaseTermProcessor");
-//        properties.store(new FileWriter(cluster + ".properties"), null);
-//
-//        return cluster;
     }
 }

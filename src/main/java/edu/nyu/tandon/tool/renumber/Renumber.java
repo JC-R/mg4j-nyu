@@ -110,8 +110,12 @@ public class Renumber {
     public void run() throws IOException, ConfigurationException {
 
         if (mapping == null) throw new IllegalStateException("Mapping file is undefined.");
+        if (index.hasPositions) {
+            // TODO
+            throw new IllegalArgumentException("Indices with positions are currently not supported");
+        }
 
-        LOGGER.info(String.format("Copying inverted lists"));
+        LOGGER.info("Copying inverted lists");
 
         long start = System.currentTimeMillis();
         IndexIterator indexIterator = indexReader.nextIterator();
@@ -127,12 +131,13 @@ public class Renumber {
                     DurationFormatUtils.formatDurationHMS(elapsed),
                     DurationFormatUtils.formatDurationHMS(left)));
         }
+        indexReader.close();
 
-        LOGGER.info(String.format("Copying sizes"));
+        LOGGER.info("Copying sizes");
         writeSizes();
-        LOGGER.info(String.format("Copying properties"));
+        LOGGER.info("Copying properties");
         writeProperties();
-        LOGGER.info(String.format("Copying terms"));
+        LOGGER.info("Copying terms");
         copyTerms();
         indexWriter.close();
 
@@ -140,8 +145,12 @@ public class Renumber {
 
     public void copyTerms() throws IOException {
         FileUtils.copyFile(new File(inputBasename + TERMS_EXTENSION), new File(outputBasename + TERMS_EXTENSION));
-        FileUtils.copyFile(new File(inputBasename + TERMMAP_EXTENSION), new File(outputBasename + TERMMAP_EXTENSION));
-        FileUtils.copyFile(new File(inputBasename + MWHC_EXTENSION), new File(outputBasename + MWHC_EXTENSION));
+        if (FileUtils.fileExists(inputBasename + TERMMAP_EXTENSION)) {
+            FileUtils.copyFile(new File(inputBasename + TERMMAP_EXTENSION), new File(outputBasename + TERMMAP_EXTENSION));
+        }
+        if (FileUtils.fileExists(inputBasename + MWHC_EXTENSION)) {
+            FileUtils.copyFile(new File(inputBasename + MWHC_EXTENSION), new File(outputBasename + MWHC_EXTENSION));
+        }
     }
 
     public void writeSizes() throws IOException {
