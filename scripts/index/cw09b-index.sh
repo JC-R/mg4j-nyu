@@ -17,8 +17,7 @@ find ${CW_LOCATION} -iname \*.gz -type f | \
         -z -f it.unimi.di.big.mg4j.document.HtmlDocumentFactory -p encoding=UTF-8 \
         ${WORK_DIR}/cw09b.sequence
 
-java Dit.unimi.di.law.warc.io.version=false -Dit.unimi.di.law.warc.records.useburl=false \
-    it.unimi.di.big.mg4j.tool.IndexBuilder \
+java it.unimi.di.big.mg4j.tool.IndexBuilder \
     -s 1000000 -S ${WORK_DIR}/cw09b.sequence \
     -t EnglishStemmer -I text -c POSITIONS:NONE \
     ${WORK_DIR}/cw09b > ~/out 2> ~/err
