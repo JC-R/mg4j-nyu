@@ -119,19 +119,22 @@ public class Renumber {
 
         long start = System.currentTimeMillis();
         IndexIterator indexIterator = indexReader.nextIterator();
+        long j = 0;
         while (indexIterator != null) {
             int i = 0;
             while (indexIterator != null && i++ < 1000) {
                 writeReorderedList(indexIterator);
                 indexIterator = indexReader.nextIterator();
             }
+            j += i;
             long elapsed = System.currentTimeMillis() - start;
-            long left = (index.numberOfTerms - i) / i * elapsed;
-            LOGGER.debug(String.format("Copied %d terms. Elapsed time: %s. Estimated time left: %s.", i,
+            long left = (index.numberOfTerms - j) / j * elapsed;
+            LOGGER.debug(String.format("Copied %d terms. Elapsed time: %s. Estimated time left: %s.", j,
                     DurationFormatUtils.formatDurationHMS(elapsed),
                     DurationFormatUtils.formatDurationHMS(left)));
         }
         indexReader.close();
+        indexWriter.close();
 
         LOGGER.info("Copying sizes");
         writeSizes();
@@ -139,7 +142,6 @@ public class Renumber {
         writeProperties();
         LOGGER.info("Copying terms");
         copyTerms();
-        indexWriter.close();
 
     }
 
