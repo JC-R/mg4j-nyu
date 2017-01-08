@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <option name="DEFAULT_COMPILER" value="Javac" />
     <option name="BUILD_PROCESS_HEAP_SIZE" value="1400" />
     <wildcardResourcePatterns>
       <entry name="!?*.java" />
@@ -21,5 +20,8 @@
         <module name="mg4j-nyu" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="mg4j-nyu" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

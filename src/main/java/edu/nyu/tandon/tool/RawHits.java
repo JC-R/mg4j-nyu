@@ -84,11 +84,7 @@ public class RawHits {
      * A formatter for TREC results.
      */
     private static final java.text.NumberFormat FORMATTER = new java.text.DecimalFormat("0.0000000000");
-    private static int[] docHits;
     private static long queryCount = 0;
-    private static int[] bins;
-    private static int[] limits = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 40, 80, 160, 320, 640, 1280, 2160, 4320, 8640};
-    private static int dhBatch = 0;
     private static int phBatch = 0;
     private static String outputName;
     /**
@@ -98,7 +94,7 @@ public class RawHits {
     /**
      * The maximum number of items outputDH to the console.
      */
-    private int maxOutput = 10000;
+    private int maxOutput = 1000;
     /**
      * Current topic number, for {@link OutputType#TREC} only.
      */
@@ -114,89 +110,11 @@ public class RawHits {
     /**
      * The current output stream, changeable with <samp>$divert</samp>.
      */
-    private PrintStream outputDH = System.out;
     private PrintStream outputPH = System.out;
     private ObjectArrayList<ImmutableTriple<Integer, Integer, Integer>> postHits = new ObjectArrayList<ImmutableTriple<Integer, Integer, Integer>>();
 
     public RawHits(final QueryEngine queryEngine) {
         this.queryEngine = queryEngine;
-    }
-
-    private static int binIndex(int rank) {
-        for (int i = 0; i < limits.length; i++)
-            if (rank <= limits[i]) return i;
-        return limits.length - 1;
-    }
-
-    private static void buildBins(int results, int numDocs) {
-        docHits = new int[limits.length * numDocs];
-        bins = new int[results];
-        for (int i = 1; i <= results; i++)
-            bins[i - 1] = binIndex(i);
-    }
-
-    private static void dumpPosthits(RawHits query, long numDocs, boolean endRun) {
-
-        Collections.sort(query.postHits);
-        ImmutableTriple<Integer, Integer, Integer> t;
-        Triple<Integer, Integer, Integer> lastT = new MutableTriple<>(-1, -1, -1);
-        int hits = 0;
-        for (int i = 0; i < query.postHits.size(); i++) {
-            t = query.postHits.get(i);
-            if (t.compareTo(lastT) != 0) {
-                if (hits > 0) {
-                    // format: doc, term, , rank, #hits
-                    query.outputPH.printf("%d,%d,%d,%d\n", lastT.getLeft(), lastT.getMiddle(), lastT.getRight(), hits);
-                }
-                hits = 0;
-                lastT = t;
-            }
-            hits++;
-        }
-        query.postHits.clear();
-        if (query.outputDH != System.out) {
-            query.outputPH.close();
-        }
-        if (!endRun) {
-            try {
-                query.outputPH = new PrintStream(new FastBufferedOutputStream(new FileOutputStream(outputName + "-" + phBatch++ + ".ph.txt")));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private static void dumpBatch(RawHits query, long numDocs, boolean endRun) {
-
-        // docHits
-        for (int i = 0; i < numDocs; i++) {
-
-            int index = (i * limits.length);
-            boolean zero = true;
-            for (int j = 0; j < limits.length && zero; j++) zero = docHits[index + j] == 0;
-            if (zero) continue;
-            // print only non-zero results
-            query.outputDH.printf("%d,", i);
-            for (int j = 0; j < limits.length - 1; j++) {
-                query.outputDH.printf("%d,", docHits[index + j]);
-                docHits[index + j] = 0;
-            }
-            query.outputDH.printf("%d", docHits[limits.length - 1]);
-            docHits[index + (limits.length - 1)] = 0;
-            query.outputDH.println();
-        }
-
-        if (query.outputDH != System.out) {
-            query.outputDH.close();
-        }
-
-        if (!endRun) {
-            try {
-                query.outputDH = new PrintStream(new FastBufferedOutputStream(new FileOutputStream(outputName + "-" + dhBatch++ + ".dh.txt")));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     /**
@@ -338,19 +256,17 @@ public class RawHits {
 
         // start docHits with at least 10K results
         query.interpretCommand("$score BM25Scorer");
-        query.interpretCommand("$mode time");
+//        query.interpretCommand("$mode time");
 
         if (jsapResult.userSpecified("divert"))
             query.interpretCommand("$divert " + jsapResult.getObject("divert"));
 
         query.displayMode = OutputType.DOCHHITS;
-        query.maxOutput = jsapResult.getInt("results", 10000);
+        query.maxOutput = jsapResult.getInt("results", 1000);
 
         String q;
         int n = 0;
 
-        int dumpsize = jsapResult.userSpecified("dumpsize") ? jsapResult.getInt("dumpsize", 10000) : 10000;
-        buildBins(query.maxOutput, (int) numberOfDocuments);
         String lastQ = "";
 
         try {
@@ -371,7 +287,7 @@ public class RawHits {
                 }
 
                 queryCount++;
-                long time = -System.nanoTime();
+                 long time = -System.nanoTime();
                 if (q.compareTo(lastQ) != 0) {
                     try {
                         n = queryEngine.process(q, 0, query.maxOutput, results);
@@ -388,20 +304,8 @@ public class RawHits {
                 }
                 time += System.nanoTime();
                 query.output(results, documentCollection, titleList, TextMarker.TEXT_BOLDFACE);
-
-                // dump batch
-                if (queryCount % dumpsize == 0) {
-                    dumpBatch(query, numberOfDocuments, false);
-                }
-                // check postHits
-                if (query.postHits.size() > 100000000)
-                    dumpPosthits(query, numberOfDocuments, false);
             }
-
         } finally {
-            dumpBatch(query, numberOfDocuments, true);
-            dumpPosthits(query, numberOfDocuments, true);
-            if (query.outputDH != System.out) query.outputDH.close();
         }
     }
 
@@ -427,19 +331,16 @@ public class RawHits {
 
             dsi = results.get(i);
 
-            // docHits
+            // docID
             doc = (int) dsi.document;
-            int index = (doc * limits.length) + bins[i];
-            docHits[index]++;
 
-            // postHits
+            // (query, doc, term, rank)
             for (j = 0; j < dsi.info.size(); j++)
-                postHits.add(new ImmutableTriple<Integer, Integer, Integer>(doc,(int) ((BM25Scorer) queryEngine.scorer).flatIndexIterator[dsi.info.get(j)].termNumber(),i));
+                outputPH.printf("%d,%d,%d,%d\n", queryCount, doc,(int) ((BM25Scorer) queryEngine.scorer).flatIndexIterator[dsi.info.get(j)].termNumber(),i);
         }
 
-        if (doc > 0 && (queryCount % 2000 == 0))
+        if (doc > 0 && (queryCount % 10 == 0))
             LOGGER.info("Processed " + queryCount + " queries");
-//            outputDH.printf("%d %d %d\n", queryCount, doc, i+1 );
 
         return i;
     }
@@ -557,16 +458,12 @@ public class RawHits {
             case DIVERT:
                 if (part.length > 2) System.err.println("Wrong argument(s) to command");
                 else {
-                    if (outputDH != System.out)
-                        outputDH.close();
                     outputPH.close();
                     try {
-                        outputDH = part.length == 1 ? System.out : new PrintStream(new FastBufferedOutputStream(new FileOutputStream(part[1] + "-" + dhBatch++ + ".dh.txt")));
                         outputPH = part.length == 1 ? System.out : new PrintStream(new FastBufferedOutputStream(new FileOutputStream(part[1] + "-" + phBatch++ + ".ph.txt")));
                         outputName = part[1];
                     } catch (FileNotFoundException e) {
                         System.err.println("Cannot create file " + part[1]);
-                        outputDH = System.out;
                         outputPH = System.out;
                     }
                 }

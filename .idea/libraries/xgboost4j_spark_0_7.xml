@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="xgboost4j-spark-0.7">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../xgboost/jvm-packages/xgboost4j-spark/target/xgboost4j-spark-0.7.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../xgboost/jvm-packages/xgboost4j-spark/src/main/scala/ml" />
+      <root url="file://$PROJECT_DIR$/../xgboost/jvm-packages/xgboost4j-spark/src/main/scala/ml/dmlc/xgboost4j/scala/spark" />
+    </SOURCES>
+  </library>
+</component>

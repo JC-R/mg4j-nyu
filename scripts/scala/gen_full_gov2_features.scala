@@ -87,7 +87,7 @@ withColumn("p_top1k",toDouble($"p_top1k")).
 withColumn("termID",toDouble($"termID")).
 withColumn("docID",toDouble($"docID")).
 map(row => {
-	val d = (for (i<-0 to 56) yield row.getDouble(i)).toArray
+		val d = (for (i<-0 to 56) yield row.getDouble(i)).toArray
 	LabeledPoint(0.toDouble, Vectors.dense(d).toSparse)
 })
 //.repartition(20)

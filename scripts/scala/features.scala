@@ -1,3 +1,7 @@
+import org.apache.spark.mllib.linalg.SparseVector
+import org.apache.spark.mllib.regression.LabeledPoint
+import org.apache.spark.mllib.util.MLUtils
+
 # spark-shell --master local[*] --packages com.databricks:spark-csv_2.10:1.3.0 driver-memory 40g --name prune-features --conf spark.kryoserializer.buffer.max=256m
 
 val work_dir = "/home/juan/work/experiments/features/"
@@ -211,3 +215,19 @@ val df1 = df.
     "top1k")
 
 df.write.parquet(work_dir+"postings_features.parquet")
+
+featureGroups.foreach { case (key, value) =>
+    val stage = new VectorAssembler()
+      .setInputCols(value)
+      .setOutputCol("features")
+    stage.transform(df).select("p_termID","p_docID","features").write.parquet("scratch/cw09b.full."+key+".parquet")
+}
+
+
+featureGroups.foreach { case (key, value) =>
+    val d1 = spark.read.parquet("scratch/full/cw09b.full." + key + ".parquet")
+    d1.select("p_termID","p_docID").write.format("csv").save("scratch/full/cw09b.full."+ key + ".key")
+    val d2 = MLUtils.convertVectorColumnsFromML(d1, "features")
+    val d3 = d2.map(row => LabeledPoint(0, row.getAs[SparseVector]("features")))
+    MLUtils.saveAsLibSVMFile(d3.rdd, "scratch/full/cw09b.full." + key + ".libsvm")
+}

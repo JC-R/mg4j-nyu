@@ -60,7 +60,7 @@ public class IndexFeatures {
         final Index text = Index.getInstance(arg[0], true, true);
         final IndexReader reader = text.getReader();
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(arg[0] + ".terms"), Charset.forName("UTF-8")));
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(arg[0].split("\\?")[0] + ".terms"), Charset.forName("UTF-8")));
         IndexIterator iterator;
         while ((iterator = reader.nextIterator()) != null) {
             // for each term in the index, extract the term features: termID,docID,term-freq,doc-term-freq,bm25

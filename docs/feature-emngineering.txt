@@ -1,0 +1,73 @@
+doc features
+  d_len: integer         doc size
+  d_terms: integer       unique terms
+  d_xdoc: double         xdoc
+  d_doc_ratio: double    doc #terms / doc # unique terms
+  d_xdoc_norm1: double   xdoc / # terms
+  d_xdoc_norm2: double   xdoc / # unique terms
+
+doc-hit features
+  // bins
+  d_b1: integer
+  d_b2: integer
+  d_b3: integer
+  d_b4: integer
+  d_b5: integer
+  d_b6: integer
+  d_b7: integer
+  d_b8: integer
+  d_b9: integer
+  d_b10: integer
+  d_b20: integer
+  d_b40: integer
+  d_b80: integer
+  d_b160: integer
+  d_b320: integer
+  // aggregates
+  d_top10: integer
+  d_top20: integer
+  d_top40: integer
+  d_top80: integer
+  d_top160: integer
+  d_top1k: integer
+
+posting features
+  list size: integer
+  doc_term_freq: integer
+  bm25: double
+
+posting hit features
+  // bins
+  p_b1: integer
+  p_b2: integer
+  p_b3: integer
+  p_b4: integer
+  p_b5: integer
+  p_b6: integer
+  p_b7: integer
+  p_b8: integer
+  p_b9: integer
+  p_b10: integer
+  p_b20: integer
+  p_b40: integer
+  p_b80: integer
+  p_b160: integer
+  p_b320: integer
+  p_b640: integer
+  p_b1280: integer
+  // aggregates
+  p_top10: integer
+  p_top20: integer
+  p_top40: integer
+  p_top80: integer
+  p_top160: integer
+  p_top1k: integer
+
+ADD:
+ hits / size (#unique terms), for each aggregate
+ P(t) from LM
+
+LABEL:
+
+ termID: integer
+ docID: integer
