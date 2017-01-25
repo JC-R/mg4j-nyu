@@ -24,9 +24,9 @@ public class ExtractShardScores {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ExtractShardScores.class);
 
-    private static ShardSelector resolveShardSelector(String name, CentralSampleIndex csi) {
+    private static ShardSelector resolveShardSelector(String name, CentralSampleIndex csi, int base) {
         if ("redde".equals(name)) return new ReDDEShardSelector(csi);
-        else if ("shrkc".equals(name)) return new RankS(csi, 2).withC(-1.0);
+        else if ("shrkc".equals(name)) return new RankS(csi, base).withC(-1.0);
         else throw new IllegalArgumentException("You need to define a proper selector: redde, shrkc");
     }
 
@@ -68,6 +68,7 @@ public class ExtractShardScores {
                         new FlaggedOption("output", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "output", "The output files basename."),
                         new FlaggedOption("clusters", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'c', "clusters", "The number of clusters."),
                         new FlaggedOption("selector", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 's', "selector", "Selector type (redde or shrkc)"),
+                        new FlaggedOption("base", JSAP.INTEGER_PARSER, "2", JSAP.REQUIRED, 'b', "base", "The base for Rank-S."),
                         new FlaggedOption("scorer", JSAP.STRING_PARSER, "bm25", JSAP.NOT_REQUIRED, 'S', "scorer", "Scorer type (bm25 or ql)"),
                         new FlaggedOption("csiMaxOutput", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'L', "csi-max-output", "CSI maximal number of results")
                                 .setAllowMultipleDeclarations(true),
@@ -92,7 +93,8 @@ public class ExtractShardScores {
 
             LOGGER.info(String.format("Extracting shard scores for L = %d", L));
             csi.setMaxOutput(L);
-            ShardSelector shardSelector = resolveShardSelector(jsapResult.getString("selector"), csi);
+            ShardSelector shardSelector = resolveShardSelector(jsapResult.getString("selector"),
+                    csi, jsapResult.getInt("base"));
 
             FileWriter[] writers = new FileWriter[clusters];
             for (int i = 0; i < clusters; i++)
