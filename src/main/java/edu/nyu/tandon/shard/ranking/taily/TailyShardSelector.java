@@ -91,7 +91,7 @@ public class TailyShardSelector implements ShardSelector {
         double fullAll = fullEvaluator.all(terms);
         double pc = nc / fullAll;
         LOGGER.info(String.format("Processing query: %s (%s)", query, Arrays.toString(terms.toArray())));
-        LOGGER.debug(String.format("nc=%f, fullAll=%f, pc=%f", nc, fullAll, pc));
+        LOGGER.debug(String.format("nc=%d, fullAll=%f, pc=%f", nc, fullAll, pc));
         StatisticalShardRepresentation.TermStats fullStats;
         try {
             fullStats = fullRepresentation.queryStats(fullEvaluator.termIds(terms));
