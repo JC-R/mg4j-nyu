@@ -32,7 +32,7 @@ starttime=$(date +%s)
 
 set -e
 
-java -Xmx3g edu.nyu.tandon.experiments.cluster.ExtractShardScores \
+java edu.nyu.tandon.experiments.cluster.ExtractShardScores \
     -s redde \
     -i ${input} \
     -o "${outputDir}/${inputBase}" \
@@ -41,7 +41,7 @@ java -Xmx3g edu.nyu.tandon.experiments.cluster.ExtractShardScores \
     ${base} \
     ${csiBase}
 
-java -Xmx3g edu.nyu.tandon.experiments.cluster.ExtractShardScores \
+java edu.nyu.tandon.experiments.cluster.ExtractShardScores \
     -s shrkc \
     -i ${input} \
     -o "${outputDir}/${inputBase}" \

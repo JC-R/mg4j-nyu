@@ -36,6 +36,11 @@ public class StatisticalShardRepresentation {
             this.variance = variance;
             this.minValue = minValue;
         }
+
+        @Override
+        public String toString() {
+            return String.format("[exp=%f, var=%f, min=%f]", expectedValue, variance, minValue);
+        }
     }
 
     public interface TermIterator extends Iterator<TermStats> {
