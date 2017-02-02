@@ -36,6 +36,11 @@ public class StatisticalShardRepresentation {
             this.variance = variance;
             this.minValue = minValue;
         }
+
+        @Override
+        public String toString() {
+            return String.format("[exp=%f, var=%f, min=%f]", expectedValue, variance, minValue);
+        }
     }
 
     public interface TermIterator extends Iterator<TermStats> {
@@ -319,11 +324,12 @@ public class StatisticalShardRepresentation {
     }
 
     public TermStats queryStats(long[] termIds) throws IOException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
+        LOGGER.debug(String.format("queryStats for termsIds = %s", Arrays.toString(termIds)));
         Arrays.sort(termIds);
         double expectedValue = 0;
         double variance = 0;
         double minValue = 0;
-        long prev = 0;
+        long prev = -1;
         TermIterator it = termIterator();
         for (long termId : termIds) {
             TermStats term = it.next(termId - prev);
@@ -331,6 +337,7 @@ public class StatisticalShardRepresentation {
             variance += term.variance;
             minValue += term.minValue;
             prev = termId;
+            LOGGER.trace(String.format("Term %d: %s", termId, term));
         }
         it.close();
         return new TermStats(expectedValue, variance, minValue);

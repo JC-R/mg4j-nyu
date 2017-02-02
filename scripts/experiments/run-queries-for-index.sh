@@ -21,7 +21,7 @@ if [ -z "${outputDir}" ]; then echo "You have to define output directory (3)"; e
 
 inputBase=`basename ${input}`
 
-java -Xmx4g edu.nyu.tandon.experiments.cluster.ExtractClusterFeatures \
+java edu.nyu.tandon.experiments.cluster.ExtractClusterFeatures \
     -i ${input} \
     -o "${outputDir}/${inputBase}" \
     -k 100 \

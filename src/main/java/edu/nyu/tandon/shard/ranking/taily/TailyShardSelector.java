@@ -88,19 +88,24 @@ public class TailyShardSelector implements ShardSelector {
     public Map<Integer, Double> shardScores(String query) throws QueryParserException, QueryBuilderVisitorException, IOException {
         Map<Integer, Double> scores = new HashMap<>();
         List<String> terms = processedTerms(query);
-        double pc = nc / fullEvaluator.all(terms);
+        double fullAll = fullEvaluator.all(terms);
+        double pc = nc / fullAll;
         LOGGER.info(String.format("Processing query: %s (%s)", query, Arrays.toString(terms.toArray())));
+        LOGGER.debug(String.format("nc=%d, fullAll=%f, pc=%f", nc, fullAll, pc));
         StatisticalShardRepresentation.TermStats fullStats;
         try {
             fullStats = fullRepresentation.queryStats(fullEvaluator.termIds(terms));
+            LOGGER.debug(String.format("Full stats: %s", fullStats));
         } catch (IllegalAccessException | URISyntaxException | InstantiationException | ConfigurationException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
         double sc = TailyShardEvaluator.icdf(fullStats.expectedValue - fullStats.minValue, fullStats.variance).apply(pc);
+        LOGGER.debug(String.format("sc = icdf(pc) = %f", sc));
         for (int shardId = 0; shardId < shardEvaluators.size(); shardId++) {
             try {
                 double estimate = shardEvaluators.get(shardId).estimateDocsAboveCutoff(terms, sc, fullStats.minValue);
                 scores.put(shardId, estimate);
+                LOGGER.trace(String.format("Estimated score for shard %d: %f", shardId, estimate));
             } catch (Exception e) {
                 throw new RuntimeException(
                         String.format("Failed estimating docs above cutoff=%f for shard %d", sc, shardId),
