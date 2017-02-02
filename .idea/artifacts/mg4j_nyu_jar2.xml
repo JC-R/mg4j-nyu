@@ -1,0 +1,33 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="mg4j-nyu:jar2">
+    <output-path>$PROJECT_DIR$/target/artifacts/mg4j_nyu_jar2</output-path>
+    <root id="archive" name="mg4j-nyu.jar">
+      <element id="module-output" name="mg4j-nyu" />
+      <element id="library" level="project" name="xgboost-predictor-0.1.9-SNAPSHOT" />
+      <element id="library" level="application" name="scala-sdk-2.11.8" />
+      <element id="library" level="project" name="com.martiansoftware:jsap:2.1" />
+      <element id="library" level="project" name="commons-configuration:commons-configuration:1.10" />
+      <element id="library" level="project" name="it.unimi.dsi:fastutil:7.0.13" />
+      <element id="library" level="project" name="junit:junit:4.12" />
+      <element id="library" level="module" name="Maven: jdk.tools:jdk.tools:1.6" module-name="mg4j-nyu" />
+      <element id="library" level="project" name="org.apache.httpcomponents:httpcore:4.4.4" />
+      <element id="directory" name="lib">
+        <element id="file-copy" path="/lib/x86_64-linux-gnu/libm.so.6" />
+        <element id="file-copy" path="/lib/x86_64-linux-gnu/libc.so.6" />
+      </element>
+      <element id="library" level="application" name="xgboost4j-0.7" />
+      <element id="library" level="application" name="xgboost4j-example-0.7" />
+      <element id="library" level="application" name="xgboost4j-spark-0.7" />
+      <element id="library" level="project" name="org.apache.spark:spark-mllib_2.11:2.1.0" />
+      <element id="library" level="project" name="com.github.scopt:scopt_2.12:3.5.0" />
+      <element id="library" level="project" name="it.unimi.di:mg4j-big:5.4.1" />
+      <element id="library" level="project" name="it.unimi.dsi:dsiutils:2.3.3" />
+      <element id="library" level="project" name="it.unimi.dsi:sux4j:3.2.2" />
+      <element id="library" level="application" name="org.codehaus.mojo:exec-maven-plugin:1.5.0" />
+      <element id="library" level="application" name="org.scalanlp:breeze_2.11:0.10" />
+      <element id="library" level="project" name="org.apache.spark:spark-core_2.11:2.1.0" />
+      <element id="library" level="project" name="org.apache.spark:spark-sql_2.11:2.1.0" />
+      <element id="library" level="project" name="org.apache.spark:spark-catalyst_2.11:2.1.0" />
+    </root>
+  </artifact>
+</component>

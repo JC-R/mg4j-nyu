@@ -47,9 +47,13 @@ public class IndexFeatures {
         long document = 0;
         double score = 0;
 
-        if (arg.length != 1) {
-            System.out.println("Missing argument: IndexFeatures <index>");
+        if (arg.length < 1) {
+            System.out.println("Missing argument: IndexFeatures <index> [segment [length]");
         }
+
+        int segment = (arg.length >= 2) ? Integer.parseInt(arg[1]) : -1;
+        long seglength = (arg.length >= 3) ? Long.parseLong(arg[2]) : -1;
+        long startT = (segment > -1) ? segment * seglength : -1;
 
         Logger LOGGER = LoggerFactory.getLogger(IndexFeatures.class);
 
@@ -62,13 +66,27 @@ public class IndexFeatures {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(arg[0].split("\\?")[0] + ".terms"), Charset.forName("UTF-8")));
         IndexIterator iterator;
+
+
+        long i = 0;
         while ((iterator = reader.nextIterator()) != null) {
             // for each term in the index, extract the term features: termID,docID,term-freq,doc-term-freq,bm25
+            long tID = iterator.termNumber();
+
+            if (segment > -1 && tID < startT) {
+                String s = br.readLine();
+                continue;
+            }
+
+            long tfreq = iterator.frequency();
             iterator.term(br.readLine());
             scorer.wrap(iterator);
             while ((document = iterator.nextDocument()) != DocumentIterator.END_OF_LIST) {
-                System.out.printf("%d,%d,%d,%d,%f\n", iterator.termNumber(), document, iterator.frequency(), iterator.count(), scorer.score());
+                System.out.printf("%d,%d,%d,%d,%f\n", tID, document, tfreq, iterator.count(), scorer.score());
             }
+
+            i++;
+            if (seglength > -1 && i >= seglength) break;
         }
     }
 }

@@ -20,17 +20,17 @@ public class printXDOC {
         int pos = 0;
         int terms = 0;
         float xdoc = 0;
-
+        long n = 0;
         FileInputStream fis = new FileInputStream( arg[0] );
         InputBitStream ibs = new InputBitStream(fis);
         try {
             while (ibs.hasNext()) {
-
                 docid = ibs.readLongGamma();
                 pos = ibs.readGamma(); //size
                 terms = ibs.readGamma(); // unique terms
                 xdoc = Float.intBitsToFloat(ibs.readInt(32)); // xdoc
-                System.out.printf("%d,%d,%d,%e\n", docid, pos, terms, xdoc);
+                System.out.printf("%d,%d,%d,%e\n", n, pos, terms, xdoc);
+                n++;
             }
         }
         catch (IOException e) {

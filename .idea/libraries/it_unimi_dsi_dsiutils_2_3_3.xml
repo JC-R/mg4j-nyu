@@ -35,7 +35,6 @@
     </JAVADOC>
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/dsiutils/2.3.3/dsiutils-2.3.3-sources.jar!/" />
-      <root url="jar://$USER_HOME$/.ideaLibSources/commons-configuration-1.10-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/dsiutils/2.3.3/dsiutils-2.3.3-sources.jar!/" />
     </SOURCES>
   </library>

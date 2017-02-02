@@ -1,23 +1,22 @@
 package edu.nyu.tandon.experiments.ml.StaticPruning
 
-import java.io.File
-
 import ml.dmlc.xgboost4j.scala.spark.XGBoost
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
+
 import scala.collection.mutable
 
 /**
   * Created by juan on 12/28/16.
   */
-object TrainFromDF {
+object TrainwLabel {
 
   def sqr(x: Float) = x * x
 
   def main(args: Array[String]): Unit = {
 
-    if (args.length < 7) {
-      System.err.println("\nUsage: TrainDF <train/eval> <rounds> <eta> <maxDepth> <extMem> <doEval> <silent>\n")
+    if (args.length < 8) {
+      System.err.println("\nUsage: TrainDF <train/eval> <rounds> <eta> <maxDepth> <extMem> <doEval> <silent> <label>\n")
       System.exit(1)
     }
 
@@ -28,6 +27,7 @@ object TrainFromDF {
     val extMem = args(4).toBoolean
     val doEval = args(5).toBoolean
     val silent = args(6).toInt
+    val label = args(7)
 
     val spark = SparkSession
       .builder()
@@ -67,39 +67,30 @@ object TrainFromDF {
     val d3 = d2.sample(false,1f * c / d2.count())
     val d = d1.union(d3)
 
-
-//    val ratio = if (c > 100000000) 100000000.0f / c else 1
-//    val d = if (c > 100000000) train.sample(false, ratio)
-//    else train
-
     println("Dataset rows: " + d.count())
 
     val eval = if (doEval) spark.read.parquet(featuresFile+".test.parquet")
         .sample(false, 0.2)
-        .na.fill(0)
-        .orderBy(desc("top1k"),desc("top10"))
+        .orderBy(desc(label))
     else spark.emptyDataFrame
 
-    labels.foreach { label =>
+    println("training: " + featuresFile + " - " + label)
 
-      println("training: " + featuresFile + " - " + label)
+    val booster = XGBoost.trainWithDataFrame(d.na.fill(0), params.toMap, nRounds, nWorkers = 1, useExternalMemory = extMem, labelCol = label, featureCol = "features", missing = 0f)
+    booster.saveModelAsHadoopFile(featuresFile + "." + label + ".model")
 
-      val booster = XGBoost.trainWithDataFrame(d.na.fill(0), params.toMap, nRounds, nWorkers = 1, useExternalMemory = extMem, labelCol = label, featureCol = "features", missing = 0)
-      booster.saveModelAsHadoopFile(featuresFile + "." + label + ".model")
+    println("evaluating...")
 
-      println("evaluating...")
+    if (doEval) {
+      val res = booster.transform(eval)
+        .withColumn("e_top10", ($"top10" - $"prediction") * ($"top10" - $"prediction"))
+        .withColumn("e_top1k", ($"top1k" - $"prediction") * ($"top1k" - $"prediction"))
+        .withColumn("rse_top10", sqrt("e_top10"))
+        .withColumn("rse_top1k", sqrt("e_top1k"))
 
-      if (doEval) {
-        val res = booster.transform(eval)
-          .withColumn("e_top10", ($"top10" - $"prediction") * ($"top10" - $"prediction"))
-          .withColumn("e_top1k", ($"top1k" - $"prediction") * ($"top1k" - $"prediction"))
-          .withColumn("rse_top10", sqrt("e_top10"))
-          .withColumn("rse_top1k", sqrt("e_top1k"))
+      res.show(25)
 
-        res.show(25)
-
-        res.select("rse_" + label).describe().show()
-      }
+      res.select("rse_" + label).describe().show()
     }
   }
 }
