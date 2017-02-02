@@ -56,8 +56,6 @@ public class StatisticalShardRepresentationClusterTest extends BaseTest {
     @Test
     public void queryStats() throws Exception {
         // given
-        String basename = buildCluster();
-        StatisticalShardRepresentation representation = new StatisticalShardRepresentation(basename);
         StatisticalShardRepresentation.TermIterator it = representation.calc(1.0);
         representation.write(it);
 
@@ -73,8 +71,6 @@ public class StatisticalShardRepresentationClusterTest extends BaseTest {
     @Test
     public void termIteratorSkip() throws Exception {
         // given
-        String basename = buildCluster();
-        StatisticalShardRepresentation representation = new StatisticalShardRepresentation(basename);
         StatisticalShardRepresentation.TermIterator it = representation.calc(1.0);
         representation.write(it);
 
