@@ -99,7 +99,7 @@ public class ExtractShardScores {
             FileWriter[] writers = new FileWriter[clusters];
             for (int i = 0; i < clusters; i++)
                 writers[i] =
-                        new FileWriter(jsapResult.getString("output") + "#" + i + "." + jsapResult.getString("selector") + "." + L);
+                        new FileWriter(jsapResult.getString("output") + "#" + i + "." + jsapResult.getString("selector") + "-" + L);
 
             run(new File(jsapResult.getString("input")), writers, shardSelector);
         }
