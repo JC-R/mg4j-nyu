@@ -30,7 +30,7 @@ starttime=$(date +%s)
 
 set -e
 
-edu.nyu.tandon.experiments.cluster.ExtractTailyScores \
+java edu.nyu.tandon.experiments.cluster.ExtractTailyScores \
     -i ${input} \
     -o "${outputDir}/${inputBase}" \
     -c `ls ${dir}/*-*titles | wc -l` \
