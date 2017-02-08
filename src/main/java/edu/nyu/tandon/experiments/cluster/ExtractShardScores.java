@@ -26,7 +26,7 @@ public class ExtractShardScores {
 
     private static ShardSelector resolveShardSelector(String name, CentralSampleIndex csi, int base) {
         if ("redde".equals(name)) return new ReDDEShardSelector(csi);
-        else if ("shrkc".equals(name)) return new RankS(csi, base).withC(-1.0);
+        else if ("shrkc".equals(name)) return new RankS(csi, base);
         else throw new IllegalArgumentException("You need to define a proper selector: redde, shrkc");
     }
 
