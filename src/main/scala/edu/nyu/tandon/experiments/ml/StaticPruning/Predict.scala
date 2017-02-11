@@ -8,14 +8,7 @@ import org.apache.spark.ml.feature._
 import org.apache.spark.ml.linalg._
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions.desc
-import ml.dmlc.xgboost4j.scala.spark._
-import org.apache.spark.TaskContext
-import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.types._
-import org.apache.spark.sql.catalyst.encoders.RowEncoder
 
-import scala.reflect.ClassTag
-import scala.collection.mutable
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 
 /**
@@ -37,10 +30,6 @@ object Predict {
 
     spark.conf.set("spark.serializer","org.apache.serializer.KyroSerializer")
     spark.conf.set("spark.kyroserializer.buffer.max","1g")
-
-//    if (spark.conf.get("spark.driver.extraLibraryPath").length()>0 &&
-//    spark.conf.get("spark.executor.extraLibraryPath").length==0)
-//      spark.conf.set("spark.executor.extraLibraryPath",spark.conf.get("spark.driver.extraLibraryPath"))
 
     spark.sparkContext.setLogLevel("ERROR")
 
@@ -73,13 +62,14 @@ object Predict {
 //        }).toIterator
 //      }).toDF("termID","docID","prediciton")
 //
-      d.map( row => {
+val d1 = d.map(row => {
           val (term, doc, featV) = (row.getAs[Int]("termID"), row.getAs[Int]("docID"), row.getAs[Vector]("features"))
           val pred = broadcastBooster.value.predictSingle(FVec.Transformer.fromArray(featV.toDense.toArray, false))
           (term, doc, pred)
       }).toDF("termID","docID","prediction")
         .orderBy(desc("prediction"))
-        .write
+
+      d1.write
         .format("org.apache.spark.sql.execution.datasources.parquet.ParquetFileFormat")
         .save(args(2) + "." + label + ".predict" )
 

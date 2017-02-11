@@ -1,15 +1,21 @@
 package edu.nyu.tandon.index.cluster;
 
+import breeze.optimize.linear.LinearProgram;
 import com.martiansoftware.jsap.*;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalPartitioningStrategy;
+import it.unimi.dsi.fastutil.ints.AbstractInt2ObjectFunction;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.util.Properties;
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +25,20 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+
+import org.apache.parquet.hadoop.ParquetReader;
+import org.apache.parquet.tools.read.SimpleReadSupport;
+import org.apache.parquet.tools.read.SimpleRecord;
+
+class InputPosting {
+    public int termID;
+    public int docID;
+
+    public InputPosting(int termID, int docID) {
+        this.termID = termID;
+        this.docID = docID;
+    }
+}
 
 public class PostingPruningStrategy implements DocumentalPartitioningStrategy, DocumentalClusteringStrategy, Serializable {
 
@@ -30,26 +49,37 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
      * The (cached) number of segments.
      */
     private static final int k = 2;
-    public final Long2ObjectOpenHashMap<LongOpenHashSet> postings_Global;
-    public final Long2LongOpenHashMap documents_Global;
-    public final Long2LongOpenHashMap terms_Global;
-    public final Long2LongOpenHashMap documents_Local;
+
+//    public final Long2ObjectOpenHashMap<LongOpenHashSet> postings_Global;
+//    public final Long2LongOpenHashMap documents_Global;
+//    public final Long2LongOpenHashMap terms_Global;
+//    public final Long2LongOpenHashMap documents_Local;
+
+    // sets implemented as ints -> limit # terms and #docs to ~ 2 billion
+    public Int2ObjectOpenHashMap<IntOpenHashSet> postings_Global;
+    public Int2IntOpenHashMap documents_Global;
+    //    public Int2IntOpenHashMap terms_Global;
+    public Int2IntOpenHashMap documents_Local;
+
+    private static BufferedReader prunelist;
+    private static ParquetReader<SimpleRecord> reader;
+    private static boolean parquet = false;
 
     /**
      * Creates a pruned strategy with the given lists
      */
 
-    public PostingPruningStrategy(String baseline, String strategy, final Long2LongOpenHashMap terms,
-                                  final Long2ObjectOpenHashMap<LongOpenHashSet> postings, Long2LongOpenHashMap docs,
-                                  Long2LongOpenHashMap localDocs)
+    public PostingPruningStrategy(String baseline, String strategy, final Int2IntOpenHashMap terms,
+                                  final Int2ObjectOpenHashMap<IntOpenHashSet> postings, Int2IntOpenHashMap docs,
+                                  Int2IntOpenHashMap localDocs)
             throws IOException {
 
         if (terms.size() == 0 || docs.size() == 0) throw new IllegalArgumentException("Empty prune list");
 
-        this.documents_Global = docs.clone();
-        this.terms_Global = terms.clone();
-        this.postings_Global = postings.clone();
-        this.documents_Local = localDocs.clone();
+        this.documents_Global = docs;
+//        this.terms_Global = terms;
+        this.postings_Global = postings;
+        this.documents_Local = localDocs;
 
         // create the document titles for local index (local doc IDs)
         ArrayList<String> titles = new ArrayList<String>(documents_Global.size());
@@ -60,13 +90,58 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
         Titles.close();
 
         BufferedWriter newTitles = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(strategy +".titles"), Charset.forName("UTF-8")));
-        for (long j=0; j<documents_Local.size(); j++) {
+        for (int j = 0; j < documents_Local.size(); j++) {
             newTitles.write(titles.get((int)documents_Local.get(j)));
             if (j < documents_Local.size()-1) newTitles.newLine();
         }
         newTitles.close();
         titles.clear();
     }
+
+    private static void wrapReader(ParquetReader<SimpleRecord> r) {
+        reader = r;
+        parquet = true;
+    }
+
+    private static void wrapReader(BufferedReader r) {
+        prunelist = r;
+        parquet = false;
+    }
+
+    private static boolean nextPosting(InputPosting p) {
+
+        try {
+
+            if (parquet) {
+                SimpleRecord value = reader.read();
+                if (value == null) {
+                    reader.close();
+                    return false;
+                }
+                p.termID = (int) value.getValues().get(0).getValue();
+                p.docID = (int) value.getValues().get(1).getValue();
+                value = null;
+                return true;
+            }
+
+            // ascii comma delimited term,doc,....
+            else {
+                String line;
+                while ((line = prunelist.readLine()) != null) {
+                    String[] tokens = line.split(",");
+                    if (tokens.length < 2) continue;
+                    p.termID = Integer.parseInt(tokens[0]);
+                    p.docID = Integer.parseInt(tokens[1]);
+                    return true;
+                }
+                return false;
+            }
+        } catch (IOException e) {
+            return false;
+        }
+
+    }
+
 
     public static void main(final String[] arg) throws JSAPException, IOException, ConfigurationException, SecurityException,
             URISyntaxException, ClassNotFoundException, InstantiationException, IllegalAccessException,
@@ -75,7 +150,8 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
         final SimpleJSAP jsap = new SimpleJSAP(PostingPruningStrategy.class.getName(), "Builds a documental partitioning strategy based on a prune list.",
                 new Parameter[]{
                         new FlaggedOption("threshold", JSAP.DOUBLE_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 't', "threshold", "Prune threshold for the index (may be specified several times).").setAllowMultipleDeclarations(true),
-                        new FlaggedOption("pruningList", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'p', "pruningList", "A file of newline-separated, UTF-8 sorted postings"),
+                        new FlaggedOption("pruningList", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'p', "pruningList", "A file with the sorted postings to use as prune criteria"),
+                        new Switch("parquet", 'P', "parquet", "pruning input list is in parquet format"),
                         new FlaggedOption("strategy", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 's', "The filename for the strategy."),
                         new FlaggedOption("titles", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'T', "The filename for the source titles."),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index.")
@@ -96,50 +172,51 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
             threshold[i] = Math.ceil(((double) index.numberOfPostings) * t_list[i]);
             strategies[i] = true;
         }
-        final Long2ObjectOpenHashMap<LongOpenHashSet> postings = new Long2ObjectOpenHashMap<LongOpenHashSet>();
-        final Long2LongOpenHashMap terms = new Long2LongOpenHashMap();
-        final Long2LongOpenHashMap documentsGlobal = new Long2LongOpenHashMap();
-        final Long2LongOpenHashMap documentsLocal = new Long2LongOpenHashMap();
+
+        final Int2IntOpenHashMap terms = new Int2IntOpenHashMap();
+        final Int2IntOpenHashMap documentsGlobal = new Int2IntOpenHashMap();
+        final Int2IntOpenHashMap documentsLocal = new Int2IntOpenHashMap();
+
+        // postings implemented as linked hash
+        final Int2ObjectOpenHashMap<IntOpenHashSet> postings = new Int2ObjectOpenHashMap<IntOpenHashSet>();
 
         postings.defaultReturnValue(null);
         documentsGlobal.defaultReturnValue(-1);
         terms.defaultReturnValue(-1);
+
         LOGGER.info("Generating prunning strategy for " + jsapResult.getString("basename"));
 
-        // read the prune list up to 50%
-        BufferedReader prunelist = new BufferedReader(new InputStreamReader(new FileInputStream(jsapResult.getString("pruningList")), Charset.forName("UTF-8")));
-        double n = 0;
+        String input = jsapResult.getString("pruningList");
+
+        // parquet or ascii ordered input list?
+        if (jsapResult.userSpecified("parquet"))
+            wrapReader(new ParquetReader(new Path(input), new SimpleReadSupport()));
+        else
+            wrapReader(new BufferedReader(new InputStreamReader(new FileInputStream(input), Charset.forName("UTF-8"))));
+
         long totPostings = 0;
-        String line;
+        double n = 0;
         int j = 0;
-        while ((line = prunelist.readLine()) != null) {
 
-            String[] tokens = line.split(",");
-            if (tokens.length < 2) continue;
+        InputPosting p = new InputPosting(-1, -1);
+        while (nextPosting(p)) {
 
-            long term = Long.parseLong(tokens[0]);
-            long localTerm = terms.get(term);
-            if (localTerm == -1) {
-                localTerm = terms.size();
-                terms.put(term, localTerm);
+            if (!terms.containsKey(p.termID))
+                terms.put(p.termID, terms.size());
+
+            if (!documentsGlobal.containsKey(p.docID)) {
+                int localDoc = documentsGlobal.size();
+                documentsGlobal.put(p.docID, localDoc);
+                documentsLocal.put(localDoc, p.docID);
             }
 
-            long doc = Long.parseLong(tokens[1]);
-            long localDoc = documentsGlobal.get(doc);
-            if (localDoc == -1) {
-                localDoc = documentsGlobal.size();
-                documentsGlobal.put(doc, localDoc);
-                documentsLocal.put(localDoc, doc);
+            if (!postings.containsKey(p.termID)) {
+                postings.put(p.termID, new IntOpenHashSet());
             }
 
             // add to term list
-            if (!postings.containsKey(term)) {
-                // create a new term list
-                postings.put(term, new LongOpenHashSet());
-            }
-            postings.get(term).add(doc);
+            postings.get(p.termID).add(p.docID);
             totPostings++;
-
 
             // dispatch intermediate strategies if we reached their thresholds
             for (int i = 0; i < t_list.length - 1; i++) {
@@ -147,19 +224,23 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
                     j++;
                     strategies[i] = false;
                     String level = String.format("%02d", (int) (t_list[i] * 100));
-                    BinIO.storeObject(new PostingPruningStrategy(jsapResult.getString("titles"), jsapResult.getString("strategy") + "-" + level, terms, postings, documentsGlobal, documentsLocal), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[i] * 100)) + ".strategy");
+                    PostingPruningStrategy ps = new PostingPruningStrategy(jsapResult.getString("titles"), jsapResult.getString("strategy") + "-" + level, terms, postings, documentsGlobal, documentsLocal);
+                    BinIO.storeObject(ps, jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[i] * 100)) + ".strategy");
+                    ps = null;
                     LOGGER.info(String.valueOf(t_list[i]) + " strategy serialized : " + String.valueOf(documentsGlobal.size()) + " documents, " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings");
                 }
             }
             if (n++ >= threshold[threshold.length - 1]) break;
 
             if ((n % 10000000.0) == 0.0)
-                LOGGER.debug(jsapResult.getString("pruneList") + "... " + (int) Math.ceil(n / 1000000.0) + "M");
+                LOGGER.info(jsapResult.getString("pruneList") + "... " + (int) Math.ceil(n / 1000000.0) + "M");
         }
         if (j >= t_list.length) j--;
-        prunelist.close();
 
-        // ran out of input; dump last one
+        if (parquet) reader.close();
+        else prunelist.close();
+
+        // ran out of input; dump last set
         String level = String.format("%02d", (int) (t_list[j] * 100));
         BinIO.storeObject(new PostingPruningStrategy(jsapResult.getString("titles"), jsapResult.getString("strategy") + "-" + level, terms, postings, documentsGlobal, documentsLocal), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[j] * 100)) + ".strategy");
         LOGGER.info(String.valueOf(t_list[j]) + " strategy serialized : " + String.valueOf(documentsGlobal.size()) + " documents, " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings");
@@ -176,7 +257,7 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
      * @param globalPointer: global document ID
      */
     public int localIndex(final long globalPointer) {
-        return (documents_Global.get(globalPointer) == -1) ? 1 : 0;
+        return (documents_Global.containsKey((int) globalPointer)) ? 0 : 1;
     }
 
     /**
@@ -186,8 +267,9 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
      * @param doc:  global document ID
      */
     public int localIndex(final long term, final long doc) {
-        if (terms_Global.get(term) == -1) return 1;
-        return (postings_Global.get(term).contains(doc)) ? 0 : 1;
+        IntOpenHashSet s;
+        if ((s = postings_Global.get((int) term)) == null) return 1;
+        return (s.contains((int) doc)) ? 0 : 1;
     }
 
     /**
@@ -197,12 +279,12 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
      * @return localPointer
      */
     public long localPointer(final long globalPointer) {
-        return documents_Global.get(globalPointer);
+        return documents_Global.get((int) globalPointer);
     }
 
     public long globalPointer(final int index, final long localPointer) {
         if (index != 0) return -1;
-        return documents_Local.get(localPointer);
+        return documents_Local.get((int) localPointer);
     }
 
     /**
@@ -211,11 +293,12 @@ public class PostingPruningStrategy implements DocumentalPartitioningStrategy, D
      * @param globalTermId
      * @return localId
      */
-    public long localTermId(final long globalTermId) {
-        return terms_Global.get(globalTermId);
-    }
+//    public long localTermId(final long globalTermId) {
+//        return terms_Global.get(globalTermId);
+//    }
 
     public long numberOfDocuments(final int localIndex) {
+
         return (localIndex == 0) ? documents_Global.size() : 0;
     }
 
