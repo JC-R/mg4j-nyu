@@ -69,6 +69,7 @@ public class ReDDEShardSelector implements ShardSelector {
             shardScores.put(shardId, score);
             scoreSum += score;
         }
+        if (scoreSum == 0) scoreSum = 1.0;
         for (Integer shardId : shardCounts.keySet()) {
             shardScores.put(shardId, shardScores.get(shardId) / scoreSum);
         }
