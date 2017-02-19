@@ -33,6 +33,10 @@ public class TailyShardEvaluator {
                                StringMap<? extends CharSequence> termMap)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
 
+        if (termMap == null) {
+            throw new IllegalArgumentException("the cluster has to have term map provided");
+        }
+
         this.index = index;
         this.termMap = termMap;
         this.statisticalRepresentation = statisticalRepresentation;
@@ -60,6 +64,7 @@ public class TailyShardEvaluator {
             variance = epsilon;
         }
         double k = expectedValue * expectedValue / variance;
+        if (k == 0) return (p) -> 0.0;
         double theta = variance / expectedValue;
         return (s) -> {
             try {
@@ -86,7 +91,12 @@ public class TailyShardEvaluator {
     }
 
     public static Function<Double, Double> icdf(double expectedValue, double variance) {
+        if (variance < epsilon) {
+            LOGGER.warn(String.format("variance = %f < %f: falling back to %f", variance, epsilon, epsilon));
+            variance = epsilon;
+        }
         double k = expectedValue * expectedValue / variance;
+        if (k == 0) return (p) -> 0.0;
         double theta = variance / expectedValue;
         return (p) -> invRegularizedGammaQ(k, p) * theta;
     }
@@ -121,6 +131,7 @@ public class TailyShardEvaluator {
 
     public static double all(long[] frequencies, double D) throws IOException {
         double any = any(frequencies, D);
+        if (any == 0) return 0;
         double product = 1.0;
         for (long frequency : frequencies) product *= frequency / any;
         return any * product;
@@ -140,7 +151,9 @@ public class TailyShardEvaluator {
     public double estimateDocsAboveCutoff(List<String> terms, double scoreCutoff, double globalMinValue) throws IOException {
         long[] termIds = termIds(terms);
         long[] frequencies = frequencies(termIds);
-        return all(frequencies) * cdf(termIds, globalMinValue).apply(scoreCutoff);
+        double all = all(frequencies);
+        double pi = cdf(termIds, globalMinValue).apply(scoreCutoff);
+        return all * pi;
     }
 
 }

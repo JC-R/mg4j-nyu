@@ -7,7 +7,7 @@ import it.unimi.di.big.mg4j.index.DiskBasedIndex;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
 import it.unimi.di.big.mg4j.index.cluster.ClusterAccessHelper;
-import it.unimi.di.big.mg4j.index.cluster.DocumentalMergedCluster;
+import it.unimi.di.big.mg4j.index.cluster.DocumentalCluster;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.dsi.big.util.StringMap;
@@ -39,7 +39,7 @@ public class TailyShardSelector implements ShardSelector {
 
     public TailyShardSelector(String basename, int shardCount) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
         shardEvaluators = new ArrayList<>();
-        DocumentalMergedCluster fullIndex = (DocumentalMergedCluster) Index.getInstance(basename, true, true, true);
+        DocumentalCluster fullIndex = (DocumentalCluster) Index.getInstance(basename, true, true, true);
         Index[] shards = ClusterAccessHelper.getLocalIndices(fullIndex);
         fullRepresentation = new StatisticalShardRepresentation(basename, fullIndex);
         StringMap<? extends CharSequence> termMap = DiskBasedIndex.loadStringMap(basename + DiskBasedIndex.TERMMAP_EXTENSION);
@@ -89,21 +89,32 @@ public class TailyShardSelector implements ShardSelector {
         Map<Integer, Double> scores = new HashMap<>();
         List<String> terms = processedTerms(query);
         double fullAll = fullEvaluator.all(terms);
+        if (fullAll == 0) {
+            for (int shardId = 0; shardId < shardEvaluators.size(); shardId++) {
+                scores.put(shardId, 0.0);
+            }
+            return scores;
+        }
         double pc = nc / fullAll;
         LOGGER.info(String.format("Processing query: %s (%s)", query, Arrays.toString(terms.toArray())));
         LOGGER.debug(String.format("nc=%d, fullAll=%f, pc=%f", nc, fullAll, pc));
         StatisticalShardRepresentation.TermStats fullStats;
+        double globalMinValue = 0.0;
         try {
             fullStats = fullRepresentation.queryStats(fullEvaluator.termIds(terms));
             LOGGER.debug(String.format("Full stats: %s", fullStats));
+            globalMinValue = fullStats.minValue;
+            for (TailyShardEvaluator shardEvaluator : shardEvaluators) globalMinValue +=
+                    shardEvaluator.statisticalRepresentation.queryStats(shardEvaluator.termIds(terms)).minValue;
+
         } catch (IllegalAccessException | URISyntaxException | InstantiationException | ConfigurationException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
-        double sc = TailyShardEvaluator.icdf(fullStats.expectedValue - fullStats.minValue, fullStats.variance).apply(pc);
+        double sc = TailyShardEvaluator.icdf(fullStats.expectedValue - globalMinValue, fullStats.variance).apply(pc);
         LOGGER.debug(String.format("sc = icdf(pc) = %f", sc));
         for (int shardId = 0; shardId < shardEvaluators.size(); shardId++) {
             try {
-                double estimate = shardEvaluators.get(shardId).estimateDocsAboveCutoff(terms, sc, fullStats.minValue);
+                double estimate = shardEvaluators.get(shardId).estimateDocsAboveCutoff(terms, sc, globalMinValue);
                 scores.put(shardId, estimate);
                 LOGGER.trace(String.format("Estimated score for shard %d: %f", shardId, estimate));
             } catch (Exception e) {

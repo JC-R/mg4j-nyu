@@ -6,6 +6,8 @@ import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import edu.nyu.tandon.shard.csi.CentralSampleIndex;
 import it.unimi.di.big.mg4j.index.BitStreamIndex;
 import it.unimi.di.big.mg4j.index.CompressionFlags;
+import it.unimi.di.big.mg4j.index.CompressionFlags.Coding;
+import it.unimi.di.big.mg4j.index.CompressionFlags.Component;
 import it.unimi.di.big.mg4j.index.QuasiSuccinctIndexWriter;
 import it.unimi.di.big.mg4j.index.cluster.ContiguousDocumentalStrategy;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
@@ -13,9 +15,10 @@ import it.unimi.di.big.mg4j.index.cluster.DocumentalPartitioningStrategy;
 import it.unimi.di.big.mg4j.tool.Combine;
 import it.unimi.di.big.mg4j.tool.IndexBuilder;
 import it.unimi.di.big.mg4j.tool.PartitionDocumentally;
-import it.unimi.dsi.Util;
 import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.logging.ProgressLogger;
+import it.unimi.dsi.sux4j.mph.MWHCFunction;
+import it.unimi.dsi.sux4j.util.SignedFunctionStringMap;
 import org.apache.commons.configuration.ConfigurationException;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
@@ -26,10 +29,12 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import static it.unimi.dsi.fastutil.io.BinIO.loadObject;
 
@@ -151,11 +156,21 @@ public class BaseTest {
         String cluster = temporaryFolder.getRoot().getAbsolutePath() + "/cluster";
         ContiguousDocumentalStrategy strategy = new ContiguousDocumentalStrategy(0, 3, 5);
         BinIO.storeObject(strategy, cluster + ".strategy");
+        Map<Component,Coding> map = new EnumMap<Component,Coding>( Component.class );
+        map.put(Component.POINTERS, null);
+        map.put(Component.COUNTS, null);
         new PartitionDocumentally(full + "-text", cluster, strategy, cluster + ".strategy", 0,
-                PartitionDocumentally.DEFAULT_BUFFER_SIZE, CompressionFlags.DEFAULT_QUASI_SUCCINCT_INDEX,
+                PartitionDocumentally.DEFAULT_BUFFER_SIZE, map,
                 Combine.IndexType.QUASI_SUCCINCT, true, 32, BitStreamIndex.DEFAULT_HEIGHT,
                 QuasiSuccinctIndexWriter.DEFAULT_CACHE_SIZE, ProgressLogger.DEFAULT_LOG_INTERVAL)
                 .run();
+        MWHCFunction.main(new String[] { "-s", "32", cluster + "-0.mwhc", cluster + "-0.terms" });
+        MWHCFunction.main(new String[] { "-s", "32", cluster + "-1.mwhc", cluster + "-1.terms" });
+        SignedFunctionStringMap.main(new String[] { cluster + "-0.mwhc", cluster + "-0.termmap" });
+        SignedFunctionStringMap.main(new String[] { cluster + "-1.mwhc", cluster + "-1.termmap" });
+
+        // Copy full index's termmap
+        Files.copy(Paths.get(full + "-text.termmap"), Paths.get(cluster + ".termmap"));
 
         return cluster;
     }

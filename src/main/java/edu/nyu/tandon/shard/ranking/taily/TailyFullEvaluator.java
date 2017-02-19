@@ -1,9 +1,6 @@
 package edu.nyu.tandon.shard.ranking.taily;
 
-import it.unimi.di.big.mg4j.index.Index;
-import it.unimi.di.big.mg4j.index.IndexReader;
-import it.unimi.di.big.mg4j.index.cluster.ClusterAccessHelper;
-import it.unimi.di.big.mg4j.index.cluster.DocumentalMergedCluster;
+import it.unimi.di.big.mg4j.index.cluster.DocumentalCluster;
 import it.unimi.dsi.big.util.StringMap;
 import org.apache.commons.configuration.ConfigurationException;
 
@@ -19,7 +16,7 @@ public class TailyFullEvaluator extends TailyShardEvaluator {
 
     private List<TailyShardEvaluator> shardEvaluators;
 
-    public TailyFullEvaluator(DocumentalMergedCluster index, StatisticalShardRepresentation statisticalRepresentation,
+    public TailyFullEvaluator(DocumentalCluster index, StatisticalShardRepresentation statisticalRepresentation,
                               List<TailyShardEvaluator> shardEvaluators, StringMap<? extends CharSequence> termMap) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
         super(index, statisticalRepresentation, termMap);
         this.shardEvaluators = shardEvaluators;

@@ -2,6 +2,7 @@ package edu.nyu.tandon.shard.ranking.taily;
 
 import edu.nyu.tandon.test.BaseTest;
 import it.unimi.di.big.mg4j.index.Index;
+import it.unimi.dsi.big.util.StringMap;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.special.Gamma;
@@ -17,13 +18,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -90,7 +88,7 @@ public class TailyShardEvaluatorTest extends BaseTest {
     @Test
     public void cdf() throws IllegalAccessException, URISyntaxException, IOException, InstantiationException, NoSuchMethodException, ConfigurationException, InvocationTargetException, ClassNotFoundException {
         // given
-        TailyShardEvaluator evaluator = new TailyShardEvaluator(mock(Index.class), mock(StatisticalShardRepresentation.class));
+        TailyShardEvaluator evaluator = new TailyShardEvaluator(mock(Index.class), mock(StatisticalShardRepresentation.class), mock(StringMap.class));
         // when
         Function<Double, Double> cdf = evaluator.cdf(5, 1);
         // then
@@ -102,7 +100,7 @@ public class TailyShardEvaluatorTest extends BaseTest {
     @Test
     public void icdf() throws IllegalAccessException, URISyntaxException, IOException, InstantiationException, NoSuchMethodException, ConfigurationException, InvocationTargetException, ClassNotFoundException {
         // given
-        TailyShardEvaluator evaluator = new TailyShardEvaluator(mock(Index.class), mock(StatisticalShardRepresentation.class));
+        TailyShardEvaluator evaluator = new TailyShardEvaluator(mock(Index.class), mock(StatisticalShardRepresentation.class), mock(StringMap.class));
         // when
         Function<Double, Double> cdf = evaluator.cdf(5, 1);
         Function<Double, Double> icdf = evaluator.icdf(5, 1);

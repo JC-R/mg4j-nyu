@@ -26,7 +26,7 @@ public class ExtractShardScores {
 
     private static ShardSelector resolveShardSelector(String name, CentralSampleIndex csi, int base) {
         if ("redde".equals(name)) return new ReDDEShardSelector(csi);
-        else if ("shrkc".equals(name)) return new RankS(csi, base).withC(-1.0);
+        else if ("shrkc".equals(name)) return new RankS(csi, base);
         else throw new IllegalArgumentException("You need to define a proper selector: redde, shrkc");
     }
 
@@ -99,7 +99,7 @@ public class ExtractShardScores {
             FileWriter[] writers = new FileWriter[clusters];
             for (int i = 0; i < clusters; i++)
                 writers[i] =
-                        new FileWriter(jsapResult.getString("output") + "#" + i + "." + jsapResult.getString("selector") + "." + L);
+                        new FileWriter(jsapResult.getString("output") + "#" + i + "." + jsapResult.getString("selector") + "-" + L);
 
             run(new File(jsapResult.getString("input")), writers, shardSelector);
         }
