@@ -32,24 +32,6 @@ starttime=$(date +%s)
 
 set -e
 
-java edu.nyu.tandon.experiments.cluster.ExtractShardScores \
-    -s redde \
-    -i ${input} \
-    -o "${outputDir}/${inputBase}" \
-    -c `ls ${dir}/*-*titles | wc -l` \
-    -L 10 -L 20 -L 30 -L 40 -L 50 -L 75 -L 100 -L 200 -L 300 -L 500 -L 1000 \
-    ${base} \
-    ${csiBase}
-
-java edu.nyu.tandon.experiments.cluster.ExtractShardScores \
-    -s shrkc \
-    -i ${input} \
-    -o "${outputDir}/${inputBase}" \
-    -c `ls ${dir}/*-*titles | wc -l` \
-    -L 50 \
-    ${base} \
-    ${csiBase}
-
 ls ${dir}/*-*titles | sort | while read file;
 do
         clusterBase=`echo ${file} | sed "s/\.titles$//"`

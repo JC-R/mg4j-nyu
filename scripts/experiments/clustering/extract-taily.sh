@@ -32,7 +32,7 @@ set -e
 java edu.nyu.tandon.experiments.cluster.ExtractTailyScores \
     -i ${input} \
     -o "${outputDir}/${inputBase}" \
-    -c `ls ${dir}/*-*titles | wc -l` \
+    -c `ls ${dir}/*-*terms | wc -l` \
     ${base}
 
 endtime=$(date +%s)

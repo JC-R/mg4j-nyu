@@ -36,7 +36,7 @@ java edu.nyu.tandon.experiments.cluster.ExtractShardScores \
     -s redde \
     -i ${input} \
     -o "${outputDir}/${inputBase}" \
-    -c `ls ${dir}/*-*titles | wc -l` \
+    -c `ls ${dir}/*-*terms | wc -l` \
     -L 10 -L 20 -L 50 -L 100 -L 200 -L 500 -L 1000 \
     ${base} \
     ${csiBase}
@@ -45,7 +45,7 @@ java edu.nyu.tandon.experiments.cluster.ExtractShardScores \
     -s shrkc \
     -i ${input} \
     -o "${outputDir}/${inputBase}" \
-    -c `ls ${dir}/*-*titles | wc -l` \
+    -c `ls ${dir}/*-*terms | wc -l` \
     -L 10 -L 20 -L 50 -L 100 -L 200 -L 500 -L 1000 \
     ${base} \
     ${csiBase}
