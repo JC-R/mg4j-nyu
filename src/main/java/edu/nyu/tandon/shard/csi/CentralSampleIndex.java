@@ -129,7 +129,7 @@ public class CentralSampleIndex {
 
     public static CentralSampleIndex loadCSI(String csiBasename, String clustersBasename, Scorer scorer) throws IOException, ClassNotFoundException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException {
         DocumentalClusteringStrategy csiStrategy = (DocumentalClusteringStrategy) BinIO.loadObject(csiBasename + STRATEGY);
-        SelectiveDocumentalIndexStrategy clusterStrategy = (SelectiveDocumentalIndexStrategy) BinIO.loadObject(clustersBasename + STRATEGY);
+        DocumentalPartitioningStrategy clusterStrategy = (DocumentalPartitioningStrategy) BinIO.loadObject(clustersBasename + STRATEGY);
         return new CentralSampleIndex(csiBasename + "-0", csiStrategy, clusterStrategy, scorer);
     }
 
