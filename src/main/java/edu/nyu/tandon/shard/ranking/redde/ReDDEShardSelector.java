@@ -58,7 +58,8 @@ public class ReDDEShardSelector implements ShardSelector {
     }
 
     protected double computeShardScore(int shardId, long count) {
-        return (double) count * shardWeight(shardId);
+        double w = shardWeight(shardId);
+        return (double) count * w;
     }
 
     protected Map<Integer, Double> computeShardScores(Map<Integer, Long> shardCounts) {

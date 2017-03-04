@@ -44,7 +44,8 @@ public class TailyShardSelector implements ShardSelector {
         fullRepresentation = new StatisticalShardRepresentation(basename, fullIndex);
         StringMap<? extends CharSequence> termMap = DiskBasedIndex.loadStringMap(basename + DiskBasedIndex.TERMMAP_EXTENSION);
         if (termMap == null) {
-            throw new IllegalArgumentException("the cluster has to have term map provided");
+            throw new IllegalArgumentException("the cluster has to have term map provided at " +
+                    basename + DiskBasedIndex.TERMMAP_EXTENSION);
         }
         for (int shardId = 0; shardId < shardCount; shardId++) {
             String shardBasename = String.format("%s-%d", basename, shardId);

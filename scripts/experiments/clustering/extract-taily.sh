@@ -9,7 +9,6 @@
 # 1) cluster directory
 # 2) input with queries
 # 3) output directory
-# 4) csi
 #
 
 source "${MG4J_NYU_SCRIPTS}/commons.sh"
