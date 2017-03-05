@@ -4,6 +4,7 @@ import java.io._
 import java.nio.file.{Files, Paths}
 
 import edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy
+import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy
 import scopt.OptionParser
 
 import scala.io.Source
@@ -13,10 +14,10 @@ import scala.io.Source
   */
 object TranslateToGlobalIds {
 
-  def toGlobal(strategy: SelectiveDocumentalIndexStrategy, cluster: Int)(localIds: Seq[Long]): Seq[Long] =
+  def toGlobal(strategy: DocumentalClusteringStrategy, cluster: Int)(localIds: Seq[Long]): Seq[Long] =
     localIds map (strategy.globalPointer(cluster, _))
 
-  def translate(input: File, cluster: Int, strategy: SelectiveDocumentalIndexStrategy): Unit = {
+  def translate(input: File, cluster: Int, strategy: DocumentalClusteringStrategy): Unit = {
     /*
      * Move the current file to temp file.
      * We're going to replace the old file with the new one
@@ -70,7 +71,7 @@ object TranslateToGlobalIds {
       case Some(config) =>
 
         val strategy = new ObjectInputStream(new FileInputStream(config.strategy)).readObject()
-          .asInstanceOf[SelectiveDocumentalIndexStrategy]
+          .asInstanceOf[DocumentalClusteringStrategy]
 
         try {
           translate(config.input, config.cluster, strategy)
