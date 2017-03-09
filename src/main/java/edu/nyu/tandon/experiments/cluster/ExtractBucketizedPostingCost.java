@@ -37,8 +37,8 @@ public class ExtractBucketizedPostingCost {
                 new Parameter[]{
                         new FlaggedOption("input", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'i', "input", "The input file with queries delimited by new lines."),
                         new FlaggedOption("output", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "output", "The output files basename."),
-                        new FlaggedOption("shardId", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 's', "shard-id", "The shard ID."),
-                        new FlaggedOption("buckets", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'b', "buckets", "The number of buckets."),
+                        new FlaggedOption("shardId", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 's', "shard-id", "The shard ID."),
+                        new FlaggedOption("buckets", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'b', "buckets", "The number of buckets."),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index.")
                 });
 
@@ -88,7 +88,7 @@ public class ExtractBucketizedPostingCost {
                     DocumentIterator it = indexReader.documents(term);
                     long docId;
                     while ((docId = it.nextDocument()) != END_OF_LIST) {
-                        buckets[(int) (docId % bucketSize)]++;
+                        buckets[(int) (docId / bucketSize)]++;
                     }
                 }
                 for (int i = 0; i < bucketCount; i++) {
