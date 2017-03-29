@@ -12,7 +12,7 @@ import org.apache.spark.sql.catalyst.encoders.RowEncoder
 /**
   * Created by juan on 1/1/17.
   */
-object ConvertModel {
+object ExtractXGBoostBaseModel {
 
   def main(args: Array[String]): Unit = {
 

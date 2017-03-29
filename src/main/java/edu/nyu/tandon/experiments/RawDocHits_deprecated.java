@@ -1,4 +1,4 @@
-package edu.nyu.tandon.tool;
+package edu.nyu.tandon.experiments;
 /*
  * MG4J: Managing Gigabytes for Java (big)
  *
@@ -20,14 +20,14 @@ package edu.nyu.tandon.tool;
  */
 
 import com.martiansoftware.jsap.*;
-import edu.nyu.tandon.query.HitsQueryEngine;
 import edu.nyu.tandon.query.QueryEngine;
 import it.unimi.di.big.mg4j.document.AbstractDocumentSequence;
 import it.unimi.di.big.mg4j.document.DocumentCollection;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
-import it.unimi.di.big.mg4j.query.HttpQueryServer;
+import it.unimi.di.big.mg4j.query.IntervalSelector;
 import it.unimi.di.big.mg4j.query.Marker;
+import it.unimi.di.big.mg4j.query.SelectedInterval;
 import it.unimi.di.big.mg4j.query.TextMarker;
 import it.unimi.di.big.mg4j.query.nodes.QueryTransformer;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
@@ -46,16 +46,12 @@ import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.lang.ObjectParser;
 import it.unimi.dsi.sux4j.io.FileLinesBigList;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.MutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
-import java.util.Collections;
 
 //import it.unimi.di.big.mg4j.query.*;
 
@@ -76,25 +72,29 @@ import java.util.Collections;
  * <p><strong>Warning:</strong> This class is <strong>highly experimental</strong> (it is the
  * place that we tweak to experiment every kind of new indexing/ranking method).
  */
-public class RawHits {
+public class RawDocHits_deprecated {
 
     public final static int MAX_STEMMING = 2048;
-    private static final Logger LOGGER = LoggerFactory.getLogger(RawHits.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RawDocHits_deprecated.class);
     /**
      * A formatter for TREC results.
      */
     private static final java.text.NumberFormat FORMATTER = new java.text.DecimalFormat("0.0000000000");
+    private static int[] docHits;
     private static long queryCount = 0;
-    private static int phBatch = 0;
+    private static int[] bins;
+    private static int[] limits = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 40, 80, 160, 320, 640, 1280, 2160, 4320, 8640};
+    private static int[] lastResults;
+    private static int batch = 0;
     private static String outputName;
     /**
      * The current query engine.
      */
     private final QueryEngine queryEngine;
     /**
-     * The maximum number of items outputDH to the console.
+     * The maximum number of items output to the console.
      */
-    private int maxOutput = 1000;
+    private int maxOutput = 10000;
     /**
      * Current topic number, for {@link OutputType#TREC} only.
      */
@@ -110,11 +110,50 @@ public class RawHits {
     /**
      * The current output stream, changeable with <samp>$divert</samp>.
      */
-    private PrintStream outputPH = System.out;
-    private ObjectArrayList<ImmutableTriple<Integer, Integer, Integer>> postHits = new ObjectArrayList<ImmutableTriple<Integer, Integer, Integer>>();
+    private PrintStream output = System.out;
 
-    public RawHits(final QueryEngine queryEngine) {
+    public RawDocHits_deprecated(final QueryEngine queryEngine) {
         this.queryEngine = queryEngine;
+    }
+
+    private static int binIndex(int rank) {
+        for (int i = 0; i < limits.length; i++)
+            if (rank <= limits[i]) return i;
+        return limits.length - 1;
+    }
+
+    private static void buildBins(int results, int numDocs) {
+        docHits = new int[limits.length * numDocs];
+        lastResults = new int[results];
+        bins = new int[results];
+        for (int i = 1; i <= results; i++)
+            bins[i - 1] = binIndex(i);
+    }
+
+    private static void dumpBatch(RawDocHits_deprecated query, long numDocs) {
+        // docHits
+        for (int i = 0; i < numDocs; i++) {
+
+            int index = (i * limits.length);
+            boolean zero = true;
+            for (int j = 0; j < limits.length && zero; j++) zero = docHits[index + j] == 0;
+            if (zero) continue;
+            // print only non-zero results
+            query.output.printf("%d,", i);
+            for (int j = 0; j < limits.length; j++) {
+                query.output.printf("%d,", docHits[index + j]);
+                docHits[index + j] = 0;
+            }
+            query.output.println();
+        }
+        if (query.output != System.out) {
+            query.output.close();
+            try {
+                query.output = new PrintStream(new FastBufferedOutputStream(new FileOutputStream(outputName + "-" + batch++ + ".txt")));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -187,7 +226,7 @@ public class RawHits {
     @SuppressWarnings("unchecked")
     public static void main(final String[] arg) throws Exception {
 
-        SimpleJSAP jsap = new SimpleJSAP(RawHits.class.getName(), "Loads indices relative to a collection, possibly loads the collection, and answers to queries.",
+        SimpleJSAP jsap = new SimpleJSAP(RawDocHits_deprecated.class.getName(), "Loads indices relative to a collection, possibly loads the collection, and answers to queries.",
                 new Parameter[]{
                         new FlaggedOption("collection", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'c', "collection", "The collection of documents indexed by the given indices."),
                         new FlaggedOption("objectCollection", new ObjectParser(DocumentCollection.class, MG4JClassParser.PACKAGE), JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'o', "object-collection", "An object specification describing a document collection."),
@@ -225,7 +264,7 @@ public class RawHits {
         final Reference2DoubleOpenHashMap<Index> index2Weight = new Reference2DoubleOpenHashMap<Index>();
         final boolean verbose = jsapResult.getBoolean("verbose");
         final boolean loadSizes = !jsapResult.getBoolean("noSizes");
-        RawHits.loadIndicesFromSpec(basenameWeight, loadSizes, documentCollection, indexMap, index2Weight);
+        RawDocHits_deprecated.loadIndicesFromSpec(basenameWeight, loadSizes, documentCollection, indexMap, index2Weight);
 
         final long numberOfDocuments = indexMap.values().iterator().next().numberOfDocuments;
         if (titleList != null && titleList.size64() != numberOfDocuments)
@@ -238,41 +277,47 @@ public class RawHits {
 
         final Reference2ReferenceMap<Index, Object> index2Parser = new Reference2ReferenceOpenHashMap<Index, Object>();
         /*
-		// Fetch parsers for payload-based fields.
+        // Fetch parsers for payload-based fields.
 		for( Index index: indexMap.values() ) if ( index.hasPayloads ) {
 			if ( index.payload.getClass() == DatePayload.class ) index2Parser.put( index, DateFormat.getDateInstance( DateFormat.SHORT, Locale.UK ) );
 		}
 		*/
 
-        final HitsQueryEngine queryEngine = new HitsQueryEngine(simpleParser, new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING), indexMap);
+        final QueryEngine queryEngine = new QueryEngine(simpleParser, new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING), indexMap);
         queryEngine.setWeights(index2Weight);
         queryEngine.score(new Scorer[]{new BM25Scorer(), new VignaScorer()}, new double[]{1, 1});
 
+        // We set up an interval selector only if there is a collection for snippeting
+        queryEngine.intervalSelector = documentCollection != null ? new IntervalSelector(4, 40) : new IntervalSelector();
+
         queryEngine.multiplex = !jsapResult.userSpecified("moPlex") || jsapResult.getBoolean("noMplex");
-        queryEngine.intervalSelector = null;
+
         queryEngine.equalize(1000);
 
-        RawHits query = new RawHits(queryEngine);
+        RawDocHits_deprecated query = new RawDocHits_deprecated(queryEngine);
 
         // start docHits with at least 10K results
         query.interpretCommand("$score BM25Scorer");
-//        query.interpretCommand("$mode time");
+        query.interpretCommand("$mode time");
+        query.interpretCommand("$select");
 
         if (jsapResult.userSpecified("divert"))
             query.interpretCommand("$divert " + jsapResult.getObject("divert"));
 
         query.displayMode = OutputType.DOCHHITS;
-        query.maxOutput = jsapResult.getInt("results", 1000);
+        query.maxOutput = jsapResult.getInt("results", 10000);
 
         String q;
         int n = 0;
 
+        int dumpsize = jsapResult.userSpecified("dumpsize") ? jsapResult.getInt("dumpsize", 10000) : 1000;
+        buildBins(query.maxOutput, (int) numberOfDocuments);
         String lastQ = "";
+
 
         try {
             final BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(jsapResult.getString("input"))));
-
-            final ObjectArrayList<DocumentScoreInfo<ObjectArrayList<Byte>>> results = new ObjectArrayList<DocumentScoreInfo<ObjectArrayList<Byte>>>();
+            final ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> results = new ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>>();
 
             for (; ; ) {
                 q = br.readLine();
@@ -287,7 +332,7 @@ public class RawHits {
                 }
 
                 queryCount++;
-                 long time = -System.nanoTime();
+                long time = -System.nanoTime();
                 if (q.compareTo(lastQ) != 0) {
                     try {
                         n = queryEngine.process(q, 0, query.maxOutput, results);
@@ -301,48 +346,24 @@ public class RawHits {
                         continue;
                     }
                     lastQ = q;
+                    time += System.nanoTime();
+                    query.output(results, documentCollection, titleList, TextMarker.TEXT_BOLDFACE);
+                } else {
+                    // repeat last query results
+                    time += System.nanoTime();
+                    for (int j = 0; j < results.size(); j++) docHits[lastResults[j]]++;
                 }
-                time += System.nanoTime();
-                query.output(results, documentCollection, titleList, TextMarker.TEXT_BOLDFACE);
+
+                // dump batch
+                if (queryCount % dumpsize == 0) {
+                    dumpBatch(query, numberOfDocuments);
+                }
             }
+
         } finally {
+            dumpBatch(query, numberOfDocuments);
+            if (query.output != System.out) query.output.close();
         }
-    }
-
-    /**
-     * Scores the given document iterator and produces score outputDH.
-     *
-     * @param results            an iterator returning instances of {@link DocumentScoreInfo}.
-     * @param documentCollection an optional document collection, or <code>null</code>.
-     * @param titleList          an optional list of titles, or <code>null</code>.
-     * @param marker             an optional text marker to mark snippets, or <code>null</code>.
-     * @return the number of documents scanned.
-     */
-    @SuppressWarnings("boxing")
-    public int output(final ObjectArrayList<DocumentScoreInfo<ObjectArrayList<Byte>>> results, final DocumentCollection documentCollection,
-                      final BigList<? extends CharSequence> titleList, final Marker marker) throws IOException {
-
-        int i, j;
-        int doc = 0;
-
-        DocumentScoreInfo<ObjectArrayList<Byte>> dsi;
-
-        for (i = 0; i < results.size(); i++) {
-
-            dsi = results.get(i);
-
-            // docID
-            doc = (int) dsi.document;
-
-            // (query, doc, term, rank)
-            for (j = 0; j < dsi.info.size(); j++)
-                outputPH.printf("%d,%d,%d,%d\n", queryCount, doc,(int) ((BM25Scorer) queryEngine.scorer).flatIndexIterator[dsi.info.get(j)].termNumber(),i);
-        }
-
-        if (doc > 0 && (queryCount % 10 == 0))
-            LOGGER.info("Processed " + queryCount + " queries");
-
-        return i;
     }
 
     /**
@@ -361,6 +382,7 @@ public class RawHits {
         if (part[0].length() == 0) {
             System.err.println("$                                                       prints this help.");
             System.err.println("$mode [time|short|long|snippet|trec <topicNo> <runTag>] chooses display mode.");
+            System.err.println("$select [<maxIntervals> <maxLength>] [all]              installs or removes an interval selector.");
             System.err.println("$limit <max>                                            output at most <max> results per query.");
             System.err.println("$divert [<filename>]                                    diverts output to <filename> or to stdout.");
             System.err.println("$weight {index:weight}                                  set index weights (unspecified weights are set to 1).");
@@ -414,6 +436,28 @@ public class RawHits {
                 break;
 
 
+            case SELECT:
+                int maxIntervals = -1, maxLength = -1;
+                if (part.length == 1) {
+                    queryEngine.intervalSelector = null;
+                    System.err.println("Intervals have been disabled.");
+                } else if (part.length == 2 && "all".equals(part[1])) {
+                    queryEngine.intervalSelector = new IntervalSelector(); // All intervals
+                    System.err.println("Interval selection has been disabled (will compute all intervals).");
+                } else {
+                    if (part.length == 3) {
+                        try {
+                            maxIntervals = Integer.parseInt(part[1]);
+                            maxLength = Integer.parseInt(part[2]);
+                            queryEngine.intervalSelector = new IntervalSelector(maxIntervals, maxLength);
+                        } catch (NumberFormatException e) {
+                        }
+                    }
+                    if (maxIntervals < 0 || maxLength < 0)
+                        System.err.println("Missing or incorrect selector parameters.");
+                }
+                break;
+
             case SCORE:
                 final Scorer[] scorer = new Scorer[part.length - 1];
                 final double[] weight = new double[part.length - 1];
@@ -458,16 +502,18 @@ public class RawHits {
             case DIVERT:
                 if (part.length > 2) System.err.println("Wrong argument(s) to command");
                 else {
-                    outputPH.close();
+                    if (output != System.out)
+                        output.close();
                     try {
-                        outputPH = part.length == 1 ? System.out : new PrintStream(new FastBufferedOutputStream(new FileOutputStream(part[1] + "-" + phBatch++ + ".ph.txt")));
+                        output = part.length == 1 ? System.out : new PrintStream(new FastBufferedOutputStream(new FileOutputStream(part[1] + "-" + batch++ + ".txt")));
                         outputName = part[1];
                     } catch (FileNotFoundException e) {
                         System.err.println("Cannot create file " + part[1]);
-                        outputPH = System.out;
+                        output = System.out;
                     }
                 }
                 break;
+
 
             case EQUALIZE:
                 try {
@@ -485,6 +531,38 @@ public class RawHits {
         return true;
     }
 
+    /**
+     * Scores the given document iterator and produces score output.
+     *
+     * @param results            an iterator returning instances of {@link DocumentScoreInfo}.
+     * @param documentCollection an optional document collection, or <code>null</code>.
+     * @param titleList          an optional list of titles, or <code>null</code>.
+     * @param marker             an optional text marker to mark snippets, or <code>null</code>.
+     * @return the number of documents scanned.
+     */
+    @SuppressWarnings("boxing")
+    public int output(final ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> results, final DocumentCollection documentCollection, final BigList<? extends CharSequence> titleList, final Marker marker) throws IOException {
+
+        int i;
+        int doc = 0;
+
+        DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi;
+
+        for (i = 0; i < results.size(); i++) {
+            dsi = results.get(i);
+            doc = (int) dsi.document;
+            int index = (doc * limits.length) + bins[i];
+            lastResults[i] = index;
+            docHits[index]++;
+        }
+
+        if (doc > 0 && (queryCount % 1000 == 0))
+            LOGGER.info("Processed " + queryCount + " queries");
+//            output.printf("%d %d %d\n", queryCount, doc, i+1 );
+
+        return i;
+    }
+
     public enum Command {
         MODE,
         LIMIT,
@@ -497,7 +575,6 @@ public class RawHits {
         EQUALIZE,
         QUIT
     }
-
 
     public enum OutputType {
         /**

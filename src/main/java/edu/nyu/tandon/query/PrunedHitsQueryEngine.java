@@ -181,8 +181,8 @@ public class PrunedHitsQueryEngine<T> extends QueryEngine<T> {
 
         ObjectArrayList<Byte> termList = new ObjectArrayList<Byte>();
 
-        for (int i = 0; i < ((BM25Scorer) mainScorer).flatIndexIterator.length; i++) {
-            if (document == ((BM25Scorer) mainScorer).flatIndexIterator[i].document()) {
+        for (int i = 0; i < ((BM25ScorerNYU) mainScorer).flatIndexIterator.length; i++) {
+            if (document == ((BM25ScorerNYU) mainScorer).flatIndexIterator[i].document()) {
                 termList.add((byte) i);
             }
         }

@@ -59,16 +59,15 @@ object TrainCV2 {
     val termbased_features = termFeatures ++ phFeatures
 
     val featureGroups = Map(
+      "all" -> raw_features,
+      "doc" -> docFeatures,
+      "term" -> termFeatures,
+      "ph" -> phFeatures,
+      "dh" -> dhFeatures,
+      "termbased" -> termbased_features,
+      "docbased" -> docbased_features,
       "intrinsic" -> intrinsic_features
     )
-
-//    "all" -> raw_features,
-//    "doc" -> docFeatures,
-//    "term" -> termFeatures,
-//    "ph" -> phFeatures,
-//    "dh" -> dhFeatures,
-//    "termbased" -> termbased_features,
-//    "docbased" -> docbased_features
 
     val paramMap = List(
       "eta" -> 0.023f,

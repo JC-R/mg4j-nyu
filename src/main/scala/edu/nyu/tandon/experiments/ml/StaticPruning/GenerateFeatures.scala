@@ -49,7 +49,7 @@ object GenerateFeatures {
       .drop("l10_termID", "l10_docID", "l10_top10", "l10_top1K", "l1k_termID", "l1k_docID", "l1k_top10", "l1k_top1K",
         "d_docID", "dh_docID", "ph_docID", "ph_termID")
 
-    // read in training raw labels made with edu.nyu.tandon.tool.RawHits
+    // read in training raw labels made with edu.nyu.tandon.experiments.RawHits
     if (!Files.exists(Paths.get(saveFiles+".top10.parquet"))) {
 
       System.out.println("Generating: " + saveFiles+".top10.parquet");

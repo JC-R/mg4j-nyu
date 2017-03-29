@@ -1,4 +1,4 @@
-package edu.nyu.tandon.experiments.ml.StaticPruning;
+package edu.nyu.tandon.experiments.StaticPruning;
 /*
  * MG4J: Managing Gigabytes for Java (big)
  *
@@ -31,6 +31,7 @@ import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.di.big.mg4j.query.parser.SimpleParser;
 import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
 import it.unimi.di.big.mg4j.search.score.BM25Scorer;
+import it.unimi.di.big.mg4j.search.score.BM25ScorerNYU;
 import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
 import it.unimi.dsi.fastutil.BigList;
 import it.unimi.dsi.fastutil.BigListIterator;
@@ -248,7 +249,7 @@ public class PrunedIndexOverlap extends Query {
             for (j = 0; j < dsi.info.size(); j++) {
 
                 // find the list for this term
-                term = ((BM25Scorer) queryEngine.scorer).flatIndexIterator[dsi.info.get(j)].term();
+                term = ((BM25ScorerNYU) queryEngine.scorer).flatIndexIterator[dsi.info.get(j)].term();
                 prunedIterator = prunedIndex.documents(term);
                 if (prunedIterator == null) continue;           // this term not in pruned index
 

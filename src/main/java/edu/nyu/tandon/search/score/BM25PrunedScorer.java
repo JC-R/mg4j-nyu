@@ -3,7 +3,7 @@ package edu.nyu.tandon.search.score;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.search.AbstractIntersectionDocumentIterator;
 import it.unimi.di.big.mg4j.search.DocumentIterator;
-import it.unimi.di.big.mg4j.search.score.BM25Scorer;
+import it.unimi.di.big.mg4j.search.score.BM25ScorerNYU;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ import java.io.IOException;
  * In particular, we want global term frequency (list length) instead of the local pruned list length, and global documents
  *
  */
-public class BM25PrunedScorer extends BM25Scorer {
+public class BM25PrunedScorer extends BM25ScorerNYU {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(BM25PrunedScorer.class);
 

@@ -1,4 +1,4 @@
-package edu.nyu.tandon.experiments.ml;
+package edu.nyu.tandon.experiments;
 
 import com.martiansoftware.jsap.*;
 import it.unimi.di.big.mg4j.index.Index;

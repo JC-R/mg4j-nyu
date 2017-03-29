@@ -11,7 +11,7 @@ set -e
 #  7: home directory
 
 if [ "$#" -ne 7 ]; then
-    echo "Illegal number of parameters: PrnedIndex-trec-eval.sh CORPUS MODEL_NAME BASELINE_DIR BASELINE_INDEX PRUNED_INDER_DIR OUTPUT_DIR RUN_DIRECTORY"
+    echo \n"Illegal number of parameters: CORPUS MODEL_NAME BASELINE_DIR BASELINE_INDEX PRUNED_INDER_DIR OUTPUT_DIR RUN_DIRECTORY\n"
     exit 1
 fi
 
@@ -63,8 +63,8 @@ done
 
 # overlap baselines
 # -----------------
-java $OPTIONS edu.nyu.tandon.experiments.PrunedQuery -r $NUM_RESULTS --trecQueries -I lists/trec_eval.AND.txt -d results/$CORPUS.baseline.AND.1k.txt $BASELINE_INDEX 2> $RESULTS/$CORPUS.trec_eval.baseline.1k-AND.log &
-java $OPTIONS edu.nyu.tandon.experiments.PrunedQuery -r $NUM_RESULTS --trecQueries -I lists/trec_eval.OR.txt -d results/$CORPUS.baseline.OR.1k.txt $BASELINE_INDEX 2> $RESULTS/$CORPUS.trec_eval.baseline.1k-OR.log  &
+java $OPTIONS edu.nyu.tandon.experiments.StaticPruning.PrunedQuery -r $NUM_RESULTS --trecQueries -I lists/trec_eval.AND.txt -d results/$CORPUS.baseline.AND.1k.txt $BASELINE_INDEX 2> $RESULTS/$CORPUS.trec_eval.baseline.1k-AND.log &
+java $OPTIONS edu.nyu.tandon.experiments.StaticPruning.PrunedQuery -r $NUM_RESULTS --trecQueries -I lists/trec_eval.OR.txt -d results/$CORPUS.baseline.OR.1k.txt $BASELINE_INDEX 2> $RESULTS/$CORPUS.trec_eval.baseline.1k-OR.log  &
 wait
 
 for q in AND OR; do
@@ -87,12 +87,12 @@ fname=$CORPUS-$MODEL-$n
 ARGS="-r $NUM_RESULTS --trecQueries -I lists/trec_eval.$s.txt -T $PRUNED_DIR/$fname.titles $INDEX-0"
 
 # get documents for overlap
-java -Xmx30g $OPTIONS edu.nyu.tandon.experiments.PrunedQuery -d $RESULTS/$fname-$s-local.1k -s $PRUNED_DIR/$CORPUS-$MODEL-$n.strategy $ARGS 2>$RESULTS/$fname-$s-local.1k.log &
-java -Xmx30g $OPTIONS edu.nyu.tandon.experiments.PrunedQuery --globalScoring -d $RESULTS/$fname-$s-global.1k -s $PRUNED_DIR/$CORPUS-$MODEL-$n.strategy $ARGS 2>$RESULTS/$fname-$s-global.1k.log &
+java -Xmx30g $OPTIONS edu.nyu.tandon.experiments.staticPruning.PrunedQuery -d $RESULTS/$fname-$s-local.1k -s $PRUNED_DIR/$CORPUS-$MODEL-$n.strategy $ARGS 2>$RESULTS/$fname-$s-local.1k.log &
+java -Xmx30g $OPTIONS edu.nyu.tandon.experiments.staticPruning.PrunedQuery --globalScoring -d $RESULTS/$fname-$s-global.1k -s $PRUNED_DIR/$CORPUS-$MODEL-$n.strategy $ARGS 2>$RESULTS/$fname-$s-global.1k.log &
 
 # get TREC ids for relevance
-java $OPTIONS edu.nyu.tandon.experiments.PrunedQuery --trec -d $RESULTS/$fname-$s-local.txt $ARGS 2>$RESULTS/$fname-$s-local.log &
-java $OPTIONS edu.nyu.tandon.experiments.PrunedQuery --trec --globalScoring -d $RESULTS/$fname-$s-global.txt $ARGS 2>$RESULTS/$fname-$s-global.log &
+java $OPTIONS edu.nyu.tandon.experiments.staticPruning.PrunedQuery --trec -d $RESULTS/$fname-$s-local.txt $ARGS 2>$RESULTS/$fname-$s-local.log &
+java $OPTIONS edu.nyu.tandon.experiments.staticPruning.PrunedQuery --trec --globalScoring -d $RESULTS/$fname-$s-global.txt $ARGS 2>$RESULTS/$fname-$s-global.log &
 
 wait
 

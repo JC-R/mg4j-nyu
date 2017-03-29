@@ -24,7 +24,6 @@
     <orderEntry type="library" name="com.github.scopt:scopt_2.12:3.5.0" level="project" />
     <orderEntry type="library" name="org.apache.httpcomponents:httpcore:4.4.4" level="project" />
     <orderEntry type="library" name="commons-configuration:commons-configuration:1.10" level="project" />
-    <orderEntry type="library" name="it.unimi.dsi:sux4j:3.2.2" level="project" />
     <orderEntry type="library" name="it.unimi.di:mg4j-big:5.4.3" level="project" />
     <orderEntry type="library" name="org.apache.spark:spark-mllib_2.11:2.1.0" level="project" />
     <orderEntry type="library" name="org.apache.spark:spark-sql_2.11:2.1.0" level="project" />
@@ -49,14 +48,18 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="org.apache.spark:spark-core_2.11:2.1.0" level="project" />
-    <orderEntry type="library" name="xgboost-predictor-0.1.9-SNAPSHOT" level="project" />
     <orderEntry type="library" name="com.github.scopt:scopt_2.11:3.5.0" level="application" />
     <orderEntry type="library" name="xgboost4j-spark-0.7" level="application" />
     <orderEntry type="library" name="xgboost4j-example-0.7" level="application" />
     <orderEntry type="library" name="xgboost4j-0.7" level="project" />
     <orderEntry type="library" name="xgboost-predictor-0.1.9-SNAPSHOT-javadoc" level="application" />
-    <orderEntry type="library" name="org.apache.parquet:parquet-hadoop:1.9.0" level="project" />
-    <orderEntry type="library" name="org.apache.parquet:parquet-tools:1.9.0" level="project" />
+    <orderEntry type="library" name="org.apache.parquet:parquet-common:1.9.0" level="project" />
+    <orderEntry type="library" name="org.apache.parquet:parquet-tools:1.9.0" level="application" />
+    <orderEntry type="library" name="org.apache.spark:spark-core_2.11:2.1.0" level="application" />
+    <orderEntry type="library" name="it.unimi.dsi:sux4j:3.2.2" level="project" />
+    <orderEntry type="library" name="it.unimi.dsi:sux4j:4.1.0" level="project" />
+    <orderEntry type="library" name="xgboost-predictor-0.2.1-SNAPSHOT-javadoc" level="project" />
+    <orderEntry type="library" name="xgboost-predictor-spark_2.11-0.2.1" level="project" />
+    <orderEntry type="library" name="ai.h2o:h2o-genmodel:3.10.3.2" level="project" />
   </component>
 </module>

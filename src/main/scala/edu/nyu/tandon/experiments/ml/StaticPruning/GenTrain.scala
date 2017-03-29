@@ -13,12 +13,12 @@ import org.apache.spark.sql._
 /**
   * Created by juan on 12/28/16.
   */
-object TrainCV {
+object GenTrain {
 
   def main(args: Array[String]): Unit = {
 
     if (args.length < 7) {
-      System.err.println("Usage: Train <features> <top10> <top1k> <prefix> <nrounds> <maxDepth> <nthread>")
+      System.err.println("Usage: GenTrain <features> <top10> <top1k> <prefix> <nrounds> <maxDepth> <nthread>")
       System.exit(1)
     }
 
@@ -33,7 +33,7 @@ object TrainCV {
 
     val spark = SparkSession
       .builder()
-      .appName("Train")
+      .appName("Generate Training set")
       .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .getOrCreate()
 
@@ -42,6 +42,7 @@ object TrainCV {
     val sc = spark.sparkContext
     sc.setLogLevel("ERROR")
 
+    // load raw set
     val d_raw = spark.read
       .format("org.apache.spark.sql.execution.datasources.parquet.ParquetFileFormat")
       .load(raw_data)
@@ -50,7 +51,7 @@ object TrainCV {
     val tot = d_raw.count
     println(s"postings: $tot")
 
-    // generate training sets
+    // load labels
     val top10_count = spark.read
       .format("org.apache.spark.sql.execution.datasources.parquet.ParquetFileFormat")
       .load(labels_10)

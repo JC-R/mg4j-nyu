@@ -1,4 +1,4 @@
-package edu.nyu.tandon.experiments.ml;
+package edu.nyu.tandon.tool;
 
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.query.Query;

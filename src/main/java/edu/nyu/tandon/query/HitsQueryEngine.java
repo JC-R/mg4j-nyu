@@ -127,8 +127,8 @@ public class HitsQueryEngine<T> extends QueryEngine<T> {
                 //  byte (127) terms per query !!!
                 //
                 ObjectArrayList<Byte> termList = new ObjectArrayList<Byte>();
-                for (int i = 0; i < ((BM25Scorer) scorer).flatIndexIterator.length; i++) {
-                    if (document == ((BM25Scorer) scorer).flatIndexIterator[i].document()) {
+                for (int i = 0; i < ((BM25ScorerNYU) scorer).flatIndexIterator.length; i++) {
+                    if (document == ((BM25ScorerNYU) scorer).flatIndexIterator[i].document()) {
                         termList.add((byte) i);
                     }
                 }
@@ -142,8 +142,8 @@ public class HitsQueryEngine<T> extends QueryEngine<T> {
                 //  byte (127) terms per query !!!
                 //
                 ObjectArrayList<Byte> termList = new ObjectArrayList<Byte>();
-                for (int i = 0; i < ((BM25Scorer) scorer).flatIndexIterator.length; i++) {
-                    if (document == ((BM25Scorer) scorer).flatIndexIterator[i].document()) {
+                for (int i = 0; i < ((BM25ScorerNYU) scorer).flatIndexIterator.length; i++) {
+                    if (document == ((BM25ScorerNYU) scorer).flatIndexIterator[i].document()) {
                         termList.add((byte) i);
                     }
                 }

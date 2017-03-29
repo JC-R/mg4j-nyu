@@ -91,6 +91,7 @@ public class Query {
      * The current display mode.
      */
     public OutputType displayMode = OutputType.SHORT;
+
     /**
      * The current output stream, changeable with <samp>$divert</samp>.
      */

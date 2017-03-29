@@ -81,7 +81,7 @@ import java.util.Arrays;
  * @author Mauro Mereu
  * @author Sebastiano Vigna
  */
-public class BM25Scorer extends AbstractWeightedScorer implements DelegatingScorer {
+public class BM25ScorerNYU extends AbstractWeightedScorer implements DelegatingScorer {
     public static final Logger LOGGER = LoggerFactory.getLogger(BM25Scorer.class);
     public static final boolean DEBUG = true;
     /**
@@ -151,7 +151,7 @@ public class BM25Scorer extends AbstractWeightedScorer implements DelegatingScor
     /**
      * Creates a BM25 scorer using {@link #DEFAULT_K1} and {@link #DEFAULT_B} as parameters.
      */
-    public BM25Scorer() {
+    public BM25ScorerNYU() {
         this(DEFAULT_K1, DEFAULT_B);
     }
 
@@ -161,7 +161,7 @@ public class BM25Scorer extends AbstractWeightedScorer implements DelegatingScor
      * @param k1 the <var>k</var><sub>1</sub> parameter.
      * @param b  the <var>b</var> parameter.
      */
-    public BM25Scorer(final double k1, final double b) {
+    public BM25ScorerNYU(final double k1, final double b) {
         termVisitor = new TermCollectionVisitor();
         setupVisitor = new CounterSetupVisitor(termVisitor);
         this.k1 = k1;
@@ -175,7 +175,7 @@ public class BM25Scorer extends AbstractWeightedScorer implements DelegatingScor
      * @param k1 the <var>k</var><sub>1</sub> parameter.
      * @param b  the <var>b</var> parameter.
      */
-    public BM25Scorer(final String k1, final String b) {
+    public BM25ScorerNYU(final String k1, final String b) {
         this(Double.parseDouble(k1), Double.parseDouble(b));
     }
 

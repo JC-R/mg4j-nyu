@@ -1,6 +1,7 @@
-package edu.nyu.tandon.experiments.ml;
+package edu.nyu.tandon.tool;
 
 import com.martiansoftware.jsap.*;
+import edu.nyu.tandon.tool.ListSpeed;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.query.QueryEngine;
 import it.unimi.di.big.mg4j.index.Index;

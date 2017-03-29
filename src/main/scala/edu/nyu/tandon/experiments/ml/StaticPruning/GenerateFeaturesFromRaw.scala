@@ -178,7 +178,7 @@ object GenerateFeaturesFromRaw {
 
     val sample = spark.read.parquet(saveFiles + ".sample.raw_features.parquet")
 
-    // read in training raw labels made with edu.nyu.tandon.tool.RawHits
+    // read in training raw labels made with edu.nyu.tandon.experiments.RawHits
     val raw_features = Array("d_docSize","d_docTerms","d_xdoc","d_doc_s_t","d_xdoc_s","d_xdoc_t",
       "p_tfreq","p_tdfreq","p_bm25",
       "ph_b1","ph_b2","ph_b3","ph_b4","ph_b5","ph_b6","ph_b7","ph_b8","ph_b9","ph_b10",

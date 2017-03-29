@@ -1,4 +1,4 @@
-package edu.nyu.tandon.tool;
+package edu.nyu.tandon.index.prune;
 
 /*		 
  * MG4J: Managing Gigabytes for Java (big)
@@ -21,13 +21,11 @@ package edu.nyu.tandon.tool;
  */
 
 import com.martiansoftware.jsap.*;
-import edu.nyu.tandon.index.cluster.DocumentPruningStrategy;
 import edu.nyu.tandon.index.cluster.PostingPruningStrategy;
 import it.unimi.di.big.mg4j.index.*;
 import it.unimi.di.big.mg4j.index.CompressionFlags.Coding;
 import it.unimi.di.big.mg4j.index.CompressionFlags.Component;
 import it.unimi.di.big.mg4j.index.cluster.*;
-import it.unimi.di.big.mg4j.index.payload.IntegerPayload;
 import it.unimi.di.big.mg4j.index.payload.Payload;
 import it.unimi.di.big.mg4j.io.IOFactory;
 import it.unimi.di.big.mg4j.tool.Combine;
@@ -35,13 +33,12 @@ import it.unimi.di.big.mg4j.tool.Combine.IndexType;
 import it.unimi.di.big.mg4j.tool.Merge;
 import it.unimi.dsi.Util;
 import it.unimi.dsi.bits.Fast;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntBigList;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.longs.LongArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectList;
 import it.unimi.dsi.io.FastBufferedReader;
 import it.unimi.dsi.io.InputBitStream;
 import it.unimi.dsi.io.OutputBitStream;
@@ -53,12 +50,13 @@ import org.apache.commons.configuration.ConfigurationMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.print.Doc;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -227,6 +225,9 @@ public class PrunedPartition {
      */
     private final long[] numberOfDocuments;
     private final boolean docPruning;
+	private double[] threshold;
+	private boolean[] strategies;
+
     /**
      * A copy of {@link #indexWriter} which is non-<code>null</code> if {@link #indexWriter} is an instance of {@link QuasiSuccinctIndexWriter}[].
      */
@@ -244,6 +245,7 @@ public class PrunedPartition {
                            final int quantum,
                            final int height,
                            final int skipBufferOrCacheSize,
+                           final double[] t_list,
                            final long logInterval,
                            final boolean docPruning) throws ConfigurationException, IOException, ClassNotFoundException, SecurityException, InstantiationException, IllegalAccessException, URISyntaxException, InvocationTargetException, NoSuchMethodException {
 
@@ -262,7 +264,9 @@ public class PrunedPartition {
 
         final Coding positionCoding = writerFlags.get(Component.POSITIONS);
 
-        inputProperties = new Properties(inputBasename + DiskBasedIndex.PROPERTIES_EXTENSION);
+	    String[] names = inputBasename.split("\\?");
+	    inputProperties = new Properties(names[0] + DiskBasedIndex.PROPERTIES_EXTENSION);
+
         globalIndex = Index.getInstance(inputBasename, false, positionCoding == Coding.GOLOMB || positionCoding == Coding.INTERPOLATIVE, false);
         indexReader = globalIndex.getReader();
 
@@ -278,12 +282,18 @@ public class PrunedPartition {
         numPostings = new long[numIndices];
         indexWriter = new IndexWriter[numIndices];
         quasiSuccinctIndexWriter = new QuasiSuccinctIndexWriter[numIndices];
-
         this.numberOfDocuments = new long[2];
         numberOfDocuments[0] = strategy.numberOfDocuments(0);
         numberOfDocuments[1] = globalIndex.numberOfDocuments - numberOfDocuments[0];
 
-        if ((havePayloads = writerFlags.containsKey(Component.PAYLOADS)) && !globalIndex.hasPayloads)
+	    threshold = new double[t_list.length];
+	    strategies = new boolean[t_list.length];
+	    for (int i = 0; i < t_list.length; i++) {
+		    threshold[i] = Math.ceil(((double) globalIndex.numberOfPostings) * t_list[i]);
+		    strategies[i] = true;
+	    }
+
+	    if ((havePayloads = writerFlags.containsKey(Component.PAYLOADS)) && !globalIndex.hasPayloads)
             throw new IllegalArgumentException("You requested payloads, but the global index does not contain them.");
         if ((haveCounts = writerFlags.containsKey(Component.COUNTS)) && !globalIndex.hasCounts)
             throw new IllegalArgumentException("You requested counts, but the global index does not contain them.");
@@ -316,7 +326,7 @@ public class PrunedPartition {
             }
         localTerms[0] = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(localBasename[0] + DiskBasedIndex.TERMS_EXTENSION), "UTF-8")));
 
-        terms = new FastBufferedReader(new InputStreamReader(new FileInputStream(inputBasename + DiskBasedIndex.TERMS_EXTENSION), "UTF-8"));
+        terms = new FastBufferedReader(new InputStreamReader(new FileInputStream(names[0] + DiskBasedIndex.TERMS_EXTENSION), "UTF-8"));
 
     }
 
@@ -326,8 +336,6 @@ public class PrunedPartition {
                 new Parameter[]{
                         new FlaggedOption("bufferSize", JSAP.INTSIZE_PARSER, Util.formatBinarySize(DEFAULT_BUFFER_SIZE), JSAP.NOT_REQUIRED, 'b', "buffer-size", "The size of an I/O buffer."),
                         new FlaggedOption("logInterval", JSAP.LONG_PARSER, Long.toString(ProgressLogger.DEFAULT_LOG_INTERVAL), JSAP.NOT_REQUIRED, 'l', "log-interval", "The minimum time interval between activity logs in milliseconds."),
-                        new FlaggedOption("strategy", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 's', "strategy", "A serialised documental partitioning strategy."),
-                        new FlaggedOption("uniformStrategy", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'u', "uniform", "Requires a uniform partitioning in the given number of parts."),
                         new FlaggedOption("bloom", JSAP.INTEGER_PARSER, "0", JSAP.NOT_REQUIRED, 'B', "bloom", "Generates Bloom filters with given precision."),
                         new FlaggedOption("comp", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'c', "comp", "A compression flag for the index (may be specified several times).").setAllowMultipleDeclarations(true),
                         new Switch("noSkips", JSAP.NO_SHORTFLAG, "no-skips", "Disables skips."),
@@ -338,9 +346,13 @@ public class PrunedPartition {
                         new FlaggedOption("stopwords", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'S', "stopword", "The stop words."),
                         new FlaggedOption("height", JSAP.INTSIZE_PARSER, Integer.toString(BitStreamIndex.DEFAULT_HEIGHT), JSAP.NOT_REQUIRED, 'H', "height", "The skip height."),
                         new FlaggedOption("skipBufferSize", JSAP.INTSIZE_PARSER, Util.formatBinarySize(SkipBitStreamIndexWriter.DEFAULT_TEMP_BUFFER_SIZE), JSAP.NOT_REQUIRED, JSAP.NO_SHORTFLAG, "skip-buffer-size", "The size of the internal temporary buffer used while creating an index with skips."),
-                        new Switch("documentPruning", 'd', "documentPruning", "Documental pruning strategy (no term based decisions)."),
+                        new UnflaggedOption("inputBasename", JSAP.STRING_PARSER, JSAP.REQUIRED, "The basename of the global index."),
+                        new FlaggedOption("uniformStrategy", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'u', "uniform", "Requires a uniform partitioning in the given number of parts."),
+
+		                new Switch("documentPruning", 'd', "documentPruning", "Documental pruning strategy (no term based decisions)."),
+		                new FlaggedOption("threshold", JSAP.DOUBLE_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 't', "threshold", "Prune threshold for the index (may be specified several times).").setAllowMultipleDeclarations(true),
                         new FlaggedOption("outputBasename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "The basename of the local indices."),
-                        new UnflaggedOption("inputBasename", JSAP.STRING_PARSER, JSAP.REQUIRED, "The basename of the global index.")
+                        new FlaggedOption("strategy", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 's', "strategy", "A serialised documental partitioning strategy.")
                 });
 
         JSAPResult jsapResult = jsap.parse(arg);
@@ -359,7 +371,7 @@ public class PrunedPartition {
             strategy = (DocumentalPartitioningStrategy) BinIO.loadObject(strategyFilename);
         else throw new IllegalArgumentException("You must specify a partitioning strategy");
 
-        final boolean docPruning = jsapResult.getBoolean("documentPruning");    // document based pruning
+	    final boolean docPruning = jsapResult.getBoolean("documentPruning");    // document based pruning
         final boolean skips = !jsapResult.getBoolean("noSkips");
         final boolean interleaved = jsapResult.getBoolean("interleaved");
         final boolean highPerformance = jsapResult.getBoolean("highPerformance");
@@ -376,7 +388,11 @@ public class PrunedPartition {
                 CompressionFlags.valueOf(jsapResult.getStringArray("comp"), CompressionFlags.DEFAULT_QUASI_SUCCINCT_INDEX) :
                 CompressionFlags.valueOf(jsapResult.getStringArray("comp"), CompressionFlags.DEFAULT_STANDARD_INDEX);
 
-        new PrunedPartition(inputBasename,
+	    // desired pruning thresholds
+	    double[] t_list = (jsapResult.userSpecified("threshold")) ? jsapResult.getDoubleArray("threshold") : new double[0];
+	    if (t_list.length > 0) Arrays.sort(t_list);
+
+	    new PrunedPartition(inputBasename,
                 outputBasename,
                 strategy,
                 strategyFilename,
@@ -388,6 +404,7 @@ public class PrunedPartition {
                 jsapResult.getInt("quantum"),
                 jsapResult.getInt("height"),
                 indexType == IndexType.QUASI_SUCCINCT ? jsapResult.getInt("cacheSize") : jsapResult.getInt("skipBufferSize"),
+                t_list,
                 jsapResult.getLong("logInterval"),
                 docPruning).run();
     }
@@ -402,7 +419,7 @@ public class PrunedPartition {
             final InputBitStream sizes = new InputBitStream(sizesFile);
             final OutputBitStream localSizes = new OutputBitStream(localBasename[0] + DiskBasedIndex.SIZES_EXTENSION);
 
-            // WARN: can only handle 2.5billion documents; should be OK
+            // WARN: can only handle 2.5billion documents; should be OK, right?
             int[] localDocSize = new int[(int) strategy.numberOfDocuments(0)];
 
             // ALERT: for the time being, we decide whether to "fill the gaps" in sizes using as sole indicator the equality between global and local number of documents.
@@ -442,7 +459,7 @@ public class PrunedPartition {
 
         final Long2LongOpenHashMap documents = new Long2LongOpenHashMap();
 
-        long localFrequency = 0;
+        int localFrequency = 0;
         long sumMaxPos = 0;
 
         InputBitStream direct;
@@ -458,8 +475,7 @@ public class PrunedPartition {
 
         IndexIterator indexIterator;
 
-        bloomFilter = (bloomFilterPrecision != 0) ?
-                BloomFilter.create(globalIndex.numberOfTerms, bloomFilterPrecision) : null;
+        bloomFilter = (bloomFilterPrecision != 0) ? BloomFilter.create(globalIndex.numberOfTerms, bloomFilterPrecision) : null;
 
         MutableString currentTerm = new MutableString();
         Payload payload = null;
@@ -476,38 +492,53 @@ public class PrunedPartition {
 
         // for now, we rebuild the list in memory : TODO: fix so any size list is possible
         class DocEntry {
-            long docID;
-            Payload payload;
+        	long docID;
             int count;
             int[] pos;
+	        Payload payload;
         }
-        Long2ObjectOpenHashMap<DocEntry> list = new Long2ObjectOpenHashMap<DocEntry>();
+	    Long2LongOpenHashMap docs = new Long2LongOpenHashMap((int)globalIndex.numberOfDocuments);
+	    DocEntry[] docList = new DocEntry[(int)globalIndex.numberOfDocuments];
+	    IntOpenHashSet s;
+	    for (int i=0; i<globalIndex.numberOfDocuments; i++ ) docList[i] = new DocEntry();
 
+        // process by global term number
         for (int t = 0; t < globalIndex.numberOfTerms; t++) {
 
             terms.readLine(currentTerm);
+	        indexIterator = indexReader.nextIterator();
 
-            indexIterator = indexReader.nextIterator();
             frequency = indexIterator.frequency();
             termID = (int) indexIterator.termNumber();
-            assert termID == t;
+	        localFrequency = 0;
 
-            localFrequency = 0;
+//            assert termID == t;
 
-            IntegerPayload payload1;
+            // if the term never made it to the pruned index; skip it
+//            if (!docPruning && !((PostingPruningStrategy) strategy).postings_Global.containsKey(termID))
+//                continue;
 
-            // if pruning by postings, and the term never made it to the pruned index; skip it
-            if (!docPruning && !((PostingPruningStrategy) strategy).postings_Global.containsKey(termID))
-                continue;
+            // get pointer to non-pruned documents
+            s = null;
+	        if (!docPruning) {
+	        	// if doc never made it for any term, skip
+		        if ((s = ((PostingPruningStrategy) strategy).postings_Global.get((int) termID)) == null)
+		        	continue;
+	        }
 
+	        docs.clear();
+
+	        // iterate through this term's documents; pick if they should be included
             for (long j = 0; j < frequency; j++) {
 
                 globalPointer = indexIterator.nextDocument();
 
+                // doc in index at all?
+
                 // prune according to type
                 localIndex = (docPruning) ?
                         strategy.localIndex(globalPointer) :
-                        ((PostingPruningStrategy) strategy).localIndex(termID, globalPointer);
+		                (s.contains((int)globalPointer))? 0 : 1;
 
                 // (term,doc) or (doc) is in the pruned index, write it out to the new pruned index
                 if (localIndex == 0) {
@@ -523,35 +554,38 @@ public class PrunedPartition {
                         numTerms[0]++;
                     }
 
-                    // save posting data to memory;
+	                if (globalIndex.hasPayloads) payload = indexIterator.payload();
+	                count = (haveCounts) ? indexIterator.count() : 0;
+
+	                // save posting data to memory;
                     // note that we use the global doc ID as we will have to access the size list.
                     // local docID is substituted in later...
                     //
-                    DocEntry d = new DocEntry();
-                    d.docID = globalPointer;
 
-                    if (globalIndex.hasPayloads) payload = indexIterator.payload();
-                    d.payload = (havePayloads) ? payload : null;
+	                docs.put(strategy.localPointer(globalPointer),localFrequency);
 
-                    count = (haveCounts) ? indexIterator.count() : 0;
-                    d.count = count;
-                    if (haveCounts) {
+	                docList[localFrequency].docID = globalPointer;
+	                docList[localFrequency].count = count;
+	                docList[localFrequency].payload = (havePayloads) ? payload : null;
+
+	                if (haveCounts) {
                         occurrencies[localIndex] += count;
                         if (maxDocPos[localIndex] < count) maxDocPos[localIndex] = count;
                         if (havePositions) {
-                            d.pos = new int[count];
+//                            d.pos = new int[count];
+                            docList[localFrequency].pos = new int[count];
                             for (int p = 0; p < count; p++) {
                                 int pos = indexIterator.nextPosition();
-                                d.pos[p] = pos;
+	                            docList[localFrequency].pos[p] = pos;
                                 sumMaxPos += pos;
                             }
                         }
                     }
 
-                    localFrequency++;
-                    list.put(strategy.localPointer(globalPointer), d);
+	                localFrequency++;
+
                 } else {
-                    // synchronize aux files
+                    // advance & synchronize aux files
                     if (globalIndex.hasPayloads) payload = indexIterator.payload();
                     if (haveCounts) {
                         count = indexIterator.count();
@@ -580,38 +614,31 @@ public class PrunedPartition {
 
                 occurrencies[0] = 0;
 
-                indexWriter[0].writeFrequency(localFrequency);
+                indexWriter[0].writeFrequency((long)localFrequency);
 
-                // we want the index list in local docID order
-                long[] docs = list.keySet().toLongArray();
-                Arrays.sort(docs);
-                for (long localID : docs) {
+                // we want the index list in strategy-local docID order
+                long[] doc_list = docs.keySet().toLongArray();
+                Arrays.sort(doc_list);
+                for (long localID : doc_list) {
 
-                    DocEntry d = list.get(localID);
-                    globalPointer = d.docID;
-                    if (havePayloads) payload = d.payload;
-                    if (haveCounts) count = d.count;
+//                    DocEntry d = list.get(localID);
+	                DocEntry d = docList[(int)docs.get(localID)];
 
                     // TODO: support positions
 
-                    // at the position we need
                     obs = indexWriter[0].newDocumentRecord();
-
-                    // map from global docID to local docID
-//                    localPointer = strategy.localPointer(globalPointer);
-//                    assert localID == localPointer;
                     indexWriter[0].writeDocumentPointer(obs, localID);
-
                     if (havePayloads) {
-                        indexWriter[0].writePayload(obs, payload);
+                        indexWriter[0].writePayload(obs, d.payload);
                     }
-
-                    if (haveCounts) indexWriter[0].writePositionCount(obs, count);
+                    if (haveCounts) indexWriter[0].writePositionCount(obs, d.count);
                     if (havePositions) {
-                        indexWriter[0].writeDocumentPositions(obs, d.pos, 0, count, sizeList != null ? sizeList.getInt(globalPointer) : -1);
+                        indexWriter[0].writeDocumentPositions(obs, d.pos, 0, d.count, sizeList != null ? sizeList.getInt(d.docID) : -1);
                     }
-                }
 
+                    d = null;
+                }
+                doc_list = null;
                 sumMaxPos = 0;
             } else {
                 sumMaxPos = 0;
@@ -619,8 +646,6 @@ public class PrunedPartition {
             localFrequency = 0;
             pl.count += frequency - 1;
             pl.update();
-            list.clear();
-
         }
         globalFrequencies.close();
 
