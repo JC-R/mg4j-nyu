@@ -24,5 +24,5 @@ inputBase=`basename ${input}`
 java edu.nyu.tandon.experiments.cluster.ExtractClusterFeatures \
     -i ${input} \
     -o "${outputDir}/${inputBase}" \
-    -k 100 \
+    -k 10000 \
     ${index}

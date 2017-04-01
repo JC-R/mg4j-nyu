@@ -40,7 +40,7 @@ do
             -i ${input} \
             -o "${outputDir}/${inputBase}" \
             -s ${number} \
-            -k 100 \
+            -k 10000 \
             ${clusterBase}
 
         java edu.nyu.tandon.experiments.TranslateToGlobalIds \
