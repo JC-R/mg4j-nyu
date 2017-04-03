@@ -72,6 +72,7 @@ public class ExtractShardScores {
                         new FlaggedOption("scorer", JSAP.STRING_PARSER, "bm25", JSAP.NOT_REQUIRED, 'S', "scorer", "Scorer type (bm25 or ql)"),
                         new FlaggedOption("csiMaxOutput", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'L', "csi-max-output", "CSI maximal number of results")
                                 .setAllowMultipleDeclarations(true),
+                        new Switch("noIDConversion", 'n', "noconversion", "Do not use ID conversion."),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the cluster indices (not including number suffixes). In other words, the basename of the partitioned index as if loaded as a DocumentalMergedCluster."),
                         new UnflaggedOption("csi", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the central sample index.")
                 });
@@ -83,7 +84,8 @@ public class ExtractShardScores {
 
         LOGGER.info("Loading CSI...");
         CentralSampleIndex csi = CentralSampleIndex.loadCSI(jsapResult.getString("csi"),
-                jsapResult.getString("basename"), resolveScorer(jsapResult.getString("scorer")));
+                jsapResult.getString("basename"), resolveScorer(jsapResult.getString("scorer")),
+                !jsapResult.userSpecified("noIDConversion"));
 
         int[] csiMaxOutputs;
         if (jsapResult.userSpecified("csiMaxOutput")) csiMaxOutputs = jsapResult.getIntArray("csiMaxOutput");

@@ -6,6 +6,7 @@ import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.query.QueryEngine;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
+import it.unimi.di.big.mg4j.index.cluster.ContiguousDocumentalStrategy;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalPartitioningStrategy;
 import it.unimi.di.big.mg4j.index.cluster.SelectiveQueryEngine;
@@ -128,8 +129,18 @@ public class CentralSampleIndex {
     }
 
     public static CentralSampleIndex loadCSI(String csiBasename, String clustersBasename, Scorer scorer) throws IOException, ClassNotFoundException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException {
+        return loadCSI(csiBasename, clustersBasename, scorer, true);
+    }
+
+    public static CentralSampleIndex loadCSI(String csiBasename, String clustersBasename, Scorer scorer, boolean doConversion) throws IOException, ClassNotFoundException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException {
         DocumentalClusteringStrategy csiStrategy = (DocumentalClusteringStrategy) BinIO.loadObject(csiBasename + STRATEGY);
-        SelectiveDocumentalIndexStrategy clusterStrategy = (SelectiveDocumentalIndexStrategy) BinIO.loadObject(clustersBasename + STRATEGY);
+        DocumentalPartitioningStrategy clusterStrategy;
+        if (doConversion) {
+            clusterStrategy = (DocumentalPartitioningStrategy) BinIO.loadObject(clustersBasename + STRATEGY);
+        }
+        else {
+            clusterStrategy = new ContiguousDocumentalStrategy(0, Index.getInstance(clustersBasename).numberOfDocuments);
+        }
         return new CentralSampleIndex(csiBasename + "-0", csiStrategy, clusterStrategy, scorer);
     }
 

@@ -19,4 +19,8 @@ public class ClusterAccessHelper {
         return it.index;
     }
 
+    public static DocumentalConcatenatedCluster getIndex(DocumentalConcatenatedClusterIndexIterator it) {
+        return it.index;
+    }
+
 }

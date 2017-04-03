@@ -9,7 +9,7 @@
 # 1) cluster directory
 # 2) input with queries
 # 3) output directory
-# 4) csi
+# 3) number of buckets
 #
 
 source "${MG4J_NYU_SCRIPTS}/commons.sh"
@@ -17,12 +17,12 @@ source "${MG4J_NYU_SCRIPTS}/commons.sh"
 dir=$1
 input=$2
 outputDir=$3
-csiBase=$4
+buckets=$4
 
 if [ -z "${dir}" ]; then echo "You have to define cluster directory."; exit 1; fi;
 if [ -z "${input}" ]; then echo "You have to define input file."; exit 1; fi;
 if [ -z "${outputDir}" ]; then echo "You have to define output directory."; exit 1; fi;
-if [ -z "${csiBase}" ]; then echo "You have to define CSI."; exit 1; fi;
+if [ -z "${buckets}" ]; then echo "You have to define bucket count."; exit 1; fi;
 
 inputBase=`basename ${input}`
 base="${dir}/`ls ${dir} | egrep '\.strategy' | sed 's/\.strategy//'`"
@@ -32,23 +32,21 @@ starttime=$(date +%s)
 
 set -e
 
-java edu.nyu.tandon.experiments.cluster.ExtractShardScores \
-    -s redde \
-    -i ${input} \
-    -o "${outputDir}/${inputBase}" \
-    -c `ls ${dir}/*-*terms | wc -l` \
-    -L 10 -L 20 -L 50 -L 100 -L 200 -L 500 -L 1000 \
-    ${base} \
-    ${csiBase}
+ls ${dir}/*-*terms | sort | while read file;
+do
+        clusterBase=`echo ${file} | sed "s/\.terms//"`
 
-java edu.nyu.tandon.experiments.cluster.ExtractShardScores \
-    -s shrkc \
-    -i ${input} \
-    -o "${outputDir}/${inputBase}" \
-    -c `ls ${dir}/*-*terms | wc -l` \
-    -L 10 -L 20 -L 50 -L 100 -L 200 -L 500 -L 1000 \
-    ${base} \
-    ${csiBase}
+        number=`basename ${file} | sed "s/.*-//" | sed "s/\..*//"`
+        echo "${number}"
+
+        java edu.nyu.tandon.experiments.cluster.ExtractBucketizedPostingCost \
+            -i ${input} \
+            -o "${outputDir}/${inputBase}" \
+            -s ${number} \
+            -b ${buckets} \
+            ${clusterBase}
+
+done
 
 endtime=$(date +%s)
 

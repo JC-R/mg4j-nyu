@@ -1,6 +1,7 @@
 package it.unimi.di.big.mg4j.index;
 
 import it.unimi.di.big.mg4j.index.cluster.ClusterAccessHelper;
+import it.unimi.di.big.mg4j.index.cluster.DocumentalConcatenatedClusterIndexIterator;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalMergedClusterIndexIterator;
 
 import java.io.IOException;
@@ -19,6 +20,14 @@ public class IndexAccessHelper {
         }
         else if (indexIterator instanceof DocumentalMergedClusterIndexIterator) {
             DocumentalMergedClusterIndexIterator i = (DocumentalMergedClusterIndexIterator) indexIterator;
+            long occurrency = 0;
+            for (Index index : ClusterAccessHelper.getLocalIndices(ClusterAccessHelper.getIndex(i))) {
+                occurrency += getOccurrency(index.documents(indexIterator.term()));
+            }
+            return occurrency;
+        }
+        else if (indexIterator instanceof DocumentalConcatenatedClusterIndexIterator) {
+            DocumentalConcatenatedClusterIndexIterator i = (DocumentalConcatenatedClusterIndexIterator) indexIterator;
             long occurrency = 0;
             for (Index index : ClusterAccessHelper.getLocalIndices(ClusterAccessHelper.getIndex(i))) {
                 occurrency += getOccurrency(index.documents(indexIterator.term()));

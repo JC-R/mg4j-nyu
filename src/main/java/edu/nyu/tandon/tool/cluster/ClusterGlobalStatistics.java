@@ -4,6 +4,7 @@ import com.martiansoftware.jsap.*;
 import it.unimi.di.big.mg4j.index.IndexAccessHelper;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.IndexReader;
+import it.unimi.di.big.mg4j.index.cluster.DocumentalCluster;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalMergedCluster;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongBigArrayBigList;
@@ -101,7 +102,7 @@ public class ClusterGlobalStatistics {
 
     }
 
-    public static void globalStatistics(DocumentalMergedCluster index, boolean skipOccurrencies)
+    public static void globalStatistics(DocumentalCluster index, boolean skipOccurrencies)
             throws IOException, ClassNotFoundException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException {
 
         String[] localIndices = index.properties.getStringArray("localindex");
@@ -126,7 +127,7 @@ public class ClusterGlobalStatistics {
         if (jsap.messagePrinted()) return;
 
         String basename = jsapResult.getString("index");
-        DocumentalMergedCluster index = (DocumentalMergedCluster) getInstance(basename);
+        DocumentalCluster index = (DocumentalCluster) getInstance(basename);
         LOGGER.info(String.format("Creating global statistics for clusters in %s", basename));
         globalStatistics(index, jsapResult.userSpecified("skipOccurrencies"));
 

@@ -9,7 +9,6 @@
 # 1) cluster directory
 # 2) input with queries
 # 3) output directory
-# 4) csi
 #
 
 source "${MG4J_NYU_SCRIPTS}/commons.sh"
@@ -33,7 +32,7 @@ set -e
 java edu.nyu.tandon.experiments.cluster.ExtractTailyScores \
     -i ${input} \
     -o "${outputDir}/${inputBase}" \
-    -c `ls ${dir}/*-*titles | wc -l` \
+    -c `ls ${dir}/*-*terms | wc -l` \
     ${base}
 
 endtime=$(date +%s)
