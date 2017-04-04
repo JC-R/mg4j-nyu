@@ -28,9 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.github.elshize.bcsv.column.ColumnType.doubleColumn;
-import static com.github.elshize.bcsv.column.ColumnType.intColumn;
-import static com.github.elshize.bcsv.column.ColumnType.listColumn;
+import static com.github.elshize.bcsv.column.ColumnType.*;
 import static edu.nyu.tandon.query.Query.MAX_STEMMING;
 
 /**
@@ -107,14 +105,14 @@ public class ExtractClusterFeatures {
                         "sumlist"
                 },
                 new ColumnType[] {
-                        listColumn(intColumn()),
+                        listColumn(longColumn()),
                         listColumn(doubleColumn()),
-                        intColumn(),
-                        intColumn(),
-                        intColumn(),
-                        intColumn(),
-                        intColumn(),
-                        intColumn()
+                        longColumn(),
+                        longColumn(),
+                        longColumn(),
+                        longColumn(),
+                        longColumn(),
+                        longColumn()
                 }
         );
         FileOutputStream out = new FileOutputStream(jsapResult.getString("output") + ".basefeatures");
