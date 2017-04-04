@@ -1,5 +1,8 @@
 package edu.nyu.tandon.experiments.cluster;
 
+import com.github.elshize.bcsv.Header;
+import com.github.elshize.bcsv.LineWriter;
+import com.github.elshize.bcsv.column.ColumnType;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
@@ -20,14 +23,14 @@ import it.unimi.dsi.lang.MutableString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.github.elshize.bcsv.column.ColumnType.doubleColumn;
+import static com.github.elshize.bcsv.column.ColumnType.intColumn;
+import static com.github.elshize.bcsv.column.ColumnType.listColumn;
 import static edu.nyu.tandon.query.Query.MAX_STEMMING;
 
 /**
@@ -84,21 +87,46 @@ public class ExtractClusterFeatures {
                 jsapResult.getString("output");
         String type = jsapResult.userSpecified("shardId") ? ".local" : ".global";
 
-        FileWriter resultWriter = new FileWriter(String.format("%s.results%s", outputBasename, type));
-        FileWriter scoreWriter = new FileWriter(String.format("%s.results.scores", outputBasename));
-        FileWriter timeWriter = new FileWriter(String.format("%s.time", outputBasename));
-        FileWriter avgTimeWriter = new FileWriter(String.format("%s.time.avg", outputBasename));
-        FileWriter maxListLen1Writer = new FileWriter(String.format("%s.maxlist1", outputBasename));
-        FileWriter maxListLen2Writer = new FileWriter(String.format("%s.maxlist2", outputBasename));
-        FileWriter minListLen1Writer = new FileWriter(String.format("%s.minlist1", outputBasename));
-        FileWriter minListLen2Writer = new FileWriter(String.format("%s.minlist2", outputBasename));
-        FileWriter sumListLenWriter = new FileWriter(String.format("%s.sumlist", outputBasename));
-
+        final int DOCUMENTS = 0;
+        final int SCORES = 1;
+        final int TIME = 2;
+        final int MAX_LIST_1 = 3;
+        final int MAX_LIST_2 = 4;
+        final int MIN_LIST_1 = 5;
+        final int MIN_LIST_2 = 6;
+        final int SUM_LIST = 7;
+        Header header = new Header(
+                new String[] {
+                        "documents",
+                        "scores",
+                        "time",
+                        "maxlist1",
+                        "maxlist2",
+                        "minlist1",
+                        "minlist2",
+                        "sumlist"
+                },
+                new ColumnType[] {
+                        listColumn(intColumn()),
+                        listColumn(doubleColumn()),
+                        intColumn(),
+                        intColumn(),
+                        intColumn(),
+                        intColumn(),
+                        intColumn(),
+                        intColumn()
+                }
+        );
+        FileOutputStream out = new FileOutputStream(jsapResult.getString("output") + ".basefeatures");
+        header.write(out);
+        LineWriter writer = header.getLineWriter(out);
 
         long totalTime = 0;
         long queryCount = 0;
         try(BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
             for (String query; (query = br.readLine()) != null; ) {
+
+                Object[] row = header.newRow();
 
                 ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r =
                         new ObjectArrayList<>();
@@ -123,26 +151,24 @@ public class ExtractClusterFeatures {
                     }
                 }).collect(Collectors.toList());
                 if (listLengths.isEmpty()) {
-                    maxListLen1Writer.append("0\n");
-                    maxListLen2Writer.append("0\n");
-                    minListLen1Writer.append("0\n");
-                    minListLen2Writer.append("0\n");
+                    row[MAX_LIST_1] = 0;
+                    row[MAX_LIST_2] = 0;
+                    row[MIN_LIST_1] = 0;
+                    row[MIN_LIST_2] = 0;
                 }
                 else {
-                    maxListLen1Writer.append(String.valueOf(listLengths.get(0))).append('\n');
-                    minListLen1Writer.append(String.valueOf(listLengths.get(listLengths.size() - 1))).append('\n');
+                    row[MAX_LIST_1] = listLengths.get(0);
+                    row[MIN_LIST_1] = listLengths.get(listLengths.size() - 1);
                     if (listLengths.size() > 1) {
-                        maxListLen2Writer.append(String.valueOf(listLengths.get(1))).append('\n');
-                        minListLen2Writer.append(String.valueOf(listLengths.get(listLengths.size() - 2))).append('\n');
+                        row[MAX_LIST_2] = listLengths.get(1);
+                        row[MIN_LIST_2] = listLengths.get(listLengths.size() - 2);
                     }
                     else {
-                        maxListLen2Writer.append("0\n");
-                        minListLen2Writer.append("0\n");
+                        row[MAX_LIST_2] = 0;
+                        row[MIN_LIST_2] = 0;
                     }
                 }
-                sumListLenWriter
-                        .append(String.valueOf(listLengths.stream().mapToLong(Long::longValue).sum()))
-                        .append('\n');
+                row[SUM_LIST] = listLengths.stream().mapToLong(Long::longValue).sum();
 
                 try {
                     long start = System.currentTimeMillis();
@@ -150,40 +176,26 @@ public class ExtractClusterFeatures {
                     long elapsed = System.currentTimeMillis() - start;
                     totalTime += elapsed;
                     queryCount++;
-                    timeWriter.append(String.valueOf(elapsed)).append('\n');
+                    row[TIME] = elapsed;
                 } catch (Exception e) {
                     LOGGER.error(String.format("There was an error while processing query: %s", query), e);
                     throw e;
                 }
 
                 Iterator<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> it = r.iterator();
-                if (it.hasNext()) {
-                    DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi = it.next();
-                    resultWriter.append(String.valueOf(dsi.document));
-                    scoreWriter.append(String.valueOf(dsi.score));
-                    while (it.hasNext()) {
-                        dsi = it.next();
-                        resultWriter.append(' ').append(String.valueOf(dsi.document));
-                        scoreWriter.append(' ').append(String.valueOf(dsi.score));
-                    }
+                Object[] documents = new Object[r.size()];
+                Object[] scores = new Object[r.size()];
+                for (int i = 0; i < r.size(); i++) {
+                    DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi = r.get(i);
+                    documents[i] = dsi.document;
+                    scores[i] = dsi.score;
                 }
-                resultWriter.append('\n');
-                scoreWriter.append('\n');
+                row[DOCUMENTS] = documents;
+                row[SCORES] = scores;
 
+                writer.writeLine(row);
             }
         }
-
-        avgTimeWriter.append(String.valueOf(totalTime / queryCount));
-        avgTimeWriter.close();
-
-        resultWriter.close();
-        scoreWriter.close();
-        timeWriter.close();
-        maxListLen1Writer.close();
-        maxListLen2Writer.close();
-        minListLen1Writer.close();
-        minListLen2Writer.close();
-        sumListLenWriter.close();
 
     }
 

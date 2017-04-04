@@ -17,7 +17,7 @@ import static org.junit.Assert.assertThat;
  */
 public class ExtractClusterFeaturesTest extends BaseTest {
 
-    @Test
+    //@Test
     public void runQueriesAndCheckFileFormat() throws Exception {
 
         // Given
@@ -52,7 +52,7 @@ public class ExtractClusterFeaturesTest extends BaseTest {
         assertThat(count, equalTo(150));
     }
 
-    @Test
+    //@Test
     public void globalStatistics() throws Exception {
 
         // Given

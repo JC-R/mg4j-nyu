@@ -211,9 +211,16 @@
                 <!--</exclusion>-->
             </exclusions>
         </dependency>
+
+        <!-- Local -->
         <dependency>
             <groupId>edu.nyu.tandon</groupId>
             <artifactId>index-utils</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.elshize</groupId>
+            <artifactId>bcsv</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
