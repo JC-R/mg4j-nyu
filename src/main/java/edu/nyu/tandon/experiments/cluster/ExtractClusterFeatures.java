@@ -9,8 +9,12 @@ import com.google.common.collect.Lists;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.query.QueryEngine;
+import edu.nyu.tandon.shard.ranking.shrkc.node.Document;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
+import it.unimi.di.big.mg4j.index.cluster.ClusteringStrategy;
+import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
+import it.unimi.di.big.mg4j.index.cluster.PartitioningStrategy;
 import it.unimi.di.big.mg4j.index.cluster.SelectiveQueryEngine;
 import it.unimi.di.big.mg4j.query.SelectedInterval;
 import it.unimi.di.big.mg4j.query.parser.SimpleParser;
@@ -18,13 +22,16 @@ import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
 import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
 import it.unimi.di.big.mg4j.search.score.Scorer;
 import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.lang.MutableString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,6 +62,8 @@ public class ExtractClusterFeatures {
         final JSAPResult jsapResult = jsap.parse(args);
         if (jsap.messagePrinted()) return;
 
+        boolean shardDefined = jsapResult.userSpecified("shardId");
+
         String basename = jsapResult.getString("basename");
         String[] basenameWeight = new String[] { basename };
 
@@ -80,10 +89,15 @@ public class ExtractClusterFeatures {
         engine.score(scorer);
 
         int k = jsapResult.userSpecified("topK") ? jsapResult.getInt("topK") : 10;
-        String outputBasename = jsapResult.userSpecified("shardId") ?
+        String outputBasename = shardDefined ?
                 String.format("%s#%d", jsapResult.getString("output"), jsapResult.getInt("shardId")) :
                 jsapResult.getString("output");
-        String type = jsapResult.userSpecified("shardId") ? ".local" : ".global";
+        String type = shardDefined ? ".local" : ".global";
+
+        DocumentalClusteringStrategy strategy = null;
+        if (shardDefined) {
+            strategy = (DocumentalClusteringStrategy) BinIO.loadObject(basename + ".strategy");
+        }
 
         final int DOCUMENTS = 0;
         final int SCORES = 1;
@@ -93,28 +107,31 @@ public class ExtractClusterFeatures {
         final int MIN_LIST_1 = 5;
         final int MIN_LIST_2 = 6;
         final int SUM_LIST = 7;
-        Header header = new Header(
-                new String[] {
-                        "documents",
-                        "scores",
-                        "time",
-                        "maxlist1",
-                        "maxlist2",
-                        "minlist1",
-                        "minlist2",
-                        "sumlist"
-                },
-                new ColumnType[] {
-                        listColumn(longColumn()),
-                        listColumn(doubleColumn()),
-                        longColumn(),
-                        longColumn(),
-                        longColumn(),
-                        longColumn(),
-                        longColumn(),
-                        longColumn()
-                }
-        );
+        final int GLOBAL_IDS = 8;
+        List<String> columnNames = new LinkedList<>(Arrays.asList(
+                "documents",
+                "scores",
+                "time",
+                "maxlist1",
+                "maxlist2",
+                "minlist1",
+                "minlist2",
+                "sumlist"));
+        List<ColumnType> columnTypes = new LinkedList<>(Arrays.asList(
+                listColumn(longColumn()),
+                listColumn(doubleColumn()),
+                longColumn(),
+                longColumn(),
+                longColumn(),
+                longColumn(),
+                longColumn(),
+                longColumn()));
+        if (shardDefined) {
+            columnNames.add("globalids");
+            columnTypes.add(listColumn(longColumn()));
+        }
+        Header header = new Header(columnNames.toArray(new String[]{}),
+                columnTypes.toArray(new ColumnType[]{}));
         FileOutputStream out = new FileOutputStream(jsapResult.getString("output") + ".basefeatures");
         header.write(out);
         LineWriter writer = header.getLineWriter(out);
@@ -190,6 +207,14 @@ public class ExtractClusterFeatures {
                 }
                 row[DOCUMENTS] = documents;
                 row[SCORES] = scores;
+                if (shardDefined) {
+                    Object[] globalIds = new Object[documents.length];
+                    int shardId = jsapResult.getInt("shardId");
+                    for (int i = 0; i < documents.length; i++) {
+                        globalIds[i] = strategy.globalPointer(shardId, r.get(i).document);
+                    }
+                    row[GLOBAL_IDS] = globalIds;
+                }
 
                 writer.writeLine(row);
             }

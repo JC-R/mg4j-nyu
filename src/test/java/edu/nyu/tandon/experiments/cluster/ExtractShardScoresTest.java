@@ -16,7 +16,7 @@ import static org.junit.Assert.assertThat;
  */
 public class ExtractShardScoresTest extends BaseTest {
 
-    @Test
+    //@Test
     public void redde() throws Exception {
 
         // Given
@@ -42,7 +42,7 @@ public class ExtractShardScoresTest extends BaseTest {
         }
     }
 
-    @Test
+    //@Test
     public void shrkc() throws Exception {
 
         // Given

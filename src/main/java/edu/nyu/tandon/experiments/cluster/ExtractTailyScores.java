@@ -35,12 +35,12 @@ public class ExtractTailyScores {
         int clusters = jsapResult.getInt("clusters");
         TailyShardSelector shardSelector = new TailyShardSelector(jsapResult.getString("basename"), clusters);
 
-        FileWriter[] writers = new FileWriter[clusters];
+        String[] filenames = new String[clusters];
         for (int i = 0; i < clusters; i++) {
-            writers[i] = new FileWriter(jsapResult.getString("output") + "#" + i + ".taily");
+            filenames[i] = jsapResult.getString("output") + "#" + i + ".taily";
         }
 
-        ExtractShardScores.run(new File(jsapResult.getString("input")), writers, shardSelector);
+        ExtractShardScores.run(new File(jsapResult.getString("input")), "taily", filenames, shardSelector);
 
     }
 }

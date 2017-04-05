@@ -1,5 +1,8 @@
 package edu.nyu.tandon.experiments.cluster;
 
+import com.github.elshize.bcsv.Header;
+import com.github.elshize.bcsv.LineWriter;
+import com.github.elshize.bcsv.Utils;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.search.score.BM25PrunedScorer;
@@ -16,6 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.Map;
+
+import static com.github.elshize.bcsv.column.ColumnType.doubleColumn;
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -36,14 +41,22 @@ public class ExtractShardScores {
         else throw new IllegalArgumentException("You need to define a proper scorer: bm25, ql");
     }
 
-    public static void run(File input, FileWriter[] writers, ShardSelector shardSelector) throws IOException {
+    public static void run(File input, String name, String[] filenames, ShardSelector shardSelector) throws IOException {
+        int clusters = filenames.length;
+        Header[] headers = new Header[clusters];
+        LineWriter[] writers = new LineWriter[clusters];
+        OutputStream[] out = new OutputStream[clusters];
+        for (int i = 0; i < clusters; i++) {
+            out[i] = new BufferedOutputStream(new FileOutputStream(filenames[i]));
+            headers[i] = Header.singleColumn(name, doubleColumn());
+            writers[i] = headers[i].getLineWriter(out[i]);
+        }
         try (BufferedReader br = new BufferedReader(new FileReader(input))) {
             for (String query; (query = br.readLine()) != null; ) {
                 try {
                     Map<Integer, Double> shardScores = shardSelector.shardScores(query);
                     for (int i = 0; i < writers.length; i++) {
-                        writers[i].append(shardScores.getOrDefault(i, 0.0).toString())
-                                .append("\n");
+                        writers[i].writeValue(0, shardScores.getOrDefault(i, 0.0));
                     }
                 } catch (QueryParserException | QueryBuilderVisitorException | IOException e) {
                     throw new RuntimeException(String.format("There was an error while processing query: %s", query), e);
@@ -52,7 +65,7 @@ public class ExtractShardScores {
         } finally {
             for (int i = 0; i < writers.length; i++) {
                 try {
-                    writers[i].close();
+                    out[i].close();
                 } catch (IOException e) {
                     LOGGER.error(String.format("Couldn't close writer for shard %d", i));
                 }
@@ -98,13 +111,26 @@ public class ExtractShardScores {
             ShardSelector shardSelector = resolveShardSelector(jsapResult.getString("selector"),
                     csi, jsapResult.getInt("base"));
 
-            FileWriter[] writers = new FileWriter[clusters];
-            for (int i = 0; i < clusters; i++)
-                writers[i] =
-                        new FileWriter(jsapResult.getString("output") + "#" + i + "." + jsapResult.getString("selector") + "-" + L);
+            String name = jsapResult.getString("selector") + "-" + L;
+            String[] filenames = new String[clusters];
+            for (int i = 0; i < clusters; i++) {
+                filenames[i] = jsapResult.getString("output") + "#" + i + "." + name;
+            }
+            run(new File(jsapResult.getString("input")), name, filenames, shardSelector);
 
-            run(new File(jsapResult.getString("input")), writers, shardSelector);
         }
+
+        for (int shardId = 0; shardId < clusters; shardId++) {
+            String[] files = new String[csiMaxOutputs.length];
+            for (int i = 0; i < files.length; i++) {
+                files[i] = jsapResult.getString("output") + "#" + shardId +
+                        "." + jsapResult.getString("selector") + "-" + csiMaxOutputs[i];
+            }
+            Utils.concat(files, jsapResult.getString("output") + "#" + shardId +
+                        "." + jsapResult.getString("selector"));
+        }
+
+
     }
 
 }
