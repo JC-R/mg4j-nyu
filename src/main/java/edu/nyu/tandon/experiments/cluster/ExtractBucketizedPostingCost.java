@@ -1,5 +1,7 @@
 package edu.nyu.tandon.experiments.cluster;
 
+import com.github.elshize.bcsv.Header;
+import com.github.elshize.bcsv.LineWriter;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.martiansoftware.jsap.*;
@@ -7,20 +9,20 @@ import edu.nyu.tandon.query.Query;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.IndexReader;
 import it.unimi.di.big.mg4j.index.TermProcessor;
-import it.unimi.di.big.mg4j.query.parser.SimpleParser;
 import it.unimi.di.big.mg4j.search.DocumentIterator;
 import it.unimi.dsi.fastutil.Hash;
-import it.unimi.dsi.fastutil.objects.*;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ReferenceLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap;
 import it.unimi.dsi.lang.MutableString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.github.elshize.bcsv.column.ColumnType.doubleColumn;
 import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
 
 /**
@@ -54,8 +56,6 @@ public class ExtractBucketizedPostingCost {
 
         final Object2ObjectOpenHashMap<String, TermProcessor> termProcessors = new Object2ObjectOpenHashMap<>(indexMap.size());
         for (String alias : indexMap.keySet()) termProcessors.put(alias, indexMap.get(alias).termProcessor);
-        final SimpleParser simpleParser = new SimpleParser(indexMap.keySet(), indexMap.firstKey(), termProcessors);
-        final Reference2ReferenceMap<Index, Object> index2Parser = new Reference2ReferenceOpenHashMap<>();
 
         Index index = indexMap.get(indexMap.firstKey());
         IndexReader indexReader = index.getReader();
@@ -66,8 +66,14 @@ public class ExtractBucketizedPostingCost {
                 String.format("%s#%d", jsapResult.getString("output"), jsapResult.getInt("shardId")) :
                 jsapResult.getString("output");
 
-        FileWriter[] writers = new FileWriter[bucketCount];
-        for (int i = 0; i < bucketCount; i++) writers[i] = new FileWriter(String.format("%s#%d.postingcost", outputBasename, i));
+        Header[] headers = new Header[bucketCount];
+        LineWriter[] writers = new LineWriter[bucketCount];
+        OutputStream[] out = new OutputStream[bucketCount];
+        for (int i = 0; i < bucketCount; i++) {
+            out[i] = new BufferedOutputStream(new FileOutputStream(String.format("%s#%d.postingcost", outputBasename, i)));
+            headers[i] = Header.singleColumn("postingcost", doubleColumn());
+            writers[i] = headers[i].getLineWriter(out[i]);
+        }
 
         try(BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
             for (String query; (query = br.readLine()) != null; ) {
@@ -92,14 +98,14 @@ public class ExtractBucketizedPostingCost {
                     }
                 }
                 for (int i = 0; i < bucketCount; i++) {
-                    writers[i].append(String.format("%d\n", buckets[i]));
+                    writers[i].writeValue(0, buckets[i]);
                 }
 
             }
         }
 
         indexReader.close();
-        for (FileWriter writer : writers) writer.close();
+        for (OutputStream o : out) o.close();
 
     }
 

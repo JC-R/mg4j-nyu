@@ -50,6 +50,7 @@ public class ExtractShardScores {
             out[i] = new BufferedOutputStream(new FileOutputStream(filenames[i]));
             headers[i] = Header.singleColumn(name, doubleColumn());
             writers[i] = headers[i].getLineWriter(out[i]);
+            headers[i].write(out[i]);
         }
         try (BufferedReader br = new BufferedReader(new FileReader(input))) {
             for (String query; (query = br.readLine()) != null; ) {

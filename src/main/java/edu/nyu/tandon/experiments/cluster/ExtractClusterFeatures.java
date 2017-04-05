@@ -132,7 +132,7 @@ public class ExtractClusterFeatures {
         }
         Header header = new Header(columnNames.toArray(new String[]{}),
                 columnTypes.toArray(new ColumnType[]{}));
-        FileOutputStream out = new FileOutputStream(jsapResult.getString("output") + ".basefeatures");
+        FileOutputStream out = new FileOutputStream(outputBasename + ".basefeatures");
         header.write(out);
         LineWriter writer = header.getLineWriter(out);
 
