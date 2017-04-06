@@ -108,6 +108,7 @@ public class ExtractClusterFeatures {
 
         StructType schemaResults = new StructType()
                 .add("query", IntegerType)
+                .add("idx", IntegerType)
                 .add("docid-local", LongType)
                 .add("docid-global", LongType)
                 .add("score", FloatType);
@@ -197,6 +198,7 @@ public class ExtractClusterFeatures {
                 }
 
                 if (buckets == 0) {
+                    int idx = 0;
                     for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
                         Object[] resultRow = new Object[schemaResults.size()];
                         resultRow[schemaResults.fieldIndex("query")] = queryCount;
@@ -207,6 +209,10 @@ public class ExtractClusterFeatures {
                             resultRow[schemaResults.fieldIndex("docid-global")] =
                                     strategy.globalPointer(shardId, dsi.document);
                         }
+                        else {
+                            resultRow[schemaResults.fieldIndex("docid-global")] = dsi.document;
+                        }
+                        resultRow[schemaResults.fieldIndex("idx")] = idx++;
                         resultRows.add(new GenericRow(resultRow));
                     }
                 }
@@ -220,6 +226,7 @@ public class ExtractClusterFeatures {
                             LOGGER.error(String.format("There was an error while processing query: %s", query), e);
                             throw e;
                         }
+                        int idx = 0;
                         for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
                             Object[] resultRow = new Object[schemaResults.size()];
                             resultRow[schemaResults.fieldIndex("query")] = queryCount;
@@ -231,6 +238,7 @@ public class ExtractClusterFeatures {
                                         strategy.globalPointer(shardId, dsi.document);
                                 resultRow[schemaResults.fieldIndex("bucket")] = bucket;
                             }
+                            resultRow[schemaResults.fieldIndex("idx")] = idx++;
                             resultRows.add(new GenericRow(resultRow));
                         }
                     }
