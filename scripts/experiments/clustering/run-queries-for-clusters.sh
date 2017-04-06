@@ -9,6 +9,7 @@
 # 1) cluster directory
 # 2) input with queries
 # 3) output directory
+# 4) buckets
 #
 
 source "${MG4J_NYU_SCRIPTS}/commons.sh"
@@ -16,10 +17,12 @@ source "${MG4J_NYU_SCRIPTS}/commons.sh"
 dir=$1
 input=$2
 outputDir=$3
+buckets=$4
 
 if [ -z "${dir}" ]; then echo "You have to define cluster directory."; exit 1; fi;
 if [ -z "${input}" ]; then echo "You have to define input file."; exit 1; fi;
 if [ -z "${outputDir}" ]; then echo "You have to define output directory."; exit 1; fi;
+if [ -z "${buckets}" ]; then echo "You have to define the number of buckets."; exit 1; fi;
 
 inputBase=`basename ${input}`
 base="${dir}/`ls ${dir} | egrep '\.strategy' | sed 's/\.strategy//'`"
@@ -41,6 +44,7 @@ do
             -o "${outputDir}/${inputBase}" \
             -s ${number} \
             -k 10000 \
+            -b ${buckets} \
             ${clusterBase}
 
 done
