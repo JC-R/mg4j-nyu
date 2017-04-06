@@ -36,6 +36,7 @@ public class TerminatingQueryEngine<T> extends QueryEngine<T> {
         super(queryParser, builderVisitor, indexMap);
         this.indexMap = indexMap;
         earlyTerminationThreshold = null;
+        documentLowerBound = null;
     }
 
     public void setEarlyTerminationThreshold(Double p) {

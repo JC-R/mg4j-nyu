@@ -1,7 +1,5 @@
 package edu.nyu.tandon.experiments.cluster;
 
-import com.github.elshize.bcsv.Header;
-import com.github.elshize.bcsv.LineWriter;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.martiansoftware.jsap.*;
@@ -15,15 +13,23 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap;
 import it.unimi.dsi.lang.MutableString;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.catalyst.expressions.GenericRowWithSchema;
+import org.apache.spark.sql.types.StructType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.github.elshize.bcsv.column.ColumnType.doubleColumn;
 import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
+import static org.apache.spark.sql.types.DataTypes.IntegerType;
+import static org.apache.spark.sql.types.DataTypes.LongType;
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -62,20 +68,20 @@ public class ExtractBucketizedPostingCost {
 
         int bucketCount = jsapResult.getInt("buckets");
         long bucketSize = (long) Math.ceil(Long.valueOf(index.numberOfDocuments).doubleValue() / bucketCount);
+        int shardId = jsapResult.getInt("shardId");
         String outputBasename = jsapResult.userSpecified("shardId") ?
                 String.format("%s#%d", jsapResult.getString("output"), jsapResult.getInt("shardId")) :
                 jsapResult.getString("output");
 
-        Header[] headers = new Header[bucketCount];
-        LineWriter[] writers = new LineWriter[bucketCount];
-        OutputStream[] out = new OutputStream[bucketCount];
-        for (int i = 0; i < bucketCount; i++) {
-            out[i] = new BufferedOutputStream(new FileOutputStream(String.format("%s#%d.postingcost", outputBasename, i)));
-            headers[i] = Header.singleColumn("postingcost", doubleColumn());
-            writers[i] = headers[i].getLineWriter(out[i]);
-        }
+        StructType schema = new StructType()
+                .add("query", IntegerType)
+                .add("shard", IntegerType)
+                .add("bucket", IntegerType)
+                .add("postingcost", LongType);
 
+        List<Row> rows = new ArrayList<>();
         try(BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
+            int queryId = 0;
             for (String query; (query = br.readLine()) != null; ) {
 
                 TermProcessor termProcessor = termProcessors.get(indexMap.firstKey());
@@ -97,15 +103,20 @@ public class ExtractBucketizedPostingCost {
                         buckets[(int) (docId / bucketSize)]++;
                     }
                 }
-                for (int i = 0; i < bucketCount; i++) {
-                    writers[i].writeValue(0, buckets[i]);
+                for (int bucketId = 0; bucketId < bucketCount; bucketId++) {
+                    rows.add(new GenericRowWithSchema(new Object[] {
+                            queryId,
+                            shardId,
+                            bucketId,
+                            buckets[bucketId]
+                    }, schema));
                 }
-
+                queryId++;
             }
         }
 
-        indexReader.close();
-        for (OutputStream o : out) o.close();
+        Dataset<Row> df = SparkSession.builder().master("local").getOrCreate().createDataFrame(rows, schema);
+        df.write().parquet(outputBasename + String.format("#%d.postingcost", shardId));
 
     }
 

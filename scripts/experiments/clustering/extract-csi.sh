@@ -42,7 +42,7 @@ java edu.nyu.tandon.experiments.cluster.ExtractShardScores \
     ${csiBase}
 
 java edu.nyu.tandon.experiments.cluster.ExtractShardScores \
-    -s shrkc \
+    -s ranks \
     -i ${input} \
     -o "${outputDir}/${inputBase}" \
     -c `ls ${dir}/*-*terms | wc -l` \

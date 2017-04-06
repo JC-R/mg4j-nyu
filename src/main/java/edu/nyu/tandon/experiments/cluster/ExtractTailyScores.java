@@ -6,6 +6,8 @@ import edu.nyu.tandon.shard.ranking.ShardSelector;
 import edu.nyu.tandon.shard.ranking.taily.TailyShardSelector;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,12 +37,8 @@ public class ExtractTailyScores {
         int clusters = jsapResult.getInt("clusters");
         TailyShardSelector shardSelector = new TailyShardSelector(jsapResult.getString("basename"), clusters);
 
-        String[] filenames = new String[clusters];
-        for (int i = 0; i < clusters; i++) {
-            filenames[i] = jsapResult.getString("output") + "#" + i + ".taily";
-        }
+        Dataset<Row> df = ExtractShardScores.run(new File(jsapResult.getString("input")), "taily", clusters, shardSelector);
 
-        ExtractShardScores.run(new File(jsapResult.getString("input")), "taily", filenames, shardSelector);
-
+        df.sort("query", "shard").write().parquet(jsapResult.getString("output") + ".taily");
     }
 }

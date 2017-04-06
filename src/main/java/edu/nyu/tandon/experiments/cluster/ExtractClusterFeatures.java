@@ -1,20 +1,14 @@
 package edu.nyu.tandon.experiments.cluster;
 
-import com.github.elshize.bcsv.Header;
-import com.github.elshize.bcsv.LineWriter;
-import com.github.elshize.bcsv.column.ColumnType;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.query.Query;
-import edu.nyu.tandon.query.QueryEngine;
-import edu.nyu.tandon.shard.ranking.shrkc.node.Document;
+import edu.nyu.tandon.query.TerminatingQueryEngine;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
-import it.unimi.di.big.mg4j.index.cluster.ClusteringStrategy;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
-import it.unimi.di.big.mg4j.index.cluster.PartitioningStrategy;
 import it.unimi.di.big.mg4j.index.cluster.SelectiveQueryEngine;
 import it.unimi.di.big.mg4j.query.SelectedInterval;
 import it.unimi.di.big.mg4j.query.parser.SimpleParser;
@@ -25,18 +19,22 @@ import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.lang.MutableString;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.catalyst.expressions.GenericRow;
+import org.apache.spark.sql.types.StructType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.github.elshize.bcsv.column.ColumnType.*;
 import static edu.nyu.tandon.query.Query.MAX_STEMMING;
+import static org.apache.spark.sql.types.DataTypes.*;
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -55,6 +53,7 @@ public class ExtractClusterFeatures {
                         new FlaggedOption("output", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "output", "The output files basename."),
                         new FlaggedOption("topK", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'k', "top-k", "The engine will limit the result set to top k results. k=10 by default."),
                         new FlaggedOption("shardId", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 's', "shard-id", "The shard ID."),
+                        new FlaggedOption("buckets", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'b', "buckets", "Partition results into this many buckets."),
                         new FlaggedOption("scorer", JSAP.STRING_PARSER, "bm25", JSAP.NOT_REQUIRED, 'S', "scorer", "Scorer type (bm25 or ql)"),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index.")
                 });
@@ -63,6 +62,11 @@ public class ExtractClusterFeatures {
         if (jsap.messagePrinted()) return;
 
         boolean shardDefined = jsapResult.userSpecified("shardId");
+        int buckets = jsapResult.userSpecified("buckets") ? jsapResult.getInt("buckets") : 0;
+        if (buckets > 0 && !shardDefined) {
+            System.err.println("you must define shard if you define buckets");
+            return;
+        }
 
         String basename = jsapResult.getString("basename");
         String[] basenameWeight = new String[] { basename };
@@ -76,10 +80,11 @@ public class ExtractClusterFeatures {
         final SimpleParser simpleParser = new SimpleParser(indexMap.keySet(), indexMap.firstKey(), termProcessors);
         final Reference2ReferenceMap<Index, Object> index2Parser = new Reference2ReferenceOpenHashMap<>();
 
-        QueryEngine engine = new QueryEngine<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>>(
-                simpleParser,
-                new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING),
-                indexMap);
+        TerminatingQueryEngine engine =
+                new TerminatingQueryEngine<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>>(
+                    simpleParser,
+                    new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING),
+                    indexMap);
         engine.setWeights(index2Weight);
         Scorer scorer = ExtractShardScores.resolveScorer(jsapResult.getString("scorer"));
         if (jsapResult.userSpecified("globalStatistics")) {
@@ -88,60 +93,52 @@ public class ExtractClusterFeatures {
         }
         engine.score(scorer);
 
-        int k = jsapResult.userSpecified("topK") ? jsapResult.getInt("topK") : 10;
+        int k = jsapResult.userSpecified("topK") ? jsapResult.getInt("topK") : 500;
         String outputBasename = shardDefined ?
                 String.format("%s#%d", jsapResult.getString("output"), jsapResult.getInt("shardId")) :
                 jsapResult.getString("output");
-        String type = shardDefined ? ".local" : ".global";
 
         DocumentalClusteringStrategy strategy = null;
         if (shardDefined) {
-            strategy = (DocumentalClusteringStrategy) BinIO.loadObject(basename + ".strategy");
+            strategy = (DocumentalClusteringStrategy)
+                    BinIO.loadObject(basename.substring(0, basename.lastIndexOf("-")) + ".strategy");
         }
 
-        final int DOCUMENTS = 0;
-        final int SCORES = 1;
-        final int TIME = 2;
-        final int MAX_LIST_1 = 3;
-        final int MAX_LIST_2 = 4;
-        final int MIN_LIST_1 = 5;
-        final int MIN_LIST_2 = 6;
-        final int SUM_LIST = 7;
-        final int GLOBAL_IDS = 8;
-        List<String> columnNames = new LinkedList<>(Arrays.asList(
-                "documents",
-                "scores",
-                "time",
-                "maxlist1",
-                "maxlist2",
-                "minlist1",
-                "minlist2",
-                "sumlist"));
-        List<ColumnType> columnTypes = new LinkedList<>(Arrays.asList(
-                listColumn(longColumn()),
-                listColumn(doubleColumn()),
-                longColumn(),
-                longColumn(),
-                longColumn(),
-                longColumn(),
-                longColumn(),
-                longColumn()));
+        StructType schemaResults = new StructType()
+                .add("query", IntegerType)
+                .add("docid-local", LongType)
+                .add("docid-global", LongType)
+                .add("score", FloatType);
+        StructType schemaQuery = new StructType()
+                .add("query", IntegerType)
+                .add("time", LongType)
+                .add("maxlist1", LongType)
+                .add("maxlist2", LongType)
+                .add("minlist1", LongType)
+                .add("minlist2", LongType)
+                .add("sumlist", LongType);
+
+        int shardId = -1;
         if (shardDefined) {
-            columnNames.add("globalids");
-            columnTypes.add(listColumn(longColumn()));
+            schemaResults = schemaResults.add("shard", IntegerType);
+            schemaQuery = schemaQuery.add("shard", IntegerType);
+            shardId = jsapResult.getInt("shardId");
         }
-        Header header = new Header(columnNames.toArray(new String[]{}),
-                columnTypes.toArray(new ColumnType[]{}));
-        FileOutputStream out = new FileOutputStream(outputBasename + ".basefeatures");
-        header.write(out);
-        LineWriter writer = header.getLineWriter(out);
 
-        long totalTime = 0;
-        long queryCount = 0;
+        List<Row> resultRows = new ArrayList<>();
+        List<Row> queryRows = new ArrayList<>();
+
+        double bucketStep = 0.0;
+        if (buckets > 0) {
+            bucketStep = 1.0 / buckets;
+            schemaResults = schemaResults.add("bucket", IntegerType);
+        }
+        int queryCount = 0;
         try(BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
             for (String query; (query = br.readLine()) != null; ) {
 
-                Object[] row = header.newRow();
+                Object[] queryRow = new Object[schemaQuery.size()];
+                queryRow[schemaQuery.fieldIndex("query")] = queryCount;
 
                 ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r =
                         new ObjectArrayList<>();
@@ -166,59 +163,92 @@ public class ExtractClusterFeatures {
                     }
                 }).collect(Collectors.toList());
                 if (listLengths.isEmpty()) {
-                    row[MAX_LIST_1] = 0;
-                    row[MAX_LIST_2] = 0;
-                    row[MIN_LIST_1] = 0;
-                    row[MIN_LIST_2] = 0;
+                    queryRow[schemaQuery.fieldIndex("maxlist1")] = 0L;
+                    queryRow[schemaQuery.fieldIndex("maxlist2")] = 0L;
+                    queryRow[schemaQuery.fieldIndex("minlist1")] = 0L;
+                    queryRow[schemaQuery.fieldIndex("minlist2")] = 0L;
                 }
                 else {
-                    row[MAX_LIST_1] = listLengths.get(0);
-                    row[MIN_LIST_1] = listLengths.get(listLengths.size() - 1);
+                    queryRow[schemaQuery.fieldIndex("maxlist1")] = listLengths.get(0);
+                    queryRow[schemaQuery.fieldIndex("minlist1")] = listLengths.get(listLengths.size() - 1);
                     if (listLengths.size() > 1) {
-                        row[MAX_LIST_2] = listLengths.get(1);
-                        row[MIN_LIST_2] = listLengths.get(listLengths.size() - 2);
+                        queryRow[schemaQuery.fieldIndex("maxlist2")] = listLengths.get(1);
+                        queryRow[schemaQuery.fieldIndex("minlist2")] = listLengths.get(listLengths.size() - 2);
                     }
                     else {
-                        row[MAX_LIST_2] = 0;
-                        row[MIN_LIST_2] = 0;
+                        queryRow[schemaQuery.fieldIndex("maxlist2")] = 0L;
+                        queryRow[schemaQuery.fieldIndex("minlist2")] = 0L;
                     }
                 }
-                row[SUM_LIST] = listLengths.stream().mapToLong(Long::longValue).sum();
+                queryRow[schemaQuery.fieldIndex("sumlist")] = listLengths.stream().mapToLong(Long::longValue).sum();
 
                 try {
+                    engine.setDocumentLowerBound(null);
+                    engine.setEarlyTerminationThreshold(null);
                     long start = System.currentTimeMillis();
                     engine.process(query, 0, k, r);
                     long elapsed = System.currentTimeMillis() - start;
-                    totalTime += elapsed;
-                    queryCount++;
-                    row[TIME] = elapsed;
+                    queryRow[schemaQuery.fieldIndex("time")] = elapsed;
                 } catch (Exception e) {
                     LOGGER.error(String.format("There was an error while processing query: %s", query), e);
                     throw e;
                 }
 
-                Iterator<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> it = r.iterator();
-                Object[] documents = new Object[r.size()];
-                Object[] scores = new Object[r.size()];
-                for (int i = 0; i < r.size(); i++) {
-                    DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi = r.get(i);
-                    documents[i] = dsi.document;
-                    scores[i] = dsi.score;
-                }
-                row[DOCUMENTS] = documents;
-                row[SCORES] = scores;
-                if (shardDefined) {
-                    Object[] globalIds = new Object[documents.length];
-                    int shardId = jsapResult.getInt("shardId");
-                    for (int i = 0; i < documents.length; i++) {
-                        globalIds[i] = strategy.globalPointer(shardId, r.get(i).document);
+                if (buckets == 0) {
+                    for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
+                        Object[] resultRow = new Object[schemaResults.size()];
+                        resultRow[schemaResults.fieldIndex("query")] = queryCount;
+                        resultRow[schemaResults.fieldIndex("docid-local")] = dsi.document;
+                        resultRow[schemaResults.fieldIndex("score")] = (float) dsi.score;
+                        if (shardDefined) {
+                            resultRow[schemaResults.fieldIndex("shard")] = shardId;
+                            resultRow[schemaResults.fieldIndex("docid-global")] =
+                                    strategy.globalPointer(shardId, dsi.document);
+                        }
+                        resultRows.add(new GenericRow(resultRow));
                     }
-                    row[GLOBAL_IDS] = globalIds;
+                }
+                else {
+                    for (int bucket = 0; bucket < buckets; bucket++) {
+                        try {
+                            engine.setDocumentLowerBound(bucket * bucketStep);
+                            engine.setEarlyTerminationThreshold((bucket + 1) * bucketStep);
+                            engine.process(query, 0, k, r);
+                        } catch (Exception e) {
+                            LOGGER.error(String.format("There was an error while processing query: %s", query), e);
+                            throw e;
+                        }
+                        for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
+                            Object[] resultRow = new Object[schemaResults.size()];
+                            resultRow[schemaResults.fieldIndex("query")] = queryCount;
+                            resultRow[schemaResults.fieldIndex("docid-local")] = dsi.document;
+                            resultRow[schemaResults.fieldIndex("score")] = (float) dsi.score;
+                            if (shardDefined) {
+                                resultRow[schemaResults.fieldIndex("shard")] = shardId;
+                                resultRow[schemaResults.fieldIndex("docid-global")] =
+                                        strategy.globalPointer(shardId, dsi.document);
+                                resultRow[schemaResults.fieldIndex("bucket")] = bucket;
+                            }
+                            resultRows.add(new GenericRow(resultRow));
+                        }
+                    }
                 }
 
-                writer.writeLine(row);
+                if (shardDefined) {
+                    queryRow[schemaQuery.fieldIndex("shard")] = shardId;
+                }
+                queryRows.add(new GenericRow(queryRow));
+                queryCount++;
             }
         }
+
+        SparkSession sparkSession = SparkSession.builder().master("local").getOrCreate();
+        sparkSession.createDataFrame(queryRows, schemaQuery).sort("query").write().parquet(outputBasename + ".queryfeatures");
+        String ext = ".results";
+        if (buckets > 0) {
+            ext = ext + "-" + String.valueOf(buckets);
+        }
+        sparkSession.createDataFrame(resultRows, schemaResults).write().parquet(outputBasename + ext);
 
     }
 
