@@ -118,7 +118,7 @@ public class ExtractBucketizedPostingCost {
         }
 
         Dataset<Row> df = SparkSession.builder().master("local").getOrCreate().createDataFrame(rows, schema);
-        df.write().mode(Overwrite).parquet(outputBasename + String.format("#%d.postingcost", shardId));
+        df.write().mode(Overwrite).parquet(outputBasename + String.format("#%d.postingcost-%d", shardId, bucketCount));
 
     }
 
