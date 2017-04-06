@@ -108,7 +108,7 @@ public class ExtractClusterFeatures {
 
         StructType schemaResults = new StructType()
                 .add("query", IntegerType)
-                .add("idx", IntegerType)
+                .add("ridx", IntegerType)
                 .add("docid-local", LongType)
                 .add("docid-global", LongType)
                 .add("score", FloatType);
@@ -212,7 +212,7 @@ public class ExtractClusterFeatures {
                         else {
                             resultRow[schemaResults.fieldIndex("docid-global")] = dsi.document;
                         }
-                        resultRow[schemaResults.fieldIndex("idx")] = idx++;
+                        resultRow[schemaResults.fieldIndex("ridx")] = idx++;
                         resultRows.add(new GenericRow(resultRow));
                     }
                 }
@@ -238,7 +238,7 @@ public class ExtractClusterFeatures {
                                         strategy.globalPointer(shardId, dsi.document);
                                 resultRow[schemaResults.fieldIndex("bucket")] = bucket;
                             }
-                            resultRow[schemaResults.fieldIndex("idx")] = idx++;
+                            resultRow[schemaResults.fieldIndex("ridx")] = idx++;
                             resultRows.add(new GenericRow(resultRow));
                         }
                     }

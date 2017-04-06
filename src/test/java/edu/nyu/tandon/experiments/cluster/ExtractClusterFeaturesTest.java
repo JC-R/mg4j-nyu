@@ -39,7 +39,7 @@ public class ExtractClusterFeaturesTest extends BaseTest {
         SparkSession spark = SparkSession.builder().master("local").getOrCreate();
         Dataset results = spark.read().parquet(outputBasename + ".results");
         assertThat(Arrays.asList(results.columns()),
-                containsInAnyOrder("query", "docid-local", "docid-global", "score", "idx"));
+                containsInAnyOrder("query", "docid-local", "docid-global", "score", "ridx"));
         Dataset queryFeatures = spark.read().parquet(outputBasename + ".queryfeatures");
         assertThat(Arrays.asList(queryFeatures.columns()),
                 containsInAnyOrder("query", "time", "maxlist1", "maxlist2", "minlist1", "minlist2", "sumlist"));
@@ -67,7 +67,7 @@ public class ExtractClusterFeaturesTest extends BaseTest {
         SparkSession spark = SparkSession.builder().master("local").getOrCreate();
         Dataset results = spark.read().parquet(outputBasename + "#0.results");
         assertThat(Arrays.asList(results.columns()),
-                containsInAnyOrder("query", "shard", "docid-local", "docid-global", "score", "idx"));
+                containsInAnyOrder("query", "shard", "docid-local", "docid-global", "score", "ridx"));
         Dataset queryFeatures = spark.read().parquet(outputBasename + "#0.queryfeatures");
         assertThat(Arrays.asList(queryFeatures.columns()),
                 containsInAnyOrder("query", "shard", "time", "maxlist1", "maxlist2", "minlist1", "minlist2", "sumlist"));
@@ -95,7 +95,7 @@ public class ExtractClusterFeaturesTest extends BaseTest {
         SparkSession spark = SparkSession.builder().master("local").getOrCreate();
         Dataset results = spark.read().parquet(outputBasename + "#0.results-2");
         assertThat(Arrays.asList(results.columns()),
-                containsInAnyOrder("query", "shard", "docid-local", "docid-global", "score", "bucket", "idx"));
+                containsInAnyOrder("query", "shard", "docid-local", "docid-global", "score", "bucket", "ridx"));
         Dataset queryFeatures = spark.read().parquet(outputBasename + "#0.queryfeatures");
         assertThat(Arrays.asList(queryFeatures.columns()),
                 containsInAnyOrder("query", "shard", "time", "maxlist1", "maxlist2", "minlist1", "minlist2", "sumlist"));
