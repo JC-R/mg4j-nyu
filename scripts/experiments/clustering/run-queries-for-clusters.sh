@@ -43,7 +43,7 @@ do
             -i ${input} \
             -o "${outputDir}/${inputBase}" \
             -s ${number} \
-            -k 10000 \
+            -k 500 \
             -b ${buckets} \
             ${clusterBase}
 
