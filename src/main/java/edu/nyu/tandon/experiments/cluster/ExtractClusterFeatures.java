@@ -20,7 +20,6 @@ import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.lang.MutableString;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.catalyst.expressions.GenericRow;
 import org.apache.spark.sql.types.StructType;
