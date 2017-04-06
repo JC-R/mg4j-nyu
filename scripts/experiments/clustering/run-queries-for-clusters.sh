@@ -36,17 +36,12 @@ do
         number=`basename ${file} | sed "s/.*-//" | sed "s/\..*//"`
         echo "${number}"
 
-        java -Xmx4g edu.nyu.tandon.experiments.cluster.ExtractClusterFeatures -g \
+        java edu.nyu.tandon.experiments.cluster.ExtractClusterFeatures -g \
             -i ${input} \
             -o "${outputDir}/${inputBase}" \
             -s ${number} \
             -k 10000 \
             ${clusterBase}
-
-        java edu.nyu.tandon.experiments.TranslateToGlobalIds \
-            -i "${outputDir}/${inputBase}#${number}.results.local" \
-            -s ${strategy} \
-            -c ${number}
 
 done
 
