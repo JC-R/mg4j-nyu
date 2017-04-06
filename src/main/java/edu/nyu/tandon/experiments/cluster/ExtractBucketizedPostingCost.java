@@ -15,6 +15,7 @@ import it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap;
 import it.unimi.dsi.lang.MutableString;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.catalyst.expressions.GenericRowWithSchema;
 import org.apache.spark.sql.types.StructType;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
+import static org.apache.spark.sql.SaveMode.Overwrite;
 import static org.apache.spark.sql.types.DataTypes.IntegerType;
 import static org.apache.spark.sql.types.DataTypes.LongType;
 
@@ -116,7 +118,7 @@ public class ExtractBucketizedPostingCost {
         }
 
         Dataset<Row> df = SparkSession.builder().master("local").getOrCreate().createDataFrame(rows, schema);
-        df.write().parquet(outputBasename + String.format("#%d.postingcost", shardId));
+        df.write().mode(Overwrite).parquet(outputBasename + String.format("#%d.postingcost", shardId));
 
     }
 

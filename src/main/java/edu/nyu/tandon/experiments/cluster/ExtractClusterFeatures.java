@@ -20,6 +20,7 @@ import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.lang.MutableString;
 import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.catalyst.expressions.GenericRow;
 import org.apache.spark.sql.types.StructType;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static edu.nyu.tandon.query.Query.MAX_STEMMING;
+import static org.apache.spark.sql.SaveMode.Overwrite;
 import static org.apache.spark.sql.types.DataTypes.*;
 
 /**
@@ -243,12 +245,12 @@ public class ExtractClusterFeatures {
         }
 
         SparkSession sparkSession = SparkSession.builder().master("local").getOrCreate();
-        sparkSession.createDataFrame(queryRows, schemaQuery).sort("query").write().parquet(outputBasename + ".queryfeatures");
+        sparkSession.createDataFrame(queryRows, schemaQuery).sort("query").write().mode(Overwrite).parquet(outputBasename + ".queryfeatures");
         String ext = ".results";
         if (buckets > 0) {
             ext = ext + "-" + String.valueOf(buckets);
         }
-        sparkSession.createDataFrame(resultRows, schemaResults).write().parquet(outputBasename + ext);
+        sparkSession.createDataFrame(resultRows, schemaResults).write().mode(Overwrite).parquet(outputBasename + ext);
 
     }
 

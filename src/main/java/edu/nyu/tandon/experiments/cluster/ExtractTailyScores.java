@@ -8,11 +8,14 @@ import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SaveMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.Map;
+
+import static org.apache.spark.sql.SaveMode.Overwrite;
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -39,6 +42,6 @@ public class ExtractTailyScores {
 
         Dataset<Row> df = ExtractShardScores.run(new File(jsapResult.getString("input")), "taily", clusters, shardSelector);
 
-        df.sort("query", "shard").write().parquet(jsapResult.getString("output") + ".taily");
+        df.sort("query", "shard").write().mode(Overwrite).parquet(jsapResult.getString("output") + ".taily");
     }
 }
