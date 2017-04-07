@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="xgboost-predictor-spark_2.11-0.2.1">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../xgboost-predictor-java/build/xgboost-predictor-spark_2.11/libs/xgboost-predictor-spark_2.11-0.2.1.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

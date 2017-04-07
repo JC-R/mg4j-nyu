@@ -21,8 +21,6 @@
         <element id="file-copy" path="/lib/x86_64-linux-gnu/libc.so.6" />
         <element id="file-copy" path="/lib/x86_64-linux-gnu/libm.so.6" />
       </element>
-      <element id="library" level="project" name="xgboost4j-0.7" />
-      <element id="library" level="project" name="xgboost4j-spark-0.7" />
       <element id="library" level="application" name="com.github.scopt:scopt_2.11:3.5.0" />
       <element id="library" level="application" name="xgboost4j-example-0.7" />
       <element id="library" level="project" name="it.unimi.di:mg4j-big:5.4.3" />
@@ -31,9 +29,9 @@
       <element id="library" level="project" name="org.apache.parquet:parquet-common:1.9.0" />
       <element id="library" level="application" name="org.apache.parquet:parquet-tools:1.9.0" />
       <element id="library" level="application" name="org.apache.spark:spark-core_2.11:2.1.0" />
-      <element id="library" level="project" name="it.unimi.dsi:sux4j:3.2.2" />
       <element id="artifact" artifact-name="mg4j-nyu:jar2" />
-      <element id="library" level="project" name="ai.h2o:h2o-genmodel:3.10.3.2" />
+      <element id="library" level="project" name="ai.h2o:h2o-genmodel:3.10.4.2" />
+      <element id="library" level="project" name="it.unimi.dsi:sux4j:4.1.0" />
     </root>
   </artifact>
 </component>

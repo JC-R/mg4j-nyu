@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="ai.h2o:h2o-genmodel:3.10.4.2" type="repository">
+    <properties maven-id="ai.h2o:h2o-genmodel:3.10.4.2" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/ai/h2o/h2o-genmodel/3.10.4.2/h2o-genmodel-3.10.4.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/net/sf/opencsv/opencsv/2.3/opencsv-2.3.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/ai/h2o/deepwater-backend-api/1.0.2/deepwater-backend-api-1.0.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/19.0/guava-19.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/ai/h2o/h2o-genmodel/3.10.4.2/h2o-genmodel-3.10.4.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/ai/h2o/h2o-genmodel/3.10.4.2/h2o-genmodel-3.10.4.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

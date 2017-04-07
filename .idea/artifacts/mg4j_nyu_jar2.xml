@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="mg4j-nyu:jar2">
+  <artifact type="jar" name="mg4j-nyu:jar2">
     <output-path>$PROJECT_DIR$/target/artifacts/mg4j_nyu_jar2</output-path>
     <root id="archive" name="mg4j-nyu.jar">
       <element id="module-output" name="mg4j-nyu" />
@@ -25,10 +25,11 @@
       <element id="library" level="application" name="org.scalanlp:breeze_2.11:0.10" />
       <element id="library" level="project" name="org.apache.spark:spark-sql_2.11:2.1.0" />
       <element id="library" level="application" name="com.github.scopt:scopt_2.11:3.5.0" />
-      <element id="library" level="project" name="it.unimi.dsi:sux4j:3.2.2" />
       <element id="library" level="project" name="org.apache.parquet:parquet-common:1.9.0" />
       <element id="library" level="application" name="org.apache.parquet:parquet-tools:1.9.0" />
       <element id="library" level="application" name="org.apache.spark:spark-core_2.11:2.1.0" />
+      <element id="library" level="project" name="ai.h2o:h2o-genmodel:3.10.4.2" />
+      <element id="library" level="project" name="it.unimi.dsi:sux4j:4.1.0" />
     </root>
   </artifact>
 </component>

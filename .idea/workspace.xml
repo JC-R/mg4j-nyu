@@ -3,72 +3,50 @@
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
       <artifact name="mg4j-nyu:jar" />
+      <artifact name="mg4j-nyu:jar2" />
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0844f41b-037f-49f5-8817-1b80a7fcf4fc" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/h2o-genmodel.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/kotlinc.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/it_unimi_dsi_sux4j_4_1_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/org_apache_parquet_parquet_common_1_9_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/xgboost_predictor_0_2_1_SNAPSHOT_javadoc.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/xgboost_predictor_spark_2_11_0_2_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/RawPostingsPrunedQuery.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/h2oPredict.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/MojoPreProcess.scala" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/MojoPredict.scala" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/org_apache_parquet_parquet_hadoop_1_9_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/org_apache_parquet_parquet_tools_1_9_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/org_apache_spark_spark_core_2_11_2_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/xgboost_predictor_0_1_9_SNAPSHOT.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-beanutils-1.7.0.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-beanutils-core-1.8.0.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-cli-1.2.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-collections-3.2.1.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-compress-1.4.1.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-configuration-1.6.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/commons-digester-1.8.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/jetty-util-6.1.26.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/log4j-1.2.17.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/protobuf-java-2.5.0.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/xmlenc-0.52.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/xz-1.0.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/zookeeper-3.4.5.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/StaticPruning/RawPostingsPrunedQuery.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/CV.scala" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/DocHitsBySize.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/DocHitsBySize.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/ListSpeed.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/ListSpeed.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/RandomAccess.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/RandomAccess.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/StaticPruning/PrunedIndexOverlap.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/PrunedIndexOverlap.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/StaticPruning/PrunedQuery.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/PrunedQuery.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/DocumentPruningStrategy.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/DocumentPruningStrategy.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/BinnedRawHits.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/BinnedRawHits.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/PrunedPartition.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PrunedPartition.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/RawDocHits_deprecated.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/RawDocHits_deprecated.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/RawHits.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/RawHits.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/search/score/BM25Scorer.java" afterPath="$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/search/score/BM25ScorerNYU.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/ConvertModel.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/ExtractXGBoostBaseModel.scala" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/TrainCV.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/GenTrain.scala" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/ai_h2o_h2o_genmodel_3_10_4_2.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/org_apache_parquet_parquet_tools_1_9_0.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredict.scala" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/it_unimi_dsi_sux4j_3_2_2.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/xgboost4j_0_7.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/xgboost4j_spark_0_7.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/xgboost_predictor_0_2_1_SNAPSHOT_javadoc.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/xgboost_predictor_spark_2_11_0_2_1.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/h2o-genmodel.jar" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/h2oPredict.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/PostingPruningStrategy.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/MojoPredict.scala" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/PrunedIndexOverlap.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/PrunedIndexOverlap.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/PrunedQuery.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/PrunedQuery.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/RawPostingsPrunedQuery.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/RawPostingsPrunedQuery.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PrunedPartition.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/ExtractXGBoostBaseModel.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/ExtractXGBoostBaseModel.scala" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/GenTrain.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/GenTrain.scala" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/GenerateFeatures.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeatures.scala" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/GenerateFeaturesFromRaw.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeaturesFromRaw.scala" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/GenerateFeaturesFromRaw1.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeaturesFromRaw1.scala" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/GenerateFeaturesFromRaw2.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeaturesFromRaw2.scala" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/GenerateFeaturesFromRaw3.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeaturesFromRaw3.scala" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/ModelTune.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/ModelTune.scala" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/MojoPreProcess.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPreProcess.scala" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/Partition.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/spark/Repartition.scala" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/Predict.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/Predict.scala" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/PredictAll.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/PredictAll.scala" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/TrainCV2.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainCV2.scala" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/TrainCV3.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainCV3.scala" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/TrainFromDF.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainFromDF.scala" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/TrainwLabel.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainwLabel.scala" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/Vectorize.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/Vectorize.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/mg4j_nyu_jar.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/mg4j_nyu_jar.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/mg4j_nyu_jar2.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/mg4j_nyu_jar2.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/it_unimi_di_mg4j_big_5_4_3.xml" afterPath="$PROJECT_DIR$/.idea/libraries/it_unimi_di_mg4j_big_5_4_3.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/org_apache_spark_spark_mllib_2_11_2_1_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/org_apache_spark_spark_mllib_2_11_2_1_0.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/org_apache_spark_spark_sql_2_11_2_1_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/org_apache_spark_spark_sql_2_11_2_1_0.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mg4j-nyu.iml" afterPath="$PROJECT_DIR$/mg4j-nyu.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/PrunedIndex-trec-eval.sh" afterPath="$PROJECT_DIR$/scripts/shell/PrunedIndex-trec-eval.sh" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/run-input-queries.sh" afterPath="$PROJECT_DIR$/scripts/shell/run-input-queries.sh" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/PostingPruningStrategy.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/PostingPruningStrategy.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/HitsQueryEngine.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/HitsQueryEngine.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedHitsQueryEngine.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedHitsQueryEngine.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/Query.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/Query.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/BM25PrunedScorer.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/BM25PrunedScorer.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/PrunedIndexFeatures.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/PrunedIndexFeatures.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/GenerateFeatures.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/GenerateFeatures.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/GenerateFeaturesFromRaw.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/GenerateFeaturesFromRaw.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/GenerateFeaturesFromRaw2.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/GenerateFeaturesFromRaw2.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/TrainCV2.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/TrainCV2.scala" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <ignored path="$PROJECT_DIR$/scripts/" />
@@ -94,12 +72,46 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="MojoPredict.scala" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/MojoPredict.scala">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredict.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="254">
-              <caret line="56" column="0" lean-forward="true" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
+            <state relative-caret-position="15">
+              <caret line="23" column="22" lean-forward="false" selection-start-line="23" selection-start-column="22" selection-end-line="23" selection-end-column="22" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RawPostingsPrunedQuery.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/RawPostingsPrunedQuery.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1650">
+              <caret line="144" column="15" lean-forward="false" selection-start-line="144" selection-start-column="15" selection-end-line="144" selection-end-column="15" />
               <folding>
-                <element signature="e#95#120#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PostingStrategy.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1410">
+              <caret line="116" column="0" lean-forward="false" selection-start-line="116" selection-start-column="2" selection-end-line="121" selection-end-column="19" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PrunedQuery.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/PrunedQuery.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1530">
+              <caret line="135" column="79" lean-forward="false" selection-start-line="135" selection-start-column="79" selection-end-line="135" selection-end-column="79" />
+              <folding>
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -154,6 +166,7 @@
   <component name="Git.Settings">
     <option name="PREVIOUS_COMMIT_AUTHORS">
       <list>
+        <option value="jcr" />
         <option value="jcr365@nyu.edu" />
         <option value="jcr365@nyu.edu &lt;shadow6161&gt;" />
         <option value="juan rodriguez &lt;jcr365@nyu.edu&gt;" />
@@ -179,23 +192,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/Vectorize.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/ReVectorize.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/Partition.scala" />
-        <option value="$PROJECT_DIR$/../xgboost/jvm-packages/xgboost4j-spark/target/xgboost4j-spark-0.7.jar!/ml/dmlc/xgboost4j/scala/spark/XGBoostModel.class" />
-        <option value="$PROJECT_DIR$/src/main/scala/XGBoostRegressionModelNYU.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/ml/dmlc/xgboost4j/scala/spark/XGBoostRegressionModelNYU.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/ConvertModel.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/PredictAll.scala" />
-        <option value="$PROJECT_DIR$/scripts/shell/SingletonIndexPrune.sh" />
-        <option value="$PROJECT_DIR$/scripts/shell/IndexPrune.sh" />
-        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/Predict.scala" />
-        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/PrunedPartition.java" />
-        <option value="$PROJECT_DIR$/scripts/staticprune/postings-topKprunedIndexTopKOverlap.sh" />
-        <option value="$PROJECT_DIR$/scripts/staticprune/prunedIndexQuery.sh" />
-        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/StaticPruning/RawPostingsPrunedQuery.java" />
-        <option value="$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/search/score/BM25Scorer.java" />
-        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/BM25PrunedScorer.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/BinnedRawHits.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedHitsQueryEngine.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/PrunedIndexOverlap.java" />
@@ -207,7 +203,6 @@
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/PrunedPartition.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/DocumentPruningStrategy.java" />
         <option value="$PROJECT_DIR$/scripts/staticprune/IndexPrune.sh" />
-        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingPruningStrategy.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingPruningStrategyNew.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/PrunedQuery.java" />
         <option value="$PROJECT_DIR$/scripts/shell/PrunedIndex-trec-eval.sh" />
@@ -229,7 +224,25 @@
         <option value="$PROJECT_DIR$/scripts/scala/tools.scala" />
         <option value="$PROJECT_DIR$/scripts/staticprune/h2o-predict.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/MojoPreProcess.scala" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingPruningStrategy.java" />
         <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/MojoPredict.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/MojoPredict.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPreProcess.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainwLabel.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/Vectorize.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeaturesFromRaw3.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/GenTrain.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/ModelTune.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/Partition.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/Repartition.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/utils/Repartition.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/spark/Repartition.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/Predict.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredict.scala" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/RawPostingsPrunedQuery.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/PrunedQuery.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy.java" />
       </list>
     </option>
   </component>
@@ -283,10 +296,10 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="190" />
-    <option name="y" value="189" />
-    <option name="width" value="1593" />
-    <option name="height" value="846" />
+    <option name="x" value="306" />
+    <option name="y" value="98" />
+    <option name="width" value="1205" />
+    <option name="height" value="903" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -328,9 +341,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -343,125 +354,19 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="tandon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="tandon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ml" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="tandon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ml" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="StaticPruning" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15293041" />
     <property name="project.structure.side.proportion" value="0.33655706" />
     <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.repository.indices" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="Downloaded.Files.Path.Enabled" value="true" />
+    <property name="Downloaded.Files.Path.Enabled" value="false" />
     <property name="Repository.Attach.JavaDocs" value="true" />
     <property name="Repository.Attach.Sources" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../xgboost-predictor-java/build/xgboost-predictor-spark_2.11/libs/xgboost-predictor-spark_2.11-0.2.1.jar!/" />
@@ -477,10 +382,20 @@
     <property name="node.js.selected.package.standard" value="" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/lib" />
+      <recent name="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/staticpruning" />
+      <recent name="$PROJECT_DIR$/scripts/experiments/hits" />
+    </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="edu.nyu.tandon.utils" />
       <recent name="edu.nyu.tandon.experiments" />
       <recent name="edu.nyu.tandon.experiments.StaticPruning" />
       <recent name="edu.nyu.tandon.experiments.ml.StaticPruning" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="edu.nyu.tandon.experiments.ml.StaticPruning" />
+      <recent name="edu.nyu.tandon.tool" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/lib" />
@@ -488,15 +403,6 @@
       <recent name="$PROJECT_DIR$/scripts/staticprune/eval-queries" />
       <recent name="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster" />
       <recent name="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune" />
-    </key>
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="edu.nyu.tandon.experiments.ml.StaticPruning" />
-      <recent name="edu.nyu.tandon.tool" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/lib" />
-      <recent name="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/staticpruning" />
-      <recent name="$PROJECT_DIR$/scripts/experiments/hits" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -511,11 +417,11 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.h2oPredict">
+  <component name="RunManager" selected="Application.MojoPredict">
     <configuration default="false" name="XGBoostPredict" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="edu.nyu.tandon.experiments.StaticPruning.*" />
+          <option name="PATTERN" value="edu.nyu.tandon.experiments.staticpruning.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -535,11 +441,11 @@
     <configuration default="false" name="PostingPruningStrategy" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="edu.nyu.tandon.index.cluster.*" />
+          <option name="PATTERN" value="edu.nyu.tandon.index.prune.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.index.cluster.PostingPruningStrategy" />
+      <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.index.prune.PostingPruningStrategy" />
       <option name="VM_PARAMETERS" value="-Xmx60g" />
       <option name="PROGRAM_PARAMETERS" value="-t 0.01 -t 0.02 -t 0.03 -t 0.04 -t 0.05 -t 0.1 -p /mnt/scratch/cw09b.OR_top1k.all.top1k.predict --parquet -s /mnt/scratch/cw09b.top1k.all.temp -T $USER_HOME$/work/data/IR/ClueWeb09b/index/mg4j/qs-xdoc/cw09b.titles $USER_HOME$/work/data/IR/ClueWeb09b/index/mg4j/qs-xdoc/cw09b-text" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
@@ -555,11 +461,11 @@
     <configuration default="false" name="RawPostingsPrunedQuery" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="edu.nyu.tandon.experiments.StaticPruning.*" />
+          <option name="PATTERN" value="edu.nyu.tandon.experiments.staticpruning.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.experiments.StaticPruning.RawPostingsPrunedQuery" />
+      <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.experiments.staticpruning.RawPostingsPrunedQuery" />
       <option name="VM_PARAMETERS" value="" />
       <option name="PROGRAM_PARAMETERS" value="-r 1000 --trec --trecOutput --globalScoring -I /mnt/data/experiments/lists/cw09b.trec_eval.OR.txt -T /mnt/scratch//strategies/cw09b.OR_top1k.all.top1k-01.titles -d /mnt/data/experiments/results.cw09b/cw09b.OR_top1k.all.top1k.01.postings.txt /mnt/scratch//strategies/cw09b.OR_top1k.all.top1k-01-0" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
@@ -592,14 +498,14 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="h2oPredict" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+    <configuration default="false" name="MojoPredict" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="edu.nyu.tandon.experiments.StaticPruning.*" />
+          <option name="PATTERN" value="edu.nyu.tandon.experiments.staticpruning.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.experiments.StaticPruning.h2oPredict" />
+      <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.experiments.staticpruning.ml.h2o.MojoPredict" />
       <option name="VM_PARAMETERS" value="" />
       <option name="PROGRAM_PARAMETERS" value="/mnt/scratch/gbm-top1k-all-top1k.h2o-model" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
@@ -1140,11 +1046,11 @@
       <item index="2" class="java.lang.String" itemvalue="Application.PostingPruningStrategy" />
       <item index="3" class="java.lang.String" itemvalue="Application.RawPostingsPrunedQuery" />
       <item index="4" class="java.lang.String" itemvalue="Application.PrunedPartition" />
-      <item index="5" class="java.lang.String" itemvalue="Application.h2oPredict" />
+      <item index="5" class="java.lang.String" itemvalue="Application.MojoPredict" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Application.h2oPredict" />
+        <item index="0" class="java.lang.String" itemvalue="Application.MojoPredict" />
         <item index="1" class="java.lang.String" itemvalue="Application.PrunedPartition" />
         <item index="2" class="java.lang.String" itemvalue="Application.RawPostingsPrunedQuery" />
         <item index="3" class="java.lang.String" itemvalue="Application.PostingPruningStrategy" />
@@ -1375,7 +1281,15 @@
       <workItem from="1490367168487" duration="39038000" />
       <workItem from="1490745521921" duration="169000" />
       <workItem from="1490746426520" duration="64000" />
-      <workItem from="1490810309394" duration="41000" />
+      <workItem from="1490810309394" duration="319000" />
+      <workItem from="1490873397378" duration="119000" />
+      <workItem from="1490873541085" duration="7782000" />
+      <workItem from="1491078596526" duration="13822000" />
+      <workItem from="1491137419347" duration="31000" />
+      <workItem from="1491185555091" duration="2481000" />
+      <workItem from="1491409179953" duration="438000" />
+      <workItem from="1491535073083" duration="1390000" />
+      <workItem from="1491569104427" duration="42000" />
     </task>
     <task id="LOCAL-00001" summary="Build environment; scala ML">
       <created>1479909389931</created>
@@ -1426,11 +1340,18 @@
       <option name="project" value="LOCAL" />
       <updated>1486832611484</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="H2O integration">
+      <created>1490810394701</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1490810394701</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="643934000" />
+    <option name="totallyTimeSpent" value="670317000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1442,25 +1363,26 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="190" y="189" width="1593" height="846" extended-state="0" />
-    <editor active="true" />
+    <frame x="306" y="98" width="1205" height="903" extended-state="0" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32806805" sideWeight="0.4978701" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23146068" sideWeight="0.4978701" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27671233" sideWeight="0.3344093" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32921347" sideWeight="0.4978701" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40526316" sideWeight="0.3453919" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.171875" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2706767" sideWeight="0.4978701" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40679953" sideWeight="0.57294995" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30898875" sideWeight="0.48722044" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26966292" sideWeight="0.4978701" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30898875" sideWeight="0.48509052" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2675693" sideWeight="0.59662575" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27390182" sideWeight="0.8460674" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.095752895" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23104182" sideWeight="0.40337422" order="5" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30118892" sideWeight="0.69675374" order="3" side_tool="false" content_ui="tabs" x="211" y="324" width="1663" height="420" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3223684" sideWeight="0.692562" order="3" side_tool="false" content_ui="tabs" x="211" y="324" width="1663" height="420" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24227902" sideWeight="0.15393259" order="5" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1475,8 +1397,7 @@
       <window_info id="Memory View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19510582" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.75842696" sideWeight="0.8599574" order="15" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24592221" sideWeight="0.6655907" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32921347" sideWeight="0.4978701" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32894737" sideWeight="0.6546081" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Run Dashboard" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" x="99" y="124" width="1722" height="833" />
@@ -1484,9 +1405,8 @@
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34166667" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Runtime Dashboard" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
-      <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24719101" sideWeight="0.47763577" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21011236" sideWeight="0.47763577" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="CSS-X-Fire" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
     </layout>
@@ -1537,6 +1457,24 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="processedProjectFiles" value="true" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
       <collection />
@@ -1553,7 +1491,8 @@
     <MESSAGE value="Build environment; scala ML" />
     <MESSAGE value="Static Pruning branch" />
     <MESSAGE value="Machine Learn - XGBoost pure java predictor&#10;Added support for Parquet file format - input lists" />
-    <option name="LAST_COMMIT_MESSAGE" value="Machine Learn - XGBoost pure java predictor&#10;Added support for Parquet file format - input lists" />
+    <MESSAGE value="H2O integration" />
+    <option name="LAST_COMMIT_MESSAGE" value="H2O integration" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1578,43 +1517,13 @@
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PrunedPartition.java</url>
-          <line>454</line>
-          <properties />
-          <option name="timeStamp" value="53" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PrunedPartition.java</url>
-          <line>605</line>
-          <properties />
-          <option name="timeStamp" value="63" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PrunedPartition.java</url>
-          <line>525</line>
-          <properties />
-          <option name="timeStamp" value="64" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/h2oPredict.java</url>
-          <line>18</line>
-          <properties />
-          <option name="timeStamp" value="65" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/h2oPredict.java</url>
-          <line>16</line>
-          <properties />
-          <option name="timeStamp" value="66" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>jar://$PROJECT_DIR$/lib/h2o-genmodel-3.10.3.2-sources.jar!/hex/genmodel/MojoModel.java</url>
           <line>32</line>
           <properties />
           <option name="timeStamp" value="67" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="69" />
+      <option name="time" value="70" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
@@ -1629,100 +1538,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$MAVEN_REPOSITORY$/it/unimi/di/mg4j-big/5.4.3/mg4j-big-5.4.3.jar!/it/unimi/di/big/mg4j/query/parser/QueryParser.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="18" column="21" lean-forward="false" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/search/score/BM25ScorerNYU.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="109" column="7" lean-forward="false" selection-start-line="109" selection-start-column="7" selection-end-line="109" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/BinnedRawHits.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="173">
-          <caret line="433" column="101" lean-forward="false" selection-start-line="433" selection-start-column="101" selection-end-line="433" selection-end-column="101" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/QueryEngine.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="129" column="18" lean-forward="false" selection-start-line="129" selection-start-column="18" selection-end-line="129" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/RawHits.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/HitsQueryEngine.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="145" column="51" lean-forward="false" selection-start-line="145" selection-start-column="51" selection-end-line="145" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/PrunedIndexOverlap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="251" column="25" lean-forward="false" selection-start-line="251" selection-start-column="25" selection-end-line="251" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedHitsQueryEngine.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="184" column="43" lean-forward="false" selection-start-line="184" selection-start-column="43" selection-end-line="184" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/ListSpeed.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="25" column="13" lean-forward="false" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/RandomAccess.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="26" column="13" lean-forward="false" selection-start-line="26" selection-start-column="13" selection-end-line="26" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/DocHitsBySize.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="19" column="13" lean-forward="false" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/SelectiveDocumentalIndexStrategy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1965">
-          <caret line="159" column="0" lean-forward="true" selection-start-line="159" selection-start-column="0" selection-end-line="159" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/DocumentPruningStrategy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="690">
-          <caret line="107" column="40" lean-forward="true" selection-start-line="107" selection-start-column="40" selection-end-line="107" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingPruningStrategyNew.java" />
     <entry file="file://$PROJECT_DIR$/scripts/staticprune/IndexPrune.sh">
       <provider selected="true" editor-type-id="text-editor">
@@ -1732,13 +1547,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/scripts/staticprune/eval-queries/prunedIndexQuery-rawPostings-baseline.sh" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/PrunedQuery.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="212">
-          <caret line="348" column="11" lean-forward="true" selection-start-line="348" selection-start-column="11" selection-end-line="348" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/shell/postings-topKprunedIndexTopKOverlap.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="525">
@@ -1779,13 +1587,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-405">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/PostingPruningStrategy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="179">
-          <caret line="265" column="36" lean-forward="true" selection-start-line="265" selection-start-column="16" selection-end-line="265" selection-end-column="36" />
         </state>
       </provider>
     </entry>
@@ -1838,45 +1639,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PrunedPartition.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="507" column="12" lean-forward="false" selection-start-line="507" selection-start-column="12" selection-end-line="507" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/TrainCV2.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="113" column="0" lean-forward="true" selection-start-line="113" selection-start-column="0" selection-end-line="113" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/GenTrain.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="136" column="48" lean-forward="false" selection-start-line="136" selection-start-column="48" selection-end-line="136" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lib/scriptFile.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/ExtractXGBoostBaseModel.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="363">
-          <caret line="30" column="0" lean-forward="true" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/package.scala" />
     <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/CV.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/RawPostingsPrunedQuery.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="953">
-          <caret line="322" column="47" lean-forward="false" selection-start-line="322" selection-start-column="47" selection-end-line="322" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar:///usr/lib/jvm/java-8-oracle/src.zip!/java/util/zip/ZipFile.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="697">
@@ -1884,83 +1649,199 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/h2o-genmodel-3.10.3.2-sources.jar!/hex/genmodel/MojoModel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="32" column="0" lean-forward="false" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/ModelTune.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="16" column="7" lean-forward="false" selection-start-line="16" selection-start-column="7" selection-end-line="16" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/MojoPreProcess.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="10" column="6" lean-forward="false" selection-start-line="10" selection-start-column="6" selection-end-line="10" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/h2o-genmodel-3.10.3.2-sources.jar!/hex/genmodel/MojoModel.java" />
     <entry file="file://$PROJECT_DIR$/scripts/staticprune/h2o-predict.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="403">
           <caret line="37" column="0" lean-forward="false" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/Vectorize.scala">
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/h2oPredict.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/DocumentPruningStrategy.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="455">
-          <caret line="69" column="42" lean-forward="false" selection-start-line="69" selection-start-column="20" selection-end-line="69" selection-end-column="42" />
-          <folding />
+        <state relative-caret-position="604">
+          <caret line="118" column="49" lean-forward="true" selection-start-line="118" selection-start-column="11" selection-end-line="118" selection-end-column="49" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/GenerateFeaturesFromRaw.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="455">
-          <caret line="214" column="0" lean-forward="false" selection-start-line="214" selection-start-column="0" selection-end-line="214" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/GenerateFeatures.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13">
-          <caret line="53" column="0" lean-forward="false" selection-start-line="53" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingPruningStrategy.java" />
     <entry file="file://$PROJECT_DIR$/scripts/scala/tools.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="52">
-          <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="45">
+          <caret line="3" column="46" lean-forward="false" selection-start-line="3" selection-start-column="46" selection-end-line="3" selection-end-column="46" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/h2oPredict.java">
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/ExtractXGBoostBaseModel.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="403">
-          <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="0">
+          <caret line="10" column="7" lean-forward="false" selection-start-line="10" selection-start-column="7" selection-end-line="10" selection-end-column="7" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/MojoPredict.scala">
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/PredictAll.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="254">
-          <caret line="56" column="0" lean-forward="true" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
+        <state relative-caret-position="0">
+          <caret line="14" column="7" lean-forward="false" selection-start-line="14" selection-start-column="7" selection-end-line="14" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainCV2.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="11" column="7" lean-forward="false" selection-start-line="11" selection-start-column="7" selection-end-line="11" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainCV3.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="14" column="7" lean-forward="false" selection-start-line="14" selection-start-column="7" selection-end-line="14" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainFromDF.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="11" column="7" lean-forward="false" selection-start-line="11" selection-start-column="7" selection-end-line="11" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainwLabel.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="11" column="7" lean-forward="false" selection-start-line="11" selection-start-column="7" selection-end-line="11" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPreProcess.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="7" lean-forward="false" selection-start-line="8" selection-start-column="7" selection-end-line="8" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/PrunedIndexOverlap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="66" column="13" lean-forward="false" selection-start-line="66" selection-start-column="13" selection-end-line="66" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/spark/Repartition.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="29" lean-forward="true" selection-start-line="2" selection-start-column="29" selection-end-line="2" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeaturesFromRaw2.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="11" column="7" lean-forward="false" selection-start-line="11" selection-start-column="7" selection-end-line="11" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeatures.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1455">
+          <caret line="14" column="7" lean-forward="false" selection-start-line="14" selection-start-column="7" selection-end-line="14" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeaturesFromRaw.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1050">
+          <caret line="11" column="7" lean-forward="false" selection-start-line="11" selection-start-column="7" selection-end-line="11" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeaturesFromRaw3.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-391">
+          <caret line="32" column="10" lean-forward="false" selection-start-line="32" selection-start-column="10" selection-end-line="32" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/Vectorize.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="7" lean-forward="false" selection-start-line="8" selection-start-column="7" selection-end-line="8" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeaturesFromRaw1.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1801">
+          <caret line="8" column="7" lean-forward="false" selection-start-line="8" selection-start-column="7" selection-end-line="8" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/Predict.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="10" column="0" lean-forward="true" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/ModelTune.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="12" column="7" lean-forward="false" selection-start-line="12" selection-start-column="7" selection-end-line="12" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/GenTrain.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="8" column="7" lean-forward="false" selection-start-line="8" selection-start-column="7" selection-end-line="8" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PrunedPartition.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="525">
+          <caret line="110" column="14" lean-forward="false" selection-start-line="110" selection-start-column="14" selection-end-line="110" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/RawPostingsPrunedQuery.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1650">
+          <caret line="144" column="15" lean-forward="false" selection-start-line="144" selection-start-column="15" selection-end-line="144" selection-end-column="15" />
           <folding>
-            <element signature="e#95#120#0" expanded="true" />
+            <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/PrunedQuery.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1530">
+          <caret line="135" column="79" lean-forward="false" selection-start-line="135" selection-start-column="79" selection-end-line="135" selection-end-column="79" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1410">
+          <caret line="116" column="0" lean-forward="false" selection-start-line="116" selection-start-column="2" selection-end-line="121" selection-end-column="19" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredict.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="23" column="22" lean-forward="false" selection-start-line="23" selection-start-column="22" selection-end-line="23" selection-end-column="22" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1971,10 +1852,10 @@
         <settings>
           <artifact-editor>
             <show-content>
+              <type id="javaee-facet-resources" />
+              <type id="jpa-descriptors" />
               <type id="artifact" />
               <type id="library" />
-              <type id="jpa-descriptors" />
-              <type id="javaee-facet-resources" />
             </show-content>
           </artifact-editor>
           <last-edited>mg4j-nyu:jar</last-edited>
@@ -2002,7 +1883,7 @@
       </state>
       <state key="GlobalLibrariesConfigurable.UI">
         <settings>
-          <last-edited>org.apache.spark:spark-core_2.11:2.1.0</last-edited>
+          <last-edited>org.apache.parquet:parquet-common:1.9.0</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -2050,7 +1931,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>ai.h2o:h2o-genmodel:3.10.3.2</last-edited>
+          <last-edited>org.apache.parquet:parquet-tools:1.9.0</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

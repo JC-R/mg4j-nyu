@@ -17,7 +17,7 @@ package edu.nyu.tandon.tool;
 */
 
 import com.martiansoftware.jsap.*;
-import edu.nyu.tandon.experiments.StaticPruning.RawPostingsPrunedQuery;
+import edu.nyu.tandon.experiments.staticpruning.RawPostingsPrunedQuery;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.IndexIterator;
 import it.unimi.di.big.mg4j.index.IndexReader;

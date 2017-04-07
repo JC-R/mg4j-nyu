@@ -10,6 +10,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/scala" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/scripts" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
       <excludeFolder url="file://$MODULE_DIR$/test/resources" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
@@ -51,15 +52,10 @@
     <orderEntry type="library" name="com.github.scopt:scopt_2.11:3.5.0" level="application" />
     <orderEntry type="library" name="xgboost4j-spark-0.7" level="application" />
     <orderEntry type="library" name="xgboost4j-example-0.7" level="application" />
-    <orderEntry type="library" name="xgboost4j-0.7" level="project" />
-    <orderEntry type="library" name="xgboost-predictor-0.1.9-SNAPSHOT-javadoc" level="application" />
     <orderEntry type="library" name="org.apache.parquet:parquet-common:1.9.0" level="project" />
     <orderEntry type="library" name="org.apache.parquet:parquet-tools:1.9.0" level="application" />
     <orderEntry type="library" name="org.apache.spark:spark-core_2.11:2.1.0" level="application" />
-    <orderEntry type="library" name="it.unimi.dsi:sux4j:3.2.2" level="project" />
     <orderEntry type="library" name="it.unimi.dsi:sux4j:4.1.0" level="project" />
-    <orderEntry type="library" name="xgboost-predictor-0.2.1-SNAPSHOT-javadoc" level="project" />
-    <orderEntry type="library" name="xgboost-predictor-spark_2.11-0.2.1" level="project" />
-    <orderEntry type="library" name="ai.h2o:h2o-genmodel:3.10.3.2" level="project" />
+    <orderEntry type="library" name="ai.h2o:h2o-genmodel:3.10.4.2" level="project" />
   </component>
 </module>
