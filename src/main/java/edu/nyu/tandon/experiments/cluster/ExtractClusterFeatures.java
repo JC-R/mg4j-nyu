@@ -4,6 +4,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.martiansoftware.jsap.*;
+import edu.nyu.tandon.experiments.thrift.Result;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.query.TerminatingQueryEngine;
 import it.unimi.di.big.mg4j.index.Index;
@@ -19,6 +20,8 @@ import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.lang.MutableString;
+import org.apache.parquet.hadoop.metadata.CompressionCodecName;
+import org.apache.parquet.thrift.ThriftParquetWriter;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.catalyst.expressions.GenericRow;
@@ -30,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -105,12 +109,18 @@ public class ExtractClusterFeatures {
             strategy = (DocumentalClusteringStrategy)
                     BinIO.loadObject(basename.substring(0, basename.lastIndexOf("-")) + ".strategy");
         }
+        String ext = ".results";
+        if (buckets > 0) {
+            ext = ext + "-" + String.valueOf(buckets);
+        }
 
-        StructType schemaResults = new StructType()
-                .add("query", IntegerType)
-                .add("docids-local", createArrayType(LongType))
-                .add("docids-global", createArrayType(LongType))
-                .add("scores", createArrayType(FloatType));
+        ThriftParquetWriter<Result> resultWriter = new ThriftParquetWriter<Result>(new org.apache.hadoop.fs.Path(outputBasename + ext),
+                Result.class, CompressionCodecName.SNAPPY);
+        //StructType schemaResults = new StructType()
+        //        .add("query", IntegerType)
+        //        .add("docids-local", createArrayType(LongType))
+        //        .add("docids-global", createArrayType(LongType))
+        //        .add("scores", createArrayType(FloatType));
         StructType schemaQuery = new StructType()
                 .add("query", IntegerType)
                 .add("time", LongType)
@@ -122,18 +132,18 @@ public class ExtractClusterFeatures {
 
         int shardId = -1;
         if (shardDefined) {
-            schemaResults = schemaResults.add("shard", IntegerType);
+            //schemaResults = schemaResults.add("shard", IntegerType);
             schemaQuery = schemaQuery.add("shard", IntegerType);
             shardId = jsapResult.getInt("shardId");
         }
 
-        List<Row> resultRows = new ArrayList<>();
+        //List<Row> resultRows = new ArrayList<>();
         List<Row> queryRows = new ArrayList<>();
 
         double bucketStep = 0.0;
         if (buckets > 0) {
             bucketStep = 1.0 / buckets;
-            schemaResults = schemaResults.add("bucket", IntegerType);
+            //schemaResults = schemaResults.add("bucket", IntegerType);
         }
         int queryCount = 0;
         try(BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
@@ -197,25 +207,22 @@ public class ExtractClusterFeatures {
                 }
 
                 if (buckets == 0) {
-                    long[] localIds = new long[r.size()];
-                    long[] globalIds = new long[r.size()];
-                    float[] scores = new float[r.size()];
-                    int i = 0;
+                    List<Long> localIds = new ArrayList<>(r.size());
+                    List<Long> globalIds = new ArrayList<>(r.size());
+                    List<Double> scores = new ArrayList<>(r.size());
                     for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
-                        localIds[i] = dsi.document;
-                        globalIds[i] = shardDefined ? strategy.globalPointer(shardId, dsi.document) : dsi.document;
-                        scores[i] = (float)dsi.score;
-                        i += 1;
+                        localIds.add(dsi.document);
+                        globalIds.add(shardDefined ? strategy.globalPointer(shardId, dsi.document) : dsi.document);
+                        scores.add(dsi.score);
                     }
-                    Object[] resultRow = new Object[schemaResults.size()];
-                    resultRow[schemaResults.fieldIndex("query")] = queryCount;
-                    resultRow[schemaResults.fieldIndex("docids-local")] = localIds;
-                    resultRow[schemaResults.fieldIndex("scores")] = scores;
-                    resultRow[schemaResults.fieldIndex("docids-global")] = globalIds;
+                    Result result = new Result(queryCount);
+                    result.setDocids_local(localIds);
+                    result.setDocids_global(globalIds);
+                    result.setScores(scores);
                     if (shardDefined) {
-                        resultRow[schemaResults.fieldIndex("shard")] = shardId;
+                        result.setShard(shardId);
                     }
-                    resultRows.add(new GenericRow(resultRow));
+                    resultWriter.write(result);
                 }
                 else {
                     for (int bucket = 0; bucket < buckets; bucket++) {
@@ -227,24 +234,25 @@ public class ExtractClusterFeatures {
                             LOGGER.error(String.format("There was an error while processing query: %s", query), e);
                             throw e;
                         }
-                        long[] localIds = new long[r.size()];
-                        long[] globalIds = new long[r.size()];
-                        float[] scores = new float[r.size()];
-                        int i = 0;
+                        List<Long> localIds = new ArrayList<>(r.size());
+                        List<Long> globalIds = new ArrayList<>(r.size());
+                        List<Double> scores = new ArrayList<>(r.size());
                         for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
-                            localIds[i] = dsi.document;
-                            globalIds[i] = shardDefined ? strategy.globalPointer(shardId, dsi.document) : dsi.document;
-                            scores[i] = (float)dsi.score;
-                            i += 1;
+                            localIds.add(dsi.document);
+                            globalIds.add(shardDefined ? strategy.globalPointer(shardId, dsi.document) : dsi.document);
+                            scores.add(dsi.score);
                         }
-                        Object[] resultRow = new Object[schemaResults.size()];
-                        resultRow[schemaResults.fieldIndex("query")] = queryCount;
-                        resultRow[schemaResults.fieldIndex("docids-local")] = localIds;
-                        resultRow[schemaResults.fieldIndex("docids-global")] = globalIds;
-                        resultRow[schemaResults.fieldIndex("scores")] = scores;
-                        resultRow[schemaResults.fieldIndex("shard")] = shardId;
-                        resultRow[schemaResults.fieldIndex("bucket")] = bucket;
-                        resultRows.add(new GenericRow(resultRow));
+                        Result result = new Result(queryCount);
+                        result.setDocids_local(localIds);
+                        result.setDocids_global(globalIds);
+                        result.setScores(scores);
+                        if (shardDefined) {
+                            result.setShard(shardId);
+                        }
+                        if (buckets > 0) {
+                            result.setBucket(bucket);
+                        }
+                        resultWriter.write(result);
                     }
                 }
 
@@ -256,13 +264,10 @@ public class ExtractClusterFeatures {
             }
         }
 
+        resultWriter.close();
+
         SparkSession sparkSession = SparkSession.builder().master("local").getOrCreate();
         sparkSession.createDataFrame(queryRows, schemaQuery).sort("query").write().mode(Overwrite).parquet(outputBasename + ".queryfeatures");
-        String ext = ".results";
-        if (buckets > 0) {
-            ext = ext + "-" + String.valueOf(buckets);
-        }
-        sparkSession.createDataFrame(resultRows, schemaResults).write().mode(Overwrite).parquet(outputBasename + ext);
 
     }
 
