@@ -22,6 +22,7 @@ import it.unimi.dsi.lang.MutableString;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.catalyst.expressions.GenericRow;
+import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,10 +108,9 @@ public class ExtractClusterFeatures {
 
         StructType schemaResults = new StructType()
                 .add("query", IntegerType)
-                .add("ridx", IntegerType)
-                .add("docid-local", LongType)
-                .add("docid-global", LongType)
-                .add("score", FloatType);
+                .add("docids-local", createArrayType(LongType))
+                .add("docids-global", createArrayType(LongType))
+                .add("scores", createArrayType(FloatType));
         StructType schemaQuery = new StructType()
                 .add("query", IntegerType)
                 .add("time", LongType)
@@ -197,23 +197,25 @@ public class ExtractClusterFeatures {
                 }
 
                 if (buckets == 0) {
-                    int idx = 0;
+                    long[] localIds = new long[r.size()];
+                    long[] globalIds = new long[r.size()];
+                    float[] scores = new float[r.size()];
+                    int i = 0;
                     for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
-                        Object[] resultRow = new Object[schemaResults.size()];
-                        resultRow[schemaResults.fieldIndex("query")] = queryCount;
-                        resultRow[schemaResults.fieldIndex("docid-local")] = dsi.document;
-                        resultRow[schemaResults.fieldIndex("score")] = (float) dsi.score;
-                        if (shardDefined) {
-                            resultRow[schemaResults.fieldIndex("shard")] = shardId;
-                            resultRow[schemaResults.fieldIndex("docid-global")] =
-                                    strategy.globalPointer(shardId, dsi.document);
-                        }
-                        else {
-                            resultRow[schemaResults.fieldIndex("docid-global")] = dsi.document;
-                        }
-                        resultRow[schemaResults.fieldIndex("ridx")] = idx++;
-                        resultRows.add(new GenericRow(resultRow));
+                        localIds[i] = dsi.document;
+                        globalIds[i] = shardDefined ? strategy.globalPointer(shardId, dsi.document) : dsi.document;
+                        scores[i] = (float)dsi.score;
+                        i += 1;
                     }
+                    Object[] resultRow = new Object[schemaResults.size()];
+                    resultRow[schemaResults.fieldIndex("query")] = queryCount;
+                    resultRow[schemaResults.fieldIndex("docids-local")] = localIds;
+                    resultRow[schemaResults.fieldIndex("scores")] = scores;
+                    resultRow[schemaResults.fieldIndex("docids-global")] = globalIds;
+                    if (shardDefined) {
+                        resultRow[schemaResults.fieldIndex("shard")] = shardId;
+                    }
+                    resultRows.add(new GenericRow(resultRow));
                 }
                 else {
                     for (int bucket = 0; bucket < buckets; bucket++) {
@@ -225,21 +227,24 @@ public class ExtractClusterFeatures {
                             LOGGER.error(String.format("There was an error while processing query: %s", query), e);
                             throw e;
                         }
-                        int idx = 0;
+                        long[] localIds = new long[r.size()];
+                        long[] globalIds = new long[r.size()];
+                        float[] scores = new float[r.size()];
+                        int i = 0;
                         for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
-                            Object[] resultRow = new Object[schemaResults.size()];
-                            resultRow[schemaResults.fieldIndex("query")] = queryCount;
-                            resultRow[schemaResults.fieldIndex("docid-local")] = dsi.document;
-                            resultRow[schemaResults.fieldIndex("score")] = (float) dsi.score;
-                            if (shardDefined) {
-                                resultRow[schemaResults.fieldIndex("shard")] = shardId;
-                                resultRow[schemaResults.fieldIndex("docid-global")] =
-                                        strategy.globalPointer(shardId, dsi.document);
-                                resultRow[schemaResults.fieldIndex("bucket")] = bucket;
-                            }
-                            resultRow[schemaResults.fieldIndex("ridx")] = idx++;
-                            resultRows.add(new GenericRow(resultRow));
+                            localIds[i] = dsi.document;
+                            globalIds[i] = shardDefined ? strategy.globalPointer(shardId, dsi.document) : dsi.document;
+                            scores[i] = (float)dsi.score;
+                            i += 1;
                         }
+                        Object[] resultRow = new Object[schemaResults.size()];
+                        resultRow[schemaResults.fieldIndex("query")] = queryCount;
+                        resultRow[schemaResults.fieldIndex("docids-local")] = localIds;
+                        resultRow[schemaResults.fieldIndex("docids-global")] = globalIds;
+                        resultRow[schemaResults.fieldIndex("scores")] = scores;
+                        resultRow[schemaResults.fieldIndex("shard")] = shardId;
+                        resultRow[schemaResults.fieldIndex("bucket")] = bucket;
+                        resultRows.add(new GenericRow(resultRow));
                     }
                 }
 
