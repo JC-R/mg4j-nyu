@@ -42,6 +42,10 @@ public class ExtractTailyScores {
 
         Dataset<Row> df = ExtractShardScores.run(new File(jsapResult.getString("input")), "taily", clusters, shardSelector);
 
-        df.sort("query", "shard").write().mode(Overwrite).parquet(jsapResult.getString("output") + ".taily");
+        df.sort("query", "shard")
+                .coalesce(1)
+                .write()
+                .mode(Overwrite)
+                .parquet(jsapResult.getString("output") + ".taily");
     }
 }
