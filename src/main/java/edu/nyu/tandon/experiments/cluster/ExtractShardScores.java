@@ -8,6 +8,7 @@ import edu.nyu.tandon.shard.csi.CentralSampleIndex;
 import edu.nyu.tandon.shard.ranking.ShardSelector;
 import edu.nyu.tandon.shard.ranking.redde.ReDDEShardSelector;
 import edu.nyu.tandon.shard.ranking.shrkc.RankS;
+import edu.nyu.tandon.utils.Utils;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.di.big.mg4j.search.score.Scorer;
@@ -141,6 +142,8 @@ public class ExtractShardScores {
                 .write()
                 .mode(Overwrite)
                 .parquet(jsapResult.getString("output") + "." + jsapResult.getString("selector"));
+
+        Utils.unfolder(new File(jsapResult.getString("output") + "." + jsapResult.getString("selector")));
     }
 
 }
