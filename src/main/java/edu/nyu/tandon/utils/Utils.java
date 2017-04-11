@@ -17,6 +17,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileSystemUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -123,7 +124,8 @@ public class Utils {
 
         File parquet = parquetFiles[0];
         File dir = file.getParentFile();
-        File temp = File.createTempFile(file.getAbsolutePath(), "", dir);
+        File temp = new File(file.getAbsolutePath()
+                .concat("-").concat(RandomStringUtils.randomAlphabetic(8)));
         FileUtils.moveDirectory(file, temp);
         FileUtils.moveFileToDirectory(parquet, file, true);
         FileUtils.deleteDirectory(temp);
