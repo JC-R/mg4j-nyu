@@ -128,7 +128,7 @@ public class Utils {
         Verify.verify(parquetFiles.length == 1, "detected more than one parquet file in the folder");
 
         File parquet = parquetFiles[0];
-        FileUtils.moveFileToDirectory(parquet, file, true);
+        FileUtils.moveFile(parquet, file);
         FileUtils.deleteDirectory(temp);
     }
 }
