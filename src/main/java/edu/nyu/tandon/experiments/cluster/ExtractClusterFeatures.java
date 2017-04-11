@@ -4,6 +4,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.martiansoftware.jsap.*;
+import edu.nyu.tandon.experiments.thrift.QueryFeatures;
 import edu.nyu.tandon.experiments.thrift.Result;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.query.TerminatingQueryEngine;
@@ -22,25 +23,17 @@ import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.lang.MutableString;
 import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.apache.parquet.thrift.ThriftParquetWriter;
-import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SparkSession;
-import org.apache.spark.sql.catalyst.expressions.GenericRow;
-import org.apache.spark.sql.types.DataTypes;
-import org.apache.spark.sql.types.StructType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static edu.nyu.tandon.query.Query.MAX_STEMMING;
-import static org.apache.spark.sql.SaveMode.Overwrite;
-import static org.apache.spark.sql.types.DataTypes.*;
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -114,43 +107,27 @@ public class ExtractClusterFeatures {
             ext = ext + "-" + String.valueOf(buckets);
         }
 
-        ThriftParquetWriter<Result> resultWriter = new ThriftParquetWriter<Result>(new org.apache.hadoop.fs.Path(outputBasename + ext),
+        ThriftParquetWriter<Result> resultWriter = new ThriftParquetWriter<>(new org.apache.hadoop.fs.Path(outputBasename + ext),
                 Result.class, CompressionCodecName.SNAPPY);
-        //StructType schemaResults = new StructType()
-        //        .add("query", IntegerType)
-        //        .add("docids-local", createArrayType(LongType))
-        //        .add("docids-global", createArrayType(LongType))
-        //        .add("scores", createArrayType(FloatType));
-        StructType schemaQuery = new StructType()
-                .add("query", IntegerType)
-                .add("time", LongType)
-                .add("maxlist1", LongType)
-                .add("maxlist2", LongType)
-                .add("minlist1", LongType)
-                .add("minlist2", LongType)
-                .add("sumlist", LongType);
+        ThriftParquetWriter<QueryFeatures> queryFeaturesWriter =
+                new ThriftParquetWriter<>(new org.apache.hadoop.fs.Path(outputBasename + ".queryfeatures"),
+                        QueryFeatures.class, CompressionCodecName.SNAPPY);
 
         int shardId = -1;
         if (shardDefined) {
-            //schemaResults = schemaResults.add("shard", IntegerType);
-            schemaQuery = schemaQuery.add("shard", IntegerType);
             shardId = jsapResult.getInt("shardId");
         }
 
-        //List<Row> resultRows = new ArrayList<>();
-        List<Row> queryRows = new ArrayList<>();
 
         double bucketStep = 0.0;
         if (buckets > 0) {
             bucketStep = 1.0 / buckets;
-            //schemaResults = schemaResults.add("bucket", IntegerType);
         }
         int queryCount = 0;
         try(BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
             for (String query; (query = br.readLine()) != null; ) {
 
-                Object[] queryRow = new Object[schemaQuery.size()];
-                queryRow[schemaQuery.fieldIndex("query")] = queryCount;
+                QueryFeatures queryFeatures = new QueryFeatures(queryCount);
 
                 ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r =
                         new ObjectArrayList<>();
@@ -175,24 +152,24 @@ public class ExtractClusterFeatures {
                     }
                 }).collect(Collectors.toList());
                 if (listLengths.isEmpty()) {
-                    queryRow[schemaQuery.fieldIndex("maxlist1")] = 0L;
-                    queryRow[schemaQuery.fieldIndex("maxlist2")] = 0L;
-                    queryRow[schemaQuery.fieldIndex("minlist1")] = 0L;
-                    queryRow[schemaQuery.fieldIndex("minlist2")] = 0L;
+                    queryFeatures.setMaxlist1(0L);
+                    queryFeatures.setMaxlist2(0L);
+                    queryFeatures.setMinlist1(0L);
+                    queryFeatures.setMinlist2(0L);
                 }
                 else {
-                    queryRow[schemaQuery.fieldIndex("maxlist1")] = listLengths.get(0);
-                    queryRow[schemaQuery.fieldIndex("minlist1")] = listLengths.get(listLengths.size() - 1);
+                    queryFeatures.setMaxlist1(listLengths.get(0));
+                    queryFeatures.setMinlist1(listLengths.get(listLengths.size() - 1));
                     if (listLengths.size() > 1) {
-                        queryRow[schemaQuery.fieldIndex("maxlist2")] = listLengths.get(1);
-                        queryRow[schemaQuery.fieldIndex("minlist2")] = listLengths.get(listLengths.size() - 2);
+                        queryFeatures.setMaxlist2(listLengths.get(1));
+                        queryFeatures.setMinlist2(listLengths.get(listLengths.size() - 2));
                     }
                     else {
-                        queryRow[schemaQuery.fieldIndex("maxlist2")] = 0L;
-                        queryRow[schemaQuery.fieldIndex("minlist2")] = 0L;
+                        queryFeatures.setMaxlist2(0L);
+                        queryFeatures.setMinlist2(0L);
                     }
                 }
-                queryRow[schemaQuery.fieldIndex("sumlist")] = listLengths.stream().mapToLong(Long::longValue).sum();
+                queryFeatures.setSumlist(listLengths.stream().mapToLong(Long::longValue).sum());
 
                 try {
                     engine.setDocumentLowerBound(null);
@@ -200,7 +177,7 @@ public class ExtractClusterFeatures {
                     long start = System.currentTimeMillis();
                     engine.process(query, 0, k, r);
                     long elapsed = System.currentTimeMillis() - start;
-                    queryRow[schemaQuery.fieldIndex("time")] = elapsed;
+                    queryFeatures.setTime(elapsed);
                 } catch (Exception e) {
                     LOGGER.error(String.format("There was an error while processing query: %s", query), e);
                     throw e;
@@ -257,17 +234,15 @@ public class ExtractClusterFeatures {
                 }
 
                 if (shardDefined) {
-                    queryRow[schemaQuery.fieldIndex("shard")] = shardId;
+                    queryFeatures.setShard(shardId);
                 }
-                queryRows.add(new GenericRow(queryRow));
+                queryFeaturesWriter.write(queryFeatures);
                 queryCount++;
             }
         }
 
+        queryFeaturesWriter.close();
         resultWriter.close();
-
-        SparkSession sparkSession = SparkSession.builder().master("local").getOrCreate();
-        sparkSession.createDataFrame(queryRows, schemaQuery).sort("query").write().mode(Overwrite).parquet(outputBasename + ".queryfeatures");
 
     }
 
