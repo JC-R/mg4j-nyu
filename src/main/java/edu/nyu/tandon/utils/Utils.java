@@ -14,6 +14,9 @@ import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.longs.LongBigArrayBigList;
 import it.unimi.dsi.fastutil.objects.*;
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.io.FileSystemUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -121,8 +124,8 @@ public class Utils {
         File parquet = parquetFiles[0];
         File dir = file.getParentFile();
         File temp = File.createTempFile(file.getAbsolutePath(), "", dir);
-        file.renameTo(temp);
-        parquet.renameTo(file);
-        temp.delete();
+        FileUtils.moveDirectory(file, temp);
+        FileUtils.moveFileToDirectory(parquet, file, true);
+        FileUtils.deleteDirectory(temp);
     }
 }
