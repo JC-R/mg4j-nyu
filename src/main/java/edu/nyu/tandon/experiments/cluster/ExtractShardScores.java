@@ -13,7 +13,6 @@ import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.di.big.mg4j.search.score.Scorer;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.catalyst.expressions.GenericRowWithSchema;
 import org.apache.spark.sql.types.StructType;
@@ -137,7 +136,11 @@ public class ExtractShardScores {
             df = df.join(datasets.get(i), indexColumns);
         }
 
-        df.sort("query", "shard").write().mode(Overwrite).parquet(jsapResult.getString("output") + "." + jsapResult.getString("selector"));
+        df.sort("query", "shard")
+                .coalesce(1)
+                .write()
+                .mode(Overwrite)
+                .parquet(jsapResult.getString("output") + "." + jsapResult.getString("selector"));
     }
 
 }

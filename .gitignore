@@ -2,3 +2,5 @@ target/
 dependency-reduced-pom.xml
 spark-warehouse/
 .idea/
+gen-java/
+src/test/java/edu/nyu/tandon/search/
