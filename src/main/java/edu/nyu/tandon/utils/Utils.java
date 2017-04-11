@@ -119,7 +119,7 @@ public class Utils {
                 .concat("-").concat(RandomStringUtils.randomAlphabetic(8)));
         FileUtils.moveDirectory(file, temp);
 
-        File[] parquetFiles = file.listFiles(new FilenameFilter() {
+        File[] parquetFiles = temp.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File file, String s) {
                 return s.endsWith("parquet");
