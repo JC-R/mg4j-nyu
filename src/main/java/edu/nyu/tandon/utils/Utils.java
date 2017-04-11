@@ -1,5 +1,7 @@
 package edu.nyu.tandon.utils;
 
+import com.google.common.base.Verify;
+import com.google.common.io.Files;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import it.unimi.di.big.mg4j.index.Index;
@@ -13,10 +15,7 @@ import it.unimi.dsi.fastutil.longs.LongBigArrayBigList;
 import it.unimi.dsi.fastutil.objects.*;
 import org.apache.commons.configuration.ConfigurationException;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.util.Random;
@@ -107,5 +106,23 @@ public class Utils {
             }
         }
         return ints;
+    }
+
+    public static void unfolder(File file) throws IOException {
+        Verify.verify(file.exists(), "the file doesn't exist");
+        File[] parquetFiles = file.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String s) {
+                return s.endsWith("parquet");
+            }
+        });
+        Verify.verify(parquetFiles.length == 1, "detected more than one parquet file in the folder");
+
+        File parquet = parquetFiles[0];
+        File dir = file.getParentFile();
+        File temp = File.createTempFile(file.getAbsolutePath(), "", dir);
+        Files.move(file, temp);
+        Files.move(parquet, file);
+        temp.delete();
     }
 }
