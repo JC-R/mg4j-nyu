@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -184,22 +183,17 @@ public class ExtractClusterFeatures {
                 }
 
                 if (buckets == 0) {
-                    List<Long> localIds = new ArrayList<>(r.size());
-                    List<Long> globalIds = new ArrayList<>(r.size());
-                    List<Double> scores = new ArrayList<>(r.size());
+                    int rank = 0;
                     for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
-                        localIds.add(dsi.document);
-                        globalIds.add(shardDefined ? strategy.globalPointer(shardId, dsi.document) : dsi.document);
-                        scores.add(dsi.score);
+                        Result result = new Result(queryCount, rank++);
+                        result.setLdocid(dsi.document);
+                        result.setGdocid(dsi.document);
+                        result.setScore(dsi.score);
+                        if (shardDefined) {
+                            result.setShard(shardId);
+                        }
+                        resultWriter.write(result);
                     }
-                    Result result = new Result(queryCount);
-                    result.setDocids_local(localIds);
-                    result.setDocids_global(globalIds);
-                    result.setScores(scores);
-                    if (shardDefined) {
-                        result.setShard(shardId);
-                    }
-                    resultWriter.write(result);
                 }
                 else {
                     for (int bucket = 0; bucket < buckets; bucket++) {
@@ -211,25 +205,18 @@ public class ExtractClusterFeatures {
                             LOGGER.error(String.format("There was an error while processing query: %s", query), e);
                             throw e;
                         }
-                        List<Long> localIds = new ArrayList<>(r.size());
-                        List<Long> globalIds = new ArrayList<>(r.size());
-                        List<Double> scores = new ArrayList<>(r.size());
+                        int rank = 0;
                         for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
-                            localIds.add(dsi.document);
-                            globalIds.add(shardDefined ? strategy.globalPointer(shardId, dsi.document) : dsi.document);
-                            scores.add(dsi.score);
-                        }
-                        Result result = new Result(queryCount);
-                        result.setDocids_local(localIds);
-                        result.setDocids_global(globalIds);
-                        result.setScores(scores);
-                        if (shardDefined) {
-                            result.setShard(shardId);
-                        }
-                        if (buckets > 0) {
+                            Result result = new Result(queryCount, rank++);
+                            result.setLdocid(dsi.document);
+                            result.setScore(dsi.score);
+                            if (shardDefined) {
+                                result.setShard(shardId);
+                                result.setGdocid(strategy.globalPointer(shardId, dsi.document));
+                            }
                             result.setBucket(bucket);
+                            resultWriter.write(result);
                         }
-                        resultWriter.write(result);
                     }
                 }
 

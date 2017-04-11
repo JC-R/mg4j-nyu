@@ -1,5 +1,4 @@
-.idea/workspace.xml
 target/
-.idea/dictionaries/
 dependency-reduced-pom.xml
 spark-warehouse/
+.idea/
