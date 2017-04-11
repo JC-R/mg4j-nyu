@@ -31,7 +31,6 @@ import java.util.Map;
 
 import static org.apache.spark.sql.SaveMode.Overwrite;
 import static org.apache.spark.sql.types.DataTypes.DoubleType;
-import static org.apache.spark.sql.types.DataTypes.FloatType;
 import static org.apache.spark.sql.types.DataTypes.IntegerType;
 import static scala.collection.JavaConversions.asScalaBuffer;
 
@@ -71,7 +70,7 @@ public class ExtractShardScores {
                         rows.add(new GenericRowWithSchema(new Object[] {
                                 queryId,
                                 shardId,
-                                shardScores.getOrDefault(shardId, 0.0).floatValue()
+                                shardScores.getOrDefault(shardId, 0.0)
                         }, schema));
                     }
                     queryId++;
