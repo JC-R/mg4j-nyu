@@ -89,6 +89,16 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.apache.parquet</groupId>
+            <artifactId>parquet-thrift</artifactId>
+            <version>1.8.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>0.10.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-core_2.10</artifactId>
             <version>2.0.0</version>
@@ -210,16 +220,6 @@
                 <!--<artifactId>log4j</artifactId>-->
                 <!--</exclusion>-->
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.parquet</groupId>
-            <artifactId>parquet-thrift</artifactId>
-            <version>1.8.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.thrift</groupId>
-            <artifactId>libthrift</artifactId>
-            <version>0.10.0</version>
         </dependency>
 
 
