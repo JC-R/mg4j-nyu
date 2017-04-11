@@ -114,6 +114,11 @@ public class Utils {
 
     public static void unfolder(File file) throws IOException {
         Verify.verify(file.exists(), "the file doesn't exist");
+        File dir = file.getParentFile();
+        File temp = new File(file.getAbsolutePath()
+                .concat("-").concat(RandomStringUtils.randomAlphabetic(8)));
+        FileUtils.moveDirectory(file, temp);
+
         File[] parquetFiles = file.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File file, String s) {
@@ -123,10 +128,6 @@ public class Utils {
         Verify.verify(parquetFiles.length == 1, "detected more than one parquet file in the folder");
 
         File parquet = parquetFiles[0];
-        File dir = file.getParentFile();
-        File temp = new File(file.getAbsolutePath()
-                .concat("-").concat(RandomStringUtils.randomAlphabetic(8)));
-        FileUtils.moveDirectory(file, temp);
         FileUtils.moveFileToDirectory(parquet, file, true);
         FileUtils.deleteDirectory(temp);
     }
