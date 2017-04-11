@@ -121,8 +121,8 @@ public class Utils {
         File parquet = parquetFiles[0];
         File dir = file.getParentFile();
         File temp = File.createTempFile(file.getAbsolutePath(), "", dir);
-        Files.move(file, temp);
-        Files.move(parquet, file);
+        file.renameTo(temp);
+        parquet.renameTo(file);
         temp.delete();
     }
 }
