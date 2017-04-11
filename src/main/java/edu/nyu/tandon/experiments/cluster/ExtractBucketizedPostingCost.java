@@ -4,6 +4,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.query.Query;
+import edu.nyu.tandon.utils.Utils;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.IndexReader;
 import it.unimi.di.big.mg4j.index.TermProcessor;
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -118,7 +120,11 @@ public class ExtractBucketizedPostingCost {
         }
 
         Dataset<Row> df = SparkSession.builder().master("local").getOrCreate().createDataFrame(rows, schema);
-        df.write().mode(Overwrite).parquet(outputBasename + String.format(".postingcost-%d", bucketCount));
+        df.coalesce(1)
+                .write()
+                .mode(Overwrite)
+                .parquet(outputBasename + String.format(".postingcost-%d", bucketCount));
+        Utils.unfolder(new File(outputBasename + String.format(".postingcost-%d", bucketCount)));
 
     }
 
