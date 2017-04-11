@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.apache.spark.sql.SaveMode.Overwrite;
+import static org.apache.spark.sql.types.DataTypes.DoubleType;
 import static org.apache.spark.sql.types.DataTypes.FloatType;
 import static org.apache.spark.sql.types.DataTypes.IntegerType;
 import static scala.collection.JavaConversions.asScalaBuffer;
@@ -58,7 +59,7 @@ public class ExtractShardScores {
         StructType schema = new StructType()
                 .add("query", IntegerType)
                 .add("shard", IntegerType)
-                .add(name, FloatType);
+                .add(name, DoubleType);
 
         List<Row> rows = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(input))) {
