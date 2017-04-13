@@ -101,15 +101,15 @@ public class ExtractClusterFeatures {
             strategy = (DocumentalClusteringStrategy)
                     BinIO.loadObject(basename.substring(0, basename.lastIndexOf("-")) + ".strategy");
         }
-        String ext = ".results";
+        String ext = "";
         if (buckets > 0) {
-            ext = ext + "-" + String.valueOf(buckets);
+            ext = "-" + String.valueOf(buckets);
         }
 
-        ThriftParquetWriter<Result> resultWriter = new ThriftParquetWriter<>(new org.apache.hadoop.fs.Path(outputBasename + ext),
+        ThriftParquetWriter<Result> resultWriter = new ThriftParquetWriter<>(new org.apache.hadoop.fs.Path(outputBasename + ".results" + ext),
                 Result.class, CompressionCodecName.SNAPPY);
         ThriftParquetWriter<QueryFeatures> queryFeaturesWriter =
-                new ThriftParquetWriter<>(new org.apache.hadoop.fs.Path(outputBasename + ".queryfeatures"),
+                new ThriftParquetWriter<>(new org.apache.hadoop.fs.Path(outputBasename + ".queryfeatures" + ext),
                         QueryFeatures.class, CompressionCodecName.SNAPPY);
 
         int shardId = -1;
