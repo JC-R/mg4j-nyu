@@ -90,6 +90,16 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.parquet</groupId>
+            <artifactId>parquet-avro</artifactId>
+            <version>1.7.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>1.8.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.parquet</groupId>
             <artifactId>parquet-thrift</artifactId>
             <version>1.7.0</version>
         </dependency>

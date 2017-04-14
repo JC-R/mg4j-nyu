@@ -12,6 +12,13 @@ import edu.nyu.tandon.utils.Utils;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.di.big.mg4j.search.score.Scorer;
+import org.apache.avro.Schema;
+import org.apache.avro.SchemaBuilder;
+import org.apache.avro.data.RecordBuilder;
+import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.generic.GenericRecordBuilder;
+import org.apache.avro.generic.IndexedRecord;
+import org.apache.parquet.avro.AvroParquetWriter;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
@@ -54,7 +61,7 @@ public class ExtractShardScores {
         else throw new IllegalArgumentException("You need to define a proper scorer: bm25, ql");
     }
 
-    public static Dataset<Row> run(File input, String name, int clusters, ShardSelector shardSelector) throws IOException {
+    public static List<Row> run(File input, String name, int clusters, ShardSelector shardSelector) throws IOException {
 
         StructType schema = new StructType()
                 .add("query", IntegerType)
@@ -81,7 +88,8 @@ public class ExtractShardScores {
             }
         }
 
-        return SparkSession.builder().master("local").getOrCreate().createDataFrame(rows, schema);
+        return rows;
+        //return SparkSession.builder().master("local").getOrCreate().createDataFrame(rows, schema);
     }
 
     public static void main(String[] args) throws Exception {
@@ -114,8 +122,22 @@ public class ExtractShardScores {
         int[] csiMaxOutputs;
         if (jsapResult.userSpecified("csiMaxOutput")) csiMaxOutputs = jsapResult.getIntArray("csiMaxOutput");
         else csiMaxOutputs = new int[] { 100 };
+        String selector = jsapResult.getString("selector");
 
-        List<Dataset<Row>> datasets = new ArrayList<>();
+        SchemaBuilder.FieldAssembler fields = SchemaBuilder
+                .record(selector)
+                .namespace("edu.nyu.tandon.experiments.avro")
+                .fields()
+                .name("query").type().intType().noDefault();
+
+        for (int L : csiMaxOutputs) {
+            fields = (SchemaBuilder.FieldAssembler)
+                    fields.name(selector + "-" + L).type().optional().doubleType();
+        }
+
+        Schema schema = (Schema) fields.endRecord();
+
+        List<List<Row>> datasets = new ArrayList<>();
 
         for (int L : csiMaxOutputs) {
 
@@ -124,26 +146,28 @@ public class ExtractShardScores {
 
             LOGGER.info(String.format("Extracting shard scores for L = %d", L));
             csi.setMaxOutput(L);
-            ShardSelector shardSelector = resolveShardSelector(jsapResult.getString("selector"),
+            ShardSelector shardSelector = resolveShardSelector(selector,
                     csi, jsapResult.getInt("base"));
 
-            Dataset<Row> df = run(new File(jsapResult.getString("input")), name, clusters, shardSelector);
+            List<Row> df = run(new File(jsapResult.getString("input")), name, clusters, shardSelector);
             datasets.add(df);
 
         }
         Seq<String> indexColumns = asScalaBuffer(Arrays.asList("query", "shard"));
-        Dataset<Row> df = datasets.get(0);
-        for (int i = 1; i < datasets.size(); i++) {
-            df = df.join(datasets.get(i), indexColumns);
+
+        int queryCount = datasets.get(0).size();
+        AvroParquetWriter<GenericRecord> writer = new AvroParquetWriter<>(
+                new org.apache.hadoop.fs.Path(jsapResult.getString("output") + "." + selector), schema);
+
+        for (int query = 0; query < queryCount; query++) {
+            GenericRecordBuilder builder = new GenericRecordBuilder(schema);
+            for (int i = 0; i < csiMaxOutputs.length; i++) {
+                builder = builder.set(selector + "-" + csiMaxOutputs[i], datasets.get(i).get(query));
+            }
+            writer.write(builder.build());
         }
 
-        df.sort("query", "shard")
-                .coalesce(1)
-                .write()
-                .mode(Overwrite)
-                .parquet(jsapResult.getString("output") + "." + jsapResult.getString("selector"));
-
-        Utils.unfolder(new File(jsapResult.getString("output") + "." + jsapResult.getString("selector")));
+        writer.close();
     }
 
 }

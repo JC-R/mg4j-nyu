@@ -10,13 +10,20 @@ import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SaveMode;
+import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.IntegerType;
+import org.apache.spark.sql.types.StructType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.List;
 import java.util.Map;
 
 import static org.apache.spark.sql.SaveMode.Overwrite;
+import static org.apache.spark.sql.types.DataTypes.DoubleType;
+import static org.apache.spark.sql.types.DataTypes.IntegerType;
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -41,9 +48,14 @@ public class ExtractTailyScores {
         int clusters = jsapResult.getInt("clusters");
         TailyShardSelector shardSelector = new TailyShardSelector(jsapResult.getString("basename"), clusters);
 
-        Dataset<Row> df = ExtractShardScores.run(new File(jsapResult.getString("input")), "taily", clusters, shardSelector);
+        List<Row> rows = ExtractShardScores.run(new File(jsapResult.getString("input")), "taily", clusters, shardSelector);
 
-        df.sort("query", "shard")
+        StructType schema = new StructType()
+                .add("query", IntegerType)
+                .add("shard", IntegerType)
+                .add("taily", DoubleType);
+
+        SparkSession.builder().master("local").getOrCreate().createDataFrame(rows, schema)
                 .coalesce(1)
                 .write()
                 .mode(Overwrite)
