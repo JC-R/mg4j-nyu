@@ -128,7 +128,8 @@ public class ExtractShardScores {
                 .record(selector)
                 .namespace("edu.nyu.tandon.experiments.avro")
                 .fields()
-                .name("query").type().intType().noDefault();
+                .name("query").type().intType().noDefault()
+                .name("shard").type().intType().noDefault();
 
         for (int L : csiMaxOutputs) {
             fields = (SchemaBuilder.FieldAssembler)
@@ -155,14 +156,16 @@ public class ExtractShardScores {
         }
         Seq<String> indexColumns = asScalaBuffer(Arrays.asList("query", "shard"));
 
-        int queryCount = datasets.get(0).size();
+        int rowCount = datasets.get(0).size();
         AvroParquetWriter<GenericRecord> writer = new AvroParquetWriter<>(
                 new org.apache.hadoop.fs.Path(jsapResult.getString("output") + "." + selector), schema);
 
-        for (int query = 0; query < queryCount; query++) {
+        for (int row = 0; row < rowCount; row++) {
             GenericRecordBuilder builder = new GenericRecordBuilder(schema);
+            builder.set("query", datasets.get(0).get(row).getInt(0));
+            builder.set("shard", datasets.get(0).get(row).getInt(1));
             for (int i = 0; i < csiMaxOutputs.length; i++) {
-                builder = builder.set(selector + "_" + csiMaxOutputs[i], datasets.get(i).get(query));
+                builder = builder.set(selector + "_" + csiMaxOutputs[i], datasets.get(i).get(row).getDouble(2));
             }
             writer.write(builder.build());
         }
