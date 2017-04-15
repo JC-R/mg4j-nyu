@@ -132,7 +132,7 @@ public class ExtractShardScores {
 
         for (int L : csiMaxOutputs) {
             fields = (SchemaBuilder.FieldAssembler)
-                    fields.name(selector + "-" + L).type().optional().doubleType();
+                    fields.name(selector + "_" + L).type().optional().doubleType();
         }
 
         Schema schema = (Schema) fields.endRecord();
@@ -141,7 +141,7 @@ public class ExtractShardScores {
 
         for (int L : csiMaxOutputs) {
 
-            String name = jsapResult.getString("selector") + "-" + L;
+            String name = jsapResult.getString("selector") + "_" + L;
 
 
             LOGGER.info(String.format("Extracting shard scores for L = %d", L));
@@ -162,7 +162,7 @@ public class ExtractShardScores {
         for (int query = 0; query < queryCount; query++) {
             GenericRecordBuilder builder = new GenericRecordBuilder(schema);
             for (int i = 0; i < csiMaxOutputs.length; i++) {
-                builder = builder.set(selector + "-" + csiMaxOutputs[i], datasets.get(i).get(query));
+                builder = builder.set(selector + "_" + csiMaxOutputs[i], datasets.get(i).get(query));
             }
             writer.write(builder.build());
         }
