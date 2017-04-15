@@ -23,6 +23,7 @@ import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.lang.MutableString;
 import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.apache.parquet.thrift.ThriftParquetWriter;
+import org.codehaus.plexus.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,10 +107,19 @@ public class ExtractClusterFeatures {
             ext = "-" + String.valueOf(buckets);
         }
 
-        ThriftParquetWriter<Result> resultWriter = new ThriftParquetWriter<>(new org.apache.hadoop.fs.Path(outputBasename + ".results" + ext),
+        String resultPath = outputBasename + ".results" + ext;
+        String queryFeaturesPath = outputBasename + ".queryfeatures" + ext;
+
+        if (FileUtils.fileExists(resultPath)) {
+            FileUtils.fileDelete(resultPath);
+        }
+        if (FileUtils.fileExists(queryFeaturesPath)) {
+            FileUtils.fileDelete(queryFeaturesPath);
+        }
+
+        ThriftParquetWriter<Result> resultWriter = new ThriftParquetWriter<>(new org.apache.hadoop.fs.Path(resultPath),
                 Result.class, CompressionCodecName.SNAPPY);
-        ThriftParquetWriter<QueryFeatures> queryFeaturesWriter =
-                new ThriftParquetWriter<>(new org.apache.hadoop.fs.Path(outputBasename + ".queryfeatures" + ext),
+        ThriftParquetWriter<QueryFeatures> queryFeaturesWriter = new ThriftParquetWriter<>(new org.apache.hadoop.fs.Path(queryFeaturesPath),
                         QueryFeatures.class, CompressionCodecName.SNAPPY);
 
         int shardId = -1;

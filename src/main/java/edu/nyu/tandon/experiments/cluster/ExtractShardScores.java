@@ -8,20 +8,17 @@ import edu.nyu.tandon.shard.csi.CentralSampleIndex;
 import edu.nyu.tandon.shard.ranking.ShardSelector;
 import edu.nyu.tandon.shard.ranking.redde.ReDDEShardSelector;
 import edu.nyu.tandon.shard.ranking.shrkc.RankS;
-import edu.nyu.tandon.utils.Utils;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.di.big.mg4j.search.score.Scorer;
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
-import org.apache.avro.data.RecordBuilder;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.generic.GenericRecordBuilder;
-import org.apache.avro.generic.IndexedRecord;
 import org.apache.parquet.avro.AvroParquetWriter;
-import org.apache.spark.sql.Dataset;
+import org.apache.parquet.hadoop.ParquetFileWriter;
+import org.apache.parquet.hadoop.ParquetWriter;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.catalyst.expressions.GenericRowWithSchema;
 import org.apache.spark.sql.types.StructType;
 import org.slf4j.Logger;
@@ -37,7 +34,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.spark.sql.SaveMode.Overwrite;
 import static org.apache.spark.sql.types.DataTypes.DoubleType;
 import static org.apache.spark.sql.types.DataTypes.IntegerType;
 import static scala.collection.JavaConversions.asScalaBuffer;
@@ -157,8 +153,11 @@ public class ExtractShardScores {
         Seq<String> indexColumns = asScalaBuffer(Arrays.asList("query", "shard"));
 
         int rowCount = datasets.get(0).size();
-        AvroParquetWriter<GenericRecord> writer = new AvroParquetWriter<>(
-                new org.apache.hadoop.fs.Path(jsapResult.getString("output") + "." + selector), schema);
+        ParquetWriter<GenericRecord> writer = AvroParquetWriter.<GenericRecord>builder(
+                new org.apache.hadoop.fs.Path(jsapResult.getString("output") + "." + selector))
+                .withSchema(schema)
+                .withWriteMode(ParquetFileWriter.Mode.OVERWRITE)
+                .build();
 
         for (int row = 0; row < rowCount; row++) {
             GenericRecordBuilder builder = new GenericRecordBuilder(schema);

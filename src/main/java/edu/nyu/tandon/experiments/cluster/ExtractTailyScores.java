@@ -2,24 +2,16 @@ package edu.nyu.tandon.experiments.cluster;
 
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.query.Query;
-import edu.nyu.tandon.shard.ranking.ShardSelector;
 import edu.nyu.tandon.shard.ranking.taily.TailyShardSelector;
 import edu.nyu.tandon.utils.Utils;
-import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
-import it.unimi.di.big.mg4j.query.parser.QueryParserException;
-import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
-import org.apache.spark.sql.types.DataTypes;
-import org.apache.spark.sql.types.IntegerType;
 import org.apache.spark.sql.types.StructType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 import static org.apache.spark.sql.SaveMode.Overwrite;
 import static org.apache.spark.sql.types.DataTypes.DoubleType;

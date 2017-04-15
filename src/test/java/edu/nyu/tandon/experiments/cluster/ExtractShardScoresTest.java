@@ -2,11 +2,13 @@ package edu.nyu.tandon.experiments.cluster;
 
 import com.google.common.primitives.Doubles;
 import edu.nyu.tandon.test.BaseTest;
+import org.apache.commons.io.FileUtils;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.SparkSession;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -39,7 +41,7 @@ public class ExtractShardScoresTest extends BaseTest {
         assertTrue(Files.exists(Paths.get(outputBasename + ".redde")));
         SparkSession spark = SparkSession.builder().master("local").getOrCreate();
         Dataset redde = spark.read().parquet(outputBasename + ".redde");
-        assertThat(redde.columns(), equalTo(new String[] {"query", "shard", "redde-100"}));
+        assertThat(redde.columns(), equalTo(new String[] {"query", "shard", "redde_100"}));
         assertThat(redde.count(), equalTo(22L));
     }
 
@@ -63,7 +65,7 @@ public class ExtractShardScoresTest extends BaseTest {
         assertTrue(Files.exists(Paths.get(outputBasename + ".ranks")));
         SparkSession spark = SparkSession.builder().master("local").getOrCreate();
         Dataset ranks = spark.read().parquet(outputBasename + ".ranks");
-        assertThat(ranks.columns(), equalTo(new String[] {"query", "shard", "ranks-100"}));
+        assertThat(ranks.columns(), equalTo(new String[] {"query", "shard", "ranks_100"}));
         assertThat(ranks.count(), equalTo(22L));
     }
 
@@ -77,6 +79,26 @@ public class ExtractShardScoresTest extends BaseTest {
                 .split(" ");
         ExtractShardScores.main(args);
 
+    }
+
+    @Test
+    public void fileExists() throws Exception {
+        // Given
+        File input = newTemporaryFileWithContent("the\na\n");
+        String outputBasename = temporaryFolder.getRoot().getAbsolutePath() + "/test";
+        String[] args = String.format("-i %s -o %s -c 11 -s ranks %s %s",
+                input.getAbsoluteFile(),
+                outputBasename,
+                getFileFromResourcePath("clusters").getAbsoluteFile() + "/gov2C",
+                getFileFromResourcePath("csi").getAbsoluteFile() + "/csi")
+                .split(" ");
+
+        FileUtils.touch(new File(outputBasename + ".ranks"));
+
+        // When
+        ExtractShardScores.main(args);
+
+        // Do not fail
     }
 
 }
