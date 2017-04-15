@@ -28,11 +28,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Map;
 
 import static org.apache.spark.sql.types.DataTypes.DoubleType;
 import static org.apache.spark.sql.types.DataTypes.IntegerType;
+
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -146,6 +148,7 @@ public class ExtractShardScores {
             datasets.add(df);
 
         }
+
         String outputFile = jsapResult.getString("output") + "." + selector;
         if (FileUtils.fileExists(outputFile)) {
             org.apache.commons.io.FileUtils.forceDelete(new File(outputFile));
@@ -153,6 +156,7 @@ public class ExtractShardScores {
         int rowCount = datasets.get(0).size();
         AvroParquetWriter<GenericRecord> writer = new AvroParquetWriter<>(
                 new org.apache.hadoop.fs.Path(outputFile), schema);
+
 
         for (int row = 0; row < rowCount; row++) {
             GenericRecordBuilder builder = new GenericRecordBuilder(schema);
