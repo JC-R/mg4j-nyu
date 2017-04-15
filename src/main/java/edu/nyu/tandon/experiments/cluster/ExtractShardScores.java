@@ -16,27 +16,25 @@ import org.apache.avro.SchemaBuilder;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.generic.GenericRecordBuilder;
 import org.apache.parquet.avro.AvroParquetWriter;
-import org.apache.parquet.hadoop.ParquetFileWriter;
-import org.apache.parquet.hadoop.ParquetWriter;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.catalyst.expressions.GenericRowWithSchema;
 import org.apache.spark.sql.types.StructType;
+import org.codehaus.plexus.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.collection.Seq;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.List;
 import java.util.Map;
 
 import static org.apache.spark.sql.types.DataTypes.DoubleType;
 import static org.apache.spark.sql.types.DataTypes.IntegerType;
-import static scala.collection.JavaConversions.asScalaBuffer;
+
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -150,14 +148,15 @@ public class ExtractShardScores {
             datasets.add(df);
 
         }
-        Seq<String> indexColumns = asScalaBuffer(Arrays.asList("query", "shard"));
 
+        String outputFile = jsapResult.getString("output") + "." + selector;
+        if (FileUtils.fileExists(outputFile)) {
+            org.apache.commons.io.FileUtils.forceDelete(new File(outputFile));
+        }
         int rowCount = datasets.get(0).size();
-        ParquetWriter<GenericRecord> writer = AvroParquetWriter.<GenericRecord>builder(
-                new org.apache.hadoop.fs.Path(jsapResult.getString("output") + "." + selector))
-                .withSchema(schema)
-                .withWriteMode(ParquetFileWriter.Mode.OVERWRITE)
-                .build();
+        AvroParquetWriter<GenericRecord> writer = new AvroParquetWriter<>(
+                new org.apache.hadoop.fs.Path(outputFile), schema);
+
 
         for (int row = 0; row < rowCount; row++) {
             GenericRecordBuilder builder = new GenericRecordBuilder(schema);
