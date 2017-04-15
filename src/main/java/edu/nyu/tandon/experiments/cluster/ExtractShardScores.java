@@ -11,11 +11,32 @@ import edu.nyu.tandon.shard.ranking.shrkc.RankS;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
 import it.unimi.di.big.mg4j.search.score.Scorer;
+import org.apache.avro.Schema;
+import org.apache.avro.SchemaBuilder;
+import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.generic.GenericRecordBuilder;
+import org.apache.parquet.avro.AvroParquetWriter;
+import org.apache.parquet.hadoop.ParquetFileWriter;
+import org.apache.parquet.hadoop.ParquetWriter;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.catalyst.expressions.GenericRowWithSchema;
+import org.apache.spark.sql.types.StructType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.collection.Seq;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+
+import static org.apache.spark.sql.types.DataTypes.DoubleType;
+import static org.apache.spark.sql.types.DataTypes.IntegerType;
+import static scala.collection.JavaConversions.asScalaBuffer;
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -26,8 +47,8 @@ public class ExtractShardScores {
 
     private static ShardSelector resolveShardSelector(String name, CentralSampleIndex csi, int base) {
         if ("redde".equals(name)) return new ReDDEShardSelector(csi);
-        else if ("shrkc".equals(name)) return new RankS(csi, base);
-        else throw new IllegalArgumentException("You need to define a proper selector: redde, shrkc");
+        else if ("ranks".equals(name)) return new RankS(csi, base);
+        else throw new IllegalArgumentException("You need to define a proper selector: redde, ranks");
     }
 
     public static Scorer resolveScorer(String name) {
@@ -36,28 +57,35 @@ public class ExtractShardScores {
         else throw new IllegalArgumentException("You need to define a proper scorer: bm25, ql");
     }
 
-    public static void run(File input, FileWriter[] writers, ShardSelector shardSelector) throws IOException {
+    public static List<Row> run(File input, String name, int clusters, ShardSelector shardSelector) throws IOException {
+
+        StructType schema = new StructType()
+                .add("query", IntegerType)
+                .add("shard", IntegerType)
+                .add(name, DoubleType);
+
+        List<Row> rows = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(input))) {
+            int queryId = 0;
             for (String query; (query = br.readLine()) != null; ) {
                 try {
                     Map<Integer, Double> shardScores = shardSelector.shardScores(query);
-                    for (int i = 0; i < writers.length; i++) {
-                        writers[i].append(shardScores.getOrDefault(i, 0.0).toString())
-                                .append("\n");
+                    for (int shardId = 0; shardId < clusters; shardId++) {
+                        rows.add(new GenericRowWithSchema(new Object[] {
+                                queryId,
+                                shardId,
+                                shardScores.getOrDefault(shardId, 0.0)
+                        }, schema));
                     }
+                    queryId++;
                 } catch (QueryParserException | QueryBuilderVisitorException | IOException e) {
                     throw new RuntimeException(String.format("There was an error while processing query: %s", query), e);
                 }
             }
-        } finally {
-            for (int i = 0; i < writers.length; i++) {
-                try {
-                    writers[i].close();
-                } catch (IOException e) {
-                    LOGGER.error(String.format("Couldn't close writer for shard %d", i));
-                }
-            }
         }
+
+        return rows;
+        //return SparkSession.builder().master("local").getOrCreate().createDataFrame(rows, schema);
     }
 
     public static void main(String[] args) throws Exception {
@@ -67,7 +95,7 @@ public class ExtractShardScores {
                         new FlaggedOption("input", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'i', "input", "The input file with queries delimited by new lines."),
                         new FlaggedOption("output", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "output", "The output files basename."),
                         new FlaggedOption("clusters", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'c', "clusters", "The number of clusters."),
-                        new FlaggedOption("selector", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 's', "selector", "Selector type (redde or shrkc)"),
+                        new FlaggedOption("selector", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 's', "selector", "Selector type (redde or ranks)"),
                         new FlaggedOption("base", JSAP.INTEGER_PARSER, "2", JSAP.REQUIRED, 'b', "base", "The base for Rank-S."),
                         new FlaggedOption("scorer", JSAP.STRING_PARSER, "bm25", JSAP.NOT_REQUIRED, 'S', "scorer", "Scorer type (bm25 or ql)"),
                         new FlaggedOption("csiMaxOutput", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'L', "csi-max-output", "CSI maximal number of results")
@@ -90,21 +118,58 @@ public class ExtractShardScores {
         int[] csiMaxOutputs;
         if (jsapResult.userSpecified("csiMaxOutput")) csiMaxOutputs = jsapResult.getIntArray("csiMaxOutput");
         else csiMaxOutputs = new int[] { 100 };
+        String selector = jsapResult.getString("selector");
+
+        SchemaBuilder.FieldAssembler fields = SchemaBuilder
+                .record(selector)
+                .namespace("edu.nyu.tandon.experiments.avro")
+                .fields()
+                .name("query").type().intType().noDefault()
+                .name("shard").type().intType().noDefault();
+
+        for (int L : csiMaxOutputs) {
+            fields = (SchemaBuilder.FieldAssembler)
+                    fields.name(selector + "_" + L).type().optional().doubleType();
+        }
+
+        Schema schema = (Schema) fields.endRecord();
+
+        List<List<Row>> datasets = new ArrayList<>();
 
         for (int L : csiMaxOutputs) {
 
+            String name = jsapResult.getString("selector") + "_" + L;
+
+
             LOGGER.info(String.format("Extracting shard scores for L = %d", L));
             csi.setMaxOutput(L);
-            ShardSelector shardSelector = resolveShardSelector(jsapResult.getString("selector"),
+            ShardSelector shardSelector = resolveShardSelector(selector,
                     csi, jsapResult.getInt("base"));
 
-            FileWriter[] writers = new FileWriter[clusters];
-            for (int i = 0; i < clusters; i++)
-                writers[i] =
-                        new FileWriter(jsapResult.getString("output") + "#" + i + "." + jsapResult.getString("selector") + "-" + L);
+            List<Row> df = run(new File(jsapResult.getString("input")), name, clusters, shardSelector);
+            datasets.add(df);
 
-            run(new File(jsapResult.getString("input")), writers, shardSelector);
         }
+        Seq<String> indexColumns = asScalaBuffer(Arrays.asList("query", "shard"));
+
+        int rowCount = datasets.get(0).size();
+        ParquetWriter<GenericRecord> writer = AvroParquetWriter.<GenericRecord>builder(
+                new org.apache.hadoop.fs.Path(jsapResult.getString("output") + "." + selector))
+                .withSchema(schema)
+                .withWriteMode(ParquetFileWriter.Mode.OVERWRITE)
+                .build();
+
+        for (int row = 0; row < rowCount; row++) {
+            GenericRecordBuilder builder = new GenericRecordBuilder(schema);
+            builder.set("query", datasets.get(0).get(row).getInt(0));
+            builder.set("shard", datasets.get(0).get(row).getInt(1));
+            for (int i = 0; i < csiMaxOutputs.length; i++) {
+                builder = builder.set(selector + "_" + csiMaxOutputs[i], datasets.get(i).get(row).getDouble(2));
+            }
+            writer.write(builder.build());
+        }
+
+        writer.close();
     }
 
 }

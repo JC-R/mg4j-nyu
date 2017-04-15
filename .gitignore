@@ -1,5 +1,6 @@
-.idea/workspace.xml
 target/
-.idea/dictionaries/
 dependency-reduced-pom.xml
 spark-warehouse/
+.idea/
+gen-java/
+src/test/java/edu/nyu/tandon/search/

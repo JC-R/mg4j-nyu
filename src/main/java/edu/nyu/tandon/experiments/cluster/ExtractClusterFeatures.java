@@ -4,10 +4,13 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.martiansoftware.jsap.*;
+import edu.nyu.tandon.experiments.thrift.QueryFeatures;
+import edu.nyu.tandon.experiments.thrift.Result;
 import edu.nyu.tandon.query.Query;
-import edu.nyu.tandon.query.QueryEngine;
+import edu.nyu.tandon.query.TerminatingQueryEngine;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
+import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
 import it.unimi.di.big.mg4j.index.cluster.SelectiveQueryEngine;
 import it.unimi.di.big.mg4j.query.SelectedInterval;
 import it.unimi.di.big.mg4j.query.parser.SimpleParser;
@@ -15,16 +18,18 @@ import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
 import it.unimi.di.big.mg4j.search.score.DocumentScoreInfo;
 import it.unimi.di.big.mg4j.search.score.Scorer;
 import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.lang.MutableString;
+import org.apache.parquet.hadoop.metadata.CompressionCodecName;
+import org.apache.parquet.thrift.ThriftParquetWriter;
+import org.codehaus.plexus.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,12 +52,20 @@ public class ExtractClusterFeatures {
                         new FlaggedOption("output", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "output", "The output files basename."),
                         new FlaggedOption("topK", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'k', "top-k", "The engine will limit the result set to top k results. k=10 by default."),
                         new FlaggedOption("shardId", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 's', "shard-id", "The shard ID."),
+                        new FlaggedOption("buckets", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'b', "buckets", "Partition results into this many buckets."),
                         new FlaggedOption("scorer", JSAP.STRING_PARSER, "bm25", JSAP.NOT_REQUIRED, 'S', "scorer", "Scorer type (bm25 or ql)"),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index.")
                 });
 
         final JSAPResult jsapResult = jsap.parse(args);
         if (jsap.messagePrinted()) return;
+
+        boolean shardDefined = jsapResult.userSpecified("shardId");
+        int buckets = jsapResult.userSpecified("buckets") ? jsapResult.getInt("buckets") : 0;
+        if (buckets > 0 && !shardDefined) {
+            System.err.println("you must define shard if you define buckets");
+            return;
+        }
 
         String basename = jsapResult.getString("basename");
         String[] basenameWeight = new String[] { basename };
@@ -66,10 +79,11 @@ public class ExtractClusterFeatures {
         final SimpleParser simpleParser = new SimpleParser(indexMap.keySet(), indexMap.firstKey(), termProcessors);
         final Reference2ReferenceMap<Index, Object> index2Parser = new Reference2ReferenceOpenHashMap<>();
 
-        QueryEngine engine = new QueryEngine<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>>(
-                simpleParser,
-                new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING),
-                indexMap);
+        TerminatingQueryEngine engine =
+                new TerminatingQueryEngine<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>>(
+                    simpleParser,
+                    new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING),
+                    indexMap);
         engine.setWeights(index2Weight);
         Scorer scorer = ExtractShardScores.resolveScorer(jsapResult.getString("scorer"));
         if (jsapResult.userSpecified("globalStatistics")) {
@@ -78,27 +92,51 @@ public class ExtractClusterFeatures {
         }
         engine.score(scorer);
 
-        int k = jsapResult.userSpecified("topK") ? jsapResult.getInt("topK") : 10;
-        String outputBasename = jsapResult.userSpecified("shardId") ?
+        int k = jsapResult.userSpecified("topK") ? jsapResult.getInt("topK") : 500;
+        String outputBasename = shardDefined ?
                 String.format("%s#%d", jsapResult.getString("output"), jsapResult.getInt("shardId")) :
                 jsapResult.getString("output");
-        String type = jsapResult.userSpecified("shardId") ? ".local" : ".global";
 
-        FileWriter resultWriter = new FileWriter(String.format("%s.results%s", outputBasename, type));
-        FileWriter scoreWriter = new FileWriter(String.format("%s.results.scores", outputBasename));
-        FileWriter timeWriter = new FileWriter(String.format("%s.time", outputBasename));
-        FileWriter avgTimeWriter = new FileWriter(String.format("%s.time.avg", outputBasename));
-        FileWriter maxListLen1Writer = new FileWriter(String.format("%s.maxlist1", outputBasename));
-        FileWriter maxListLen2Writer = new FileWriter(String.format("%s.maxlist2", outputBasename));
-        FileWriter minListLen1Writer = new FileWriter(String.format("%s.minlist1", outputBasename));
-        FileWriter minListLen2Writer = new FileWriter(String.format("%s.minlist2", outputBasename));
-        FileWriter sumListLenWriter = new FileWriter(String.format("%s.sumlist", outputBasename));
+        DocumentalClusteringStrategy strategy = null;
+        if (shardDefined) {
+            strategy = (DocumentalClusteringStrategy)
+                    BinIO.loadObject(basename.substring(0, basename.lastIndexOf("-")) + ".strategy");
+        }
+        String ext = "";
+        if (buckets > 0) {
+            ext = "-" + String.valueOf(buckets);
+        }
+
+        String resultPath = outputBasename + ".results" + ext;
+        String queryFeaturesPath = outputBasename + ".queryfeatures" + ext;
+
+        if (FileUtils.fileExists(resultPath)) {
+            FileUtils.fileDelete(resultPath);
+        }
+        if (FileUtils.fileExists(queryFeaturesPath)) {
+            FileUtils.fileDelete(queryFeaturesPath);
+        }
+
+        ThriftParquetWriter<Result> resultWriter = new ThriftParquetWriter<>(new org.apache.hadoop.fs.Path(resultPath),
+                Result.class, CompressionCodecName.SNAPPY);
+        ThriftParquetWriter<QueryFeatures> queryFeaturesWriter = new ThriftParquetWriter<>(new org.apache.hadoop.fs.Path(queryFeaturesPath),
+                        QueryFeatures.class, CompressionCodecName.SNAPPY);
+
+        int shardId = -1;
+        if (shardDefined) {
+            shardId = jsapResult.getInt("shardId");
+        }
 
 
-        long totalTime = 0;
-        long queryCount = 0;
+        double bucketStep = 0.0;
+        if (buckets > 0) {
+            bucketStep = 1.0 / buckets;
+        }
+        int queryCount = 0;
         try(BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
             for (String query; (query = br.readLine()) != null; ) {
+
+                QueryFeatures queryFeatures = new QueryFeatures(queryCount);
 
                 ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r =
                         new ObjectArrayList<>();
@@ -123,67 +161,85 @@ public class ExtractClusterFeatures {
                     }
                 }).collect(Collectors.toList());
                 if (listLengths.isEmpty()) {
-                    maxListLen1Writer.append("0\n");
-                    maxListLen2Writer.append("0\n");
-                    minListLen1Writer.append("0\n");
-                    minListLen2Writer.append("0\n");
+                    queryFeatures.setMaxlist1(0L);
+                    queryFeatures.setMaxlist2(0L);
+                    queryFeatures.setMinlist1(0L);
+                    queryFeatures.setMinlist2(0L);
                 }
                 else {
-                    maxListLen1Writer.append(String.valueOf(listLengths.get(0))).append('\n');
-                    minListLen1Writer.append(String.valueOf(listLengths.get(listLengths.size() - 1))).append('\n');
+                    queryFeatures.setMaxlist1(listLengths.get(0));
+                    queryFeatures.setMinlist1(listLengths.get(listLengths.size() - 1));
                     if (listLengths.size() > 1) {
-                        maxListLen2Writer.append(String.valueOf(listLengths.get(1))).append('\n');
-                        minListLen2Writer.append(String.valueOf(listLengths.get(listLengths.size() - 2))).append('\n');
+                        queryFeatures.setMaxlist2(listLengths.get(1));
+                        queryFeatures.setMinlist2(listLengths.get(listLengths.size() - 2));
                     }
                     else {
-                        maxListLen2Writer.append("0\n");
-                        minListLen2Writer.append("0\n");
+                        queryFeatures.setMaxlist2(0L);
+                        queryFeatures.setMinlist2(0L);
                     }
                 }
-                sumListLenWriter
-                        .append(String.valueOf(listLengths.stream().mapToLong(Long::longValue).sum()))
-                        .append('\n');
+                queryFeatures.setSumlist(listLengths.stream().mapToLong(Long::longValue).sum());
 
                 try {
+                    engine.setDocumentLowerBound(null);
+                    engine.setEarlyTerminationThreshold(null);
                     long start = System.currentTimeMillis();
                     engine.process(query, 0, k, r);
                     long elapsed = System.currentTimeMillis() - start;
-                    totalTime += elapsed;
-                    queryCount++;
-                    timeWriter.append(String.valueOf(elapsed)).append('\n');
+                    queryFeatures.setTime(elapsed);
                 } catch (Exception e) {
                     LOGGER.error(String.format("There was an error while processing query: %s", query), e);
                     throw e;
                 }
 
-                Iterator<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> it = r.iterator();
-                if (it.hasNext()) {
-                    DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi = it.next();
-                    resultWriter.append(String.valueOf(dsi.document));
-                    scoreWriter.append(String.valueOf(dsi.score));
-                    while (it.hasNext()) {
-                        dsi = it.next();
-                        resultWriter.append(' ').append(String.valueOf(dsi.document));
-                        scoreWriter.append(' ').append(String.valueOf(dsi.score));
+                if (buckets == 0) {
+                    int rank = 0;
+                    for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
+                        Result result = new Result(queryCount, rank++);
+                        result.setLdocid(dsi.document);
+                        result.setGdocid(dsi.document);
+                        result.setScore(dsi.score);
+                        if (shardDefined) {
+                            result.setShard(shardId);
+                        }
+                        resultWriter.write(result);
                     }
                 }
-                resultWriter.append('\n');
-                scoreWriter.append('\n');
+                else {
+                    for (int bucket = 0; bucket < buckets; bucket++) {
+                        try {
+                            engine.setDocumentLowerBound(bucket * bucketStep);
+                            engine.setEarlyTerminationThreshold((bucket + 1) * bucketStep);
+                            engine.process(query, 0, k, r);
+                        } catch (Exception e) {
+                            LOGGER.error(String.format("There was an error while processing query: %s", query), e);
+                            throw e;
+                        }
+                        int rank = 0;
+                        for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
+                            Result result = new Result(queryCount, rank++);
+                            result.setLdocid(dsi.document);
+                            result.setScore(dsi.score);
+                            if (shardDefined) {
+                                result.setShard(shardId);
+                                result.setGdocid(strategy.globalPointer(shardId, dsi.document));
+                            }
+                            result.setBucket(bucket);
+                            resultWriter.write(result);
+                        }
+                    }
+                }
 
+                if (shardDefined) {
+                    queryFeatures.setShard(shardId);
+                }
+                queryFeaturesWriter.write(queryFeatures);
+                queryCount++;
             }
         }
 
-        avgTimeWriter.append(String.valueOf(totalTime / queryCount));
-        avgTimeWriter.close();
-
+        queryFeaturesWriter.close();
         resultWriter.close();
-        scoreWriter.close();
-        timeWriter.close();
-        maxListLen1Writer.close();
-        maxListLen2Writer.close();
-        minListLen1Writer.close();
-        minListLen2Writer.close();
-        sumListLenWriter.close();
 
     }
 
