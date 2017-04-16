@@ -19,6 +19,9 @@ if [ "$#" == "0" ]; then echo "You have to define a list of bucketization factor
 inputBase=`basename ${input}`
 tailyInputBase=`basename ${tailyInput}`
 
+set -x
+set -e
+
 $MG4J_NYU_SCRIPTS/experiments/run-queries-for-index.sh ${fullIndex} ${input} ${outputDir}
 $MG4J_NYU_SCRIPTS/experiments/clustering/extract-taily.sh ${clusterDir} ${tailyInput} ${outputDir}
 mv "${outputDir}/${tailyInputBase}.taily" "${outputDir}/${inputBase}.taily"
