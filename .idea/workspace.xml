@@ -7,23 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0844f41b-037f-49f5-8817-1b80a7fcf4fc" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Simple_Logging_Facade_for_Java_1_7_22.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/org_apache_parquet_parquet_avro_1_9_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition2.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy2.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/artifacts/mg4j_nyu_jar2.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/org_apache_parquet_parquet_tools_1_9_0.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/mg4j_nyu_jar.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/mg4j_nyu_jar.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/it_unimi_di_mg4j_big_5_4_3.xml" afterPath="$PROJECT_DIR$/.idea/libraries/it_unimi_di_mg4j_big_5_4_3.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mg4j-nyu.iml" afterPath="$PROJECT_DIR$/mg4j-nyu.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/src/main/java/META-INF/MANIFEST.MF" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/DocHitsBySize.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/DocHitsBySize.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredict.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredict.scala" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <ignored path="$PROJECT_DIR$/scripts/" />
@@ -55,10 +39,10 @@
               <caret line="268" column="0" lean-forward="false" selection-start-line="268" selection-start-column="0" selection-end-line="268" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#10881#10882#0" expanded="true" />
-                <element signature="e#10939#10940#0" expanded="true" />
-                <element signature="e#11195#11196#0" expanded="true" />
-                <element signature="e#11254#11255#0" expanded="true" />
+                <element signature="e#10742#10743#0" expanded="true" />
+                <element signature="e#10800#10801#0" expanded="true" />
+                <element signature="e#11056#11057#0" expanded="true" />
+                <element signature="e#11115#11116#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -1456,7 +1440,7 @@
       <workItem from="1492394015171" duration="562000" />
       <workItem from="1492397268304" duration="8021000" />
       <workItem from="1492513560124" duration="699000" />
-      <workItem from="1492514289539" duration="6631000" />
+      <workItem from="1492514289539" duration="6686000" />
     </task>
     <task id="LOCAL-00001" summary="Build environment; scala ML">
       <created>1479909389931</created>
@@ -1521,11 +1505,18 @@
       <option name="project" value="LOCAL" />
       <updated>1491569312888</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="posting strategy 2 ; for efficiency/size">
+      <created>1492522269379</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1492522269379</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="745718000" />
+    <option name="totallyTimeSpent" value="745773000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1668,7 +1659,8 @@
     <MESSAGE value="Machine Learn - XGBoost pure java predictor&#10;Added support for Parquet file format - input lists" />
     <MESSAGE value="H2O integration" />
     <MESSAGE value="refactor prunestrategy; refactor prune partitioning; refactor mojopredict; deprecate xgboost integration" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor prunestrategy; refactor prune partitioning; refactor mojopredict; deprecate xgboost integration" />
+    <MESSAGE value="posting strategy 2 ; for efficiency/size" />
+    <option name="LAST_COMMIT_MESSAGE" value="posting strategy 2 ; for efficiency/size" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1718,7 +1710,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy.java</url>
-          <line>225</line>
+          <line>224</line>
           <properties />
           <option name="timeStamp" value="77" />
         </line-breakpoint>
@@ -1766,7 +1758,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy.java</url>
-          <line>222</line>
+          <line>221</line>
           <properties />
           <option name="timeStamp" value="95" />
         </line-breakpoint>
@@ -2131,10 +2123,10 @@
           <caret line="268" column="0" lean-forward="false" selection-start-line="268" selection-start-column="0" selection-end-line="268" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#10881#10882#0" expanded="true" />
-            <element signature="e#10939#10940#0" expanded="true" />
-            <element signature="e#11195#11196#0" expanded="true" />
-            <element signature="e#11254#11255#0" expanded="true" />
+            <element signature="e#10742#10743#0" expanded="true" />
+            <element signature="e#10800#10801#0" expanded="true" />
+            <element signature="e#11056#11057#0" expanded="true" />
+            <element signature="e#11115#11116#0" expanded="true" />
           </folding>
         </state>
       </provider>
