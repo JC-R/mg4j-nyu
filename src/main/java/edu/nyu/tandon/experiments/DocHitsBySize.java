@@ -20,7 +20,7 @@ import java.nio.charset.Charset;
 public class DocHitsBySize {
 
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(edu.nyu.tandon.tool.DocumentFeatures.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(edu.nyu.tandon.experiments.DocHitsBySize.class);
 
     private static final long serialVersionUID = 0L;
 

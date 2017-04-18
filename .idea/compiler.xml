@@ -20,7 +20,7 @@
         <module name="mg4j-nyu" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8">
       <module name="mg4j-nyu" target="1.8" />
     </bytecodeTargetLevel>
   </component>

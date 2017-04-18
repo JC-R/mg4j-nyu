@@ -5,21 +5,19 @@ import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalPartitioningStrategy;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.io.BinIO;
-import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.util.Properties;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.hadoop.fs.Path;
-import org.apache.parquet.avro.AvroParquetReader;
+
 import org.apache.parquet.hadoop.ParquetReader;
 import org.apache.parquet.tools.read.SimpleReadSupport;
 import org.apache.parquet.tools.read.SimpleRecord;
+import org.roaringbitmap.RoaringBitmap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,54 +28,55 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-class InputPosting {
-	public int termID;
-	public int docID;
+public class PostingStrategy2 implements DocumentalPartitioningStrategy, DocumentalClusteringStrategy, Serializable {
 
-	public InputPosting(int termID, int docID) {
-		this.termID = termID;
-		this.docID = docID;
-	}
-}
+	private static final Logger LOGGER = LoggerFactory.getLogger(PostingStrategy2.class);
 
-public class PostingStrategy implements DocumentalPartitioningStrategy, DocumentalClusteringStrategy, Serializable {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(edu.nyu.tandon.index.prune.PostingStrategy.class);
-
-	private static final long serialVersionUID = 0L;
+	private static final long serialVersionUID = 2L;
 	/**
 	 * The (cached) number of segments.
 	 */
 	private static final int k = 2;
 
-//    public final Long2ObjectOpenHashMap<LongOpenHashSet> postings_Global;
-//    public final Long2LongOpenHashMap documents_Global;
-//    public final Long2LongOpenHashMap terms_Global;
-//    public final Long2LongOpenHashMap documents_Local;
-
 	// sets implemented as ints -> limit # terms and #docs to ~ 2 billion
-	public Int2ObjectOpenHashMap<IntArrayList> postings_Global;
-	public Int2IntOpenHashMap documents_Global;
-	public Int2IntOpenHashMap documents_Local;
+	public Int2ObjectOpenHashMap<IntArrayList> postings_Global = null;
+	public IntArrayList documents_Global = null;
+	public IntArrayList documents_Local = null;
+	public RoaringBitmap terms = null;
+	public RoaringBitmap docs = null;
 
 	private static BufferedReader prunelist;
 	private static ParquetReader<SimpleRecord> reader;
 	private static boolean parquet = false;
 
 	/**
+	 * create bitmap of terms and docs in pruned list
+	 */
+	public void initMaps() {
+		this.terms = RoaringBitmap.bitmapOf(postings_Global.keySet().toIntArray());
+		this.documents_Local = new IntArrayList(documents_Global.size());
+		this.docs = new RoaringBitmap();
+		for (int j = 0; j < documents_Global.size(); j++) {
+			int d = documents_Global.getInt(j);
+			if (d > -1) {
+				this.docs.add(j);
+				documents_Local.add(d, j);
+			}
+		}
+	}
+
+	/**
 	 * Creates a pruned strategy with the given lists
 	 */
-	public PostingStrategy(String baseline, String strategy,
-	                       final Int2ObjectOpenHashMap<IntArrayList> postings,
-	                       Int2IntOpenHashMap docs,
-	                       Int2IntOpenHashMap localDocs) throws IOException {
+	public PostingStrategy2(String baseline, String strategy,
+	                        final Int2ObjectOpenHashMap<IntArrayList> postings,
+	                        final IntArrayList globalDocs
+	) throws IOException {
 
-		if (postings.size() == 0 || docs.size() == 0) throw new IllegalArgumentException("Empty prune list");
+		if (postings.size() == 0) throw new IllegalArgumentException("Empty prune list");
 
-		// the strategy lists;
+		this.documents_Global = globalDocs;
 		this.postings_Global = postings;
-		this.documents_Global = docs;
-		this.documents_Local = localDocs;
 
 		// create the document titles for local index (local doc IDs)
 		ArrayList<String> titles = new ArrayList<String>(documents_Global.size());
@@ -88,9 +87,12 @@ public class PostingStrategy implements DocumentalPartitioningStrategy, Document
 		Titles.close();
 
 		BufferedWriter newTitles = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(strategy + ".titles"), Charset.forName("UTF-8")));
-		for (int j = 0; j < documents_Local.size(); j++) {
-			newTitles.write(titles.get((int) documents_Local.get(j)));
-			if (j < documents_Local.size() - 1) newTitles.newLine();
+		for (int d = 0; d < globalDocs.size(); d++) {
+			if (globalDocs.getInt(d) > -1) {
+				newTitles.write(titles.get(d));
+				if (d < globalDocs.size() - 1)
+					newTitles.newLine();
+			}
 		}
 		newTitles.close();
 		titles.clear();
@@ -165,7 +167,8 @@ public class PostingStrategy implements DocumentalPartitioningStrategy, Document
 			URISyntaxException, ClassNotFoundException, InstantiationException, IllegalAccessException,
 			InvocationTargetException, NoSuchMethodException {
 
-		final SimpleJSAP jsap = new SimpleJSAP(PostingStrategy.class.getName(), "Builds a documental partitioning strategy based on a prune list.",
+
+		final SimpleJSAP jsap = new SimpleJSAP(PostingStrategy2.class.getName(), "Builds a documental partitioning strategy based on a prune list.",
 				new Parameter[]{
 						new FlaggedOption("threshold", JSAP.DOUBLE_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 't', "threshold", "Prune threshold for the index (may be specified several times).").setAllowMultipleDeclarations(true),
 						new FlaggedOption("pruningList", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'p', "pruningList", "A file with the sorted postings to use as prune criteria"),
@@ -198,53 +201,52 @@ public class PostingStrategy implements DocumentalPartitioningStrategy, Document
 		final Int2ObjectOpenHashMap<IntArrayList> postings = new Int2ObjectOpenHashMap<IntArrayList>();
 		postings.defaultReturnValue(null);
 
-		final Int2IntOpenHashMap documentsGlobal = new Int2IntOpenHashMap();
-		documentsGlobal.defaultReturnValue(-1);
-
-		final Int2IntOpenHashMap documentsLocal = new Int2IntOpenHashMap();
-		documentsLocal.defaultReturnValue(-1);
+		// assume most documents will make it; use simple array now
+		final IntArrayList docs = new IntArrayList((int) index.numberOfDocuments);
+		for (int d = 0; d < index.numberOfDocuments; d++) docs.add(d, -1);
 
 		// parquet or ascii input list? Assumed to be in decreasing order
 		String input = jsapResult.getString("pruningList");
 		if (jsapResult.userSpecified("parquet"))
-			wrapReader(new ParquetReader(new Path(input), new SimpleReadSupport()));
+			wrapReader(new ParquetReader<>(new Path(input), new SimpleReadSupport()));
 		else
 			wrapReader(new BufferedReader(new InputStreamReader(new FileInputStream(input), Charset.forName("UTF-8"))));
 
 		long totPostings = 0;
+		int totDocs = 0;
 		double n = 0;
 		int j = 0;
 
-		IntArrayList termList = null;
-		InputPosting p = new InputPosting(-1, -1);
-
+		final InputPosting p = new InputPosting(-1, -1);
 
 		while (nextPosting(p)) {
 
 			// never seen term?
-			if ((termList = postings.get(p.termID)) == null) {
-				postings.put(p.termID, termList = new IntArrayList());
-			}
-			termList.add(p.docID);                      // add to term list
+			if (!postings.containsKey(p.termID)) postings.put(p.termID, new IntArrayList());
+
+			postings.get(p.termID).add(p.docID);
 			totPostings++;
 
-			// never seen document
-			if (!documentsGlobal.containsKey(p.docID)) {
-				int localDoc = documentsGlobal.size();  // next local docID
-				documentsGlobal.put(p.docID, localDoc);
-				documentsLocal.put(localDoc, p.docID);
+			if (docs.getInt(p.docID) == -1) {
+				docs.set(p.docID, totDocs++);
 			}
 
 			// dispatch intermediate strategies if we reached their thresholds
 			for (int i = 0; i < t_list.length - 1; i++) {
 				if (strategies[i] && n >= threshold[i]) {
+
 					j++;
 					strategies[i] = false;
 					String level = String.format("%02d", (int) (t_list[i] * 100));
-					PostingStrategy ps = new PostingStrategy(jsapResult.getString("titles"), jsapResult.getString("strategy") + "-" + level, postings, documentsGlobal, documentsLocal);
+
+					PostingStrategy2 ps = new PostingStrategy2(jsapResult.getString("titles"),
+							jsapResult.getString("strategy") + "-" + level,
+							postings,
+							docs);
+
 					BinIO.storeObject(ps, jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[i] * 100)) + ".strategy");
 					ps = null;
-					LOGGER.info(String.valueOf(t_list[i]) + " strategy serialized : " + String.valueOf(documentsGlobal.size()) + " documents, " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings");
+					LOGGER.info(String.valueOf(t_list[i]) + " strategy serialized : " + String.valueOf(totDocs) + " documents, " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings");
 				}
 			}
 			if (n++ >= threshold[threshold.length - 1]) break;
@@ -259,8 +261,10 @@ public class PostingStrategy implements DocumentalPartitioningStrategy, Document
 
 		// ran out of input; dump last set
 		String level = String.format("%02d", (int) (t_list[j] * 100));
-		BinIO.storeObject(new PostingStrategy(jsapResult.getString("titles"), jsapResult.getString("strategy") + "-" + level, postings, documentsGlobal, documentsLocal), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[j] * 100)) + ".strategy");
-		LOGGER.info(String.valueOf(t_list[j]) + " strategy serialized : " + String.valueOf(documentsGlobal.size()) + " documents, " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings");
+		BinIO.storeObject(new PostingStrategy2(jsapResult.getString("titles"),
+						jsapResult.getString("strategy") + "-" + level, postings, docs),
+				jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[j] * 100)) + ".strategy");
+		LOGGER.info(String.valueOf(t_list[j]) + " strategy serialized : " + String.valueOf(totDocs) + " documents, " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings");
 
 	}
 
@@ -273,8 +277,9 @@ public class PostingStrategy implements DocumentalPartitioningStrategy, Document
 	/** return the index of the given document
 	 * @param globalPointer: global document ID
 	 */
-	public int localIndex(final long globalPointer) {
-		return (documents_Global.containsKey((int) globalPointer)) ? 0 : 1;
+	public int localIndex(final long docID) {
+		if (docs == null) initMaps();
+		return (docs.contains((int) docID)) ? 0 : 1;
 	}
 
 	/**
@@ -284,17 +289,9 @@ public class PostingStrategy implements DocumentalPartitioningStrategy, Document
 	 * @param doc:  global document ID
 	 */
 	public int localIndex(final long term, final long doc) {
-		IntArrayList s;
-		if ((s = postings_Global.get((int) term)) == null) return 1;
-		return (s.contains((int) doc)) ? 0 : 1;
-	}
-
-	public int localIndex(final IntArrayList l, final long doc) {
-		return (l.contains((int) doc)) ? 0 : 1;
-	}
-
-	public IntArrayList postingList(final long termID) {
-		return postings_Global.get((int) termID);
+		if (terms == null) initMaps();
+		if (!terms.contains((int) term)) return 1;
+		return (postings_Global.get((int) term).contains((int) doc)) ? 0 : 1;
 	}
 
 	/**
@@ -304,17 +301,17 @@ public class PostingStrategy implements DocumentalPartitioningStrategy, Document
 	 * @return localPointer
 	 */
 	public long localPointer(final long globalPointer) {
-
-		return documents_Global.get((int) globalPointer);
+		return documents_Global.getInt((int) globalPointer);
 	}
 
 	public long globalPointer(final int index, final long localPointer) {
 		if (index != 0) return -1;
-		return documents_Local.get((int) localPointer);
+		if (documents_Local == null) initMaps();
+		return documents_Local.getInt((int) localPointer);
 	}
 
 	public long numberOfDocuments(final int localIndex) {
-		return (localIndex == 0) ? documents_Global.size() : 0;
+		return (localIndex == 0) ? docs.getCardinality() : 0;
 	}
 
 //	public String toString() {

@@ -7,7 +7,7 @@ package edu.nyu.tandon.experiments.staticpruning.ml.h2o
   * Dataset w/features, parquet
   *
   * Sample command line:
-  * spark-submit <spark args> --packages ai.h2o:h20-genmodel:3.10.4.2 --class edu.nyu.tandon.StaticPruning.H2OMojoPredict mg4j-nyu.jar gbm_top1k_all.zip cw09b.features.parquet
+  * spark-submit <spark args> --packages ai.h2o:h20-genmodel:3.10.4.2 --class edu.nyu.tandon.staticpruning.ml.h2o.MojoPredict mg4j-nyu.jar gbm_top1k_all.zip cw09b.features.parquet
   *
   * Created by juan on 3/27/17.
   */

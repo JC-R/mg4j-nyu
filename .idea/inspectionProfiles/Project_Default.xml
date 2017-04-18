@@ -16,9 +16,13 @@
     <inspection_tool class="AppliedTypeLambdaCanBeSimplified" enabled="true" level="WARNING" enabled_by_default="false">
       <scope name="Project Files" level="WARNING" enabled="true" />
     </inspection_tool>
+    <inspection_tool class="AutoBoxing" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoreAddedToCollection" value="false" />
+    </inspection_tool>
     <inspection_tool class="AutoTupling" enabled="true" level="WARNING" enabled_by_default="false">
       <scope name="Project Files" level="WARNING" enabled="true" />
     </inspection_tool>
+    <inspection_tool class="AutoUnboxing" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="CaseClassParam" enabled="true" level="WARNING" enabled_by_default="false">
       <scope name="Project Files" level="WARNING" enabled="true" />
     </inspection_tool>
@@ -124,6 +128,7 @@
     <inspection_tool class="IfElseToOption" enabled="true" level="WARNING" enabled_by_default="false">
       <scope name="Project Files" level="WARNING" enabled="true" />
     </inspection_tool>
+    <inspection_tool class="InnerClassMayBeStatic" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="JavaAccessorMethodCalledAsEmptyParen" enabled="true" level="WARNING" enabled_by_default="false">
       <scope name="Project Files" level="WARNING" enabled="true" />
     </inspection_tool>
@@ -373,6 +378,10 @@
     <inspection_tool class="UnnecessaryPartialFunction" enabled="true" level="WARNING" enabled_by_default="false">
       <scope name="Project Files" level="WARNING" enabled="true" />
     </inspection_tool>
+    <inspection_tool class="UseOfAnotherObjectsPrivateField" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoreSameClass" value="false" />
+      <option name="ignoreEquals" value="false" />
+    </inspection_tool>
     <inspection_tool class="VarCouldBeVal" enabled="true" level="WEAK WARNING" enabled_by_default="false">
       <scope name="Project Files" level="WEAK WARNING" enabled="true" />
     </inspection_tool>
@@ -382,6 +391,7 @@
     <inspection_tool class="ZeroIndexToHead" enabled="true" level="WARNING" enabled_by_default="false">
       <scope name="Project Files" level="WARNING" enabled="true" />
     </inspection_tool>
+    <inspection_tool class="ZeroLengthArrayInitialization" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ZipWithIndex" enabled="true" level="WARNING" enabled_by_default="false">
       <scope name="Project Files" level="WARNING" enabled="true" />
     </inspection_tool>

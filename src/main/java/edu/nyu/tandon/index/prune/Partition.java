@@ -32,10 +32,11 @@ import it.unimi.di.big.mg4j.tool.Combine.IndexType;
 import it.unimi.di.big.mg4j.tool.Merge;
 import it.unimi.dsi.Util;
 import it.unimi.dsi.bits.Fast;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntBigList;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.io.BinIO;
-import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
-import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.io.FastBufferedReader;
 import it.unimi.dsi.io.InputBitStream;
 import it.unimi.dsi.io.OutputBitStream;
@@ -44,14 +45,19 @@ import it.unimi.dsi.logging.ProgressLogger;
 import it.unimi.dsi.util.*;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.ConfigurationMap;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.roaringbitmap.RoaringBitmap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.print.Doc;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -114,8 +120,8 @@ public class Partition {
      * The default buffer size for all involved indices.
      */
     public final static int DEFAULT_BUFFER_SIZE = 1024 * 1024;
-    private final static Logger LOGGER = LoggerFactory.getLogger(it.unimi.di.big.mg4j.tool.PartitionDocumentally.class);
-    /**
+	private final static Logger LOGGER = LoggerFactory.getLogger(Partition.class);
+	/**
      * The number of local indices.
      */
     private final int numIndices;
@@ -228,6 +234,14 @@ public class Partition {
      */
     private QuasiSuccinctIndexWriter[] quasiSuccinctIndexWriter;
 
+	class DocEntry {
+		//		int localID;
+		int docID;
+		int count;
+		int[] pos;
+		Payload payload;
+	}
+
 	public Partition(final String inputBasename,
 	                 final String outputBasename,
 	                 final DocumentalPartitioningStrategy strategy,
@@ -305,7 +319,7 @@ public class Partition {
         if (skips && (quantum <= 0 || height < 0))
             throw new IllegalArgumentException("You must specify a positive quantum and a nonnegative height (variable quanta are not available when partitioning documentally).");
 
-        // we only produce 1 index
+		// we only produce 1 index; we use partitioning to 'partition' into 2 indexes, but only manifest 1
 		switch (indexType) {
 			case INTERLEAVED:
 				if (!skips)
@@ -327,8 +341,8 @@ public class Partition {
 
     public static void main(final String arg[]) throws Exception {
 
-        SimpleJSAP jsap = new SimpleJSAP(it.unimi.di.big.mg4j.tool.PartitionDocumentally.class.getName(), "Partitions an index documentally.",
-                new Parameter[]{
+	    SimpleJSAP jsap = new SimpleJSAP(Partition.class.getName(), "Partitions an index documentally.",
+			    new Parameter[]{
                         new FlaggedOption("bufferSize", JSAP.INTSIZE_PARSER, Util.formatBinarySize(DEFAULT_BUFFER_SIZE), JSAP.NOT_REQUIRED, 'b', "buffer-size", "The size of an I/O buffer."),
                         new FlaggedOption("logInterval", JSAP.LONG_PARSER, Long.toString(ProgressLogger.DEFAULT_LOG_INTERVAL), JSAP.NOT_REQUIRED, 'l', "log-interval", "The minimum time interval between activity logs in milliseconds."),
                         new FlaggedOption("bloom", JSAP.INTEGER_PARSER, "0", JSAP.NOT_REQUIRED, 'B', "bloom", "Generates Bloom filters with given precision."),
@@ -418,8 +432,7 @@ public class Partition {
             int[] localDocSize = new int[(int) strategy.numberOfDocuments(0)];
 
             // ALERT: for the time being, we decide whether to "fill the gaps" in sizes using as sole indicator the equality between global and local number of documents.
-            int size, localIndex, localID;
-            int currdoc = 0;
+	        int size, localIndex;
 
             if (globalIndex.numberOfDocuments == strategy.numberOfDocuments(0)) {
                 for (int i = 0; i < globalIndex.numberOfDocuments; i++) {
@@ -445,145 +458,128 @@ public class Partition {
         }
     }
 
-    public void run() throws Exception {
+	public void run() throws Exception {
 
-        final ProgressLogger pl = new ProgressLogger(LOGGER, logInterval, TimeUnit.MILLISECONDS);
-        final IntBigList sizeList = globalIndex.sizes;
 
-        partitionSizes();
+		partitionSizes();
 
-        final Long2LongOpenHashMap documents = new Long2LongOpenHashMap();
+		final ProgressLogger pl = new ProgressLogger(LOGGER, logInterval, TimeUnit.MILLISECONDS);
+		pl.expectedUpdates = globalIndex.numberOfPostings;
+		pl.itemsName = "postings";
+		pl.logInterval = logInterval;
+		pl.start("Partitioning index...");
 
-        int localFrequency = 0;
-        long sumMaxPos = 0;
+		final IntBigList sizeList = globalIndex.sizes;
 
-        InputBitStream direct;
-        InputBitStream indirect;
-        @SuppressWarnings("unchecked")
-        BloomFilter<Void> bloomFilter;
+		@SuppressWarnings("unchecked")
+		BloomFilter<Void> bloomFilter = (bloomFilterPrecision != 0) ? BloomFilter.create(globalIndex.numberOfTerms, bloomFilterPrecision) : null;
 
-        final File tempFile;
-        final CachingOutputBitStream temp;
+		IndexIterator indexIterator;
 
-        final File orderFile;
-        final CachingOutputBitStream order;
-
-        IndexIterator indexIterator;
-
-        bloomFilter = (bloomFilterPrecision != 0) ? BloomFilter.create(globalIndex.numberOfTerms, bloomFilterPrecision) : null;
-
-        MutableString currentTerm = new MutableString();
-        Payload payload = null;
-        long frequency, globalPointer, localPointer;
-	    long termID;
-	    int localIndex, count = -1;
-
-        pl.expectedUpdates = globalIndex.numberOfPostings;
-        pl.itemsName = "postings";
-        pl.logInterval = logInterval;
-        pl.start("Partitioning index...");
+		MutableString currentTerm = new MutableString();
+		Payload payload = null;
+		long frequency;
+		int globalDocID;
+		int count = -1;
+		int localFrequency = 0;
+		long sumMaxPos = 0;
 
         final OutputBitStream globalFrequencies = new OutputBitStream(localBasename[0] + ".globaltermfreq");
 
-	    LongArrayList s;
+		IntArrayList postingList;
+
+		// build bitmaps for terms
+		RoaringBitmap rb_terms = new RoaringBitmap();
+		for (int t : ((PostingStrategy) strategy).postings_Global.keySet()) {
+			rb_terms.add(t);
+		}
+
+		// bitmap for docs
+		RoaringBitmap rb_docs = new RoaringBitmap();
 
 	    int numLocalDocs = (int) strategy.numberOfDocuments(0);
 
-        // for now, we rebuild the list in memory : TODO: fix so any size list is possible
-        class DocEntry {
-	        long docID;
-	        int count;
-            int[] pos;
-	        Payload payload;
-        }
-	    DocEntry[] docList = new DocEntry[numLocalDocs];
-	    for (int i = 0; i < numLocalDocs; i++) docList[i] = new DocEntry();
+		// for now, we rebuild each term list in memory
+		ObjectArrayList<DocEntry> docList = new ObjectArrayList<DocEntry>(numLocalDocs);
 
-	    Long2LongOpenHashMap docs = new Long2LongOpenHashMap(numLocalDocs);
+		// process each term
+		for (long termID = 0; termID < globalIndex.numberOfTerms; termID++) {
 
-	    // process by term order
-	    for (int t = 0; t < globalIndex.numberOfTerms; t++) {
+			postingList = null;
 
-            terms.readLine(currentTerm);
-	        indexIterator = indexReader.nextIterator();
+			// todo: wrap in a try/catch
+			terms.readLine(currentTerm);
+			indexIterator = indexReader.nextIterator();
 		    frequency = indexIterator.frequency();
-            termID = (int) indexIterator.termNumber();
 
+//            termID = (int) indexIterator.termNumber();
 //            assert termID == t;
 
-            s = null;
-	        if (!docPruning) {
-		        // if this term didnt make it to the index; skip it
-		        if ((s = ((PostingStrategy) strategy).postings_Global.get((int) termID)) == null) continue;
-	        }
+			// if this term didnt make it to the index; skip it
+			if (!docPruning) {
+//	        	if (!rb_terms.contains((int)termID)) continue;
+				if ((postingList = ((PostingStrategy) strategy).postingList(termID)) == null) continue;
+			}
 
-	        docs.clear();
 	        localFrequency = 0;
+			rb_docs.clear();
+			for (int d : ((PostingStrategy) strategy).postingList(termID)) {
+				rb_docs.add(d);
+			}
 
-	        // iterate through this term's documents; pick if they should be included
-		    for (long j = 0; j < frequency; j++) {
+			docList.clear();
 
-                globalPointer = indexIterator.nextDocument();
+			// iterate through this posting list; check they make the pruned index
+			for (long j = 0; j < frequency; j++) {
 
-	            // doc in index?
+			    globalDocID = (int) indexIterator.nextDocument();
+			    payload = (globalIndex.hasPayloads) ? indexIterator.payload() : null;
+			    count = (haveCounts) ? indexIterator.count() : 0;
 
-                // prune according to type
-                localIndex = (docPruning) ?
-                        strategy.localIndex(globalPointer) :
-		                (s.contains((int) globalPointer)) ? 0 : 1;
+			    // doc in pruned index?
+//			    if (docPruning ? (strategy.localIndex(globalDocID)==0) : rb_docs.contains(globalDocID)) {
+			    if (docPruning ? (strategy.localIndex(globalDocID) == 0) : postingList.contains(globalDocID)) {
 
-                // (term,doc) or (doc) is in the pruned index, write it out to the new pruned index
-                if (localIndex == 0) {
+				    // posting is in the pruned index,
+				    numPostings[0]++;
 
-                    numPostings[0]++;
-
-                    // if first time this term is seen, write term metadata
-                    if (localFrequency == 0) {
-//                        assert numTerms[0] == ((PostingStrategy) strategy).localTermId(termID);
-                        currentTerm.println(localTerms[localIndex]);        // save term to terms file
-                        globalFrequencies.writeLongGamma(frequency);        // save original term size
-                        if (bloomFilterPrecision != 0) bloomFilter.add(currentTerm);
+				    // first time this term is seen
+				    if (localFrequency == 0) {
+//                        assert numTerms[0] == ((PostingStrategy2) strategy).localTermId(termID);
+	                    currentTerm.println(localTerms[0]);                // save term to terms file
+	                    globalFrequencies.writeLongGamma(frequency);       // save original term size
+					    if (bloomFilterPrecision != 0) bloomFilter.add(currentTerm);
                         numTerms[0]++;
                     }
 
-	                if (globalIndex.hasPayloads) payload = indexIterator.payload();
-	                count = (haveCounts) ? indexIterator.count() : 0;
+				    // save posting to memory;
+				    DocEntry d = new DocEntry();
+//                    d.localID = localFrequency;
+				    d.docID = globalDocID;
+				    d.count = count;
+				    d.payload = payload;
 
-	                // save posting data to memory;
-	                // note that we use the global doc ID as we will have to access the size list.
-                    // local docID is substituted in later...
-                    //
-	                docs.put(strategy.localPointer(globalPointer), localFrequency);
-
-	                docList[localFrequency].docID = globalPointer;
-	                docList[localFrequency].count = count;
-	                docList[localFrequency].payload = (havePayloads) ? payload : null;
-	                if (haveCounts) {
-		                occurrencies[localIndex] += count;
-                        if (maxDocPos[localIndex] < count) maxDocPos[localIndex] = count;
-                        if (havePositions) {
-//                            d.pos = new int[count];
-                            docList[localFrequency].pos = new int[count];
-                            for (int p = 0; p < count; p++) {
-                                int pos = indexIterator.nextPosition();
-	                            docList[localFrequency].pos[p] = pos;
-	                            sumMaxPos += pos;
-                            }
-                        }
-                    }
-	                localFrequency++;
+				    if (haveCounts) {
+					    occurrencies[0] += count;
+					    if (maxDocPos[0] < count) maxDocPos[0] = count;
+					    if (havePositions) {
+						    d.pos = new int[count];
+						    for (int p = 0; p < count; p++) {
+							    int pos = indexIterator.nextPosition();
+							    d.pos[p] = pos;
+							    sumMaxPos += pos;
+						    }
+					    }
+				    }
+				    docList.add(localFrequency++, d);
 
                 } else {
-                    // advance & synchronize aux files
-                    if (globalIndex.hasPayloads) payload = indexIterator.payload();
-                    if (haveCounts) {
-                        count = indexIterator.count();
-                        if (havePositions) {
-                            for (int p = 0; p < count; p++) {
-                                int pos = indexIterator.nextPosition();
-                            }
-                        }
-                    }
+				    // advance & synchronize files
+//                    if (havePositions) {
+//                        for (int p = 0; p < count; p++) {
+//                            indexIterator.nextPosition();
+//                        }
+//                    }
                 }
             }
 
@@ -606,27 +602,28 @@ public class Partition {
                 indexWriter[0].writeFrequency((long)localFrequency);
 
 	            // we want the term list in local docID order
-	            long[] doc_list = docs.keySet().toLongArray();
-                Arrays.sort(doc_list);
-                for (long localID : doc_list) {
+	            for (DocEntry d : docList)
+		            d.docID = (int) strategy.localPointer(d.docID);
+	            docList.sort(new java.util.Comparator<DocEntry>() {
+		            @Override
+		            public int compare(DocEntry o1, DocEntry o2) {
+			            return Long.compare(o1.docID, o2.docID);
+		            }
+	            });
 
-	                DocEntry d = docList[(int) docs.get(localID)];
-
-                    // TODO: support positions
-
-                    obs = indexWriter[0].newDocumentRecord();
-                    indexWriter[0].writeDocumentPointer(obs, localID);
-                    if (havePayloads) {
+	            for (DocEntry d : docList) {
+		            obs = indexWriter[0].newDocumentRecord();
+		            indexWriter[0].writeDocumentPointer(obs, d.docID);
+		            if (havePayloads) {
                         indexWriter[0].writePayload(obs, d.payload);
                     }
                     if (haveCounts) indexWriter[0].writePositionCount(obs, d.count);
                     if (havePositions) {
                         indexWriter[0].writeDocumentPositions(obs, d.pos, 0, d.count, sizeList != null ? sizeList.getInt(d.docID) : -1);
+	                    d.pos = null;
                     }
-
-                    d = null;
-                }
-                doc_list = null;
+		            d = null;
+	            }
                 sumMaxPos = 0;
             } else {
                 sumMaxPos = 0;

@@ -29,7 +29,6 @@
     <orderEntry type="library" name="org.apache.spark:spark-mllib_2.11:2.1.0" level="project" />
     <orderEntry type="library" name="org.apache.spark:spark-sql_2.11:2.1.0" level="project" />
     <orderEntry type="library" name="org.scalanlp:breeze_2.11:0.10" level="application" />
-    <orderEntry type="library" name="scala-sdk-2.11.8" level="application" />
     <orderEntry type="library" name="org.codehaus.mojo:exec-maven-plugin:1.5.0" level="application" />
     <orderEntry type="module-library">
       <library name="Maven: jdk.tools:jdk.tools:1.6">
@@ -50,12 +49,14 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="com.github.scopt:scopt_2.11:3.5.0" level="application" />
-    <orderEntry type="library" name="xgboost4j-spark-0.7" level="application" />
-    <orderEntry type="library" name="xgboost4j-example-0.7" level="application" />
     <orderEntry type="library" name="org.apache.parquet:parquet-common:1.9.0" level="project" />
     <orderEntry type="library" name="org.apache.parquet:parquet-tools:1.9.0" level="application" />
     <orderEntry type="library" name="org.apache.spark:spark-core_2.11:2.1.0" level="application" />
     <orderEntry type="library" name="it.unimi.dsi:sux4j:4.1.0" level="project" />
     <orderEntry type="library" name="ai.h2o:h2o-genmodel:3.10.4.2" level="project" />
+    <orderEntry type="library" name="Simple Logging Facade for Java:1.7.22" level="project" />
+    <orderEntry type="library" name="org.roaringbitmap:RoaringBitmap:0.6.42" level="application" />
+    <orderEntry type="library" name="scala-sdk-2.11.8" level="application" />
+    <orderEntry type="library" name="org.apache.parquet:parquet-avro:1.9.0" level="project" />
   </component>
 </module>
