@@ -52,6 +52,7 @@ public class ExtractClusterFeatures {
                         new FlaggedOption("output", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "output", "The output files basename."),
                         new FlaggedOption("topK", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'k', "top-k", "The engine will limit the result set to top k results. k=10 by default."),
                         new FlaggedOption("shardId", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 's', "shard-id", "The shard ID."),
+                        new FlaggedOption("fakeShardId", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'f', "fake-shard-id", "Just used to fill shard column still operates on full index"),
                         new FlaggedOption("buckets", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'b', "buckets", "Partition results into this many buckets."),
                         new FlaggedOption("scorer", JSAP.STRING_PARSER, "bm25", JSAP.NOT_REQUIRED, 'S', "scorer", "Scorer type (bm25 or ql)"),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index.")
@@ -61,6 +62,7 @@ public class ExtractClusterFeatures {
         if (jsap.messagePrinted()) return;
 
         boolean shardDefined = jsapResult.userSpecified("shardId");
+        boolean fakeShardDefined = jsapResult.userSpecified("fakeShardId");
         int buckets = jsapResult.userSpecified("buckets") ? jsapResult.getInt("buckets") : 0;
 
         String basename = jsapResult.getString("basename");
@@ -198,6 +200,9 @@ public class ExtractClusterFeatures {
                         if (shardDefined) {
                             result.setShard(shardId);
                         }
+                        else if (fakeShardDefined) {
+                            result.setShard(jsapResult.getInt("fakeShardId"));
+                        }
                         resultWriter.write(result);
                     }
                 }
@@ -219,6 +224,12 @@ public class ExtractClusterFeatures {
                             if (shardDefined) {
                                 result.setShard(shardId);
                                 result.setGdocid(strategy.globalPointer(shardId, dsi.document));
+                            }
+                            else {
+                                result.setGdocid(dsi.document);
+                                if (fakeShardDefined) {
+                                    result.setShard(jsapResult.getInt("fakeShardId"));
+                                }
                             }
                             result.setBucket(bucket);
                             resultWriter.write(result);
