@@ -220,16 +220,14 @@ public class ExtractClusterFeatures {
                         for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
                             Result result = new Result(queryCount, rank++);
                             result.setLdocid(dsi.document);
+                            result.setGdocid(dsi.document);
                             result.setScore(dsi.score);
                             if (shardDefined) {
                                 result.setShard(shardId);
                                 result.setGdocid(strategy.globalPointer(shardId, dsi.document));
                             }
-                            else {
-                                result.setGdocid(dsi.document);
-                                if (fakeShardDefined) {
-                                    result.setShard(jsapResult.getInt("fakeShardId"));
-                                }
+                            else if (fakeShardDefined) {
+                                result.setShard(jsapResult.getInt("fakeShardId"));
                             }
                             result.setBucket(bucket);
                             resultWriter.write(result);
