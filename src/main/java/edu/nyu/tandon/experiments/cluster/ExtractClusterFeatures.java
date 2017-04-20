@@ -62,10 +62,6 @@ public class ExtractClusterFeatures {
 
         boolean shardDefined = jsapResult.userSpecified("shardId");
         int buckets = jsapResult.userSpecified("buckets") ? jsapResult.getInt("buckets") : 0;
-        if (buckets > 0 && !shardDefined) {
-            System.err.println("you must define shard if you define buckets");
-            return;
-        }
 
         String basename = jsapResult.getString("basename");
         String[] basenameWeight = new String[] { basename };
