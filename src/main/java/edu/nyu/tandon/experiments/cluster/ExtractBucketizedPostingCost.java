@@ -72,7 +72,7 @@ public class ExtractBucketizedPostingCost {
 
         int bucketCount = jsapResult.getInt("buckets");
         long bucketSize = (long) Math.ceil(Long.valueOf(index.numberOfDocuments).doubleValue() / bucketCount);
-        int shardId = jsapResult.getInt("shardId");
+        int shardId = jsapResult.userSpecified("shardId") ? jsapResult.getInt("shardId") : 0;
         String outputBasename = jsapResult.userSpecified("shardId") ?
                 String.format("%s#%d", jsapResult.getString("output"), jsapResult.getInt("shardId")) :
                 jsapResult.getString("output");
