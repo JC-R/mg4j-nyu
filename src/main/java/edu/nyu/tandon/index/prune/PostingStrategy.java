@@ -16,7 +16,7 @@ import it.unimi.dsi.util.Properties;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.hadoop.fs.Path;
-import org.apache.parquet.avro.AvroParquetReader;
+//import org.apache.parquet.avro.AvroParquetReader;
 import org.apache.parquet.hadoop.ParquetReader;
 import org.apache.parquet.tools.read.SimpleReadSupport;
 import org.apache.parquet.tools.read.SimpleRecord;

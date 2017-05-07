@@ -320,10 +320,10 @@ public class RawPostingsPrunedQuery extends Query {
 				}
 			}
 		} else {
-			if (displayMode == OutputType.TREC)
-				output.printf("%d,null,null,null,null\n", trecTopicNumber);
-			else
-				output.printf("%d,null,null,null,null\n", qNumber);
+//			if (displayMode == OutputType.TREC)
+//				output.printf("%d,null,null,null,null\n", trecTopicNumber);
+//			else
+//				output.printf("%d,null,null,null,null\n", qNumber);
 		}
 		return i;
 	}

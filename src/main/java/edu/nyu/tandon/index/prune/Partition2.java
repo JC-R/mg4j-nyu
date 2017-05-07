@@ -224,6 +224,23 @@ public class Partition2 {
 	private final boolean docPruning;
 	private double[] threshold;
 	private boolean[] strategies;
+	private int localDocSize = 0;
+
+//	private void initMaps() {
+//
+//		int d;
+//		PostingStrategy2 s = (PostingStrategy2)strategy;
+//		s.documents_Local = new IntArrayList(s.documents_Global.size());
+//		for (int j = 0; j < s.documents_Global.size(); j++)
+//			s.documents_Local.add(j,-1);
+//		for (int j = 0; j < s.documents_Global.size(); j++) {
+//			d = s.documents_Global.getInt(j);
+//			if (d>-1) {
+//				s.documents_Local.set(d, j);
+//				localDocSize++;
+//			}
+//		}
+//	}
 
 	/**
 	 * A copy of {@link #indexWriter} which is non-<code>null</code> if {@link #indexWriter} is an instance of {@link QuasiSuccinctIndexWriter}[].
@@ -263,6 +280,8 @@ public class Partition2 {
 		this.bloomFilterPrecision = BloomFilterPrecision;
 		this.docPruning = docPruning;
 
+//		initMaps();
+
 		numIndices = strategy.numberOfLocalIndices();
 		if (numIndices != 2) throw new ConfigurationException("Invalid number of indeces returnd from the strategy.");
 
@@ -289,6 +308,7 @@ public class Partition2 {
 		this.numberOfDocuments = new long[2];
 		numberOfDocuments[0] = strategy.numberOfDocuments(0);
 		numberOfDocuments[1] = globalIndex.numberOfDocuments - numberOfDocuments[0];
+
 
 		threshold = new double[t_list.length];
 		strategies = new boolean[t_list.length];
@@ -334,6 +354,28 @@ public class Partition2 {
 
 	}
 
+	// initialize strategy extra data
+//	public void initMaps(PostingStrategy2 strategy) {
+//
+//		int d;
+//
+//		strategy.terms = RoaringBitmap.bitmapOf(strategy.postings_Global.keySet().toIntArray());
+//		strategy.docs = new RoaringBitmap();
+//
+//		strategy.documents_Local = new IntArrayList(strategy.documents_Global.size());
+//		strategy.documents_Local.size(strategy.documents_Global.size());
+//		for (int j = 0; j < strategy.documents_Local.size(); j++)
+//			strategy.documents_Local.set(j,-1);
+//		for (int j = 0; j < strategy.documents_Global.size(); j++) {
+//
+//			d = strategy.documents_Global.getInt(j);
+//			if (d > -1) {
+//				strategy.documents_Local.set(d, j);
+//				strategy.docs.add(j);
+//			}
+//		}
+//	}
+
 	public static void main(final String arg[]) throws Exception {
 
 		SimpleJSAP jsap = new SimpleJSAP(Partition2.class.getName(), "Partitions an index documentally.",
@@ -366,7 +408,6 @@ public class Partition2 {
 		String strategyFilename = jsapResult.getString("strategy");
 
 		DocumentalPartitioningStrategy strategy = null;
-
 		if (jsapResult.userSpecified("uniformStrategy")) {
 			strategy = DocumentalStrategies.uniform(jsapResult.getInt("uniformStrategy"), Index.getInstance(inputBasename).numberOfDocuments);
 			BinIO.storeObject(strategy, strategyFilename = outputBasename + IndexCluster.STRATEGY_DEFAULT_EXTENSION);
@@ -377,8 +418,11 @@ public class Partition2 {
 
 		final boolean docPruning = jsapResult.getBoolean("documentPruning");    // document based pruning
 
-		if (!docPruning && !(strategy.getClass() == PostingStrategy2.class))
-			throw new IllegalArgumentException("Wrong version strategy. Expect strategy version 2");
+		if (!docPruning) {
+			if (!(strategy.getClass() == PostingStrategy2.class))
+				throw new IllegalArgumentException("Wrong version strategy. Expect strategy version 2");
+			((PostingStrategy2) strategy).initMaps();
+		}
 
 		final boolean skips = !jsapResult.getBoolean("noSkips");
 		final boolean interleaved = jsapResult.getBoolean("interleaved");
@@ -435,15 +479,15 @@ public class Partition2 {
 
 			if (globalIndex.numberOfDocuments == strategy.numberOfDocuments(0)) {
 				for (int i = 0; i < globalIndex.numberOfDocuments; i++) {
-					localIndex = strategy.localIndex(i);
 					size = sizes.readGamma();
+					localIndex = strategy.localIndex(i);
 					localDocSize[(int) strategy.localPointer(i)] = (localIndex == 0) ? size : 0;
 					if (maxDocSize[localIndex] < size) maxDocSize[localIndex] = size;
 				}
 			} else {
 				for (int i = 0; i < globalIndex.numberOfDocuments; i++) {
-					localIndex = strategy.localIndex(i);
 					size = sizes.readGamma();
+					localIndex = strategy.localIndex(i);
 					if (localIndex == 0) localDocSize[(int) strategy.localPointer(i)] = size;
 					if (maxDocSize[localIndex] < size) maxDocSize[localIndex] = size;
 				}
@@ -459,6 +503,7 @@ public class Partition2 {
 
 	public void run() throws Exception {
 
+		RoaringBitmap docsMap = null;
 
 		partitionSizes();
 
@@ -487,6 +532,10 @@ public class Partition2 {
 
 		int numLocalDocs = (int) strategy.numberOfDocuments(0);
 
+		RoaringBitmap termsMap = (!docPruning) ?
+				RoaringBitmap.bitmapOf(((PostingStrategy2) strategy).postings_Global.keySet().toIntArray()) :
+				null;
+
 		// for now, we rebuild each term list in memory
 		ObjectArrayList<DocEntry> docList = new ObjectArrayList<DocEntry>(numLocalDocs);
 
@@ -501,10 +550,15 @@ public class Partition2 {
 //            assert termID == t;
 
 			// if this term didnt make it to the index; skip it
-			if (!docPruning && !((PostingStrategy2) strategy).terms.contains((int) termID)) continue;
+//			if (!docPruning && !((PostingStrategy2) strategy).postings_Global.containsKey((int) termID)) continue;
+			if (!docPruning && !termsMap.contains((int) termID)) continue;
 
 			frequency = indexIterator.frequency();
 			localFrequency = 0;
+
+			if (!docPruning) {
+				docsMap = RoaringBitmap.bitmapOf(((PostingStrategy2) strategy).postings_Global.get((int) termID).toIntArray());
+			}
 			docList.clear();
 
 			// iterate through this posting list; check they make the pruned index
@@ -513,7 +567,7 @@ public class Partition2 {
 				globalDocID = (int) indexIterator.nextDocument();
 
 				// doc in pruned index?
-				if (docPruning ? strategy.localIndex(globalDocID) == 0 : ((PostingStrategy2) strategy).localIndex(termID, globalDocID) == 0) {
+				if (docPruning ? strategy.localIndex(globalDocID) == 0 : docsMap.contains((int) globalDocID)) {
 
 					payload = (globalIndex.hasPayloads) ? indexIterator.payload() : null;
 					count = (haveCounts) ? indexIterator.count() : 0;
@@ -552,6 +606,7 @@ public class Partition2 {
 					docList.add(localFrequency++, d);
 				}
 			}
+			docsMap = null;
 
 			// We now run through the pruned index and copy from the temporary buffer.
 			OutputBitStream obs;
@@ -576,7 +631,7 @@ public class Partition2 {
 				docList.sort(new Comparator<DocEntry>() {
 					@Override
 					public int compare(DocEntry o1, DocEntry o2) {
-						return Long.compare(o1.docID, o2.docID);
+						return Integer.compare(o1.docID, o2.docID);
 					}
 				});
 

@@ -7,7 +7,208 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0844f41b-037f-49f5-8817-1b80a7fcf4fc" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredictVerify.scala" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/org_apache_parquet_parquet_avro_1_9_0.xml" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/commons-codec-1.5.jar" afterPath="$PROJECT_DIR$/lib/commons-codec-1.5.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/commons-pool-1.5.4.jar" afterPath="$PROJECT_DIR$/lib/commons-pool-1.5.4.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/deepwater-backend-api-1.0.2.jar" afterPath="$PROJECT_DIR$/lib/deepwater-backend-api-1.0.2.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/guava-19.0.jar" afterPath="$PROJECT_DIR$/lib/guava-19.0.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/jackson-core-asl-1.9.11.jar" afterPath="$PROJECT_DIR$/lib/jackson-core-asl-1.9.11.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/jackson-mapper-asl-1.9.11.jar" afterPath="$PROJECT_DIR$/lib/jackson-mapper-asl-1.9.11.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/opencsv-2.3.jar" afterPath="$PROJECT_DIR$/lib/opencsv-2.3.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/parquet-column-1.9.0.jar" afterPath="$PROJECT_DIR$/lib/parquet-column-1.9.0.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/parquet-common-1.9.0.jar" afterPath="$PROJECT_DIR$/lib/parquet-common-1.9.0.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/parquet-encoding-1.9.0.jar" afterPath="$PROJECT_DIR$/lib/parquet-encoding-1.9.0.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/parquet-format-2.3.1.jar" afterPath="$PROJECT_DIR$/lib/parquet-format-2.3.1.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/parquet-hadoop-1.9.0.jar" afterPath="$PROJECT_DIR$/lib/parquet-hadoop-1.9.0.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/parquet-jackson-1.9.0.jar" afterPath="$PROJECT_DIR$/lib/parquet-jackson-1.9.0.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/parquet-tools-1.9.0.jar" afterPath="$PROJECT_DIR$/lib/parquet-tools-1.9.0.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/slf4j-api-1.7.5.jar" afterPath="$PROJECT_DIR$/lib/slf4j-api-1.7.5.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/snappy-java-1.1.1.6.jar" afterPath="$PROJECT_DIR$/lib/snappy-java-1.1.1.6.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/sux4j-4.0.0.jar" afterPath="$PROJECT_DIR$/lib/sux4j-4.0.0.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/ml/xgboost" afterPath="$PROJECT_DIR$/scripts/ml/xgboost" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/mg4j_nyu_jar.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/mg4j_nyu_jar.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/externalDependencies.xml" afterPath="$PROJECT_DIR$/.idea/externalDependencies.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/kotlinc.xml" afterPath="$PROJECT_DIR$/.idea/kotlinc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Simple_Logging_Facade_for_Java_1_7_22.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Simple_Logging_Facade_for_Java_1_7_22.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/ai_h2o_h2o_genmodel_3_10_4_2.xml" afterPath="$PROJECT_DIR$/.idea/libraries/ai_h2o_h2o_genmodel_3_10_4_2.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/com_github_scopt_scopt_2_12_3_5_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/com_github_scopt_scopt_2_12_3_5_0.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/com_martiansoftware_jsap_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/com_martiansoftware_jsap_2_1.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/commons_configuration_commons_configuration_1_10.xml" afterPath="$PROJECT_DIR$/.idea/libraries/commons_configuration_commons_configuration_1_10.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/it_unimi_di_mg4j_big_5_4_3.xml" afterPath="$PROJECT_DIR$/.idea/libraries/it_unimi_di_mg4j_big_5_4_3.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/it_unimi_dsi_dsiutils_2_3_3.xml" afterPath="$PROJECT_DIR$/.idea/libraries/it_unimi_dsi_dsiutils_2_3_3.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/it_unimi_dsi_fastutil_7_0_13.xml" afterPath="$PROJECT_DIR$/.idea/libraries/it_unimi_dsi_fastutil_7_0_13.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/it_unimi_dsi_sux4j_4_1_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/it_unimi_dsi_sux4j_4_1_0.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/junit_junit_4_12.xml" afterPath="$PROJECT_DIR$/.idea/libraries/junit_junit_4_12.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/org_apache_httpcomponents_httpcore_4_4_4.xml" afterPath="$PROJECT_DIR$/.idea/libraries/org_apache_httpcomponents_httpcore_4_4_4.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/org_apache_parquet_parquet_common_1_9_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/org_apache_parquet_parquet_common_1_9_0.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/org_apache_spark_spark_mllib_2_11_2_1_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/org_apache_spark_spark_mllib_2_11_2_1_0.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/org_apache_spark_spark_sql_2_11_2_1_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/org_apache_spark_spark_sql_2_11_2_1_0.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/scala_sdk_2_11_8.xml" afterPath="$PROJECT_DIR$/.idea/libraries/scala_sdk_2_11_8.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/sbt.xml" afterPath="$PROJECT_DIR$/.idea/sbt.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/scala_compiler.xml" afterPath="$PROJECT_DIR$/.idea/scala_compiler.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/feature-emngineering.txt" afterPath="$PROJECT_DIR$/docs/feature-emngineering.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/install.sh" afterPath="$PROJECT_DIR$/install.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/logback.xml" afterPath="$PROJECT_DIR$/logback.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mg4j-nyu.iml" afterPath="$PROJECT_DIR$/mg4j-nyu.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/profiles.xml" afterPath="$PROJECT_DIR$/profiles.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/clustering/cluster-mapping.sh" afterPath="$PROJECT_DIR$/scripts/clustering/cluster-mapping.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/clustering/cluster-mappings.sh" afterPath="$PROJECT_DIR$/scripts/clustering/cluster-mappings.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/clustering/copy-titles.sh" afterPath="$PROJECT_DIR$/scripts/clustering/copy-titles.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/clustering/create-clusters-from-titles.sh" afterPath="$PROJECT_DIR$/scripts/clustering/create-clusters-from-titles.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/clustering/create-clusters.sh" afterPath="$PROJECT_DIR$/scripts/clustering/create-clusters.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/commons.sh" afterPath="$PROJECT_DIR$/scripts/commons.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/csi/create-csi.sh" afterPath="$PROJECT_DIR$/scripts/csi/create-csi.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/experiments/clustering/run-queries-for-clusters.sh" afterPath="$PROJECT_DIR$/scripts/experiments/clustering/run-queries-for-clusters.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/experiments/clustering/translate-to-global-ids.sh" afterPath="$PROJECT_DIR$/scripts/experiments/clustering/translate-to-global-ids.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/experiments/hits/consolidateRawPostHits.rb" afterPath="$PROJECT_DIR$/scripts/experiments/hits/consolidateRawPostHits.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/experiments/run-all-for-index.sh" afterPath="$PROJECT_DIR$/scripts/experiments/run-all-for-index.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/index/recalculate-termmap.sh" afterPath="$PROJECT_DIR$/scripts/index/recalculate-termmap.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/ml/generateMLfiles.scala" afterPath="$PROJECT_DIR$/scripts/ml/generateMLfiles.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/ml/makeCW09bFeatures.scala" afterPath="$PROJECT_DIR$/scripts/ml/makeCW09bFeatures.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/ml/pruning-build-model.sh" afterPath="$PROJECT_DIR$/scripts/ml/pruning-build-model.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/renumber/renumber-from-titles.sh" afterPath="$PROJECT_DIR$/scripts/renumber/renumber-from-titles.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/renumber/renumber.sh" afterPath="$PROJECT_DIR$/scripts/renumber/renumber.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/ruby/CollectTopK.rb" afterPath="$PROJECT_DIR$/scripts/ruby/CollectTopK.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/ruby/aggregateDochits.rb" afterPath="$PROJECT_DIR$/scripts/ruby/aggregateDochits.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/ruby/aggregateTopK.rb" afterPath="$PROJECT_DIR$/scripts/ruby/aggregateTopK.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/ruby/extractOverlap.rb" afterPath="$PROJECT_DIR$/scripts/ruby/extractOverlap.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/ruby/extractPostingsOverlap.rb" afterPath="$PROJECT_DIR$/scripts/ruby/extractPostingsOverlap.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/scala/features.scala" afterPath="$PROJECT_DIR$/scripts/scala/features.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/scala/genDH-features.scala" afterPath="$PROJECT_DIR$/scripts/scala/genDH-features.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/scala/gen_full_gov2_features.scala" afterPath="$PROJECT_DIR$/scripts/scala/gen_full_gov2_features.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/scala/generateFeatures.scala" afterPath="$PROJECT_DIR$/scripts/scala/generateFeatures.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/scala/job-learn.scala" afterPath="$PROJECT_DIR$/scripts/scala/job-learn.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/scala/processFeatures.scala" afterPath="$PROJECT_DIR$/scripts/scala/processFeatures.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/DocumentPrunedIndex.sh" afterPath="$PROJECT_DIR$/scripts/shell/DocumentPrunedIndex.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/DocumentPruningStrategy.sh" afterPath="$PROJECT_DIR$/scripts/shell/DocumentPruningStrategy.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/PostHits.sh" afterPath="$PROJECT_DIR$/scripts/shell/PostHits.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/PrunedIndex-trec-eval.sh" afterPath="$PROJECT_DIR$/scripts/shell/PrunedIndex-trec-eval.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/cluster-ordering.sh" afterPath="$PROJECT_DIR$/scripts/shell/cluster-ordering.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/cluster-orderings.sh" afterPath="$PROJECT_DIR$/scripts/shell/cluster-orderings.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/computePostingsOverlap.sh" afterPath="$PROJECT_DIR$/scripts/shell/computePostingsOverlap.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/create-pruned-cluster.sh" afterPath="$PROJECT_DIR$/scripts/shell/create-pruned-cluster.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/cw09-corpus.sh" afterPath="$PROJECT_DIR$/scripts/shell/cw09-corpus.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/cw09-docHits.sh" afterPath="$PROJECT_DIR$/scripts/shell/cw09-docHits.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/cw09-index-NYU.sh" afterPath="$PROJECT_DIR$/scripts/shell/cw09-index-NYU.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/cw09-index-pos.sh" afterPath="$PROJECT_DIR$/scripts/shell/cw09-index-pos.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/cw09-index.sh" afterPath="$PROJECT_DIR$/scripts/shell/cw09-index.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/extract-overlap.sh" afterPath="$PROJECT_DIR$/scripts/shell/extract-overlap.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/gov2-clusters.sh" afterPath="$PROJECT_DIR$/scripts/shell/gov2-clusters.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/gov2-docHits.sh" afterPath="$PROJECT_DIR$/scripts/shell/gov2-docHits.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/gov2-index-NYU.sh" afterPath="$PROJECT_DIR$/scripts/shell/gov2-index-NYU.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/gov2-index-pos.sh" afterPath="$PROJECT_DIR$/scripts/shell/gov2-index-pos.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/gov2-index.sh" afterPath="$PROJECT_DIR$/scripts/shell/gov2-index.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/postings-topKprunedIndexTopKOverlap.sh" afterPath="$PROJECT_DIR$/scripts/shell/postings-topKprunedIndexTopKOverlap.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/prunedIndexFeatures.sh" afterPath="$PROJECT_DIR$/scripts/shell/prunedIndexFeatures.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/prunedIndexOverlap.sh" afterPath="$PROJECT_DIR$/scripts/shell/prunedIndexOverlap.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/query.sh" afterPath="$PROJECT_DIR$/scripts/shell/query.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/renumber-clusters.sh" afterPath="$PROJECT_DIR$/scripts/shell/renumber-clusters.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/renumber.sh" afterPath="$PROJECT_DIR$/scripts/shell/renumber.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/shell/trec-eval.sh" afterPath="$PROJECT_DIR$/scripts/shell/trec-eval.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/zeppelin/Static Pruning-Collecting Hits.json" afterPath="$PROJECT_DIR$/scripts/zeppelin/Static Pruning-Collecting Hits.json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/src/main/java/META-INF/MANIFEST.MF" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/BinnedRawHits.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/BinnedRawHits.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/DocHitsBySize.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/DocHitsBySize.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/RawDocHits_deprecated.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/RawDocHits_deprecated.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/RawHits.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/RawHits.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/cluster/ExctractShardScores.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/cluster/ExctractShardScores.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/cluster/ExtractClusterFeatures.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/cluster/ExtractClusterFeatures.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/cluster/SelectiveQuery.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/cluster/SelectiveQuery.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/cluster/logger/EventLogger.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/cluster/logger/EventLogger.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/cluster/logger/FileClusterEventLogger.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/cluster/logger/FileClusterEventLogger.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/cluster/logger/ResultClusterEventLogger.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/cluster/logger/ResultClusterEventLogger.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/cluster/logger/TimeClusterEventLogger.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/ml/cluster/logger/TimeClusterEventLogger.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/PrunedIndexOverlap.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/PrunedIndexOverlap.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/PrunedQuery.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/PrunedQuery.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/RawPostingsPrunedQuery.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/RawPostingsPrunedQuery.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/SelectiveDocumentalIndexStrategy.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/cluster/SelectiveDocumentalIndexStrategy.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/DocumentPruningStrategy.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/DocumentPruningStrategy.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition2.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition2.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy2.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy2.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/FeaturesQueryEngine.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/FeaturesQueryEngine.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/HitsQueryEngine.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/HitsQueryEngine.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedHitsQueryEngine.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedHitsQueryEngine.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedQueryEngine.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedQueryEngine.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/Query.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/Query.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/QueryEngine.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/QueryEngine.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/TerminatingQueryEngine.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/TerminatingQueryEngine.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/BM25PrunedScorer.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/BM25PrunedScorer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/shard/csi/CentralSampleIndex.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/shard/csi/CentralSampleIndex.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/shard/csi/Result.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/shard/csi/Result.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/shard/ranking/ShardSelector.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/shard/ranking/ShardSelector.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/shard/ranking/redde/ReDDEShardSelector.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/shard/ranking/redde/ReDDEShardSelector.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/shard/ranking/shire/RankS.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/shard/ranking/shire/RankS.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/shard/ranking/shire/ShireShardSelector.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/shard/ranking/shire/ShireShardSelector.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/shard/ranking/shire/node/Document.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/shard/ranking/shire/node/Document.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/shard/ranking/shire/node/Intermediate.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/shard/ranking/shire/node/Intermediate.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/shard/ranking/shire/node/Node.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/shard/ranking/shire/node/Node.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/DocumentFeatures.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/DocumentFeatures.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/DocumentFeaturesAll.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/DocumentFeaturesAll.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/ExtractCorpus.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/ExtractCorpus.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/ExtractTermFrequencies.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/ExtractTermFrequencies.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/IndexFeatures.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/IndexFeatures.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/ListSpeed.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/ListSpeed.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/PrunedIndexFeatures.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/PrunedIndexFeatures.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/RandomAccess.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/RandomAccess.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/cluster/ClusterGlobalStatistics.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/cluster/ClusterGlobalStatistics.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/renumber/Renumber.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/renumber/Renumber.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/xdoc/XDOCConcatenate.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/xdoc/XDOCConcatenate.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/xdoc/XDOCScan.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/xdoc/XDOCScan.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/xdoc/printXDOC.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/tool/xdoc/printXDOC.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/utils/FileAsciiLongIterator.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/utils/FileAsciiLongIterator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/utils/FileStringIterator.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/utils/FileStringIterator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/utils/Utils.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/utils/Utils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/utils/languageModel.java" afterPath="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/utils/languageModel.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/it/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/src/main/java/it/META-INF/MANIFEST.MF" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/document/WarcDocumentSequence_NYU.java" afterPath="$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/document/WarcDocumentSequence_NYU.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/index/cluster/SelectiveQueryEngine.java" afterPath="$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/index/cluster/SelectiveQueryEngine.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/search/score/BM25ScorerNYU.java" afterPath="$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/search/score/BM25ScorerNYU.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/tool/Scan.java" afterPath="$PROJECT_DIR$/src/main/java/it/unimi/di/big/mg4j/tool/Scan.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/it/unimi/di/law/warc/io/AbstractWarcReader_NYU.java" afterPath="$PROJECT_DIR$/src/main/java/it/unimi/di/law/warc/io/AbstractWarcReader_NYU.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/it/unimi/di/law/warc/io/UncompressedWarcReader_NYU.java" afterPath="$PROJECT_DIR$/src/main/java/it/unimi/di/law/warc/io/UncompressedWarcReader_NYU.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/main.iml" afterPath="$PROJECT_DIR$/src/main/main.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/GBT.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/GBT.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/PrecisionEvaluator.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/PrecisionEvaluator.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/TranslateToGlobalIds.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/TranslateToGlobalIds.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeaturesFromRaw2.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeaturesFromRaw2.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeaturesFromRaw3.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeaturesFromRaw3.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/Vectorize.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/Vectorize.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPreProcess.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPreProcess.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredict.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredict.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/ExtractXGBoostBaseModel.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/ExtractXGBoostBaseModel.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/GenTrain.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/GenTrain.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/ModelTune.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/ModelTune.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/Predict.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/Predict.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/PredictAll.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/PredictAll.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainCV2.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainCV2.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainCV3.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainCV3.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainFromDF.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainFromDF.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainwLabel.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainwLabel.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/ml/features/FeatureJoin.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/ml/features/FeatureJoin.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/ml/features/SegmentCounter.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/ml/features/SegmentCounter.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/ml/features/package.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/ml/features/package.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/ml/package.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/ml/package.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/ml/regression/RFRegression.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/ml/regression/RFRegression.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/package.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/package.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/spark/Repartition.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/spark/Repartition.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/spark/package.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/spark/package.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/utils/BulkIterator.scala" afterPath="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/utils/BulkIterator.scala" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <ignored path="$PROJECT_DIR$/scripts/" />
@@ -31,29 +232,15 @@
     <favorites_list name="mg4j-nyu" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="PostingStrategy2.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy2.java">
+    <leaf>
+      <file leaf-file-name="MojoPredict.scala" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredict.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="597">
-              <caret line="268" column="0" lean-forward="false" selection-start-line="268" selection-start-column="0" selection-end-line="268" selection-end-column="0" />
+            <state relative-caret-position="581">
+              <caret line="82" column="1" lean-forward="false" selection-start-line="82" selection-start-column="1" selection-end-line="82" selection-end-column="1" />
               <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#10742#10743#0" expanded="true" />
-                <element signature="e#10800#10801#0" expanded="true" />
-                <element signature="e#11056#11057#0" expanded="true" />
-                <element signature="e#11115#11116#0" expanded="true" />
+                <element signature="e#402#438#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Partition2.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition2.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="140">
-              <caret line="515" column="0" lean-forward="false" selection-start-line="515" selection-start-column="0" selection-end-line="515" selection-end-column="0" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -70,7 +257,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>docTerms</find>
       <find>nfolds</find>
       <find>df</find>
       <find>rowItr1</find>
@@ -99,7 +285,8 @@
       <find>IntAyy</find>
       <find>PostingStra</find>
       <find>docList</find>
-      <find>postingList</find>
+      <find>numberOfDocuments</find>
+      <find>InputBitStream</find>
     </findStrings>
     <replaceStrings>
       <replace>,_</replace>
@@ -136,11 +323,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/DocumentPruningStrategy.java" />
-        <option value="$PROJECT_DIR$/scripts/staticprune/IndexPrune.sh" />
-        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingPruningStrategyNew.java" />
-        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/PrunedQuery.java" />
-        <option value="$PROJECT_DIR$/scripts/shell/PrunedIndex-trec-eval.sh" />
         <option value="$PROJECT_DIR$/scripts/staticprune/eval-queries/prunedIndexQuery-rawPostings-baseline.sh" />
         <option value="$PROJECT_DIR$/scripts/staticprune/prunedIndexQuery-rawPostings.sh" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/Query.java" />
@@ -172,21 +354,26 @@
         <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/utils/Repartition.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/spark/Repartition.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/Predict.scala" />
-        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/RawPostingsPrunedQuery.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/PrunedQuery.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/DocHitsBySize.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy2/PostingStrategy.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy2/PostingStrategy2.java" />
-        <option value="$PROJECT_DIR$/scripts/staticprune/eval-queries/prunedIndexQuery-rawPostings.sh" />
-        <option value="$PROJECT_DIR$/scripts/staticprune/eval-queries/eval-cw09b.sh" />
         <option value="$PROJECT_DIR$/scripts/staticprune/CreateStrategies.sh" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/PostingStrategy.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/PostingStrategy2.java" />
-        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredict.scala" />
-        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy.java" />
+        <option value="$PROJECT_DIR$/scripts/staticprune/eval-queries/prunedIndexQuery-rawPostings.sh" />
+        <option value="$PROJECT_DIR$/scripts/staticprune/eval-queries/eval-cw09b.sh" />
+        <option value="$PROJECT_DIR$/scripts/staticprune/eval-queries/makeEvalfiles-cw09b.sh" />
+        <option value="$PROJECT_DIR$/scripts/staticprune/eval-queries/PrunedIndex-trec-eval.sh" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition2.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy2.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/RawPostingsPrunedQuery.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy.java" />
+        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredict.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredictCSV.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredictVarify.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredictVerify.scala" />
       </list>
     </option>
   </component>
@@ -207,6 +394,8 @@
     </option>
     <option name="importingSettings">
       <MavenImportingSettings>
+        <option name="downloadDocsAutomatically" value="true" />
+        <option name="downloadSourcesAutomatically" value="true" />
         <option name="importAutomatically" value="true" />
       </MavenImportingSettings>
     </option>
@@ -240,10 +429,10 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="156" />
-    <option name="y" value="44" />
-    <option name="width" value="1319" />
-    <option name="height" value="987" />
+    <option name="x" value="427" />
+    <option name="y" value="58" />
+    <option name="width" value="1450" />
+    <option name="height" value="803" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -315,160 +504,83 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="tandon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="tandon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="index" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="prune" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mg4j-nyu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="tandon" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="index" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
+          <expand>
+            <path>
+              <item name="mg4j-nyu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mg4j-nyu" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mg4j-nyu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mg4j-nyu" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mg4j-nyu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mg4j-nyu" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mg4j-nyu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mg4j-nyu" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="scala" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mg4j-nyu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mg4j-nyu" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="scala" type="462c0819:PsiDirectoryNode" />
+              <item name="tandon" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mg4j-nyu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mg4j-nyu" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="scala" type="462c0819:PsiDirectoryNode" />
+              <item name="tandon" type="462c0819:PsiDirectoryNode" />
+              <item name="experiments" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mg4j-nyu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mg4j-nyu" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="scala" type="462c0819:PsiDirectoryNode" />
+              <item name="tandon" type="462c0819:PsiDirectoryNode" />
+              <item name="experiments" type="462c0819:PsiDirectoryNode" />
+              <item name="ml" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mg4j-nyu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mg4j-nyu" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="scala" type="462c0819:PsiDirectoryNode" />
+              <item name="tandon" type="462c0819:PsiDirectoryNode" />
+              <item name="experiments" type="462c0819:PsiDirectoryNode" />
+              <item name="ml" type="462c0819:PsiDirectoryNode" />
+              <item name="h2o" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
+      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15293041" />
     <property name="project.structure.side.proportion" value="0.35686654" />
-    <property name="settings.editor.selected.configurable" value="Errors" />
+    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.repository.indices" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="Downloaded.Files.Path.Enabled" value="false" />
     <property name="Repository.Attach.JavaDocs" value="true" />
@@ -499,14 +611,15 @@
       <recent name="edu.nyu.tandon.experiments.ml.StaticPruning" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="edu.nyu.tandon.experiments.staticpruning.ml.h2o" />
       <recent name="edu.nyu.tandon.index.prune" />
       <recent name="edu.nyu.tandon.experiments.ml.StaticPruning" />
       <recent name="edu.nyu.tandon.tool" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/scripts/staticprune/eval-queries" />
       <recent name="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index" />
       <recent name="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune" />
-      <recent name="$PROJECT_DIR$/scripts/staticprune/eval-queries" />
       <recent name="$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy2" />
       <recent name="$PROJECT_DIR$/lib" />
     </key>
@@ -523,17 +636,12 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.PostingStrategy2">
-    <configuration default="false" name="XGBoostPredict" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="edu.nyu.tandon.experiments.staticpruning.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.experiments.ml.StaticPruning.XGBoostPredict" />
+  <component name="RunManager" selected="Application.MojoPredict">
+    <configuration name="IndexFeatures" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.tool.IndexFeatures" />
       <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="/mnt/scratch/models/cw09b.OR_top1k.all.top1k.model /mnt/scratch/cw09b/cw09b.features.parquet ph test" />
+      <option name="PROGRAM_PARAMETERS" value="$USER_HOME$/data/IR/ClueWeb09b/index/mg4j/qs-xdoc/cw09b-text 1 10000000" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
@@ -542,29 +650,8 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="mg4j-nyu" />
       <envs />
-      <method />
     </configuration>
-    <configuration default="false" name="RawPostingsPrunedQuery" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="edu.nyu.tandon.experiments.staticpruning.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.experiments.staticpruning.RawPostingsPrunedQuery" />
-      <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="-r 1000 --trec --trecOutput --globalScoring -I /mnt/data/experiments/lists/cw09b.trec_eval.OR.txt -T /mnt/scratch//strategies/cw09b.OR_top1k.all.top1k-01.titles -d /mnt/data/experiments/results.cw09b/cw09b.OR_top1k.all.top1k.01.postings.txt /mnt/scratch//strategies/cw09b.OR_top1k.all.top1k-01-0" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="mg4j-nyu" />
-      <envs />
-      <method />
-    </configuration>
-    <configuration default="false" name="MojoPredict" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+    <configuration name="MojoPredict" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
           <option name="PATTERN" value="edu.nyu.tandon.experiments.staticpruning.*" />
@@ -572,8 +659,8 @@
         </pattern>
       </extension>
       <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.experiments.staticpruning.ml.h2o.MojoPredict" />
-      <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="/mnt/scratch/gbm-top1k-all-top1k.h2o-model" />
+      <option name="VM_PARAMETERS" value="-Dspark.master=local[2]" />
+      <option name="PROGRAM_PARAMETERS" value="/mnt/ssd/h2o-models/drf.top1k.top1k.all.model.zip /mnt/scratch/cw09b.features.parquet /mnt/scratch/drf.top1k.top1k.test" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
@@ -582,9 +669,8 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="mg4j-nyu" />
       <envs />
-      <method />
     </configuration>
-    <configuration default="false" name="Partition2" type="Application" factoryName="Application" temporary="true">
+    <configuration name="Partition2" type="Application" factoryName="Application" temporary="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
           <option name="PATTERN" value="edu.nyu.tandon.experiments.*" />
@@ -593,7 +679,7 @@
       </extension>
       <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.index.prune.Partition2" />
       <option name="VM_PARAMETERS" value="-Xmx32g " />
-      <option name="PROGRAM_PARAMETERS" value="-s /mnt/ssd/strategy/cw09b-top1k-top1k-01.strategy -o /mnt/ssd/pruned/top1k-top1k.all.test.01 /mnt/ssd/qs-xdoc/cw09b-text" />
+      <option name="PROGRAM_PARAMETERS" value="-s /mnt/scratch/strategy/top1k-top1k-1.all-01.strategy -o /mnt/ssd/pruned/top1k.top1k.all.01.test /mnt/ssd/qs-xdoc/cw09b-text" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
@@ -602,9 +688,8 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="mg4j-nyu" />
       <envs />
-      <method />
     </configuration>
-    <configuration default="false" name="PostingStrategy2" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+    <configuration name="PostingStrategy2" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
           <option name="PATTERN" value="edu.nyu.tandon.index.prune.*" />
@@ -622,7 +707,44 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="mg4j-nyu" />
       <envs />
-      <method />
+    </configuration>
+    <configuration name="RawPostingsPrunedQuery" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="edu.nyu.tandon.experiments.staticpruning.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.experiments.staticpruning.RawPostingsPrunedQuery" />
+      <option name="VM_PARAMETERS" value="" />
+      <option name="PROGRAM_PARAMETERS" value="-r 1000 --trec --trecOutput --globalScoring -I /mnt/ssd/lists/cw09b.trec_eval.OR.txt -T /mnt/scratch//strategy/top1k-top1k-1.all-01.titles -d /mnt/ssd/results/top1k.top1k.all.01.OR.test.txt /mnt/ssd/pruned/top1k.top1k.all.01-0" />
+      <option name="WORKING_DIRECTORY" value="file:///mnt/ssd" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="mg4j-nyu" />
+      <envs />
+    </configuration>
+    <configuration name="XGBoostPredict" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="edu.nyu.tandon.experiments.staticpruning.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.experiments.ml.StaticPruning.XGBoostPredict" />
+      <option name="VM_PARAMETERS" value="" />
+      <option name="PROGRAM_PARAMETERS" value="/mnt/scratch/models/cw09b.OR_top1k.all.top1k.model /mnt/scratch/cw09b/cw09b.features.parquet ph test" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="mg4j-nyu" />
+      <envs />
     </configuration>
     <configuration default="true" type="Applet" factoryName="Applet">
       <option name="HTML_USED" value="false" />
@@ -630,7 +752,6 @@
       <option name="HEIGHT" value="300" />
       <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
       <module />
-      <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
@@ -645,7 +766,76 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="" />
       <envs />
-      <method />
+    </configuration>
+    <configuration default="true" type="GrailsRunConfigurationType" factoryName="Grails">
+      <setting name="vmparams" value="" />
+      <setting name="cmdLine" value="run-app" />
+      <setting name="passParentEnv" value="true" />
+      <setting name="launchBrowser" value="true" />
+      <setting name="launchBrowserUrl" value="" />
+      <setting name="depsClasspath" value="false" />
+    </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+    </configuration>
+    <configuration default="true" type="Remote" factoryName="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+    </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
     </configuration>
     <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
@@ -715,6 +905,26 @@
       <option name="PARAMETERS" value="" />
       <module name="" />
       <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="CapistranoRunConfigurationType" factoryName="Capistrano">
+      <module name="" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="WORK DIR" VALUE="" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="SHOULD_USE_SDK" VALUE="false" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="ALTERN_SDK_NAME" VALUE="" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="myPassParentEnvs" VALUE="true" />
+      <envs />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_NAME" VALUE="" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_ARGS" VALUE="" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_STAGE" VALUE="" />
       <method />
     </configuration>
     <configuration default="true" type="Cold Fusion runner description" factoryName="Cold Fusion" custom_browser="" web_path="">
@@ -838,15 +1048,6 @@
       </ExternalSystemSettings>
       <method />
     </configuration>
-    <configuration default="true" type="GrailsRunConfigurationType" factoryName="Grails">
-      <setting name="vmparams" value="" />
-      <setting name="cmdLine" value="run-app" />
-      <setting name="passParentEnv" value="true" />
-      <setting name="launchBrowser" value="true" />
-      <setting name="launchBrowserUrl" value="" />
-      <setting name="depsClasspath" value="false" />
-      <method />
-    </configuration>
     <configuration default="true" type="JRubyCucumberRunConfigurationType" factoryName="JRuby Cucumber">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <option name="MAIN_CLASS_NAME" />
@@ -876,27 +1077,6 @@
       <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="CUCUMBER_RUNNER_PATH" VALUE="" />
       <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="USE_CUSTOM_RUNNER" VALUE="false" />
       <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="SETTINGS_VERSION" VALUE="2" />
-      <method />
-    </configuration>
-    <configuration default="true" type="JUnit" factoryName="JUnit">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <module name="" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="METHOD_NAME" />
-      <option name="TEST_OBJECT" value="class" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="singleModule" />
-      </option>
-      <envs />
-      <patterns />
       <method />
     </configuration>
     <configuration default="true" type="JarApplication" factoryName="JAR Application">
@@ -1014,12 +1194,20 @@
       <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="FULL_BACKTRACE" VALUE="false" />
       <method />
     </configuration>
-    <configuration default="true" type="Remote" factoryName="Remote">
-      <option name="USE_SOCKET_TRANSPORT" value="true" />
-      <option name="SERVER_MODE" value="false" />
-      <option name="SHMEM_ADDRESS" value="javadebug" />
-      <option name="HOST" value="localhost" />
-      <option name="PORT" value="5005" />
+    <configuration default="true" type="ScalaScriptConsoleRunConfiguration" factoryName="Scala Console">
+      <module name="" />
+      <setting name="vmparams4" value="-Djline.terminal=NONE" />
+      <setting name="workingDirectory" value="$PROJECT_DIR$" />
+      <setting name="consoleArgs" value="-usejavacp" />
+      <method />
+    </configuration>
+    <configuration default="true" type="ScalaScriptRunConfiguration" factoryName="Scala Script">
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="consoleargs" value="" />
+      <setting name="params" value="" />
+      <setting name="workingDirectory" value="$PROJECT_DIR$" />
       <method />
     </configuration>
     <configuration default="true" type="ScalaTestRunConfiguration" factoryName="ScalaTest">
@@ -1066,34 +1254,6 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="true" type="TestNG" factoryName="TestNG">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <module name="" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="SUITE_NAME" />
-      <option name="PACKAGE_NAME" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="METHOD_NAME" />
-      <option name="GROUP_NAME" />
-      <option name="TEST_OBJECT" value="CLASS" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
-      <option name="OUTPUT_DIRECTORY" />
-      <option name="ANNOTATION_TYPE" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="singleModule" />
-      </option>
-      <option name="USE_DEFAULT_REPORTERS" value="false" />
-      <option name="PROPERTIES_FILE" />
-      <envs />
-      <properties />
-      <listeners />
-      <method />
-    </configuration>
     <configuration default="true" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest">
       <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
       <module name="" />
@@ -1119,15 +1279,6 @@
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
-      <method />
-    </configuration>
-    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
-      <node-interpreter>project</node-interpreter>
-      <node-options />
-      <gulpfile />
-      <tasks />
-      <arguments />
-      <envs />
       <method />
     </configuration>
     <configuration default="true" type="js.build_tools.npm" factoryName="npm">
@@ -1162,35 +1313,20 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="IndexFeatures" type="Application" factoryName="Application">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <option name="MAIN_CLASS_NAME" value="edu.nyu.tandon.tool.IndexFeatures" />
-      <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="$USER_HOME$/data/IR/ClueWeb09b/index/mg4j/qs-xdoc/cw09b-text 1 10000000" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="mg4j-nyu" />
-      <envs />
-      <method />
-    </configuration>
     <list size="6">
       <item index="0" class="java.lang.String" itemvalue="Application.IndexFeatures" />
       <item index="1" class="java.lang.String" itemvalue="Application.XGBoostPredict" />
-      <item index="2" class="java.lang.String" itemvalue="Application.RawPostingsPrunedQuery" />
-      <item index="3" class="java.lang.String" itemvalue="Application.MojoPredict" />
-      <item index="4" class="java.lang.String" itemvalue="Application.Partition2" />
-      <item index="5" class="java.lang.String" itemvalue="Application.PostingStrategy2" />
+      <item index="2" class="java.lang.String" itemvalue="Application.PostingStrategy2" />
+      <item index="3" class="java.lang.String" itemvalue="Application.Partition2" />
+      <item index="4" class="java.lang.String" itemvalue="Application.RawPostingsPrunedQuery" />
+      <item index="5" class="java.lang.String" itemvalue="Application.MojoPredict" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Application.PostingStrategy2" />
-        <item index="1" class="java.lang.String" itemvalue="Application.Partition2" />
-        <item index="2" class="java.lang.String" itemvalue="Application.MojoPredict" />
-        <item index="3" class="java.lang.String" itemvalue="Application.RawPostingsPrunedQuery" />
+        <item index="0" class="java.lang.String" itemvalue="Application.MojoPredict" />
+        <item index="1" class="java.lang.String" itemvalue="Application.RawPostingsPrunedQuery" />
+        <item index="2" class="java.lang.String" itemvalue="Application.Partition2" />
+        <item index="3" class="java.lang.String" itemvalue="Application.PostingStrategy2" />
         <item index="4" class="java.lang.String" itemvalue="Application.XGBoostPredict" />
       </list>
     </recent_temporary>
@@ -1440,7 +1576,30 @@
       <workItem from="1492394015171" duration="562000" />
       <workItem from="1492397268304" duration="8021000" />
       <workItem from="1492513560124" duration="699000" />
-      <workItem from="1492514289539" duration="6686000" />
+      <workItem from="1492514289539" duration="7154000" />
+      <workItem from="1492526448372" duration="4532000" />
+      <workItem from="1492556200534" duration="1374000" />
+      <workItem from="1492777100737" duration="7097000" />
+      <workItem from="1492882958785" duration="1341000" />
+      <workItem from="1492900305849" duration="317000" />
+      <workItem from="1492901269131" duration="791000" />
+      <workItem from="1492902279806" duration="224000" />
+      <workItem from="1492902550742" duration="2048000" />
+      <workItem from="1492905272239" duration="4914000" />
+      <workItem from="1492948170727" duration="2944000" />
+      <workItem from="1492990918209" duration="16232000" />
+      <workItem from="1493068739513" duration="1985000" />
+      <workItem from="1493155758069" duration="6418000" />
+      <workItem from="1493340902847" duration="331000" />
+      <workItem from="1493402959802" duration="4042000" />
+      <workItem from="1493414098197" duration="1255000" />
+      <workItem from="1493502665263" duration="2360000" />
+      <workItem from="1493512988797" duration="452000" />
+      <workItem from="1493513735154" duration="3757000" />
+      <workItem from="1493645757969" duration="605000" />
+      <workItem from="1493683815782" duration="698000" />
+      <workItem from="1494127905029" duration="1573000" />
+      <workItem from="1494129528212" duration="5018000" />
     </task>
     <task id="LOCAL-00001" summary="Build environment; scala ML">
       <created>1479909389931</created>
@@ -1512,11 +1671,18 @@
       <option name="project" value="LOCAL" />
       <updated>1492522269379</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="posting strategy 2 ; for efficiency/size">
+      <created>1492522291794</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1492522291794</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="745773000" />
+    <option name="totallyTimeSpent" value="816549000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1528,28 +1694,27 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="156" y="44" width="1319" height="987" extended-state="0" />
-    <editor active="true" />
+    <frame x="427" y="58" width="1450" height="803" extended-state="0" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23146068" sideWeight="0.4978701" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24409449" sideWeight="0.6546081" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32091346" sideWeight="0.6546081" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32921347" sideWeight="0.4978701" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40526316" sideWeight="0.3453919" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.171875" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26966292" sideWeight="0.4978701" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40679953" sideWeight="0.57294995" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.43932584" sideWeight="0.57294995" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30898875" sideWeight="0.48509052" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25882354" sideWeight="0.8460674" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21550497" sideWeight="0.8460674" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.095752895" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24227902" sideWeight="0.15393259" order="5" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23222749" sideWeight="0.692562" order="3" side_tool="false" content_ui="tabs" x="211" y="324" width="1663" height="420" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.42668268" sideWeight="0.692562" order="3" side_tool="false" content_ui="tabs" x="211" y="324" width="1663" height="420" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1572,7 +1737,7 @@
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34166667" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Runtime Dashboard" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4141145" sideWeight="0.47763577" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33033708" sideWeight="0.47763577" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="CSS-X-Fire" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
     </layout>
@@ -1583,40 +1748,43 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29518855" sideWeight="0.42307693" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40526316" sideWeight="0.3453919" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.171875" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="IvyIDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Memory View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Memory View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19510582" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.75842696" sideWeight="0.8599574" order="17" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.095752895" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.42776203" sideWeight="0.70387393" order="3" side_tool="false" content_ui="tabs" x="211" y="324" width="1663" height="420" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32806805" sideWeight="0.4978701" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5584757" sideWeight="0.5769231" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.54964536" sideWeight="0.692562" order="3" side_tool="false" content_ui="tabs" x="211" y="324" width="1663" height="420" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23146068" sideWeight="0.4978701" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24231678" sideWeight="0.6546081" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32921347" sideWeight="0.4978701" order="16" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run Dashboard" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="18" side_tool="false" content_ui="tabs" />
+      <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" x="99" y="124" width="1722" height="833" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2706767" sideWeight="0.4978701" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6253133" sideWeight="0.57294995" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34166667" sideWeight="0.5" order="11" side_tool="true" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30898875" sideWeight="0.4914803" order="15" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1993007" sideWeight="0.59662575" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26966292" sideWeight="0.4978701" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.68052256" sideWeight="0.57294995" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34166667" sideWeight="0.5" order="12" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30898875" sideWeight="0.48509052" order="15" side_tool="false" content_ui="tabs" />
+      <window_info id="Runtime Dashboard" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="19" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28275862" sideWeight="0.8460674" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4071341" sideWeight="0.47763577" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41410694" sideWeight="0.47763577" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="CSS-X-Fire" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23104182" sideWeight="0.40337422" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24227902" sideWeight="0.15393259" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
@@ -1745,215 +1913,106 @@
           <option name="timeStamp" value="87" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition2.java</url>
-          <line>562</line>
-          <properties />
-          <option name="timeStamp" value="91" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition2.java</url>
-          <line>582</line>
-          <properties />
-          <option name="timeStamp" value="92" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy.java</url>
           <line>221</line>
           <properties />
           <option name="timeStamp" value="95" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy2.java</url>
-          <line>88</line>
+          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition2.java</url>
+          <line>561</line>
           <properties />
-          <option name="timeStamp" value="104" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy2.java</url>
-          <line>313</line>
-          <properties />
-          <option name="timeStamp" value="105" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy2.java</url>
-          <line>55</line>
-          <properties />
-          <option name="timeStamp" value="106" />
+          <option name="timeStamp" value="156" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition2.java</url>
-          <line>503</line>
+          <line>505</line>
           <properties />
-          <option name="timeStamp" value="108" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition2.java</url>
-          <line>515</line>
-          <properties />
-          <option name="timeStamp" value="109" />
+          <option name="timeStamp" value="157" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy2.java</url>
-          <line>291</line>
+          <line>308</line>
           <properties />
-          <option name="timeStamp" value="110" />
+          <option name="timeStamp" value="163" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition2.java</url>
+          <line>495</line>
+          <properties />
+          <option name="timeStamp" value="164" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/RawPostingsPrunedQuery.java</url>
+          <line>160</line>
+          <properties />
+          <option name="timeStamp" value="166" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedHitsQueryEngine.java</url>
+          <line>245</line>
+          <properties />
+          <option name="timeStamp" value="168" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/BM25PrunedScorer.java</url>
+          <line>46</line>
+          <properties />
+          <option name="timeStamp" value="169" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/RawPostingsPrunedQuery.java</url>
+          <line>281</line>
+          <properties />
+          <option name="timeStamp" value="171" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="scala-line">
+          <url>file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredict.scala</url>
+          <line>70</line>
+          <properties />
+          <option name="timeStamp" value="181" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="scala-line">
+          <url>file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredict.scala</url>
+          <line>58</line>
+          <properties />
+          <option name="timeStamp" value="182" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="scala-line">
+          <url>file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredict.scala</url>
+          <line>68</line>
+          <properties />
+          <option name="timeStamp" value="183" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="scala-line">
+          <url>file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredict.scala</url>
+          <line>47</line>
+          <properties />
+          <option name="timeStamp" value="184" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="scala-line">
+          <url>file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredict.scala</url>
+          <line>80</line>
+          <properties />
+          <option name="timeStamp" value="185" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="114" />
+      <option name="time" value="186" />
     </breakpoint-manager>
-    <watches-manager />
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="strategy.numberOfDocuments(0)" />
+        <watch expression=" strategy.localPointer(i)" />
+        <watch expression="strategy.localIndex(i)" />
+        <watch expression="m.getNames" language="Scala" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/scripts/staticprune/SingletonIndexPrune.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/scriptFile.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/package.scala" />
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/ml/StaticPruning/CV.scala" />
-    <entry file="jar:///usr/lib/jvm/java-8-oracle/src.zip!/java/util/zip/ZipFile.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="697">
-          <caret line="225" column="0" lean-forward="true" selection-start-line="225" selection-start-column="0" selection-end-line="250" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/h2o-genmodel-3.10.3.2-sources.jar!/hex/genmodel/MojoModel.java" />
-    <entry file="file://$PROJECT_DIR$/scripts/staticprune/h2o-predict.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="403">
-          <caret line="37" column="0" lean-forward="false" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/StaticPruning/h2oPredict.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingPruningStrategy.java" />
-    <entry file="file://$PROJECT_DIR$/scripts/scala/tools.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="46" lean-forward="false" selection-start-line="3" selection-start-column="46" selection-end-line="3" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/ExtractXGBoostBaseModel.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="10" column="7" lean-forward="false" selection-start-line="10" selection-start-column="7" selection-end-line="10" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/PredictAll.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="14" column="7" lean-forward="false" selection-start-line="14" selection-start-column="7" selection-end-line="14" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainCV2.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="11" column="7" lean-forward="false" selection-start-line="11" selection-start-column="7" selection-end-line="11" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainCV3.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="14" column="7" lean-forward="false" selection-start-line="14" selection-start-column="7" selection-end-line="14" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainFromDF.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="11" column="7" lean-forward="false" selection-start-line="11" selection-start-column="7" selection-end-line="11" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/TrainwLabel.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="11" column="7" lean-forward="false" selection-start-line="11" selection-start-column="7" selection-end-line="11" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPreProcess.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="7" lean-forward="false" selection-start-line="8" selection-start-column="7" selection-end-line="8" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/PrunedIndexOverlap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="66" column="13" lean-forward="false" selection-start-line="66" selection-start-column="13" selection-end-line="66" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/spark/Repartition.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="29" lean-forward="true" selection-start-line="2" selection-start-column="29" selection-end-line="2" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeaturesFromRaw2.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="11" column="7" lean-forward="false" selection-start-line="11" selection-start-column="7" selection-end-line="11" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeatures.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1455">
-          <caret line="14" column="7" lean-forward="false" selection-start-line="14" selection-start-column="7" selection-end-line="14" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeaturesFromRaw.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1050">
-          <caret line="11" column="7" lean-forward="false" selection-start-line="11" selection-start-column="7" selection-end-line="11" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeaturesFromRaw3.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-391">
-          <caret line="32" column="10" lean-forward="false" selection-start-line="32" selection-start-column="10" selection-end-line="32" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/Vectorize.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="7" lean-forward="false" selection-start-line="8" selection-start-column="7" selection-end-line="8" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/features/GenerateFeaturesFromRaw1.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1801">
-          <caret line="8" column="7" lean-forward="false" selection-start-line="8" selection-start-column="7" selection-end-line="8" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/Predict.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="10" column="0" lean-forward="true" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/xgboost/ModelTune.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
@@ -1969,20 +2028,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PrunedPartition.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/RawPostingsPrunedQuery.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1650">
-          <caret line="144" column="15" lean-forward="false" selection-start-line="144" selection-start-column="15" selection-end-line="144" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/PrunedQuery.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3645">
-          <caret line="276" column="36" lean-forward="false" selection-start-line="276" selection-start-column="36" selection-end-line="276" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/it/unimi/di/mg4j-big/5.4.3/mg4j-big-5.4.3.jar!/it/unimi/di/big/mg4j/index/IndexIterator.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="92">
@@ -2004,28 +2049,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/it/unimi/di/mg4j-big/5.4.3/mg4j-big-5.4.3-sources.jar!/src/it/unimi/di/big/mg4j/index/cluster/DocumentalPartitioningStrategy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="41" column="17" lean-forward="false" selection-start-line="41" selection-start-column="17" selection-end-line="41" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/it/unimi/di/mg4j-big/5.4.3/mg4j-big-5.4.3-sources.jar!/src/it/unimi/di/big/mg4j/index/IndexIterator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="705">
           <caret line="50" column="0" lean-forward="true" selection-start-line="27" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="520" column="32" lean-forward="false" selection-start-line="520" selection-start-column="21" selection-end-line="520" selection-end-column="32" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#24967#24977#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2058,27 +2085,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredict.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="179">
-          <caret line="14" column="0" lean-forward="false" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/staticprune/eval-queries/eval-cw09b.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1425">
-          <caret line="95" column="4" lean-forward="false" selection-start-line="95" selection-start-column="4" selection-end-line="95" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/staticprune/eval-queries/prunedIndexQuery-rawPostings.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="60" column="0" lean-forward="false" selection-start-line="60" selection-start-column="0" selection-end-line="61" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/apache/parquet/parquet-hadoop/1.9.0/parquet-hadoop-1.9.0-sources.jar!/org/apache/parquet/hadoop/ParquetReader.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1317">
@@ -2093,40 +2099,279 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/fastutil/7.0.13/fastutil-7.0.13-sources.jar!/it/unimi/dsi/fastutil/ints/IntArrayList.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="20" column="0" lean-forward="false" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+        <state relative-caret-position="166">
+          <caret line="334" column="0" lean-forward="false" selection-start-line="334" selection-start-column="0" selection-end-line="334" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/staticprune/eval-queries/prunedIndexQuery-rawPostings.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="31" column="0" lean-forward="true" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/staticprune/SingletonIndexPrune.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/staticprune/IndexPrune.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="421">
+          <caret line="50" column="4" lean-forward="true" selection-start-line="50" selection-start-column="4" selection-end-line="50" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/shell/cw09-index.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="451">
+          <caret line="68" column="62" lean-forward="true" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="71" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/index/recalculate-termmap.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/experiments/run-all-for-index.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/ml/makeCW09bFeatures.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/shell/trec-eval.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="27" column="12" lean-forward="true" selection-start-line="27" selection-start-column="12" selection-end-line="27" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/shell/PrunedIndex-trec-eval.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/PrunedQuery.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="765">
+          <caret line="276" column="36" lean-forward="false" selection-start-line="276" selection-start-column="36" selection-end-line="276" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/staticprune/eval-queries/PrunedIndex-trec-eval.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="41" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/staticprune/eval-queries/makeEvalfiles-cw09b.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="605" column="45" lean-forward="false" selection-start-line="605" selection-start-column="45" selection-end-line="605" selection-end-column="45" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/it/unimi/di/mg4j-big/5.4.3/mg4j-big-5.4.3-sources.jar!/src/it/unimi/di/big/mg4j/index/cluster/DocumentalPartitioningStrategy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="435">
+          <caret line="62" column="9" lean-forward="false" selection-start-line="62" selection-start-column="9" selection-end-line="62" selection-end-column="9" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/Partition2.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
-          <caret line="515" column="0" lean-forward="false" selection-start-line="515" selection-start-column="0" selection-end-line="515" selection-end-column="0" />
+        <state relative-caret-position="6525">
+          <caret line="470" column="59" lean-forward="false" selection-start-line="470" selection-start-column="45" selection-end-line="470" selection-end-column="59" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#27475#27476#0" expanded="false" />
+            <element signature="e#27532#27533#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/it/unimi/di/mg4j-big/5.4.3/mg4j-big-5.4.3-sources.jar!/src/it/unimi/di/big/mg4j/search/score/Scorer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="278">
+          <caret line="115" column="16" lean-forward="false" selection-start-line="115" selection-start-column="16" selection-end-line="115" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/search/score/BM25PrunedScorer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="44">
+          <caret line="62" column="0" lean-forward="false" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/fastutil/7.0.13/fastutil-7.0.13-sources.jar!/it/unimi/dsi/fastutil/ints/IntArrayList.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/it/unimi/di/mg4j-big/5.4.3/mg4j-big-5.4.3-sources.jar!/src/it/unimi/di/big/mg4j/search/score/AbstractAggregator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="334" column="0" lean-forward="false" selection-start-line="334" selection-start-column="0" selection-end-line="334" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="194">
+          <caret line="116" column="0" lean-forward="false" selection-start-line="116" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/it/unimi/di/mg4j-big/5.4.3/mg4j-big-5.4.3-sources.jar!/src/it/unimi/di/big/mg4j/search/score/AbstractWeightedScorer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="202">
+          <caret line="95" column="0" lean-forward="false" selection-start-line="95" selection-start-column="0" selection-end-line="95" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/it/unimi/di/mg4j-big/5.4.3/mg4j-big-5.4.3-sources.jar!/src/it/unimi/di/big/mg4j/search/AbstractUnionDocumentIterator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7">
+          <caret line="247" column="0" lean-forward="false" selection-start-line="247" selection-start-column="0" selection-end-line="247" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/QueryEngine.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2431">
+          <caret line="129" column="18" lean-forward="false" selection-start-line="129" selection-start-column="18" selection-end-line="129" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/Query.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="177" column="0" lean-forward="true" selection-start-line="177" selection-start-column="0" selection-end-line="177" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy2.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="597">
-          <caret line="268" column="0" lean-forward="false" selection-start-line="268" selection-start-column="0" selection-end-line="268" selection-end-column="0" />
+        <state relative-caret-position="376">
+          <caret line="308" column="0" lean-forward="false" selection-start-line="308" selection-start-column="0" selection-end-line="308" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#10742#10743#0" expanded="true" />
-            <element signature="e#10800#10801#0" expanded="true" />
-            <element signature="e#11056#11057#0" expanded="true" />
-            <element signature="e#11115#11116#0" expanded="true" />
+            <element signature="e#10631#10632#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/query/PrunedHitsQueryEngine.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="791">
+          <caret line="199" column="0" lean-forward="false" selection-start-line="199" selection-start-column="0" selection-end-line="199" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/experiments/staticpruning/RawPostingsPrunedQuery.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4410">
+          <caret line="328" column="5" lean-forward="false" selection-start-line="328" selection-start-column="5" selection-end-line="328" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/spark/spark-sql_2.11/2.1.0/spark-sql_2.11-2.1.0-sources.jar!/org/apache/spark/sql/SparkSession.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-226">
+          <caret line="900" column="6" lean-forward="false" selection-start-line="900" selection-start-column="6" selection-end-line="900" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/nyu/tandon/index/prune/PostingStrategy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="19" column="0" lean-forward="false" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/externalDependencies.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/vcs.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/scala_compiler.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/sbt.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/modules.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/misc.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredictVerify.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-618">
+          <caret line="26" column="23" lean-forward="true" selection-start-line="26" selection-start-column="23" selection-end-line="26" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/edu/nyu/tandon/experiments/staticpruning/ml/h2o/MojoPredict.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="581">
+          <caret line="82" column="1" lean-forward="false" selection-start-line="82" selection-start-column="1" selection-end-line="82" selection-end-column="1" />
+          <folding>
+            <element signature="e#402#438#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -2138,10 +2383,10 @@
         <settings>
           <artifact-editor>
             <show-content>
+              <type id="jpa-descriptors" />
+              <type id="artifact" />
               <type id="javaee-facet-resources" />
               <type id="library" />
-              <type id="artifact" />
-              <type id="jpa-descriptors" />
             </show-content>
           </artifact-editor>
           <last-edited>mg4j-nyu:jar</last-edited>
@@ -2198,7 +2443,6 @@
             <option name="proportions">
               <list>
                 <option value="0.35686654" />
-                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>
@@ -2218,7 +2462,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>it.unimi.di:mg4j-big:5.4.3</last-edited>
+          <last-edited>org.apache.parquet:parquet-common:1.9.0</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

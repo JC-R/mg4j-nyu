@@ -4,10 +4,8 @@ import com.martiansoftware.jsap.*;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalPartitioningStrategy;
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.*;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.util.Properties;
 import org.apache.avro.generic.GenericRecord;
@@ -27,12 +25,13 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class PostingStrategy2 implements DocumentalPartitioningStrategy, DocumentalClusteringStrategy, Serializable {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PostingStrategy2.class);
 
-	private static final long serialVersionUID = 2L;
+	public static final long serialVersionUID = 3L;
 	/**
 	 * The (cached) number of segments.
 	 */
@@ -41,26 +40,29 @@ public class PostingStrategy2 implements DocumentalPartitioningStrategy, Documen
 	// sets implemented as ints -> limit # terms and #docs to ~ 2 billion
 	public Int2ObjectOpenHashMap<IntArrayList> postings_Global = null;
 	public IntArrayList documents_Global = null;
-	public IntArrayList documents_Local = null;
-	public RoaringBitmap terms = null;
-	public RoaringBitmap docs = null;
 
+	// built on use
+	public IntArrayList documents_Local = null;
+
+	public int localDocSize = 0;
 	private static BufferedReader prunelist;
 	private static ParquetReader<SimpleRecord> reader;
 	private static boolean parquet = false;
 
 	/**
-	 * create bitmap of terms and docs in pruned list
+	 * create map of terms and docs in pruned list
 	 */
 	public void initMaps() {
-		this.terms = RoaringBitmap.bitmapOf(postings_Global.keySet().toIntArray());
+
+		int d;
 		this.documents_Local = new IntArrayList(documents_Global.size());
-		this.docs = new RoaringBitmap();
+		for (int j = 0; j < documents_Global.size(); j++)
+			documents_Local.add(j, -1);
 		for (int j = 0; j < documents_Global.size(); j++) {
-			int d = documents_Global.getInt(j);
+			d = documents_Global.getInt(j);
 			if (d > -1) {
-				this.docs.add(j);
-				documents_Local.add(d, j);
+				this.documents_Local.set(d, j);
+				localDocSize++;
 			}
 		}
 	}
@@ -68,34 +70,14 @@ public class PostingStrategy2 implements DocumentalPartitioningStrategy, Documen
 	/**
 	 * Creates a pruned strategy with the given lists
 	 */
-	public PostingStrategy2(String baseline, String strategy,
-	                        final Int2ObjectOpenHashMap<IntArrayList> postings,
+	public PostingStrategy2(final Int2ObjectOpenHashMap<IntArrayList> postings,
 	                        final IntArrayList globalDocs
 	) throws IOException {
 
 		if (postings.size() == 0) throw new IllegalArgumentException("Empty prune list");
-
 		this.documents_Global = globalDocs;
 		this.postings_Global = postings;
 
-		// create the document titles for local index (local doc IDs)
-		ArrayList<String> titles = new ArrayList<String>(documents_Global.size());
-		BufferedReader Titles = new BufferedReader(new InputStreamReader(new FileInputStream(baseline), Charset.forName("UTF-8")));
-		String line;
-		while ((line = Titles.readLine()) != null)
-			titles.add(line);
-		Titles.close();
-
-		BufferedWriter newTitles = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(strategy + ".titles"), Charset.forName("UTF-8")));
-		for (int d = 0; d < globalDocs.size(); d++) {
-			if (globalDocs.getInt(d) > -1) {
-				newTitles.write(titles.get(d));
-				if (d < globalDocs.size() - 1)
-					newTitles.newLine();
-			}
-		}
-		newTitles.close();
-		titles.clear();
 	}
 
 	private static void wrapReader(ParquetReader<SimpleRecord> r) {
@@ -197,6 +179,17 @@ public class PostingStrategy2 implements DocumentalPartitioningStrategy, Documen
 			strategies[i] = true;
 		}
 
+		// strategy titles
+		BufferedWriter[] newTitles = new BufferedWriter[t_list.length];
+
+		for (int j = 0; j < t_list.length; j++) {
+			String level = String.format("%02d", (int) (t_list[j] * 100));
+			newTitles[j] = new BufferedWriter(
+					new OutputStreamWriter(
+							new FileOutputStream(jsapResult.getString("strategy") + "-" + level + ".titles"),
+							Charset.forName("UTF-8")));
+		}
+
 		// data elements to track
 		final Int2ObjectOpenHashMap<IntArrayList> postings = new Int2ObjectOpenHashMap<IntArrayList>();
 		postings.defaultReturnValue(null);
@@ -204,6 +197,15 @@ public class PostingStrategy2 implements DocumentalPartitioningStrategy, Documen
 		// assume most documents will make it; use simple array now
 		final IntArrayList docs = new IntArrayList((int) index.numberOfDocuments);
 		for (int d = 0; d < index.numberOfDocuments; d++) docs.add(d, -1);
+
+		// create the document titles for local index (local doc IDs)
+		ArrayList<String> titles = new ArrayList<String>((int) index.numberOfDocuments);
+		BufferedReader Titles = new BufferedReader(new InputStreamReader(
+				new FileInputStream(jsapResult.getString("titles")),
+				Charset.forName("UTF-8")));
+		String line;
+		while ((line = Titles.readLine()) != null) titles.add(line);
+		Titles.close();
 
 		// parquet or ascii input list? Assumed to be in decreasing order
 		String input = jsapResult.getString("pruningList");
@@ -228,7 +230,18 @@ public class PostingStrategy2 implements DocumentalPartitioningStrategy, Documen
 			totPostings++;
 
 			if (docs.getInt(p.docID) == -1) {
+
+				// new doc
 				docs.set(p.docID, totDocs++);
+
+				// dispatch strategy titles
+				line = titles.get(p.docID);
+				for (int k = 0; k < t_list.length; k++) {
+					if (strategies[k]) {
+						newTitles[k].write(line);
+						newTitles[k].newLine();
+					}
+				}
 			}
 
 			// dispatch intermediate strategies if we reached their thresholds
@@ -237,15 +250,9 @@ public class PostingStrategy2 implements DocumentalPartitioningStrategy, Documen
 
 					j++;
 					strategies[i] = false;
+					newTitles[i].close();
 					String level = String.format("%02d", (int) (t_list[i] * 100));
-
-					PostingStrategy2 ps = new PostingStrategy2(jsapResult.getString("titles"),
-							jsapResult.getString("strategy") + "-" + level,
-							postings,
-							docs);
-
-					BinIO.storeObject(ps, jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[i] * 100)) + ".strategy");
-					ps = null;
+					BinIO.storeObject(new PostingStrategy2(postings, docs), jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[i] * 100)) + ".strategy");
 					LOGGER.info(String.valueOf(t_list[i]) + " strategy serialized : " + String.valueOf(totDocs) + " documents, " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings");
 				}
 			}
@@ -261,8 +268,7 @@ public class PostingStrategy2 implements DocumentalPartitioningStrategy, Documen
 
 		// ran out of input; dump last set
 		String level = String.format("%02d", (int) (t_list[j] * 100));
-		BinIO.storeObject(new PostingStrategy2(jsapResult.getString("titles"),
-						jsapResult.getString("strategy") + "-" + level, postings, docs),
+		BinIO.storeObject(new PostingStrategy2(postings, docs),
 				jsapResult.getString("strategy") + "-" + String.format("%02d", (int) (t_list[j] * 100)) + ".strategy");
 		LOGGER.info(String.valueOf(t_list[j]) + " strategy serialized : " + String.valueOf(totDocs) + " documents, " + String.valueOf((int) Math.ceil(n / 1000000.0)) + "M postings");
 
@@ -277,9 +283,9 @@ public class PostingStrategy2 implements DocumentalPartitioningStrategy, Documen
 	/** return the index of the given document
 	 * @param globalPointer: global document ID
 	 */
-	public int localIndex(final long docID) {
-		if (docs == null) initMaps();
-		return (docs.contains((int) docID)) ? 0 : 1;
+	public int localIndex(final long globalID) {
+
+		return (documents_Global.getInt((int) globalID) > -1) ? 0 : 1;
 	}
 
 	/**
@@ -289,8 +295,7 @@ public class PostingStrategy2 implements DocumentalPartitioningStrategy, Documen
 	 * @param doc:  global document ID
 	 */
 	public int localIndex(final long term, final long doc) {
-		if (terms == null) initMaps();
-		if (!terms.contains((int) term)) return 1;
+		if (!postings_Global.containsKey((int) term)) return 1;
 		return (postings_Global.get((int) term).contains((int) doc)) ? 0 : 1;
 	}
 
@@ -311,7 +316,8 @@ public class PostingStrategy2 implements DocumentalPartitioningStrategy, Documen
 	}
 
 	public long numberOfDocuments(final int localIndex) {
-		return (localIndex == 0) ? docs.getCardinality() : 0;
+		return (localIndex == 0) ? localDocSize : 0;
+
 	}
 
 //	public String toString() {
