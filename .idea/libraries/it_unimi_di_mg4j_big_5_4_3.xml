@@ -1,6 +1,5 @@
 <component name="libraryTable">
-  <library name="it.unimi.di:mg4j-big:5.4.3" type="repository">
-    <properties maven-id="it.unimi.di:mg4j-big:5.4.3" />
+  <library name="it.unimi.di:mg4j-big:5.4.3">
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/it/unimi/di/mg4j-big/5.4.3/mg4j-big-5.4.3.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/fastutil/7.0.12/fastutil-7.0.12.jar!/" />
@@ -721,12 +720,7 @@
       <root url="jar://$MAVEN_REPOSITORY$/info/bliki/wiki/bliki-core/3.0.19/bliki-core-3.0.19.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2.jar!/" />
     </CLASSES>
-    <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/it/unimi/di/mg4j-big/5.4.3/mg4j-big-5.4.3-javadoc.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/it/unimi/di/mg4j-big/5.4.3/mg4j-big-5.4.3-javadoc.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/it/unimi/di/mg4j-big/5.4.3/mg4j-big-5.4.3-javadoc.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/it/unimi/di/mg4j-big/5.4.3/mg4j-big-5.4.3-javadoc.jar!/" />
-    </JAVADOC>
+    <JAVADOC />
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/it/unimi/di/mg4j-big/5.4.3/mg4j-big-5.4.3-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/it/unimi/di/mg4j-big/5.4.3/mg4j-big-5.4.3-sources.jar!/" />

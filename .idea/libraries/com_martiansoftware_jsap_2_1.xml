@@ -1,6 +1,5 @@
 <component name="libraryTable">
-  <library name="com.martiansoftware:jsap:2.1" type="repository">
-    <properties maven-id="com.martiansoftware:jsap:2.1" />
+  <library name="com.martiansoftware:jsap:2.1">
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/com/martiansoftware/jsap/2.1/jsap-2.1.jar!/" />
     </CLASSES>

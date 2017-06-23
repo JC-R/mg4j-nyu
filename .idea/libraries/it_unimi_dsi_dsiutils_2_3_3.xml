@@ -1,6 +1,5 @@
 <component name="libraryTable">
-  <library name="it.unimi.dsi:dsiutils:2.3.3" type="repository">
-    <properties maven-id="it.unimi.dsi:dsiutils:2.3.3" />
+  <library name="it.unimi.dsi:dsiutils:2.3.3">
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/dsiutils/2.3.3/dsiutils-2.3.3.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/fastutil/7.0.12/fastutil-7.0.12.jar!/" />
@@ -29,10 +28,7 @@
       <root url="jar://$MAVEN_REPOSITORY$/commons-collections/commons-collections/20040616/commons-collections-20040616.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar!/" />
     </CLASSES>
-    <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/dsiutils/2.3.3/dsiutils-2.3.3-javadoc.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/dsiutils/2.3.3/dsiutils-2.3.3-javadoc.jar!/" />
-    </JAVADOC>
+    <JAVADOC />
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/dsiutils/2.3.3/dsiutils-2.3.3-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/dsiutils/2.3.3/dsiutils-2.3.3-sources.jar!/" />

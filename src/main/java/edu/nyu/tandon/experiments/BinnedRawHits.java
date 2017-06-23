@@ -335,7 +335,7 @@ public class BinnedRawHits {
 
         // start docHits with at least 10K results
         query.interpretCommand("$score BM25Scorer");
-        query.interpretCommand("$mode time");
+//        query.interpretCommand("$mode time");
 
         if (jsapResult.userSpecified("divert"))
             query.interpretCommand("$divert " + jsapResult.getObject("divert"));
@@ -429,8 +429,8 @@ public class BinnedRawHits {
             int index = (doc * limits.length) + bins[i];
             docHits[index]++;
 
-            // postHits
-            for (j = 0; j < dsi.info.size(); j++)
+	        // postHits: (doc, term, rank)
+	        for (j = 0; j < dsi.info.size(); j++)
                 postHits.add(new ImmutableTriple<Integer, Integer, Integer>(doc,(int) ((BM25ScorerNYU) queryEngine.scorer).flatIndexIterator[dsi.info.get(j)].termNumber(),i));
         }
 

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 PWD=`pwd`
 cd $1
 

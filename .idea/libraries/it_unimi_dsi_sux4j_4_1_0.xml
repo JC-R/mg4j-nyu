@@ -1,6 +1,5 @@
 <component name="libraryTable">
-  <library name="it.unimi.dsi:sux4j:4.1.0" type="repository">
-    <properties maven-id="it.unimi.dsi:sux4j:4.1.0" />
+  <library name="it.unimi.dsi:sux4j:4.1.0">
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/sux4j/4.1.0/sux4j-4.1.0.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/fastutil/7.1.0/fastutil-7.1.0.jar!/" />
@@ -17,9 +16,7 @@
       <root url="jar://$MAVEN_REPOSITORY$/commons-collections/commons-collections/20040616/commons-collections-20040616.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar!/" />
     </CLASSES>
-    <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/sux4j/4.1.0/sux4j-4.1.0-javadoc.jar!/" />
-    </JAVADOC>
+    <JAVADOC />
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/it/unimi/dsi/sux4j/4.1.0/sux4j-4.1.0-sources.jar!/" />
     </SOURCES>
