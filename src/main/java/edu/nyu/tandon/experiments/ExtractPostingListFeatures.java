@@ -71,13 +71,12 @@ public class ExtractPostingListFeatures {
 
         Index index = Index.getInstance(basename, true, true, true);
         LineIterator terms = null;
-        try (FileInputStream inputStream = new FileInputStream(termFilePath)) {
-            terms = IOUtils.lineIterator(inputStream, StandardCharsets.UTF_8);
-        }
 
         System.out.println("termid,length,maxscore");
 
-        try (IndexReader indexReader = index.getReader()) {
+        try (FileInputStream inputStream = new FileInputStream(termFilePath);
+             IndexReader indexReader = index.getReader()) {
+            terms = IOUtils.lineIterator(inputStream, StandardCharsets.UTF_8);
             IndexIterator indexIterator;
             while ((indexIterator = indexReader.nextIterator()) != null) {
                 indexIterator.term(terms.nextLine());
