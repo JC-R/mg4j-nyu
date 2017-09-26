@@ -27,6 +27,7 @@ import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.lang.MutableString;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
 import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.apache.parquet.thrift.ThriftParquetWriter;
 import org.apache.spark.sql.Row;
@@ -37,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,9 +70,9 @@ public class ExtractPostingListFeatures {
         String termFilePath = String.format("%s.terms", basename);
 
         Index index = Index.getInstance(basename, true, true, true);
-        List<String> terms = null;
+        LineIterator terms = null;
         try (FileInputStream inputStream = new FileInputStream(termFilePath)) {
-            terms = IOUtils.readLines(inputStream);
+            terms = IOUtils.lineIterator(inputStream, StandardCharsets.UTF_8);
         }
 
         System.out.println("termid,length,maxscore");
@@ -78,7 +80,7 @@ public class ExtractPostingListFeatures {
         try (IndexReader indexReader = index.getReader()) {
             IndexIterator indexIterator;
             while ((indexIterator = indexReader.nextIterator()) != null) {
-                indexIterator.term(terms.get((int)indexIterator.termNumber()));
+                indexIterator.term(terms.nextLine());
                 double maxScore = 0.0;
                 BM25Scorer scorer = new BM25Scorer();
                 scorer.wrap(indexIterator);
