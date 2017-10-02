@@ -41,7 +41,7 @@ public class Lines2BinTest extends BaseTest {
         File input = newTemporaryFile();
         FileUtils.writeLines(
                 input,
-                Arrays.asList("1", "2", "0", String.valueOf(Long.MAX_VALUE)));
+                Arrays.asList("1", "2", "0", String.valueOf(Integer.MAX_VALUE)));
         File output = newTemporaryFile();
 
         // When
@@ -52,9 +52,9 @@ public class Lines2BinTest extends BaseTest {
 
         // Then
         assertThat(
-                BinIO.loadLongs(output.getAbsolutePath()),
-                equalTo(new long[] {
-                        1, 2, 0, Long.MAX_VALUE
+                BinIO.loadInts(output.getAbsolutePath()),
+                equalTo(new int[] {
+                        1, 2, 0, Integer.MAX_VALUE
                 }));
     }
 

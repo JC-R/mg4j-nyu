@@ -35,8 +35,8 @@ public class Lines2Bin {
             LineIterator iterator = FileUtils.lineIterator(new File(jsapResult.getString("input")));
             while (iterator.hasNext()) {
                 String line = iterator.nextLine();
-                long val = Long.valueOf(line);
-                o.writeLong(val);
+                int val = Integer.valueOf(line);
+                o.writeInt(val);
             }
         }
 
