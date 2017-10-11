@@ -303,7 +303,7 @@ public class StatisticalShardRepresentation {
         }
     }
 
-    public void write(Iterator<TermStats> terms) throws IOException {
+    public void write(Iterator<TermStats> terms) {
         try (DataOutputStream expectedStream = new DataOutputStream(new FileOutputStream(basename + EXPECTED_V_SUFFIX));
              DataOutputStream varianceStream = new DataOutputStream(new FileOutputStream(basename + VARIANCE_SUFFIX));
              DataOutputStream minScoreStream = new DataOutputStream(new FileOutputStream(basename + MIN_SCORE_SUFFIX))) {
@@ -320,6 +320,8 @@ public class StatisticalShardRepresentation {
             LOGGER.info(String.format("Finished processing %s in %s (%d terms processed)",
                     basename, timerTask.elapsedFormatted(), timerTask.processed));
             timer.cancel();
+        } catch (IOException e) {
+            LOGGER.error(String.format("Error while processing %s", basename), e);
         }
     }
 
