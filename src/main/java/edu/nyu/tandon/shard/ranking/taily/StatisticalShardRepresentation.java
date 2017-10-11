@@ -320,7 +320,7 @@ public class StatisticalShardRepresentation {
             LOGGER.info(String.format("Finished processing %s in %s (%d terms processed)",
                     basename, timerTask.elapsedFormatted(), timerTask.processed));
             timer.cancel();
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.error(String.format("Error while processing %s", basename), e);
         }
     }
