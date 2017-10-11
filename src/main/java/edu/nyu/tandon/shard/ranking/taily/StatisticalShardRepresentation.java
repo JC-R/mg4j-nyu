@@ -413,6 +413,7 @@ public class StatisticalShardRepresentation {
         if (jsap.messagePrinted()) return;
 
         String basename = jsapResult.getString("basename");
+        LOGGER.info(String.format("Extracting StatisticalShardRepresentation for %s", basename));
         StatisticalShardRepresentation ssr = new StatisticalShardRepresentation(basename);
         ssr.write(ssr.calc());
 
