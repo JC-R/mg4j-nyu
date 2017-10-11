@@ -105,8 +105,17 @@ public class TailyShardSelector implements ShardSelector {
             fullStats = fullRepresentation.queryStats(fullEvaluator.termIds(terms));
             LOGGER.debug(String.format("Full stats: %s", fullStats));
             globalMinValue = fullStats.minValue;
-            for (TailyShardEvaluator shardEvaluator : shardEvaluators) globalMinValue +=
-                    shardEvaluator.statisticalRepresentation.queryStats(shardEvaluator.termIds(terms)).minValue;
+            int n = 0;
+            for (TailyShardEvaluator shardEvaluator : shardEvaluators) {
+                try {
+                    globalMinValue += shardEvaluator
+                            .statisticalRepresentation
+                            .queryStats(shardEvaluator.termIds(terms))
+                            .minValue;
+                } catch (Exception e) {
+                    LOGGER.error(String.format("Error reading min values for shard %d", n));
+                }
+            }
 
         } catch (IllegalAccessException | URISyntaxException | InstantiationException | ConfigurationException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException e) {
             throw new RuntimeException(e);
