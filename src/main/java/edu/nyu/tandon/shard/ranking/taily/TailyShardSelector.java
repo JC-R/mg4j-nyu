@@ -116,6 +116,7 @@ public class TailyShardSelector implements ShardSelector {
                     LOGGER.error(String.format("Error reading min values for shard %d", n));
                     throw e;
                 }
+                n++;
             }
 
         } catch (IllegalAccessException | URISyntaxException | InstantiationException | ConfigurationException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException e) {
