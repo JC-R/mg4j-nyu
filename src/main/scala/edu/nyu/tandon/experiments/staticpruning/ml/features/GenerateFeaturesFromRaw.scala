@@ -53,6 +53,7 @@ object GenerateFeaturesFromRaw {
       .withColumn("d_doc_s_t", $"d_docSize".cast("Double") / $"d_docTerms")
       .withColumn("d_xdoc_s", $"d_xdoc" / $"d_docSize")
       .withColumn("d_xdoc_t", $"d_xdoc" / $"d_docTerms")
+
     d.write
       .format("org.apache.spark.sql.execution.datasources.parquet.ParquetFileFormat")
       .save("cw09b/d.parquet")
@@ -61,9 +62,9 @@ object GenerateFeaturesFromRaw {
       .format("org.apache.spark.sql.execution.datasources.csv.CSVFileFormat")
       .option("header", false).load(phFn)
       .repartition(spark.sparkContext.defaultParallelism * 3)
-      .toDF("ph_docID", "ph_termID", "ph_b1", "ph_b2", "ph_b3", "ph_b4", "ph_b5", "ph_b6", "ph_b7", "ph_b8", "ph_b9", "ph_b10",
-        "ph_b20", "ph_b40", "ph_b80", "ph_b160", "ph_b320", "ph_b640", "ph_b1280", "u1", "u2", "u3", "u4", "u5")
-      .withColumn("ph_termID", $"ph_termID".cast("Long"))
+      .toDF("ph_termID", "ph_docID", "ph_b1", "ph_b2", "ph_b3", "ph_b4", "ph_b5", "ph_b6", "ph_b7", "ph_b8", "ph_b9", "ph_b10",
+        "ph_b20", "ph_b40", "ph_b80", "ph_b160", "ph_b320", "ph_b640", "ph_b1280", "ph_top10", "ph_top1k")
+      .withColumn("ph_termID", $"ph_termID".cast("Int"))
       .withColumn("ph_docID", $"ph_docID".cast("Int"))
       .withColumn("ph_b1", $"ph_b1".cast("Int"))
       .withColumn("ph_b2", $"ph_b2".cast("Int"))
@@ -82,9 +83,8 @@ object GenerateFeaturesFromRaw {
       .withColumn("ph_b320", $"ph_b320".cast("Int"))
       .withColumn("ph_b640", $"ph_b640".cast("Int"))
       .withColumn("ph_b1280", $"ph_b1280".cast("Int"))
-      .withColumn("ph_top10", $"ph_b1" + $"ph_b2" + $"ph_b3" + $"ph_b4" + $"ph_b5" + $"ph_b6" + $"ph_b7" + $"ph_b8" + $"ph_b9" + $"ph_b10")
-      .withColumn("ph_top1K", $"ph_top10" + $"ph_b20" + $"ph_b40" + $"ph_b80" + $"ph_b160" + $"ph_b320" + $"ph_b640" + $"ph_b1280")
-      .drop("u1", "u2", "u3", "u4", "u5")
+      .withColumn("ph_top10", $"ph_top10".cast("Int"))
+      .withColumn("ph_top1k", $"ph_top1k".cast("Int"))
 
     ph.write
       .format("org.apache.spark.sql.execution.datasources.parquet.ParquetFileFormat")
@@ -93,7 +93,6 @@ object GenerateFeaturesFromRaw {
     val dh = spark.read
       .format("org.apache.spark.sql.execution.datasources.csv.CSVFileFormat")
       .option("header", false)
-      .option("delimiter", " ")
       .load(dhFn)
       .repartition(spark.sparkContext.defaultParallelism * 3)
       .withColumn("dh_docID", $"_c0".cast("Int"))
@@ -114,8 +113,8 @@ object GenerateFeaturesFromRaw {
       .withColumn("dh_b320", $"_c15".cast("Int"))
       .withColumn("dh_b640", $"_c16".cast("Int"))
       .withColumn("dh_b1280", $"_c17".cast("Int"))
-      .withColumn("dh_top10", $"dh_b1" + $"dh_b2" + $"dh_b3" + $"dh_b4" + $"dh_b5" + $"dh_b6" + $"dh_b7" + $"dh_b8" + $"dh_b9" + $"dh_b10")
-      .withColumn("dh_top1K", $"dh_top10" + $"dh_b20" + $"dh_b40" + $"dh_b80" + $"dh_b160" + $"dh_b320" + $"dh_b640" + $"dh_b1280")
+      .withColumn("dh_top10", $"_c18".cast("Int"))
+      .withColumn("dh_top1k", $"_c19".cast("Int"))
       .select("dh_docID", "dh_b1", "dh_b2", "dh_b3", "dh_b4", "dh_b5", "dh_b6", "dh_b7", "dh_b8", "dh_b9", "dh_b10",
         "dh_b20", "dh_b40", "dh_b80", "dh_b160", "dh_b320", "dh_b640", "dh_b1280", "dh_top10", "dh_top1K")
 

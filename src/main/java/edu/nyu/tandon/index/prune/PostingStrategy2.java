@@ -122,8 +122,27 @@ public class PostingStrategy2 implements DocumentalPartitioningStrategy, Documen
 					}
 				}
 
-				p.termID = (int) value.getValues().get(termIDCol).getValue();
-				p.docID = (int) value.getValues().get(docIDCol).getValue();
+				Object val = value.getValues().get(termIDCol).getValue();
+				if (val instanceof Integer) {
+					p.termID = (int) val;
+				} else if (val instanceof String) {
+					p.termID = Integer.parseInt((String) val);
+				} else if (val instanceof Float) {
+					p.termID = (int) val;
+				}
+
+				val = value.getValues().get(docIDCol).getValue();
+				if (val instanceof Integer) {
+					p.docID = (int) val;
+				} else if (val instanceof String) {
+					p.docID = Integer.parseInt((String) val);
+				} else if (val instanceof Float) {
+					p.docID = (int) val;
+				}
+
+//				p.termID = (int) value.getValues().get(termIDCol).getValue();
+//				p.docID = (int) value.getValues().get(docIDCol).getValue();
+
 				value = null;
 				return true;
 			}
@@ -208,6 +227,7 @@ public class PostingStrategy2 implements DocumentalPartitioningStrategy, Documen
 		Titles.close();
 
 		// parquet or ascii input list? Assumed to be in decreasing order
+		// note: spark dataframes are not in order: UNLESS coalesced to 1
 		String input = jsapResult.getString("pruningList");
 		if (jsapResult.userSpecified("parquet"))
 			wrapReader(new ParquetReader<>(new Path(input), new SimpleReadSupport()));

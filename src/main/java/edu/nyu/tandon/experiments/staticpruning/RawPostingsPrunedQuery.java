@@ -118,7 +118,8 @@ public class RawPostingsPrunedQuery extends Query {
 		// use local or global metrics during scoring: can be overriden in the input query stream via $score command
 		mainScorer = new BM25PrunedScorer(1.2, 0.3);
 		if (jsapResult.getBoolean("globalScoring")) {
-			queryEngine.loadGlobalTermFrequencies(basenameWeight[0] + ".globaltermfreq");
+			String newBasename = (basenameWeight[0].indexOf('?') > -1) ? basenameWeight[0].substring(0, basenameWeight[0].indexOf('?')) : basenameWeight[0];
+			queryEngine.loadGlobalTermFrequencies(newBasename + ".globaltermfreq");
 			mainScorer.setGlobalMetrics(
 					indexMap.get(indexMap.firstKey()).properties.getLong(globalPropertyKeys.G_DOCUMENTS),
 					indexMap.get(indexMap.firstKey()).properties.getLong(globalPropertyKeys.G_OCCURRENCES),

@@ -29,14 +29,13 @@ fout = open ARGV.last,'w'
 # emulate a max value heap with the input
 n=0
 heap=[]
-files.each do |fin|
+files.each_with_index {|fin, index|
   next if fin.eof
   line = fin.readline.chomp
   tokens = line.split(',')
-  next if tokens.size != 21
-  heap.push [tokens[0].to_i,tokens[1].to_i,n,line]
-  n += 1
-end
+  next if tokens.size != 19
+  heap.push [tokens[0].to_i,tokens[1].to_i,index,line]
+}
 
 # input files are assumed to be sorted
 n = 0
@@ -47,30 +46,34 @@ while(true)
   print "\r#{n/1000000}M" if (n+=1) % 1000000 == 0
 
   # get next postings
-  nextDoc = (heap.min_by{|x| x[1]})[1]
-  break if nextDoc >= maxval
-  rows = heap.reject {|x| x[1] != nextDoc}
-  term = (rows.min_by{|x| x[0]})[0]
-  postings = rows.reject{|x| x[0] != term}
+  term = (heap.min_by{|x| x[0]})[0]
+  rows = heap.reject{|x| x[0] != term}
+  doc = (rows.min_by{|x| x[1]})[1]
+  postings = rows.reject {|x| x[1] != doc}
 
   break if postings.size == 0
 
-
   row = []
-  row[0] = postings[0][0]
-  row[1] = postings[0][1]
+  row[0] = term
+  row[1] = doc
   for i in 2..20
     row[i] = 0
   end
 
   postings.each do |p|
     tokens = p[3].split(',').collect {|x| x.to_i}
-    for i in 2..20
+    # top10
+    for i in 2..11
       row[i] += tokens[i]
+      row[19] += tokens[i]
+    end
+    # top1k
+    row[20] += row[19]
+    for i in 12..18
+      row[i] += tokens[i]
+      row[20] += tokens[i]
     end
   end
-
-  fout.puts row.collect{|x| x.to_s}.join(',')
 
   # replace the picked item with the next value from that file
   postings.each do |p|
@@ -78,9 +81,29 @@ while(true)
     heap[i] = [maxval,maxval,-1,nil]
     next if files[i].eof
     line = files[i].readline.chomp
-    tokens = line.split(',')
-    next if tokens.size != 21
-    heap[i] = [tokens[0].to_i,tokens[1].to_i,i,line]
+    tokens = line.split(',').collect {|x| x.to_i}
+    next if tokens.size != 19
+    while (tokens[0] == term && tokens[1] == doc)
+      for j in 2..11
+        row[j] += tokens[j]
+        row[19] += tokens[j]
+      end
+      # top1k
+      row[20] += row[19]
+      for j in 12..18
+        row[j] += tokens[j]
+        row[20] += tokens[j]
+      end
+      break if files[i].eof
+      line = files[i].readline.chomp
+      tokens = line.split(',').collect {|x| x.to_i}
+      breaK if tokens.size != 19
+    end
+    next if files[i].eof
+    next if tokens.size != 19
+    heap[i] = [tokens[0],tokens[1],i,line]
+
   end
+  fout.puts row.collect{|x| x.to_s}.join(',')
 
 end

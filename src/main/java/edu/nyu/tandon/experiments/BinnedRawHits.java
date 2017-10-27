@@ -43,18 +43,17 @@ import it.unimi.dsi.fastutil.objects.*;
 import it.unimi.dsi.lang.ObjectParser;
 import it.unimi.dsi.sux4j.io.FileLinesBigList;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.MutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
-import java.util.Collections;
+import java.util.Comparator;
+
 
 //import it.unimi.di.big.mg4j.query.*;
+
 
 /**
  * A command-line interpreter to query indices.
@@ -75,6 +74,50 @@ import java.util.Collections;
  */
 public class BinnedRawHits {
 
+
+	static class Tuple implements Comparator<BinnedRawHits.Tuple> {
+		public int term;
+		public int doc;
+		public byte binIndex;
+		public int reps;
+
+		public Tuple(int term, int doc, byte bin, int reps) {
+			super();
+			this.term = term;
+			this.doc = doc;
+			this.binIndex = bin;
+			this.reps = reps;
+		}
+
+		public int compareTo(Tuple o) {
+			if (term == o.term)
+				if (doc == o.doc) return (binIndex - o.binIndex);
+				else return (doc - o.doc);
+			else return (term - o.term);
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (term == ((Tuple) o).term)
+				if (doc == ((Tuple) o).doc)
+					return (binIndex == ((Tuple) o).binIndex);
+				else return false;
+			else return false;
+		}
+
+		@Override
+		public int compare(Tuple o1, Tuple o2) {
+			return o1.compareTo(o2);
+		}
+	}
+
+	public static Comparator<Tuple> TupleComparator = new Comparator<Tuple>() {
+		@Override
+		public int compare(Tuple t1, Tuple t2) {
+			return t1.compareTo(t2);
+		}
+	};
+
     public final static int MAX_STEMMING = 2048;
     private static final Logger LOGGER = LoggerFactory.getLogger(BinnedRawHits.class);
     /**
@@ -83,8 +126,8 @@ public class BinnedRawHits {
     private static final java.text.NumberFormat FORMATTER = new java.text.DecimalFormat("0.0000000000");
     private static int[] docHits;
     private static long queryCount = 0;
-    private static int[] bins;
-    private static int[] limits = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 40, 80, 160, 320, 640, 1280, 2160, 4320, 8640};
+	private static byte[] binIndex;
+	private static int[] limits = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 40, 80, 160, 320, 640, 1280};
     private static int dhBatch = 0;
     private static int phBatch = 0;
     private static String outputName;
@@ -95,7 +138,7 @@ public class BinnedRawHits {
     /**
      * The maximum number of items outputDH to the console.
      */
-    private int maxOutput = 10000;
+    private int maxOutput = 1280;
     /**
      * Current topic number, for {@link OutputType#TREC} only.
      */
@@ -113,43 +156,72 @@ public class BinnedRawHits {
      */
     private PrintStream outputDH = System.out;
     private PrintStream outputPH = System.out;
-    private ObjectArrayList<ImmutableTriple<Integer, Integer, Integer>> postHits = new ObjectArrayList<ImmutableTriple<Integer, Integer, Integer>>();
+
+	private ObjectArrayList<Tuple> postHits = new ObjectArrayList<Tuple>();
 
     public BinnedRawHits(final QueryEngine queryEngine) {
         this.queryEngine = queryEngine;
     }
 
-    private static int binIndex(int rank) {
-        for (int i = 0; i < limits.length; i++)
+	// BIN # based on a result rank
+	private static byte rank2bin(int rank) {
+		for (byte i = 0; i < limits.length; i++)
             if (rank <= limits[i]) return i;
-        return limits.length - 1;
+		return (byte) (limits.length - 1);
     }
 
-    private static void buildBins(int results, int numDocs) {
-        docHits = new int[limits.length * numDocs];
-        bins = new int[results];
-        for (int i = 1; i <= results; i++)
-            bins[i - 1] = binIndex(i);
+	// create and init binIndex
+	private static void buildBins(int maxResults, int numDocs) {
+
+		docHits = new int[limits.length * numDocs];
+		binIndex = new byte[maxResults];
+
+		// build static bin # lookup
+		for (int i = 1; i <= maxResults; i++)
+			binIndex[i - 1] = rank2bin(i);
     }
 
-    private static void dumpPosthits(BinnedRawHits query, long numDocs, boolean endRun) {
+	// dump intermediate results
+	private static void dumpPosthits(BinnedRawHits query, boolean endRun) {
 
-        Collections.sort(query.postHits);
-        ImmutableTriple<Integer, Integer, Integer> t;
-        Triple<Integer, Integer, Integer> lastT = new MutableTriple<>(-1, -1, -1);
-        int hits = 0;
+		int[] bins = new int[limits.length];
+		for (int k = 0; k < limits.length; k++) bins[k] = 0;
+
+		query.postHits.sort(TupleComparator);
+
+		// initialize to the first posting
+		Tuple t0 = query.postHits.get(0);
+		Tuple lastT = new Tuple(t0.term, t0.doc, t0.binIndex, t0.reps);
+
+
         for (int i = 0; i < query.postHits.size(); i++) {
-            t = query.postHits.get(i);
-            if (t.compareTo(lastT) != 0) {
-                if (hits > 0) {
-                    // format: doc, term, , rank, #hits
-                    query.outputPH.printf("%d,%d,%d,%d\n", lastT.getLeft(), lastT.getMiddle(), lastT.getRight(), hits);
+	        Tuple t = query.postHits.get(i);
+	        if (!t.equals(lastT)) {
+		        // format: term, doc, binIndex...
+		        query.outputPH.printf("%d,%d,", lastT.term, lastT.doc);
+		        for (int k = 0; k < limits.length; k++) {
+			        query.outputPH.printf("%d", bins[k]);
+			        if (k < limits.length - 1)
+				        query.outputPH.print(",");
+			        else
+				        query.outputPH.print("\n");
                 }
-                hits = 0;
-                lastT = t;
+		        lastT = t;
+		        for (int k = 0; k < limits.length; k++) bins[k] = 0;
             }
-            hits++;
+	        bins[t.binIndex] += t.reps;
         }
+
+		// last posting: term, doc, binIndex...
+		query.outputPH.printf("%d,%d,", lastT.term, lastT.doc);
+		for (int k = 0; k < limits.length; k++) {
+			query.outputPH.printf("%d", bins[k]);
+			if (k < limits.length - 1)
+				query.outputPH.print(",");
+			else
+				query.outputPH.print("\n");
+		}
+
         query.postHits.clear();
         if (query.outputDH != System.out) {
             query.outputPH.close();
@@ -285,7 +357,8 @@ public class BinnedRawHits {
                         new FlaggedOption("results", JSAP.INTEGER_PARSER, "1000", JSAP.NOT_REQUIRED, 'r', "results", "The # of results to display"),
                         new FlaggedOption("mode", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'M', "time", "The results display mode"),
                         new FlaggedOption("divert", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'd', "divert", "output file"),
-                        new FlaggedOption("dumpsize", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'D', "dumpsize", "number of queries before dumping")
+		                new FlaggedOption("dumpsize", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'D', "dumpsize", "number of queries before dumping"),
+		                new FlaggedOption("phDumpsize", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'S', "phDumpsize", "number of queries before dumping"),
 
 
                 });
@@ -334,7 +407,7 @@ public class BinnedRawHits {
         BinnedRawHits query = new BinnedRawHits(queryEngine);
 
         // start docHits with at least 10K results
-        query.interpretCommand("$score BM25Scorer");
+	    query.interpretCommand("$score BM25ScorerNYU");
 //        query.interpretCommand("$mode time");
 
         if (jsapResult.userSpecified("divert"))
@@ -347,8 +420,12 @@ public class BinnedRawHits {
         int n = 0;
 
         int dumpsize = jsapResult.userSpecified("dumpsize") ? jsapResult.getInt("dumpsize", 10000) : 10000;
+	    int phDumpsize = jsapResult.userSpecified("phDumpsize") ? jsapResult.getInt("phDumpsize", 10000000) : 10000000;
+
         buildBins(query.maxOutput, (int) numberOfDocuments);
-        String lastQ = "";
+
+	    String lastQ = "<MG4J-EOF>";
+	    int numReps = 0;
 
         try {
             final BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(jsapResult.getString("input"))));
@@ -356,6 +433,7 @@ public class BinnedRawHits {
             final ObjectArrayList<DocumentScoreInfo<ObjectArrayList<Byte>>> results = new ObjectArrayList<DocumentScoreInfo<ObjectArrayList<Byte>>>();
 
             for (; ; ) {
+
                 q = br.readLine();
                 if (q == null) {
                     System.err.println();
@@ -368,36 +446,62 @@ public class BinnedRawHits {
                 }
 
                 queryCount++;
-                long time = -System.nanoTime();
-                if (q.compareTo(lastQ) != 0) {
-                    try {
-                        n = queryEngine.process(q, 0, query.maxOutput, results);
-                    } catch (QueryParserException e) {
-                        if (verbose) e.getCause().printStackTrace(System.err);
-                        else System.err.println(e.getCause());
-                        continue;
-                    } catch (Exception e) {
-                        if (verbose) e.printStackTrace(System.err);
-                        else System.err.println(e);
-                        continue;
-                    }
-                    lastQ = q;
-                }
+	            if ((queryCount % 1000) == 0)
+		            LOGGER.info("Processed " + queryCount + " queries");
+
+	            long time = -System.nanoTime();
+
+	            // new query
+	            if (q.compareTo(lastQ) != 0) {
+
+		            // output last query with repetitions
+		            if (lastQ.compareTo("<MG4J-EOF>") != 0) {
+			            query.output(results, numReps + 1, documentCollection, titleList, TextMarker.TEXT_BOLDFACE);
+
+			            // dump batchdumpBatch
+			            if (queryCount % dumpsize == 0) {
+				            dumpBatch(query, numberOfDocuments, false);
+			            }
+			            // check postHits
+			            if (query.postHits.size() > phDumpsize)
+				            dumpPosthits(query, false);
+		            }
+
+		            try {
+			            n = queryEngine.process(q, 0, query.maxOutput, results);
+		            } catch (QueryParserException e) {
+			            if (verbose) e.getCause().printStackTrace(System.err);
+			            else System.err.println(e.getCause());
+			            continue;
+		            } catch (Exception e) {
+			            if (verbose) e.printStackTrace(System.err);
+			            else System.err.println(e);
+			            continue;
+		            }
+		            lastQ = q;
+		            numReps = 0;
+	            } else {
+		            numReps++;
+		            continue;
+	            }
                 time += System.nanoTime();
-                query.output(results, documentCollection, titleList, TextMarker.TEXT_BOLDFACE);
 
-                // dump batch
-                if (queryCount % dumpsize == 0) {
-                    dumpBatch(query, numberOfDocuments, false);
-                }
-                // check postHits
-                if (query.postHits.size() > 100000000)
-                    dumpPosthits(query, numberOfDocuments, false);
+
             }
-
+	        if (lastQ.compareTo("<MG4J-EOF>") != 0) {
+		        query.output(results, numReps + 1, documentCollection, titleList, TextMarker.TEXT_BOLDFACE);
+		        // dump batchdumpBatch
+		        if (queryCount % dumpsize == 0) {
+			        dumpBatch(query, numberOfDocuments, false);
+		        }
+		        // check postHits
+		        if (query.postHits.size() > phDumpsize)
+			        dumpPosthits(query, false);
+	        }
         } finally {
+
             dumpBatch(query, numberOfDocuments, true);
-            dumpPosthits(query, numberOfDocuments, true);
+	        dumpPosthits(query, true);
             if (query.outputDH != System.out) query.outputDH.close();
         }
     }
@@ -412,31 +516,33 @@ public class BinnedRawHits {
      * @return the number of documents scanned.
      */
     @SuppressWarnings("boxing")
-    public int output(final ObjectArrayList<DocumentScoreInfo<ObjectArrayList<Byte>>> results, final DocumentCollection documentCollection,
+    public int output(final ObjectArrayList<DocumentScoreInfo<ObjectArrayList<Byte>>> results,
+                      final int numReps, final DocumentCollection documentCollection,
                       final BigList<? extends CharSequence> titleList, final Marker marker) throws IOException {
 
         int i, j;
         int doc = 0;
-
         DocumentScoreInfo<ObjectArrayList<Byte>> dsi;
 
         for (i = 0; i < results.size(); i++) {
+
+	        // compute bin #
+	        byte idx = binIndex[i];
+	        assert (idx > -1);
 
             dsi = results.get(i);
 
             // docHits
             doc = (int) dsi.document;
-            int index = (doc * limits.length) + bins[i];
-            docHits[index]++;
+	        int index = (doc * limits.length) + idx;
+	        docHits[index] += numReps;
 
-	        // postHits: (doc, term, rank)
-	        for (j = 0; j < dsi.info.size(); j++)
-                postHits.add(new ImmutableTriple<Integer, Integer, Integer>(doc,(int) ((BM25ScorerNYU) queryEngine.scorer).flatIndexIterator[dsi.info.get(j)].termNumber(),i));
+	        // postHits: (term, doc, bin)
+	        for (j = 0; j < dsi.info.size(); j++) {
+		        int term = (int) ((BM25ScorerNYU) queryEngine.scorer).flatIndexIterator[dsi.info.get(j)].termNumber();
+		        postHits.add(new Tuple(term, doc, idx, numReps));
+	        }
         }
-
-        if (doc > 0 && (queryCount % 2000 == 0))
-            LOGGER.info("Processed " + queryCount + " queries");
-//            outputDH.printf("%d %d %d\n", queryCount, doc, i+1 );
 
         return i;
     }
