@@ -108,7 +108,6 @@ public class HitsRaw {
 	/**
 	 * The current output stream, changeable with <samp>$divert</samp>.
 	 */
-	private PrintStream outputDH = System.out;
 	private PrintStream outputPH = System.out;
 
 	public HitsRaw(final QueryEngine queryEngine) {
@@ -133,12 +132,9 @@ public class HitsRaw {
 	// dump intermediate results
 	private static void dumpHits(HitsRaw query, boolean endRun) {
 
-		if (query.outputDH != System.out) query.outputDH.close();
 		if (query.outputPH != System.out) query.outputPH.close();
-
 		if (!endRun) {
 			try {
-				query.outputDH = new PrintStream(new FastBufferedOutputStream(new FileOutputStream(outputName + "-" + dhBatch++ + ".dh.txt")));
 				query.outputPH = new PrintStream(new FastBufferedOutputStream(new FileOutputStream(outputName + "-" + phBatch++ + ".ph.txt")));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -360,15 +356,15 @@ public class HitsRaw {
 					dsi = results.get(i);
 					doc = (int) dsi.document;
 
-					outStr = "" + numberStrings[doc] + "," + numberStrings[idx] + "\n";
+					outStr = "," + numberStrings[doc] + "," + numberStrings[(int) queryCount] + "," + numberStrings[idx] + "\n";
 
 					// docHits
-					query.outputDH.print(outStr);
+//					query.outputDH.print(outStr);
 
 					// postHits
 					for (int j = 0; j < dsi.info.size(); j++) {
 						int term = (int) ((BM25ScorerNYU) queryEngine.scorer).flatIndexIterator[dsi.info.get(j)].termNumber();
-						query.outputPH.print(numberStrings[term] + "," + outStr);
+						query.outputPH.print(numberStrings[term] + outStr);
 					}
 				}
 
@@ -380,8 +376,6 @@ public class HitsRaw {
 			}
 		} finally {
 			dumpHits(query, true);
-			if (query.outputDH != System.out) query.outputDH.close();
-			if (query.outputPH != System.out) query.outputPH.close();
 		}
 	}
 
@@ -514,16 +508,13 @@ public class HitsRaw {
 			case DIVERT:
 				if (part.length > 2) System.err.println("Wrong argument(s) to command");
 				else {
-					if (outputDH != System.out)
-						outputDH.close();
-					outputPH.close();
+					if (outputPH != System.out)
+						outputPH.close();
 					try {
-						outputDH = part.length == 1 ? System.out : new PrintStream(new FastBufferedOutputStream(new FileOutputStream(part[1] + "-" + dhBatch++ + ".dh.txt")));
 						outputPH = part.length == 1 ? System.out : new PrintStream(new FastBufferedOutputStream(new FileOutputStream(part[1] + "-" + phBatch++ + ".ph.txt")));
 						outputName = part[1];
 					} catch (FileNotFoundException e) {
 						System.err.println("Cannot create file " + part[1]);
-						outputDH = System.out;
 						outputPH = System.out;
 					}
 				}
