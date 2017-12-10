@@ -67,6 +67,7 @@ public class ExtractScoreSample {
                 scorer.wrap(iterator);
                 while (iterator.nextDocument() != END_OF_LIST) {
                     double score = scorer.score();
+                    System.out.println(String.format("%d,%f", term, score));
                 }
             }
         }
