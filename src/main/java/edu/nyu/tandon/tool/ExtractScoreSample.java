@@ -57,9 +57,10 @@ public class ExtractScoreSample {
             LineIterator terms = IOUtils.lineIterator(inputStream, StandardCharsets.UTF_8);
             IndexIterator iterator = null;
             while ((iterator = reader.nextIterator()) != null) {
-                long doc;
+                long termId = iterator.termNumber();
                 String term = terms.nextLine();
-                if ((random.nextLong() % index.numberOfTerms) < sampleSize) {
+                long r = Math.abs(random.nextLong());
+                if ((r % index.numberOfTerms) > sampleSize) {
                     continue;
                 }
                 iterator.term(term);
@@ -67,7 +68,7 @@ public class ExtractScoreSample {
                 scorer.wrap(iterator);
                 while (iterator.nextDocument() != END_OF_LIST) {
                     double score = scorer.score();
-                    System.out.println(String.format("%d,%f", term, score));
+                    System.out.println(String.format("%d,%f", termId, score));
                 }
             }
         }
