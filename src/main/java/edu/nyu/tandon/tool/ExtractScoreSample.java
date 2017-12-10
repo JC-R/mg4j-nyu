@@ -36,7 +36,7 @@ public class ExtractScoreSample {
         SimpleJSAP jsap = new SimpleJSAP(ExtractScoreSample.class.getName(), "",
                 new Parameter[]{
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index."),
-                        new FlaggedOption("sampleSize", JSAP.INTEGER_PARSER, "1000000", JSAP.REQUIRED, 's', "sample-size", "The approximated number of terms to sample."),
+                        new FlaggedOption("sampleSize", JSAP.LONG_PARSER, "1000000", JSAP.REQUIRED, 's', "sample-size", "The approximated number of terms to sample."),
                 });
 
         JSAPResult jsapResult = jsap.parse(args);
