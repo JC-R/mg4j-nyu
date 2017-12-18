@@ -1,27 +1,24 @@
 package edu.nyu.tandon.tool.cluster;
 
 import com.martiansoftware.jsap.*;
-import it.unimi.di.big.mg4j.index.IndexAccessHelper;
 import it.unimi.di.big.mg4j.index.Index;
+import it.unimi.di.big.mg4j.index.IndexAccessHelper;
+import it.unimi.di.big.mg4j.index.IndexIterator;
 import it.unimi.di.big.mg4j.index.IndexReader;
+import it.unimi.di.big.mg4j.index.cluster.ClusterAccessHelper;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalCluster;
-import it.unimi.di.big.mg4j.index.cluster.DocumentalMergedCluster;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongBigArrayBigList;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.LineIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 
-import static it.unimi.di.big.mg4j.index.DiskBasedIndex.TERMS_EXTENSION;
 import static it.unimi.di.big.mg4j.index.Index.getInstance;
 import static it.unimi.dsi.fastutil.io.BinIO.loadLongs;
 import static it.unimi.dsi.fastutil.io.BinIO.loadLongsBig;
@@ -58,36 +55,28 @@ public class ClusterGlobalStatistics {
         return index.documents(term).frequency();
     }
 
-    public static void globalOccurrencies(Index index, int clusterId, String clusterBasename)
+    public static void globalOccurrencies(Index index, String clusterBasename)
             throws IOException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, URISyntaxException, ConfigurationException, ClassNotFoundException {
 
         try (DataOutputStream o = new DataOutputStream(new FileOutputStream(clusterBasename + GLOB_OCC_EXTENSION));
              IndexReader indexReader = index.getReader()) {
-
-            LineIterator it = FileUtils.lineIterator(new File(clusterBasename + TERMS_EXTENSION));
-            while (it.hasNext()) {
-                String term = it.nextLine();
-                LOGGER.trace(String.format("Processing term: %s", term));
-                o.writeLong(IndexAccessHelper.getOccurrency(indexReader.documents(term)));
+            IndexIterator indexIterator;
+            while ((indexIterator = indexReader.nextIterator()) != null) {
+                o.writeLong(IndexAccessHelper.getOccurrency(indexIterator));
             }
-            it.close();
         }
 
     }
 
-    public static void globalFrequencies(Index index, int clusterId, String clusterBasename)
+    public static void globalFrequencies(Index index, String clusterBasename)
             throws IOException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, URISyntaxException, ConfigurationException, ClassNotFoundException {
 
         try (DataOutputStream o = new DataOutputStream(new FileOutputStream(clusterBasename + GLOB_FREQ_EXTENSION));
              IndexReader indexReader = index.getReader()) {
-
-            LineIterator it = FileUtils.lineIterator(new File(clusterBasename + TERMS_EXTENSION));
-            while (it.hasNext()) {
-                String term = it.nextLine();
-                LOGGER.trace(String.format("Processing term: %s", term));
-                o.writeLong(indexReader.documents(term).frequency());
+            IndexIterator indexIterator;
+            while ((indexIterator = indexReader.nextIterator()) != null) {
+                o.writeLong(indexIterator.frequency());
             }
-            it.close();
         }
 
     }
@@ -105,12 +94,14 @@ public class ClusterGlobalStatistics {
     public static void globalStatistics(DocumentalCluster index, boolean skipOccurrencies)
             throws IOException, ClassNotFoundException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException {
 
-        String[] localIndices = index.properties.getStringArray("localindex");
+        String[] localBasenames = index.properties.getStringArray("localindex");
+        Index[] localIndices = ClusterAccessHelper.getLocalIndices(index);
+        //for (Index localIndex : ClusterAccessHelper.getLocalIndices(index)) {
         for (int i = 0; i < localIndices.length; i++) {
-            LOGGER.info(String.format("Creating global statistics for cluster %s", localIndices[i]));
-            globalStats(index, localIndices[i]);
-            globalFrequencies(index, i, localIndices[i]);
-            if (!skipOccurrencies) globalOccurrencies(index, i, localIndices[i]);
+            LOGGER.info(String.format("Creating global statistics for cluster %s", localBasenames[i]));
+            globalStats(localIndices[i], localBasenames[i]);
+            globalFrequencies(localIndices[i], localBasenames[i]);
+            if (!skipOccurrencies) globalOccurrencies(localIndices[i], localBasenames[i]);
         }
 
     }

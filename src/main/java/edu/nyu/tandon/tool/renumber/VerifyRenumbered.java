@@ -5,14 +5,13 @@ import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.IndexIterator;
 import it.unimi.di.big.mg4j.index.IndexReader;
 import it.unimi.di.big.mg4j.search.score.BM25Scorer;
-import it.unimi.dsi.fastutil.longs.LongBigArrayBigList;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.hadoop.yarn.webapp.hamlet.HamletSpec;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -20,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -33,8 +30,8 @@ public class VerifyRenumbered {
     private Index original;
     private Index renumbered;
 
-    private String[] originalTitles;
-    private String[] renumberedTitles;
+    private List<String> originalTitles;
+    private List<String> renumberedTitles;
 
 
     public VerifyRenumbered(String originalBasename, String renumberedBasename, boolean verifyTitles) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
@@ -51,21 +48,21 @@ public class VerifyRenumbered {
         this(originalBasename, renumberedBasename, true);
     }
 
-    private void loadTitles(String basename, String[] titles) throws IOException {
+    private void loadTitles(String basename, List<String> titles) throws IOException {
         String path = basename.replaceAll("-text", ".titles");
         try (FileInputStream stream = new FileInputStream(path)) {
             LineIterator titleIter = IOUtils.lineIterator(stream, StandardCharsets.UTF_8);
             int idx = 0;
             while (titleIter.hasNext()) {
-                titles[idx++] = titleIter.next();
+                titles.set(idx++, titleIter.next());
             }
             assert idx == original.numberOfDocuments;
         }
     }
 
     private void loadTitles() throws IOException {
-        originalTitles = new String[(int)original.numberOfDocuments];
-        renumberedTitles = new String[(int)renumbered.numberOfDocuments];
+        originalTitles = new ArrayList<>((int)original.numberOfDocuments);
+        renumberedTitles = new ArrayList<>((int)renumbered.numberOfDocuments);
         loadTitles(originalBasename, originalTitles);
         loadTitles(renumberedBasename, renumberedTitles);
     }
@@ -114,9 +111,9 @@ public class VerifyRenumbered {
                 List<Pair<String, Double>> rp = new ArrayList<Pair<String, Double>>(freq);
                 for (int idx = 0; idx < freq; idx++) {
                     od = (int)oi.nextDocument();
-                    op.add(Pair.of(originalTitles[od], os.score()));
+                    op.add(Pair.of(originalTitles.get(od), os.score()));
                     rd = (int)ri.nextDocument();
-                    rp.add(Pair.of(renumberedTitles[rd], rs.score()));
+                    rp.add(Pair.of(renumberedTitles.get(rd), rs.score()));
                 }
                 Collections.sort(op);
                 Collections.sort(rp);
