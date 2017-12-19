@@ -57,6 +57,10 @@ public class VerifyRenumbered {
                 titles.set(idx++, titleIter.next());
             }
             assert idx == original.numberOfDocuments;
+        } catch (IOException e) {
+            System.err.println(String.format("Error loading titles for %s of %d documents",
+                    basename, titles.size()));
+            throw e;
         }
     }
 
