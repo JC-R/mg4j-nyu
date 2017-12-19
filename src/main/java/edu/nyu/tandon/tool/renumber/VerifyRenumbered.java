@@ -54,7 +54,7 @@ public class VerifyRenumbered {
             LineIterator titleIter = IOUtils.lineIterator(stream, StandardCharsets.UTF_8);
             int idx = 0;
             while (titleIter.hasNext()) {
-                titles.set(idx++, titleIter.next());
+                titles.add(titleIter.next());
             }
             assert idx == original.numberOfDocuments;
         } catch (Exception e) {
@@ -65,8 +65,8 @@ public class VerifyRenumbered {
     }
 
     private void loadTitles() throws IOException {
-        originalTitles = new ArrayList<>((int)original.numberOfDocuments);
-        renumberedTitles = new ArrayList<>((int)renumbered.numberOfDocuments);
+        originalTitles = new ArrayList<>();
+        renumberedTitles = new ArrayList<>();
         loadTitles(originalBasename, originalTitles);
         loadTitles(renumberedBasename, renumberedTitles);
     }
