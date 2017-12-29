@@ -89,8 +89,8 @@ public class VerifyCluster {
         return postings;
     }
 
-    List<Pair<String, Double>> getPostings(Index index, long term, List<String> titles) throws IOException {
-        List<Pair<String, Double>> postings = new ArrayList<>();
+    List<Pair<String, Double>> getPostings(Index index, String term, List<String> titles) throws IOException {
+        List<Pair<String, Double>> postings;
         try (IndexReader reader = index.getReader()) {
             postings = getPostings(reader.documents(term), titles);
         }
@@ -113,14 +113,18 @@ public class VerifyCluster {
                 original.numberOfPostings == cluster.numberOfPostings);
         printAssert("Number of occurrences",
                 original.numberOfOccurrences == cluster.numberOfOccurrences);
+        List<String> terms;
+        try (FileInputStream stream = new FileInputStream(originalBasename + ".terms")) {
+            terms = IOUtils.readLines(stream);
+        }
         Random random = new Random(1230791238L);
         for (int i = 0; i < 100000; i++) {
             int term = random.nextInt((int)original.numberOfTerms);
-            List<Pair<String, Double>> originalPostings = getPostings(original, term, originalTitles);
+            List<Pair<String, Double>> originalPostings = getPostings(original, terms.get(term), originalTitles);
             List<Pair<String, Double>> clusterPostings = new ArrayList<>();
             for (int cluster = 0; cluster < localIndex.length; ++cluster) {
                 List<Pair<String, Double>> localPostings =
-                        getPostings(localIndex[cluster], term, clusterTitles.get(cluster));
+                        getPostings(localIndex[cluster], terms.get(term), clusterTitles.get(cluster));
                 clusterPostings.addAll(localPostings);
             }
             Collections.sort(originalPostings);
