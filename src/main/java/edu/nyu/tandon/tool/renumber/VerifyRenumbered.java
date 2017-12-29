@@ -145,7 +145,7 @@ public class VerifyRenumbered {
         if (jsap.messagePrinted()) return;
 
         String originalBasename = jsapResult.getString("original");
-        String renumberedBasename = jsapResult.getString("original");
+        String renumberedBasename = jsapResult.getString("renumbered");
 
         VerifyRenumbered v = new VerifyRenumbered(originalBasename, renumberedBasename);
         v.verify();
