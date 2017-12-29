@@ -71,13 +71,27 @@ public class VerifyRenumbered {
         loadTitles(renumberedBasename, renumberedTitles);
     }
 
+    private void printAssert(String text, boolean condition) {
+        String result = condition ? "OK" : "ERROR";
+        System.out.println(String.format("%s: %s", text, result));
+    }
+
     public void verify() throws IOException {
-        assert original.numberOfTerms == renumbered.numberOfTerms;
-        assert original.numberOfDocuments == renumbered.numberOfDocuments;
-        assert original.numberOfPostings == renumbered.numberOfPostings;
-        assert original.numberOfOccurrences == renumbered.numberOfOccurrences;
+        System.out.println(String.format("Verifying %s against %s",
+                renumberedBasename, originalBasename));
+        printAssert("Number of terms",
+                    original.numberOfTerms == renumbered.numberOfTerms);
+        printAssert("Number of documents",
+                    original.numberOfDocuments == renumbered.numberOfDocuments);
+        printAssert("Number of postings",
+                    original.numberOfPostings == renumbered.numberOfPostings);
+        printAssert("Number of occurrences",
+                    original.numberOfOccurrences == renumbered.numberOfOccurrences);
+
         String originalTermsFile = originalBasename + ".terms";
         String renumberedTermsFile = renumberedBasename + ".terms";
+        int postings = 0;
+        int errors = 0;
         try (IndexReader or = original.getReader();
              IndexReader rr = renumbered.getReader();
              FileInputStream of = new FileInputStream(originalTermsFile);
@@ -122,6 +136,7 @@ public class VerifyRenumbered {
                 Collections.sort(op);
                 Collections.sort(rp);
                 if (!op.equals(rp)) {
+                    errors++;
                     System.err.println("ERROR: The following posting lists are unequal:");
                     System.err.println(String.format("\tTerm ID: %d", termId));
                     System.err.print("Original: ");
@@ -129,7 +144,16 @@ public class VerifyRenumbered {
                     System.err.print("Renumbered: ");
                     System.err.println(Arrays.toString(rp.toArray()));
                 }
+
+                if (++postings % 1000 == 0) {
+                    System.out.println(String.format(
+                            "Verified %d postings, found %d errors.", postings, errors));
+                }
             }
+
+            System.out.println(String.format(
+                    "Finished verifying %d postings, found %d errors.", postings, errors));
+
         }
     }
 
