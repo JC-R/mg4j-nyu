@@ -90,7 +90,7 @@ public class VerifyRenumbered {
 
         String originalTermsFile = originalBasename + ".terms";
         String renumberedTermsFile = renumberedBasename + ".terms";
-        int postings = 0;
+        int terms = 0;
         int errors = 0;
         try (IndexReader or = original.getReader();
              IndexReader rr = renumbered.getReader();
@@ -145,14 +145,14 @@ public class VerifyRenumbered {
                     System.err.println(Arrays.toString(rp.toArray()));
                 }
 
-                if (++postings % 1000 == 0) {
+                if (++terms % 1000 == 0) {
                     System.out.println(String.format(
-                            "Verified %d postings, found %d errors.", postings, errors));
+                            "Verified %d terms, found %d errors.", terms, errors));
                 }
             }
 
             System.out.println(String.format(
-                    "Finished verifying %d postings, found %d errors.", postings, errors));
+                    "Finished verifying %d terms, found %d errors.", terms, errors));
 
         }
     }
