@@ -8,6 +8,8 @@ import it.unimi.di.big.mg4j.index.IndexReader;
 import it.unimi.di.big.mg4j.index.cluster.ClusterAccessHelper;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalCluster;
 import it.unimi.di.big.mg4j.index.cluster.SelectiveQueryEngine;
+import it.unimi.dsi.fastutil.objects.Reference2DoubleArrayMap;
+import it.unimi.dsi.fastutil.objects.Reference2DoubleMap;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
@@ -81,7 +83,10 @@ public class VerifyCluster {
 
     List<Pair<String, Double>> getPostings(IndexIterator indexIterator, List<String> titles, String basename) throws IOException {
         long doc;
+        Reference2DoubleMap<Index> index2Weight = new Reference2DoubleArrayMap<>();
+        index2Weight.put(indexIterator.index(), 1.0);
         BM25PrunedScorer scorer = new BM25PrunedScorer();
+        scorer.setWeights(index2Weight);
         if (basename != null) SelectiveQueryEngine.setGlobalStatistics(scorer, basename);
         scorer.wrap(indexIterator);
         List<Pair<String, Double>> postings = new ArrayList<>();
