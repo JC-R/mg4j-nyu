@@ -1,12 +1,13 @@
 package edu.nyu.tandon.tool.cluster;
 
 import com.martiansoftware.jsap.*;
+import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.IndexIterator;
 import it.unimi.di.big.mg4j.index.IndexReader;
 import it.unimi.di.big.mg4j.index.cluster.ClusterAccessHelper;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalCluster;
-import it.unimi.di.big.mg4j.search.score.BM25Scorer;
+import it.unimi.di.big.mg4j.index.cluster.SelectiveQueryEngine;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
@@ -78,9 +79,10 @@ public class VerifyCluster {
         }
     }
 
-    List<Pair<String, Double>> getPostings(IndexIterator indexIterator, List<String> titles) throws IOException {
+    List<Pair<String, Double>> getPostings(IndexIterator indexIterator, List<String> titles, String basename) throws IOException {
         long doc;
-        BM25Scorer scorer = new BM25Scorer();
+        BM25PrunedScorer scorer = new BM25PrunedScorer();
+        if (basename != null) SelectiveQueryEngine.setGlobalStatistics(scorer, basename);
         scorer.wrap(indexIterator);
         List<Pair<String, Double>> postings = new ArrayList<>();
         while ((doc = indexIterator.nextDocument()) != END_OF_LIST) {
@@ -89,10 +91,10 @@ public class VerifyCluster {
         return postings;
     }
 
-    List<Pair<String, Double>> getPostings(Index index, String term, List<String> titles) throws IOException {
+    List<Pair<String, Double>> getPostings(Index index, String term, List<String> titles, String basename) throws IOException {
         List<Pair<String, Double>> postings;
         try (IndexReader reader = index.getReader()) {
-            postings = getPostings(reader.documents(term), titles);
+            postings = getPostings(reader.documents(term), titles, basename);
         }
         return postings;
     }
@@ -120,11 +122,14 @@ public class VerifyCluster {
         Random random = new Random(1230791238L);
         for (int i = 0; i < 100000; i++) {
             int term = random.nextInt((int)original.numberOfTerms);
-            List<Pair<String, Double>> originalPostings = getPostings(original, terms.get(term), originalTitles);
+            List<Pair<String, Double>> originalPostings = getPostings(original, terms.get(term), originalTitles, null);
             List<Pair<String, Double>> clusterPostings = new ArrayList<>();
             for (int cluster = 0; cluster < localIndex.length; ++cluster) {
                 List<Pair<String, Double>> localPostings =
-                        getPostings(localIndex[cluster], terms.get(term), clusterTitles.get(cluster));
+                        getPostings(localIndex[cluster],
+                                terms.get(term),
+                                clusterTitles.get(cluster),
+                                clusterBasename + "-" + String.valueOf(cluster));
                 clusterPostings.addAll(localPostings);
             }
             Collections.sort(originalPostings);
