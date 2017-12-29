@@ -127,7 +127,10 @@ public class BM25PrunedScorer extends BM25Scorer {
             }
         } else {
 
-            if (index.length != 1) throw new IllegalArgumentException("Multiple index queries not supported.");
+            if (index.length != 1) {
+                throw new IllegalArgumentException(String.format("Multiple index queries not supported (%d).",
+                        index.length));
+            }
 
             // Some caching of frequently-used values
             final double[] k1TimesBDividedByAverageDocumentSize = new double[index.length];
