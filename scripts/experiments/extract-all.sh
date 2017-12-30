@@ -23,6 +23,15 @@ set -x
 set -e
 
 $MG4J_NYU_SCRIPTS/experiments/run-queries-for-index.sh ${fullIndex} ${input} ${outputDir}
+
+java edu.nyu.tandon.experiments.cluster.ExtractClusterFeatures \
+    -i ${input} \
+    -o "${outputDir}/${inputBase}" \
+    -f 0 \
+    -b 1000 \
+    -k 500 \
+    ${fullIndex}
+
 $MG4J_NYU_SCRIPTS/experiments/clustering/extract-taily.sh ${clusterDir} ${tailyInput} ${outputDir}
 mv "${outputDir}/${tailyInputBase}.taily" "${outputDir}/${inputBase}.taily"
 $MG4J_NYU_SCRIPTS/experiments/clustering/extract-csi.sh ${clusterDir} ${input} ${outputDir} ${csi}
