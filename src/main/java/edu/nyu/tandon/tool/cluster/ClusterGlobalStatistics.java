@@ -115,8 +115,8 @@ public class ClusterGlobalStatistics {
         SimpleJSAP jsap = new SimpleJSAP(ClusterGlobalStatistics.class.getName(), "Produces a list of term frequencies [and occurrencies] based on a clustering strategy.",
                 new Parameter[]{
                         new Switch("skipOccurrencies", 's', "skip-occurrencies", "Do not produce the list of global occurrencies."),
-                        new UnflaggedOption("original", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.GREEDY, "Orignal index"),
-                        new UnflaggedOption("cluster", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.GREEDY, "The documental merged index for which we want to compute global frequencies.")
+                        new UnflaggedOption("original", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "Orignal index"),
+                        new UnflaggedOption("cluster", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The documental merged index for which we want to compute global frequencies.")
                 });
 
         final JSAPResult jsapResult = jsap.parse(args);
