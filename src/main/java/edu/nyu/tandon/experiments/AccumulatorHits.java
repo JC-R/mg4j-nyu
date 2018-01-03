@@ -9,6 +9,7 @@ import edu.nyu.tandon.experiments.thrift.QueryFeatures;
 import edu.nyu.tandon.experiments.thrift.Result;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.query.TerminatingQueryEngine;
+import edu.nyu.tandon.utils.Utils;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.IndexIterator;
 import it.unimi.di.big.mg4j.index.IndexReader;
@@ -78,12 +79,7 @@ public class AccumulatorHits {
             LineIterator queries = IOUtils.lineIterator(queryStream, StandardCharsets.UTF_8);
             while (queries.hasNext()) {
                 String query = queries.nextLine();
-                List<String> terms = Lists.newArrayList(Splitter.on(' ').omitEmptyStrings().split(query))
-                        .stream().map(t -> {
-                            MutableString m = new MutableString(t);
-                            termProcessor.processTerm(m);
-                            return m.toString();
-                        }).collect(Collectors.toList());
+                List<String> terms = Utils.extractTerms(query, termProcessor);
                 BitSet hits = new BitSet((int) index.numberOfDocuments);
                 for (String term : terms) {
                     IndexIterator indexIterator = indexReader.documents(term);

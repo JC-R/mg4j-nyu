@@ -8,6 +8,7 @@ import edu.nyu.tandon.experiments.thrift.QueryFeatures;
 import edu.nyu.tandon.experiments.thrift.Result;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.query.TerminatingQueryEngine;
+import edu.nyu.tandon.utils.Utils;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
@@ -66,7 +67,7 @@ public class ExtractClusterFeatures {
         int buckets = jsapResult.userSpecified("buckets") ? jsapResult.getInt("buckets") : 0;
 
         String basename = jsapResult.getString("basename");
-        String[] basenameWeight = new String[] { basename };
+        String[] basenameWeight = new String[]{basename};
 
         final Object2ReferenceLinkedOpenHashMap<String, Index> indexMap = new Object2ReferenceLinkedOpenHashMap<>(Hash.DEFAULT_INITIAL_SIZE, .5f);
         final Reference2DoubleOpenHashMap<Index> index2Weight = new Reference2DoubleOpenHashMap<>();
@@ -79,9 +80,9 @@ public class ExtractClusterFeatures {
 
         TerminatingQueryEngine engine =
                 new TerminatingQueryEngine<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>>(
-                    simpleParser,
-                    new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING),
-                    indexMap);
+                        simpleParser,
+                        new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING),
+                        indexMap);
         engine.setWeights(index2Weight);
         Scorer scorer = ExtractShardScores.resolveScorer(jsapResult.getString("scorer"));
         if (jsapResult.userSpecified("globalStatistics")) {
@@ -118,7 +119,7 @@ public class ExtractClusterFeatures {
         ThriftParquetWriter<Result> resultWriter = new ThriftParquetWriter<>(new org.apache.hadoop.fs.Path(resultPath),
                 Result.class, CompressionCodecName.SNAPPY);
         ThriftParquetWriter<QueryFeatures> queryFeaturesWriter = new ThriftParquetWriter<>(new org.apache.hadoop.fs.Path(queryFeaturesPath),
-                        QueryFeatures.class, CompressionCodecName.SNAPPY);
+                QueryFeatures.class, CompressionCodecName.SNAPPY);
 
         int shardId = -1;
         if (shardDefined) {
@@ -131,26 +132,17 @@ public class ExtractClusterFeatures {
             bucketStep = 1.0 / buckets;
         }
         int queryCount = 0;
-        try(BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
             for (String query; (query = br.readLine()) != null; ) {
 
                 QueryFeatures queryFeatures = new QueryFeatures(queryCount);
 
                 ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r =
                         new ObjectArrayList<>();
-                query = CharMatcher.is(',').replaceFrom(query, "");
 
                 Index index = indexMap.get(indexMap.firstKey());
                 TermProcessor termProcessor = termProcessors.get(indexMap.firstKey());
-                List<String> processedTerms =
-                        Lists.newArrayList(Splitter.on(' ').omitEmptyStrings().split(query))
-                                .stream()
-                                .map(t -> {
-                                    MutableString m = new MutableString(t);
-                                    termProcessor.processTerm(m);
-                                    return m.toString();
-                                })
-                                .collect(Collectors.toList());
+                List<String> processedTerms = Utils.extractTerms(query, termProcessor);
                 List<Long> listLengths = processedTerms.stream().map(term -> {
                     try {
                         return index.documents(term).frequency();
@@ -163,15 +155,13 @@ public class ExtractClusterFeatures {
                     queryFeatures.setMaxlist2(0L);
                     queryFeatures.setMinlist1(0L);
                     queryFeatures.setMinlist2(0L);
-                }
-                else {
+                } else {
                     queryFeatures.setMaxlist1(listLengths.get(0));
                     queryFeatures.setMinlist1(listLengths.get(listLengths.size() - 1));
                     if (listLengths.size() > 1) {
                         queryFeatures.setMaxlist2(listLengths.get(1));
                         queryFeatures.setMinlist2(listLengths.get(listLengths.size() - 2));
-                    }
-                    else {
+                    } else {
                         queryFeatures.setMaxlist2(0L);
                         queryFeatures.setMinlist2(0L);
                     }
@@ -199,14 +189,12 @@ public class ExtractClusterFeatures {
                         result.setScore(dsi.score);
                         if (shardDefined) {
                             result.setShard(shardId);
-                        }
-                        else if (fakeShardDefined) {
+                        } else if (fakeShardDefined) {
                             result.setShard(jsapResult.getInt("fakeShardId"));
                         }
                         resultWriter.write(result);
                     }
-                }
-                else {
+                } else {
                     for (int bucket = 0; bucket < buckets; bucket++) {
                         try {
                             engine.setDocumentLowerBound(bucket * bucketStep);
@@ -225,8 +213,7 @@ public class ExtractClusterFeatures {
                             if (shardDefined) {
                                 result.setShard(shardId);
                                 result.setGdocid(strategy.globalPointer(shardId, dsi.document));
-                            }
-                            else if (fakeShardDefined) {
+                            } else if (fakeShardDefined) {
                                 result.setShard(jsapResult.getInt("fakeShardId"));
                             }
                             result.setBucket(bucket);

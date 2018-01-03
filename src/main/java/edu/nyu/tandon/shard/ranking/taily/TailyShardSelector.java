@@ -3,6 +3,7 @@ package edu.nyu.tandon.shard.ranking.taily;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import edu.nyu.tandon.shard.ranking.ShardSelector;
+import edu.nyu.tandon.utils.Utils;
 import it.unimi.di.big.mg4j.index.DiskBasedIndex;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
@@ -67,14 +68,7 @@ public class TailyShardSelector implements ShardSelector {
     }
 
     private List<String> processedTerms(String query) {
-        return Lists.newArrayList(Splitter.on(' ').omitEmptyStrings().split(query))
-                .stream()
-                .map(t -> {
-                    MutableString m = new MutableString(t);
-                    termProcessor.processTerm(m);
-                    return m.toString();
-                })
-                .collect(Collectors.toList());
+        return Utils.extractTerms(query, termProcessor);
     }
 
     @Override

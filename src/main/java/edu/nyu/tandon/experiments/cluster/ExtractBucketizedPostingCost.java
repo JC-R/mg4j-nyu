@@ -1,7 +1,5 @@
 package edu.nyu.tandon.experiments.cluster;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.utils.Utils;
@@ -13,10 +11,8 @@ import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap;
-import it.unimi.dsi.lang.MutableString;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.catalyst.expressions.GenericRowWithSchema;
 import org.apache.spark.sql.types.StructType;
@@ -28,7 +24,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
 import static org.apache.spark.sql.SaveMode.Overwrite;
@@ -89,15 +84,7 @@ public class ExtractBucketizedPostingCost {
             for (String query; (query = br.readLine()) != null; ) {
 
                 TermProcessor termProcessor = termProcessors.get(indexMap.firstKey());
-                List<String> processedTerms =
-                        Lists.newArrayList(Splitter.on(' ').omitEmptyStrings().split(query))
-                                .stream()
-                                .map(t -> {
-                                    MutableString m = new MutableString(t);
-                                    termProcessor.processTerm(m);
-                                    return m.toString();
-                                })
-                                .collect(Collectors.toList());
+                List<String> processedTerms = Utils.extractTerms(query, termProcessor);
 
                 long[] buckets = new long[bucketCount];
                 for (String term : processedTerms) {

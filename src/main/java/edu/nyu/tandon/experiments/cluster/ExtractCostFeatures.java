@@ -7,6 +7,7 @@ import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.query.QueryEngine;
 import edu.nyu.tandon.utils.Stats;
+import edu.nyu.tandon.utils.Utils;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.IndexReader;
 import it.unimi.di.big.mg4j.index.TermProcessor;
@@ -96,14 +97,7 @@ public class ExtractCostFeatures {
                 query = CharMatcher.is(',').replaceFrom(query, "");
 
                 TermProcessor termProcessor = termProcessors.get(indexMap.firstKey());
-                List<String> processedTerms = Lists.newArrayList(Splitter.on(' ').omitEmptyStrings().split(query))
-                            .stream()
-                            .map(t -> {
-                                MutableString m = new MutableString(t);
-                                termProcessor.processTerm(m);
-                                return m.toString();
-                            })
-                            .collect(Collectors.toList());
+                List<String> processedTerms = Utils.extractTerms(query, termProcessor);
 
                 /*
                  * Query features.
