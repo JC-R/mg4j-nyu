@@ -11,7 +11,7 @@ if [ -z "${fullIndex}" ]; then echo "You have to define full index (1)"; exit 1;
 if [ -z "${clusterDir}" ]; then echo "You have to define cluster directory (2)"; exit 1; fi;
 if [ -z "${csi}" ]; then echo "You have to define CSI (3)"; exit 1; fi;
 if [ -z "${input}" ]; then echo "You have to define input file (4)"; exit 1; fi;
-if [ -z "${outputDir}" ]; then echo "You have to define output directory (6)"; exit 1; fi;
+if [ -z "${outputDir}" ]; then echo "You have to define output directory (5)"; exit 1; fi;
 if [ "$#" == "0" ]; then echo "You have to define a list of bucketization factors to test."; exit 1; fi
 
 inputBase=`basename ${input}`
