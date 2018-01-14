@@ -53,7 +53,9 @@ public class ExtractStemmed {
                 fileWriter.append("\n");
 
                 String featureLine = String.format("%s,%s,%d\n",
-                        document.title(), document.uri(), documentSize - 1);
+                        document.title(),
+                        document.uri().toString(),
+                        documentSize - 1);
                 featuresWriter.append(featureLine);
             }
         }
