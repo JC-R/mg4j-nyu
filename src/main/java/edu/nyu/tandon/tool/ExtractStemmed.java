@@ -4,6 +4,7 @@ import com.martiansoftware.jsap.*;
 import it.unimi.di.big.mg4j.document.Document;
 import it.unimi.di.big.mg4j.document.DocumentCollection;
 import it.unimi.di.big.mg4j.document.DocumentIterator;
+import it.unimi.di.big.mg4j.document.DocumentSequence;
 import it.unimi.di.big.mg4j.index.TermProcessor;
 import it.unimi.di.big.mg4j.index.snowball.EnglishStemmer;
 import it.unimi.dsi.fastutil.io.BinIO;
@@ -21,11 +22,11 @@ import java.net.URISyntaxException;
  */
 public class ExtractStemmed {
 
-    DocumentCollection collection;
+    DocumentSequence collection;
     String output;
 
     public ExtractStemmed(String collection, String output) throws IOException, ClassNotFoundException {
-        this.collection = (DocumentCollection) BinIO.loadObject(collection);
+        this.collection = (DocumentSequence) BinIO.loadObject(collection);
         this.output = output;
     }
 
