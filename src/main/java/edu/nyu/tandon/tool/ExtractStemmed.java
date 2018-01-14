@@ -33,20 +33,27 @@ public class ExtractStemmed {
         DocumentIterator documentIterator = collection.iterator();
         Document document;
         TermProcessor termProcessor = new EnglishStemmer();
-        try (FileWriter fileWriter = new FileWriter(output)) {
+        try (FileWriter fileWriter = new FileWriter(output);
+             FileWriter featuresWriter = new FileWriter(output + ".features")) {
             while ((document = documentIterator.nextDocument()) != null) {
+
                 fileWriter.append(document.title());
                 fileWriter.append(" ");
+                Long documentSize = 0L;
                 FastBufferedReader reader = (FastBufferedReader) document.content(0);
-                //WordReader wordReader = document.wordReader();
                 MutableString word = new MutableString();
                 MutableString nonword = new MutableString();
                 while (reader.next(word, nonword)) {
                     termProcessor.processTerm(word);
                     fileWriter.append(word);
                     fileWriter.append(" ");
+                    documentSize++;
                 }
                 fileWriter.append("\n");
+
+                String featureLine = String.format("%s,%s,%d\n",
+                        document.title(), document.uri(), documentSize);
+                featuresWriter.append(featureLine);
             }
         }
     }
