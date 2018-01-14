@@ -104,8 +104,10 @@ public abstract class AbstractWarcReader_NYU implements WarcReader {
         // first header line
         this.version = parseHead();
         if (this.version == null) return null;
-        if (VERSION && (this.version.getMajor() != 1 || this.version.getMinor() != 0))
-            throw new IllegalArgumentException("Unsupported WARC version " + this.version);
+
+        // WORKAROUND!
+        //if (VERSION && (this.version.getMajor() != 1 || this.version.getMinor() != 0))
+        //    throw new IllegalArgumentException("Unsupported WARC version " + this.version);
 
         // rest of headers
 
