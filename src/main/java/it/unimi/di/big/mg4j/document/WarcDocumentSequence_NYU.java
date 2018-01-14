@@ -164,7 +164,7 @@ public class WarcDocumentSequence_NYU extends AbstractDocumentSequence implement
         final Header trecId = httpResponse.getWarcHeaders().getFirstHeader("WARC-TREC-ID");
         if (trecId != null) metadata.put(PropertyBasedDocumentFactory.MetadataKeys.TITLE, trecId.getValue());
 
-        metadata.put(PropertyBasedDocumentFactory.MetadataKeys.URI, httpResponse.getWarcTargetURI());
+        metadata.put(PropertyBasedDocumentFactory.MetadataKeys.URI, httpResponse.getWarcTargetURI().toString());
         if (contentTypeHeader != null)
             metadata.put(PropertyBasedDocumentFactory.MetadataKeys.MIMETYPE, contentTypeHeader.getValue());
 
