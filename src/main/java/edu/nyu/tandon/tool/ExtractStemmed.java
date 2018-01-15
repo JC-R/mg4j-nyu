@@ -2,7 +2,6 @@ package edu.nyu.tandon.tool;
 
 import com.martiansoftware.jsap.*;
 import it.unimi.di.big.mg4j.document.Document;
-import it.unimi.di.big.mg4j.document.DocumentCollection;
 import it.unimi.di.big.mg4j.document.DocumentIterator;
 import it.unimi.di.big.mg4j.document.DocumentSequence;
 import it.unimi.di.big.mg4j.index.TermProcessor;
@@ -52,9 +51,10 @@ public class ExtractStemmed {
                 }
                 fileWriter.append("\n");
 
-                String featureLine = String.format("%s,%s,%d\n",
+
+                String featureLine = String.format("%s\t%s\t%d\n",
                         document.title(),
-                        document.uri().toString(),
+                        document.uri(),
                         documentSize - 1);
                 featuresWriter.append(featureLine);
             }
