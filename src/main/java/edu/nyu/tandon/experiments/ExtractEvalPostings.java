@@ -64,7 +64,7 @@ public class ExtractEvalPostings {
                     MutableString m = new MutableString(term);
                     termProcessor.processTerm(m);
                     String stemmed = m.toString();
-                    if (termId != null) {
+                    if (termId == null) {
                         termId = termCount++;
                         seen.put(term, termId);
                         IndexIterator indexIterator = indexReader.documents(stemmed);
@@ -73,11 +73,11 @@ public class ExtractEvalPostings {
                         while (indexIterator.nextDocument() != END_OF_LIST) {
                             long docId = indexIterator.document();
                             double score = scorer.score();
-                            postingsOut.append(String.format("%d,%d,%f",
+                            postingsOut.append(String.format("%d,%d,%f\n",
                                     termId, docId, score));
                         }
                     }
-                    queriesOut.append(String.format("%d,%s,%s,%d",
+                    queriesOut.append(String.format("%d,%s,%s,%d\n",
                             queryId++, term, stemmed, termId));
                 }
             }
