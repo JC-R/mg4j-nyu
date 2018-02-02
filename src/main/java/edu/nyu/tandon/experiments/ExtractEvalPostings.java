@@ -1,6 +1,7 @@
 package edu.nyu.tandon.experiments;
 
 import com.martiansoftware.jsap.*;
+import edu.nyu.tandon.experiments.thrift.Posting;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.utils.Utils;
 import it.unimi.di.big.mg4j.index.Index;
@@ -9,6 +10,8 @@ import it.unimi.di.big.mg4j.index.IndexReader;
 import it.unimi.di.big.mg4j.index.TermProcessor;
 import it.unimi.di.big.mg4j.search.score.BM25Scorer;
 import it.unimi.dsi.lang.MutableString;
+import org.apache.parquet.hadoop.metadata.CompressionCodecName;
+import org.apache.parquet.thrift.ThriftParquetWriter;
 
 import java.io.FileWriter;
 import java.nio.file.Files;
@@ -45,12 +48,16 @@ public class ExtractEvalPostings {
         Index index = Index.getInstance(basename, true, true, true);
         TermProcessor termProcessor = index.termProcessor;
 
+        ThriftParquetWriter<Posting> postingWriter = new ThriftParquetWriter<>(
+                new org.apache.hadoop.fs.Path(postingsOutFile),
+                Posting.class, CompressionCodecName.SNAPPY);
+
         try (FileWriter queriesOut = new FileWriter(queriesOutFile);
-             FileWriter postingsOut = new FileWriter(postingsOutFile);
+             //FileWriter postingsOut = new FileWriter(postingsOutFile);
              IndexReader indexReader = index.getReader()) {
 
             queriesOut.append("query,term,stemmed,termid\n");
-            postingsOut.append("termid,docid,score\n");
+            //postingsOut.append("termid,docid,score\n");
 
             Map<String, Integer> seen = new HashMap<>();
 
@@ -73,14 +80,20 @@ public class ExtractEvalPostings {
                         while (indexIterator.nextDocument() != END_OF_LIST) {
                             long docId = indexIterator.document();
                             double score = scorer.score();
-                            postingsOut.append(String.format("%d,%d,%f\n",
-                                    termId, docId, score));
+                            Posting posting = new Posting(termId);
+                            posting.setScore(score);
+                            posting.setDocid(docId);
+                            postingWriter.write(posting);
+                            //postingsOut.append(String.format("%d,%d,%f\n",
+                            //        termId, docId, score));
                         }
                     }
                     queriesOut.append(String.format("%d,%s,%s,%d\n",
                             queryId++, term, stemmed, termId));
                 }
             }
+
+            postingWriter.close();
         }
     }
 
