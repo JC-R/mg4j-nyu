@@ -138,6 +138,7 @@ public class Utils {
         String cleanedUp = CharMatcher.is(',').replaceFrom(query, "").replaceAll("OR", "");
         List<String> unprocessedTerms = Lists.newArrayList(
                 Splitter.on(' ').omitEmptyStrings().split(cleanedUp));
+        if (termProcessor == null) return unprocessedTerms;
         return unprocessedTerms.stream().map(t -> {
                     MutableString m = new MutableString(t);
                     termProcessor.processTerm(m);
