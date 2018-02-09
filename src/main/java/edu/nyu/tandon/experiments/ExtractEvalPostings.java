@@ -67,12 +67,12 @@ public class ExtractEvalPostings {
                     termProcessor.processTerm(m);
                     String stemmed = m.toString();
                     if (termId == null) {
+                        termId = termCount++;
                         String postingsOutFile = jsapResult.getString("output-base")
                                 + String.format("-postings-%d.parquet", termId);
                         ThriftParquetWriter<Posting> postingWriter = new ThriftParquetWriter<>(
                                 new org.apache.hadoop.fs.Path(postingsOutFile),
                                 Posting.class, CompressionCodecName.SNAPPY);
-                        termId = termCount++;
                         seen.put(term, termId);
                         IndexIterator indexIterator = indexReader.documents(stemmed);
                         BM25Scorer scorer = new BM25Scorer();
