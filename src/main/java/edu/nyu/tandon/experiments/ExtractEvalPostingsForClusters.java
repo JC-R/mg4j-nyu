@@ -9,8 +9,10 @@ import it.unimi.di.big.mg4j.index.IndexIterator;
 import it.unimi.di.big.mg4j.index.IndexReader;
 import it.unimi.di.big.mg4j.index.TermProcessor;
 import it.unimi.di.big.mg4j.index.cluster.ClusterAccessHelper;
+import it.unimi.di.big.mg4j.index.cluster.DocumentalClusteringStrategy;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalMergedCluster;
 import it.unimi.di.big.mg4j.search.score.BM25Scorer;
+import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.lang.MutableString;
 import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.apache.parquet.thrift.ThriftParquetWriter;
@@ -48,6 +50,7 @@ public class ExtractEvalPostingsForClusters {
 
         DocumentalMergedCluster globalIndex =
                 (DocumentalMergedCluster) Index.getInstance(basename, true, true, true);
+        DocumentalClusteringStrategy strategy = (DocumentalClusteringStrategy) BinIO.loadObject(basename + ".strategy");
 
         int indexNumber = 0;
         for (Index index : ClusterAccessHelper.getLocalIndices(globalIndex)) {
@@ -86,7 +89,7 @@ public class ExtractEvalPostingsForClusters {
                                 double score = scorer.score();
                                 Posting posting = new Posting(termId);
                                 posting.setScore(score);
-                                posting.setDocid(docId);
+                                posting.setDocid(strategy.globalPointer(indexNumber, docId));
                                 postingWriter.write(posting);
                             }
                         }
