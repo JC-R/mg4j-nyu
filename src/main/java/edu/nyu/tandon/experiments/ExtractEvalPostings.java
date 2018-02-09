@@ -88,8 +88,9 @@ public class ExtractEvalPostings {
                         postingWriter.close();
                     }
                     queriesOut.append(String.format("%d,%s,%s,%d\n",
-                            queryId++, term, stemmed, termId));
+                            queryId, term, stemmed, termId));
                 }
+                queryId++;
             }
         }
     }
