@@ -43,14 +43,9 @@ public class ExtractEvalPostings {
         String basename = jsapResult.getString("basename");
         String queryFile = jsapResult.getString("input");
         String queriesOutFile = jsapResult.getString("output-base") + "-queries.csv";
-        String postingsOutFile = jsapResult.getString("output-base") + "-postings.csv";
 
         Index index = Index.getInstance(basename, true, true, true);
         TermProcessor termProcessor = index.termProcessor;
-
-        ThriftParquetWriter<Posting> postingWriter = new ThriftParquetWriter<>(
-                new org.apache.hadoop.fs.Path(postingsOutFile),
-                Posting.class, CompressionCodecName.SNAPPY);
 
         try (FileWriter queriesOut = new FileWriter(queriesOutFile);
              //FileWriter postingsOut = new FileWriter(postingsOutFile);
@@ -72,6 +67,11 @@ public class ExtractEvalPostings {
                     termProcessor.processTerm(m);
                     String stemmed = m.toString();
                     if (termId == null) {
+                        String postingsOutFile = jsapResult.getString("output-base")
+                                + String.format("-postings-%d.parquet", termId);
+                        ThriftParquetWriter<Posting> postingWriter = new ThriftParquetWriter<>(
+                                new org.apache.hadoop.fs.Path(postingsOutFile),
+                                Posting.class, CompressionCodecName.SNAPPY);
                         termId = termCount++;
                         seen.put(term, termId);
                         IndexIterator indexIterator = indexReader.documents(stemmed);
@@ -84,16 +84,13 @@ public class ExtractEvalPostings {
                             posting.setScore(score);
                             posting.setDocid(docId);
                             postingWriter.write(posting);
-                            //postingsOut.append(String.format("%d,%d,%f\n",
-                            //        termId, docId, score));
                         }
+                        postingWriter.close();
                     }
                     queriesOut.append(String.format("%d,%s,%s,%d\n",
                             queryId++, term, stemmed, termId));
                 }
             }
-
-            postingWriter.close();
         }
     }
 
