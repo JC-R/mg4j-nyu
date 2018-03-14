@@ -220,9 +220,11 @@ public class WarcDocumentSequence_NYU extends AbstractDocumentSequence implement
                             break;
                         }
 
-                        //record.getWarcRecordId();
-
-                        if (record.getWarcType() == WarcRecord.Type.RESPONSE) return getCurrentDocument(record);
+                        if (record.getWarcType() == WarcRecord.Type.RESPONSE) {
+                            final Header trecId = record.getWarcHeaders().getFirstHeader("WARC-TREC-ID");
+                            if (trecId != null && spamDocuments.contains(trecId.getValue())) continue;
+                            return getCurrentDocument(record);
+                        }
                     }
                 }
             }
