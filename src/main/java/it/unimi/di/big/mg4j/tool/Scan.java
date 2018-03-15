@@ -1260,7 +1260,7 @@ public class Scan {
 
                 indexWriter.close();
                 final Properties properties = indexWriter.properties();
-                totPostings += properties.getLong("postings_Global");
+                totPostings += properties.getLong("postings");
                 properties.setProperty(Index.PropertyKeys.TERMPROCESSOR, ObjectParser.toSpec(termProcessor));
                 properties.setProperty(Index.PropertyKeys.OCCURRENCES, numOccurrences);
                 properties.setProperty(Index.PropertyKeys.MAXDOCSIZE, maxDocSize);
