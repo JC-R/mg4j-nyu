@@ -9,7 +9,6 @@ import edu.nyu.tandon.utils.Utils;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
 import it.unimi.di.big.mg4j.index.cluster.DocumentalPartitioningStrategy;
-import it.unimi.di.big.mg4j.index.cluster.SelectiveQueryEngine;
 import it.unimi.di.big.mg4j.query.SelectedInterval;
 import it.unimi.di.big.mg4j.query.nodes.QueryBuilderVisitorException;
 import it.unimi.di.big.mg4j.query.parser.QueryParserException;
@@ -51,7 +50,7 @@ public class ExtractChampionListFeatures {
             ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r = new ObjectArrayList<>();
             engine.process(term, 0, maxK, r);
             int kidx = 0;
-            int currentIdx = ks.get(0);
+            int currentIdx = 0;
             for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
                 hits[kidx][strategy.localIndex(dsi.document)]++;
                 currentIdx++;
@@ -67,7 +66,7 @@ public class ExtractChampionListFeatures {
     public static void printHits(int[][] hits, int clusters, int query) {
         for (int shard = 0; shard < clusters; shard++) {
             StringBuilder line = new StringBuilder();
-            line.append(query);
+            line.append(query).append(',').append(shard);
             for (int[] karr : hits) line.append(',').append(karr[shard]);
             System.out.println(line);
         }
