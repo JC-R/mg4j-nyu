@@ -64,9 +64,6 @@ public class ExtractChampionListFeatures {
                 currentIdx++;
                 if (currentIdx == ks.get(kidx) && kidx + 1 < ks.size()) {
                     kidx++;
-                    for (int shard = 0; shard < strategy.numberOfLocalIndices(); ++shard) {
-                        hits[kidx][shard] += hits[kidx - 1][shard];
-                    }
                 }
             }
         }
@@ -77,7 +74,11 @@ public class ExtractChampionListFeatures {
         for (int shard = 0; shard < clusters; shard++) {
             StringBuilder line = new StringBuilder();
             line.append(query).append(',').append(shard);
-            for (int[] karr : hits) line.append(',').append(karr[shard]);
+            int cumulative = 0;
+            for (int[] karr : hits) {
+                cumulative += karr[shard];
+                line.append(',').append(cumulative);
+            }
             System.out.println(line);
         }
     }
@@ -154,7 +155,7 @@ public class ExtractChampionListFeatures {
 
         if (!jsapResult.userSpecified("skipHeader")) {
             StringBuilder header = new StringBuilder("query,shard");
-            for (int i : k) header.append(',').append(i);
+            for (int i : k) header.append(',').append("top").append(k).append("hits");
             System.out.println(header);
         }
         extract(engine, strategy, jsapResult.getString("input"), Ints.asList(k), jsapResult.userSpecified("trace"));
