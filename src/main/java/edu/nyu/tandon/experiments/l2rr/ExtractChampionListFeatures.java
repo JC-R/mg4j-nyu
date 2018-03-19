@@ -131,7 +131,6 @@ public class ExtractChampionListFeatures {
         String basename = jsapResult.getString("basename");
 
         Scorer scorer = ExtractShardScores.resolveScorer(jsapResult.getString("scorer"));
-        SelectiveQueryEngine.setGlobalStatistics(scorer, basename);
         TerminatingQueryEngine engine = createQueryEngine(basename);
         engine.score(scorer);
 
