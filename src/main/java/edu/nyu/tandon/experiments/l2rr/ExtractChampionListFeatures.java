@@ -127,6 +127,7 @@ public class ExtractChampionListFeatures {
         SimpleJSAP jsap = new SimpleJSAP(Query.class.getName(), ".",
                 new Parameter[]{
                         new Switch("trace", 't', "trace", "Write logs to standard error."),
+                        new Switch("skipHeader", 'H', "skip-header", "Do not write CSV header."),
                         new FlaggedOption("input", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'i', "input", "The input file with queries delimited by new lines."),
                         new FlaggedOption("topK", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'k', "top-k", "The engine will limit the result set to top k results."),
                         //new FlaggedOption("buckets", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'b', "buckets", "Partition results into this many buckets."),
@@ -151,6 +152,11 @@ public class ExtractChampionListFeatures {
         DocumentalPartitioningStrategy strategy = (DocumentalPartitioningStrategy)
                 BinIO.loadObject(jsapResult.getString("strategy"));
 
+        if (!jsapResult.userSpecified("skipHeader")) {
+            StringBuilder header = new StringBuilder("query,shard");
+            for (int i : k) header.append(',').append(i);
+            System.out.println(header);
+        }
         extract(engine, strategy, jsapResult.getString("input"), Ints.asList(k), jsapResult.userSpecified("trace"));
     }
 
