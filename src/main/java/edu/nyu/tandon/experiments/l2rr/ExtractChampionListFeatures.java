@@ -52,7 +52,7 @@ public class ExtractChampionListFeatures {
             ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r = new ObjectArrayList<>();
             engine.process(term, 0, maxK, r);
             if (trace) {
-                System.err.println(String.format("Retrieved %d results:", r.size()));
+                System.err.println(String.format("Retrieved %d results for %s:", r.size(), term));
                 for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
                     System.err.println(String.format("Document: %d, Score: %f", dsi.document, dsi.score));
                 }
