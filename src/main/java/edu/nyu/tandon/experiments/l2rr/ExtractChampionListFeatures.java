@@ -54,7 +54,7 @@ public class ExtractChampionListFeatures {
             for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
                 hits[kidx][strategy.localIndex(dsi.document)]++;
                 currentIdx++;
-                if (currentIdx == ks.get(kidx)) {
+                if (currentIdx == ks.get(kidx) && kidx + 1 < ks.size()) {
                     kidx++;
                     System.arraycopy(hits[kidx - 1], 0, hits[kidx], 0, strategy.numberOfLocalIndices());
                 }
