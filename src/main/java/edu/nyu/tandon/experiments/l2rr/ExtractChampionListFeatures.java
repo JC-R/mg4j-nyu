@@ -64,7 +64,9 @@ public class ExtractChampionListFeatures {
                 currentIdx++;
                 if (currentIdx == ks.get(kidx) && kidx + 1 < ks.size()) {
                     kidx++;
-                    System.arraycopy(hits[kidx - 1], 0, hits[kidx], 0, strategy.numberOfLocalIndices());
+                    for (int shard = 0; shard < strategy.numberOfLocalIndices(); ++shard) {
+                        hits[kidx][shard] += hits[kidx - 1][shard];
+                    }
                 }
             }
         }
