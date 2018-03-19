@@ -28,6 +28,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,12 +44,19 @@ public class ExtractChampionListFeatures {
     public static int[][] hitsForTerms(TerminatingQueryEngine<Reference2ObjectMap<Index, SelectedInterval[]>> engine,
                                        List<String> terms,
                                        List<Integer> ks,
-                                       DocumentalPartitioningStrategy strategy) throws QueryParserException, QueryBuilderVisitorException, IOException {
+                                       DocumentalPartitioningStrategy strategy,
+                                       boolean trace) throws QueryParserException, QueryBuilderVisitorException, IOException {
         int maxK = ks.get(ks.size() - 1);
         int[][] hits = new int[ks.size()][strategy.numberOfLocalIndices()];
         for (String term : terms) {
             ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r = new ObjectArrayList<>();
             engine.process(term, 0, maxK, r);
+            if (trace) {
+                System.err.println(String.format("Retrieved %d results:", r.size()));
+                for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
+                    System.err.println(String.format("Document: %d, Score: %f", dsi.document, dsi.score));
+                }
+            }
             int kidx = 0;
             int currentIdx = 0;
             for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
@@ -73,16 +81,18 @@ public class ExtractChampionListFeatures {
     }
 
     public static void extract(TerminatingQueryEngine<Reference2ObjectMap<Index, SelectedInterval[]>> engine,
-                               DocumentalPartitioningStrategy strategy, String inputFile, List<Integer> ks)
+                               DocumentalPartitioningStrategy strategy, String inputFile, List<Integer> ks, boolean trace)
             throws IOException, QueryParserException, QueryBuilderVisitorException {
         assert (ks != null && ks.size() > 0);
         Collections.sort(ks);
+        System.err.println(String.format("Extracting Champion Lists for k = %s",
+                Arrays.toString(ks.toArray())));
         try (BufferedReader queryReader = new BufferedReader(new FileReader(inputFile))) {
             String query;
             int queryIdx = 0;
             while ((query = queryReader.readLine()) != null) {
                 List<String> terms = Utils.extractTerms(query, null);
-                int[][] hits = hitsForTerms(engine, terms, ks, strategy);
+                int[][] hits = hitsForTerms(engine, terms, ks, strategy, trace);
                 printHits(hits, strategy.numberOfLocalIndices(), queryIdx++);
             }
         }
@@ -114,6 +124,7 @@ public class ExtractChampionListFeatures {
 
         SimpleJSAP jsap = new SimpleJSAP(Query.class.getName(), ".",
                 new Parameter[]{
+                        new Switch("trace", 't', "trace", "Write logs to standard error."),
                         new FlaggedOption("input", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'i', "input", "The input file with queries delimited by new lines."),
                         new FlaggedOption("topK", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'k', "top-k", "The engine will limit the result set to top k results."),
                         //new FlaggedOption("buckets", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'b', "buckets", "Partition results into this many buckets."),
@@ -138,7 +149,7 @@ public class ExtractChampionListFeatures {
         DocumentalPartitioningStrategy strategy = (DocumentalPartitioningStrategy)
                 BinIO.loadObject(jsapResult.getString("strategy"));
 
-        extract(engine, strategy, jsapResult.getString("input"), Ints.asList(k));
+        extract(engine, strategy, jsapResult.getString("input"), Ints.asList(k), jsapResult.userSpecified("trace"));
     }
 
 }
