@@ -155,7 +155,7 @@ public class ExtractChampionListFeatures {
 
         if (!jsapResult.userSpecified("skipHeader")) {
             StringBuilder header = new StringBuilder("query,shard");
-            for (int i : k) header.append(',').append("top").append(k).append("hits");
+            for (int i : k) header.append(',').append("top").append(i).append("hits");
             System.out.println(header);
         }
         extract(engine, strategy, jsapResult.getString("input"), Ints.asList(k), jsapResult.userSpecified("trace"));
