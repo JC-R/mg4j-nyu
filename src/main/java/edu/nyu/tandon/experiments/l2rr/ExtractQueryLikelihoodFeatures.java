@@ -26,6 +26,8 @@ import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
 public class ExtractQueryLikelihoodFeatures {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ExtractQueryLikelihoodFeatures.class);
+    public static final double TINY_PROBABILITY = 0.00000000000000001;
+    public static final double TINY_LOG_PROBABILITY = Math.log(TINY_PROBABILITY);
 
     public static double processShard(Index shard, String query, double lambda) throws IOException {
         List<String> terms = Utils.extractTerms(query, shard.termProcessor);
@@ -46,8 +48,12 @@ public class ExtractQueryLikelihoodFeatures {
                     inListComponent += lambdaCollectionProbability;
                     inListComponent += (1.0 - lambda) * (double) iterator.count() / (double) shard.sizes.getInt(doc);
                 }
+                double numerator = outsideListComponent + inListComponent;
 
-                double termShardLogModel = Math.log(outsideListComponent + inListComponent) - Math.log(shard.numberOfDocuments);
+                double termShardLogModel = TINY_LOG_PROBABILITY;
+                if (numerator > 0) {
+                    termShardLogModel = Math.log(numerator) - Math.log(shard.numberOfDocuments);
+                }
                 queryLikelihood += termShardLogModel;
             }
         }
@@ -71,9 +77,9 @@ public class ExtractQueryLikelihoodFeatures {
                 queryLikelihoods[idx].binnedQueryLikelihood = binnedQL;
             }
         }
-        //Arrays.sort(queryLikelihoods, (QueryLikelihood lhs, QueryLikelihood rhs) ->
-        //        Integer.compare(lhs.shard, rhs.shard)
-        //);
+        Arrays.sort(queryLikelihoods, (QueryLikelihood lhs, QueryLikelihood rhs) ->
+                Integer.compare(lhs.shard, rhs.shard)
+        );
         for (QueryLikelihood ql : queryLikelihoods) {
             StringBuilder line = new StringBuilder();
             line.append(queryIdx)
