@@ -58,25 +58,26 @@ public class ExtractQueryLikelihoodFeatures {
         QueryLikelihood[] queryLikelihoods = new QueryLikelihood[shards.length];
         int shardIdx = 0;
         for (Index shard : shards) {
-            queryLikelihoods[shardIdx++] = new QueryLikelihood(shardIdx, processShard(shard, query, lambda));
+            queryLikelihoods[shardIdx] = new QueryLikelihood(shardIdx, processShard(shard, query, lambda));
+            shardIdx++;
         }
         Arrays.sort(queryLikelihoods, (QueryLikelihood lhs, QueryLikelihood rhs) ->
                 -Double.compare(lhs.queryLikelihood, rhs.queryLikelihood)
         );
         for (int binStart = 0; binStart < shards.length; binStart += binSize) {
-            int binEnd = Math.min(binStart + 10, shards.length);
+            int binEnd = Math.min(binStart + binSize, shards.length);
             double binnedQL = queryLikelihoods[binStart].queryLikelihood;
             for (int idx = binStart; idx < binEnd; ++idx) {
-                queryLikelihoods[idx].queryLikelihood = binnedQL;
+                queryLikelihoods[idx].binnedQueryLikelihood = binnedQL;
             }
         }
-        Arrays.sort(queryLikelihoods, (QueryLikelihood lhs, QueryLikelihood rhs) ->
-                Integer.compare(lhs.shard, rhs.shard)
-        );
+        //Arrays.sort(queryLikelihoods, (QueryLikelihood lhs, QueryLikelihood rhs) ->
+        //        Integer.compare(lhs.shard, rhs.shard)
+        //);
         for (QueryLikelihood ql : queryLikelihoods) {
             StringBuilder line = new StringBuilder();
             line.append(queryIdx)
-                    .append(',').append(shardIdx)
+                    .append(',').append(ql.shard)
                     .append(',').append(ql.queryLikelihood)
                     .append(',').append(ql.invQueryLikelihood)
                     .append(',').append(ql.binnedQueryLikelihood);
