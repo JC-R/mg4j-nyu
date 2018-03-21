@@ -34,7 +34,7 @@ public class ExtractBigramFrequency {
                 List<String> terms = Utils.extractTerms(query, shard.termProcessor);
                 double bigramLogFrequency = 0.0;
                 for (int i = 0; i < terms.size(); i++) {
-                    for (int j = i; j < terms.size(); j++) {
+                    for (int j = i + 1; j < terms.size(); j++) {
                         DocumentIterator intersection = AndDocumentIterator.getInstance(
                                 shardReader.documents((terms.get(i))),
                                 shardReader.documents((terms.get(j))));
