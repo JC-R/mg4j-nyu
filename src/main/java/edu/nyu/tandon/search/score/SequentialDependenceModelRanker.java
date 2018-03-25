@@ -97,10 +97,10 @@ public class SequentialDependenceModelRanker {
                 long documentId = documentIds[documentIdx];
                 Pair<Integer, Integer> docFrequencies = maps.get(queryIdx).get(documentId);
                 Pair<Integer, Integer> colFrequencies = maps.get(queryIdx).get(-1L);
-                int docOrderedCount = docFrequencies.getFirst();
-                int docUnorderedCount = docFrequencies.getSecond();
-                int colOrderedCount = colFrequencies.getFirst();
-                int colUnorderedCount = colFrequencies.getSecond();
+                int docOrderedCount = docFrequencies != null ? docFrequencies.getFirst() : 0;
+                int docUnorderedCount = docFrequencies != null ? docFrequencies.getSecond() : 0;
+                int colOrderedCount = colFrequencies != null ? colFrequencies.getFirst() : 0;
+                int colUnorderedCount = colFrequencies != null ? colFrequencies.getSecond() : 0;
                 scores[documentIdx] += potential(lambdaOrdered,
                         docOrderedCount, documentSize(documentId), colOrderedCount);
                 scores[documentIdx] += potential(lambdaUnordered,
