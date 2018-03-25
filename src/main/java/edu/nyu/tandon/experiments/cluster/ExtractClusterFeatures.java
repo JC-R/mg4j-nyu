@@ -224,7 +224,7 @@ public class ExtractClusterFeatures {
                     throw e;
                 }
 
-                int fakeShardId = jsapResult.getInt("fakeShardId");
+                int fakeShardId = fakeShardDefined ? jsapResult.getInt("fakeShardId") : -1;
                 long[] termIds = new long[processedTerms.size()];
                 for (int idx = 0; idx < termIds.length; ++idx) {
                     termIds[idx] = index.termMap.getLong(processedTerms.get(idx));
