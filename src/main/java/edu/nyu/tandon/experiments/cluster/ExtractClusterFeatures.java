@@ -179,6 +179,8 @@ public class ExtractClusterFeatures {
         try (BufferedReader br = new BufferedReader(new FileReader(jsapResult.getString("input")))) {
             for (String query; (query = br.readLine()) != null; ) {
 
+                System.out.println(String.format("Extracting features of query %d: %s", queryCount, query));
+
                 QueryFeatures queryFeatures = new QueryFeatures(queryCount);
 
                 ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r =
