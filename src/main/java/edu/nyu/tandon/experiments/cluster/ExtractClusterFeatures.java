@@ -1,13 +1,11 @@
 package edu.nyu.tandon.experiments.cluster;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 import com.martiansoftware.jsap.*;
 import edu.nyu.tandon.experiments.thrift.QueryFeatures;
 import edu.nyu.tandon.experiments.thrift.Result;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.query.TerminatingQueryEngine;
+import edu.nyu.tandon.search.score.SequentialDependenceModelRanker;
 import edu.nyu.tandon.utils.Utils;
 import it.unimi.di.big.mg4j.index.Index;
 import it.unimi.di.big.mg4j.index.TermProcessor;
@@ -21,7 +19,7 @@ import it.unimi.di.big.mg4j.search.score.Scorer;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.fastutil.objects.*;
-import it.unimi.dsi.lang.MutableString;
+import org.apache.commons.math3.util.Pair;
 import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.apache.parquet.thrift.ThriftParquetWriter;
 import org.codehaus.plexus.util.FileUtils;
@@ -31,6 +29,8 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,12 +43,55 @@ public class ExtractClusterFeatures {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ExtractClusterFeatures.class);
 
+    public static void writeResults(int queryId, DocumentalClusteringStrategy strategy,
+                                    ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> queryResults,
+                                    boolean shardDefined, int shardId, boolean fakeShardDefined, int fakeShardId,
+                                    Integer bucket, ThriftParquetWriter<Result> resultWriter, boolean rerank,
+                                    long[] queryTermIds, Index index) throws IOException {
+        List<Pair<Long, Double>> results = new ArrayList<>();
+        for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : queryResults) {
+            results.add(new Pair<>(dsi.document, dsi.score));
+        }
+        if (rerank) {
+            long[] documents = new long[results.size()];
+            for (int idx = 0; idx < documents.length; idx++) {
+                documents[idx] = results.get(idx).getFirst();
+            }
+            // TODO: Move params to command line
+            SequentialDependenceModelRanker ranker = new SequentialDependenceModelRanker(index, 0.8, 0.1, 0.1, 0.4, 10);
+            double[] scores = ranker.score(queryTermIds, documents);
+            results.clear();
+            for (int idx = 0; idx < documents.length; idx++) {
+                results.add(new Pair<>(documents[idx], scores[idx]));
+            }
+            Collections.sort(results, (lhs, rhs) -> -Double.compare(lhs.getSecond(), rhs.getSecond()));
+        }
+        int rank = 0;
+        for (Pair<Long, Double> docscores : results) {
+            long doc = docscores.getFirst();
+            double score = docscores.getSecond();
+            Result result = new Result(queryId, rank++);
+            result.setLdocid(doc);
+            result.setGdocid(doc);
+            result.setScore(score);
+            if (shardDefined) {
+                result.setShard(shardId);
+                if (bucket != null) result.setGdocid(strategy.globalPointer(shardId, doc));
+            } else if (fakeShardDefined) {
+                result.setShard(fakeShardId);
+            }
+            if (bucket != null) result.setBucket(bucket);
+            resultWriter.write(result);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception {
 
         SimpleJSAP jsap = new SimpleJSAP(Query.class.getName(), ".",
                 new Parameter[]{
                         new Switch("globalStatistics", 'g', "global-statistics", "Whether to use global statistics. Note that they need to be calculated: see ClusterGlobalStatistics."),
+                        new Switch("rerank", 'r', "rerank", "Rerank using Sequential Dependence Model."),
                         new FlaggedOption("input", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'i', "input", "The input file with queries delimited by new lines."),
                         new FlaggedOption("output", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "output", "The output files basename."),
                         new FlaggedOption("topK", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'k', "top-k", "The engine will limit the result set to top k results. k=10 by default."),
@@ -62,6 +105,7 @@ public class ExtractClusterFeatures {
         final JSAPResult jsapResult = jsap.parse(args);
         if (jsap.messagePrinted()) return;
 
+        boolean rerank = jsapResult.userSpecified("rerank");
         boolean shardDefined = jsapResult.userSpecified("shardId");
         boolean fakeShardDefined = jsapResult.userSpecified("fakeShardId");
         int buckets = jsapResult.userSpecified("buckets") ? jsapResult.getInt("buckets") : 0;
@@ -180,20 +224,15 @@ public class ExtractClusterFeatures {
                     throw e;
                 }
 
+                int fakeShardId = jsapResult.getInt("fakeShardId");
+                long[] termIds = new long[processedTerms.size()];
+                for (int idx = 0; idx < termIds.length; ++idx) {
+                    termIds[idx] = index.termMap.getLong(processedTerms.get(idx));
+                }
                 if (buckets == 0) {
-                    int rank = 0;
-                    for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
-                        Result result = new Result(queryCount, rank++);
-                        result.setLdocid(dsi.document);
-                        result.setGdocid(dsi.document);
-                        result.setScore(dsi.score);
-                        if (shardDefined) {
-                            result.setShard(shardId);
-                        } else if (fakeShardDefined) {
-                            result.setShard(jsapResult.getInt("fakeShardId"));
-                        }
-                        resultWriter.write(result);
-                    }
+                    writeResults(queryCount, strategy, r, shardDefined, shardId,
+                            fakeShardDefined, fakeShardId, null, resultWriter,
+                            rerank, termIds, index);
                 } else {
                     for (int bucket = 0; bucket < buckets; bucket++) {
                         try {
@@ -204,21 +243,9 @@ public class ExtractClusterFeatures {
                             LOGGER.error(String.format("There was an error while processing query: %s", query), e);
                             throw e;
                         }
-                        int rank = 0;
-                        for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
-                            Result result = new Result(queryCount, rank++);
-                            result.setLdocid(dsi.document);
-                            result.setGdocid(dsi.document);
-                            result.setScore(dsi.score);
-                            if (shardDefined) {
-                                result.setShard(shardId);
-                                result.setGdocid(strategy.globalPointer(shardId, dsi.document));
-                            } else if (fakeShardDefined) {
-                                result.setShard(jsapResult.getInt("fakeShardId"));
-                            }
-                            result.setBucket(bucket);
-                            resultWriter.write(result);
-                        }
+                        writeResults(queryCount, strategy, r, shardDefined, shardId,
+                                fakeShardDefined, fakeShardId, bucket, resultWriter,
+                                rerank, termIds, index);
                     }
                 }
 

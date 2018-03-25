@@ -18,12 +18,14 @@ dir=$1
 input=$2
 outputDir=$3
 buckets=$4
-k=$5
+field=$5
+k=$6
 
 if [ -z "${dir}" ]; then echo "You have to define cluster directory."; exit 1; fi;
 if [ -z "${input}" ]; then echo "You have to define input file."; exit 1; fi;
 if [ -z "${outputDir}" ]; then echo "You have to define output directory."; exit 1; fi;
 if [ -z "${buckets}" ]; then echo "You have to define the number of buckets."; exit 1; fi;
+if [ -z "${field}" ]; then field="text"; fi;
 if [ -z "${k}" ]; then k=100; fi;
 
 inputBase=`basename ${input}`
@@ -34,7 +36,7 @@ starttime=$(date +%s)
 
 set -e
 
-ls ${dir}/*-*terms | sort | while read file;
+ls ${dir}/*-${field}*terms | sort | while read file;
 do
         clusterBase=`echo ${file} | sed "s/\.terms//"`
 

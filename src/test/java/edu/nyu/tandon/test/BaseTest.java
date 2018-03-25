@@ -98,7 +98,7 @@ public class BaseTest {
 
     public void buildIndex(String basename, List<String> corpus) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
         new IndexBuilder(basename, new StringDocumentSequence(corpus))
-                .quasiSuccinctWriterFlags(CompressionFlags.valueOf(new String[]{"POSITIONS:NONE"}, CompressionFlags.DEFAULT_STANDARD_INDEX))
+                //.quasiSuccinctWriterFlags(CompressionFlags.valueOf(new String[]{"POSITIONS:NONE"}, CompressionFlags.DEFAULT_STANDARD_INDEX))
                 .run();
     }
 
