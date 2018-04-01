@@ -169,6 +169,18 @@ public class SequentialDependenceModelRanker {
             this.first = first;
             this.second = second;
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof Bigram && (obj == this
+                    || this.first.equals(((Bigram) obj).first)
+                    && this.second.equals(((Bigram) obj).second));
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(first, second);
+        }
     }
 
     public static class PositionIntersection {
