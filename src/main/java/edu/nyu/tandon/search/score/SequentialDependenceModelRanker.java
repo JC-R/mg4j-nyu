@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static it.unimi.di.big.mg4j.index.IndexIterator.END_OF_POSITIONS;
 import static it.unimi.di.big.mg4j.search.DocumentIterator.END_OF_LIST;
@@ -85,18 +87,25 @@ public class SequentialDependenceModelRanker {
         }
     }
 
+    public List<Bigram<Long>> uniqueBigrams(long[] query) {
+        return IntStream.range(0, query.length - 1)
+                .mapToObj(start -> new Bigram<>(query[start], query[start + 1]))
+                .distinct().collect(Collectors.toList());
+    }
+
     public void scoreBigrams(long[] query, long[] documentIds, double[] scores) throws IOException {
-        List<Map<Long, Pair<Integer, Integer>>> maps = new ArrayList<>();
-        for (int queryIdx = 0; queryIdx < query.length - 1; queryIdx++) {
-            long termA = query[queryIdx];
-            long termB = query[queryIdx + 1];
-            maps.add(pairFrequencies(termA, termB, this.windowSize));
+        Set<Long> documentSet = new HashSet<>();
+        for (long docId : documentIds) documentSet.add(docId);
+        Map<Bigram<Long>, Map<Long, Pair<Integer, Integer>>> maps = new HashMap<>();
+        for (Bigram<Long> bigram : uniqueBigrams(query)) {
+            maps.put(bigram, pairFrequencies(bigram.first, bigram.second, this.windowSize, documentSet));
         }
         for (int documentIdx = 0; documentIdx < documentIds.length; documentIdx++) {
             for (int queryIdx = 0; queryIdx < query.length - 1; queryIdx++) {
                 long documentId = documentIds[documentIdx];
-                Pair<Integer, Integer> docFrequencies = maps.get(queryIdx).get(documentId);
-                Pair<Integer, Integer> colFrequencies = maps.get(queryIdx).get(-1L);
+                Bigram<Long> bigram = new Bigram<>(query[queryIdx], query[queryIdx + 1]);
+                Pair<Integer, Integer> docFrequencies = maps.get(bigram).get(documentId);
+                Pair<Integer, Integer> colFrequencies = maps.get(bigram).get(-1L);
                 int docOrderedCount = docFrequencies != null ? docFrequencies.getFirst() : 0;
                 int docUnorderedCount = docFrequencies != null ? docFrequencies.getSecond() : 0;
                 int colOrderedCount = colFrequencies != null ? colFrequencies.getFirst() : 0;
@@ -117,6 +126,11 @@ public class SequentialDependenceModelRanker {
     }
 
     public Map<Long, Pair<Integer, Integer>> pairFrequencies(long termA, long termB, int windowSize) throws IOException {
+        return pairFrequencies(termA, termB, windowSize, null);
+    }
+
+    public Map<Long, Pair<Integer, Integer>> pairFrequencies(long termA, long termB, int windowSize,
+                                                             Set<Long> documents) throws IOException {
         try (IndexReader readerA = index.getReader();
              IndexReader readerB = index.getReader()) {
             Map<Long, Pair<Integer, Integer>> frequencies = new HashMap<>();
@@ -137,12 +151,23 @@ public class SequentialDependenceModelRanker {
                     orderedCount += window.orderedCount();
                     unorderedCount += window.unorderedCount();
                 }
-                frequencies.put(doc, new Pair<>(orderedCount, unorderedCount));
+                if (documents == null || documents.contains(doc)) {
+                    frequencies.put(doc, new Pair<>(orderedCount, unorderedCount));
+                }
                 collectionOrderedCount += orderedCount;
                 collectionUnorderedCount += unorderedCount;
             }
             frequencies.put(-1L, new Pair<>(collectionOrderedCount, collectionUnorderedCount));
             return frequencies;
+        }
+    }
+
+    public static class Bigram<T> {
+        public T first;
+        public T second;
+        public Bigram(T first, T second) {
+            this.first = first;
+            this.second = second;
         }
     }
 
