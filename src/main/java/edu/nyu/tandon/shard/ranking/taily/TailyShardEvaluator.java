@@ -144,13 +144,8 @@ public class TailyShardEvaluator {
     protected long[] termIds(List<String> terms) {
         long[] ids = new long[terms.size()];
         int i = 0;
-        for (String term : terms) {
-            Long id;
-            if ((id = termMap.get(term)) != null) {
-                ids[i++] = id;
-            }
-        }
-        return Arrays.copyOfRange(ids, 0, i);
+        for (String term : terms) ids[i++] = termMap.getLong(term);
+        return ids;
     }
 
     public double estimateDocsAboveCutoff(List<String> terms, double scoreCutoff, double globalMinValue) throws IOException {
