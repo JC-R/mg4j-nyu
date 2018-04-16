@@ -47,6 +47,7 @@ public class ExtractDocHits {
             while ((query = queryReader.readLine()) != null) {
                 List<String> terms = Utils.extractTerms(query, null);
                 String processedQuery = String.join(" OR ", terms);
+                System.err.println(String.format("Query %d: %s [%s]", queryIdx++, query, processedQuery));
                 ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r = new ObjectArrayList<>();
                 engine.process(processedQuery, 0, k, r);
                 for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
