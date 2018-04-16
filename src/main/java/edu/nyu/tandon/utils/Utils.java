@@ -135,7 +135,11 @@ public class Utils {
     }
 
     public static List<String> extractTerms(String query, TermProcessor termProcessor) {
-        String cleanedUp = CharMatcher.is(',').replaceFrom(query, "").replaceAll("OR", "");
+        String cleanedUp = CharMatcher.is(',').replaceFrom(query, "");
+        cleanedUp = CharMatcher.is('.').replaceFrom(query, " ");
+        cleanedUp = CharMatcher.is('-').replaceFrom(query, " ");
+        cleanedUp = CharMatcher.is(';').replaceFrom(query, " ");
+        cleanedUp = cleanedUp.replaceAll("OR", "");
         List<String> unprocessedTerms = Lists.newArrayList(
                 Splitter.on(' ').omitEmptyStrings().split(cleanedUp));
         if (termProcessor == null) return unprocessedTerms;
