@@ -139,6 +139,7 @@ public class Utils {
         cleanedUp = CharMatcher.is('.').replaceFrom(query, " ");
         cleanedUp = CharMatcher.is('-').replaceFrom(cleanedUp, " ");
         cleanedUp = CharMatcher.is(';').replaceFrom(cleanedUp, " ");
+        cleanedUp = CharMatcher.is('&').replaceFrom(cleanedUp, " ");
         cleanedUp = cleanedUp.replaceAll("OR", "");
         List<String> unprocessedTerms = Lists.newArrayList(
                 Splitter.on(' ').omitEmptyStrings().split(cleanedUp));
