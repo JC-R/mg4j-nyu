@@ -107,7 +107,8 @@ public class TailyShardSelector implements ShardSelector {
                             .queryStats(shardEvaluator.termIds(terms))
                             .minValue;
                 } catch (Exception e) {
-                    LOGGER.error(String.format("Error reading min values for shard %d", n));
+                    LOGGER.error(
+                            String.format("Error reading min values for shard %d and query %s", n, query));
                     throw e;
                 }
                 n++;
