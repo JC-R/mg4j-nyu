@@ -334,12 +334,17 @@ public class StatisticalShardRepresentation {
         long prev = -1;
         TermIterator it = termIterator();
         for (long termId : termIds) {
-            TermStats term = it.next(termId - prev);
-            expectedValue += term.expectedValue;
-            variance += term.variance;
-            minValue += term.minValue;
-            prev = termId;
-            LOGGER.trace(String.format("Term %d: %s", termId, term));
+            try {
+                TermStats term = it.next(termId - prev);
+                expectedValue += term.expectedValue;
+                variance += term.variance;
+                minValue += term.minValue;
+                prev = termId;
+                LOGGER.trace(String.format("Term %d: %s", termId, term));
+            } catch (IOException e) {
+                LOGGER.error(String.format("Error queryStats(): termId == %d, prev == %d", termId, prev));
+                throw new RuntimeException(e);
+            }
         }
         it.close();
         return new TermStats(expectedValue, variance, minValue);
@@ -368,6 +373,7 @@ public class StatisticalShardRepresentation {
                     double minScore = minScoreStream.readDouble();
                     return new TermStats(expectedValue, variance, minScore);
                 } catch (IOException e) {
+                    LOGGER.error(String.format("Error next(): remainingTerms == %d", remainingTerms));
                     throw new RuntimeException(e);
                 }
             }
