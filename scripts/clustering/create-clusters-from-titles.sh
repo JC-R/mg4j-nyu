@@ -32,4 +32,4 @@ ${MG4J_NYU_SCRIPTS}/clustering/cluster-mappings.sh ${workDir} "${globalBase}.tit
 ${MG4J_NYU_SCRIPTS}/clustering/create-clusters.sh ${workDir} ${globalBase} ${outputName}
 
 # Copy titles
-${MG4J_NYU_SCRIPTS}/clustering/copy-titles.sh ${workDir}
+#${MG4J_NYU_SCRIPTS}/clustering/copy-titles.sh ${workDir}
