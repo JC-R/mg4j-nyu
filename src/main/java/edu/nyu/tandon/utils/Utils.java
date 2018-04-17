@@ -136,10 +136,7 @@ public class Utils {
 
     public static List<String> extractTerms(String query, TermProcessor termProcessor) {
         String cleanedUp = CharMatcher.is(',').replaceFrom(query, "");
-        cleanedUp = CharMatcher.is('.').replaceFrom(query, " ");
-        cleanedUp = CharMatcher.is('-').replaceFrom(cleanedUp, " ");
-        cleanedUp = CharMatcher.is(';').replaceFrom(cleanedUp, " ");
-        cleanedUp = CharMatcher.is('&').replaceFrom(cleanedUp, " ");
+        cleanedUp = CharMatcher.anyOf(".-;&+").replaceFrom(query, " ");
         cleanedUp = cleanedUp.replaceAll("OR", "");
         List<String> unprocessedTerms = Lists.newArrayList(
                 Splitter.on(' ').omitEmptyStrings().split(cleanedUp));
