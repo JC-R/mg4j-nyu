@@ -327,7 +327,7 @@ public class StatisticalShardRepresentation {
 
     public TermStats queryStats(long[] termIds) throws IOException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
         LOGGER.debug(String.format("queryStats for termsIds = %s", Arrays.toString(termIds)));
-        termIds = Arrays.stream(termIds).sorted().distinct().toArray();
+        termIds = Arrays.stream(termIds).sorted().distinct().filter(id -> id >= 0).toArray();
         double expectedValue = 0;
         double variance = 0;
         double minValue = 0;
