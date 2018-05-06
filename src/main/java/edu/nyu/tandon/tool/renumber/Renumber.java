@@ -260,9 +260,9 @@ public class Renumber {
             indexWriter.writeDocumentPointer(out, document);
             if (index.hasPayloads) indexWriter.writePayload(out, p.payload);
             if (index.hasCounts) indexWriter.writePositionCount(out, p.positionCount);
-            if (index.hasPositions) {
-                indexWriter.writeDocumentPositions(out, p.positions, 0, p.positionCount, p.documentSize);
-            }
+            //if (index.hasPositions) {
+            //    indexWriter.writeDocumentPositions(out, p.positions, 0, p.positionCount, p.documentSize);
+            //}
         }
     }
 
