@@ -112,10 +112,10 @@ public class Renumber {
     public void run(boolean validate) throws IOException, ConfigurationException, IllegalAccessException, URISyntaxException, InstantiationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
 
         if (mapping == null) throw new IllegalStateException("Mapping file is undefined.");
-        if (index.hasPositions) {
-            // TODO
-            throw new IllegalArgumentException("Indices with positions are currently not supported");
-        }
+        //if (index.hasPositions) {
+        //    // TODO
+        //    throw new IllegalArgumentException("Indices with positions are currently not supported");
+        //}
 
         LOGGER.info("Copying inverted lists");
 
