@@ -23,10 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
 import static edu.nyu.tandon.query.Query.MAX_STEMMING;
@@ -37,6 +34,29 @@ import static edu.nyu.tandon.query.Query.MAX_STEMMING;
 public class ExtractDocHits {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ExtractDocHits.class);
+
+    static class Hits {
+        public long[] hits_10;
+        public long[] hits_100;
+        public long[] hits_1000;
+        public int documentCount;
+        public Hits(long[] hits_10, long[] hits_100, long[] hits_1000) {
+            assert(hits_10.length == hits_100.length);
+            assert(hits_100.length == hits_1000.length);
+            this.documentCount = hits_10.length;
+            this.hits_10 = hits_10;
+            this.hits_100 = hits_100;
+            this.hits_1000 = hits_1000;
+        }
+        public void add(Hits other) {
+            assert(documentCount == other.documentCount);
+            for (int idx = 0; idx < documentCount; ++idx) {
+                hits_10[idx] += other.hits_10[idx];
+                hits_100[idx] += other.hits_100[idx];
+                hits_1000[idx] += other.hits_1000[idx];
+            }
+        }
+    }
 
     static class Extract implements Callable {
 
@@ -54,22 +74,42 @@ public class ExtractDocHits {
         }
 
         @Override
-        public long[] call() throws Exception {
+        public Hits call() throws Exception {
             try (BufferedReader queryReader = new BufferedReader(new FileReader(inputFile))) {
-                long[] hits = new long[documentCount];
+                long[] hits_10 = new long[documentCount];
+                long[] hits_100 = new long[documentCount];
+                long[] hits_1000 = new long[documentCount];
                 String query;
                 int queryIdx = 0;
                 while ((query = queryReader.readLine()) != null) {
+                    System.out.println(query);
                     List<String> terms = Utils.extractTerms(query, null);
                     String processedQuery = String.join(" OR ", terms);
                     System.err.println(String.format("Query %d: %s [%s]", queryIdx++, query, processedQuery));
                     ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r = new ObjectArrayList<>();
-                    engine.process(processedQuery, 0, k, r);
-                    for (DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>> dsi : r) {
-                        hits[(int)dsi.document]++;
+                    try {
+                        engine.process(processedQuery, 0, k, r);
+                        for (int idx = 0; idx < Math.min(10, r.size()); idx++) {
+                            int document = (int)r.get(idx).document;
+                            hits_10[document]++;
+                            hits_100[document]++;
+                            hits_1000[document]++;
+                        }
+                        for (int idx = 10; idx < Math.min(100, r.size()); idx++) {
+                            int document = (int)r.get(idx).document;
+                            hits_100[document]++;
+                            hits_1000[document]++;
+                        }
+                        for (int idx = 100; idx < r.size(); idx++) {
+                            int document = (int)r.get(idx).document;
+                            hits_1000[document]++;
+                        }
+                    } catch (Exception e) {
+                        System.err.println(String.format("Failed to process query: %s", query));
+                        e.printStackTrace();
                     }
                 }
-                return hits;
+                return new Hits(hits_10, hits_100, hits_1000);
             }
         }
     }
@@ -95,37 +135,36 @@ public class ExtractDocHits {
     ///    }
     ///}
 
-    public static void printHits(long[] hits) {
-        int document = 0;
-        for (long hit : hits) {
-            System.out.println(String.format("%d,%d", document++, hit));
+    public static void printHits(Hits hits) {
+        System.out.println("docid,h10,h100,h1000");
+        for (int document = 0; document < hits.documentCount; document++) {
+            System.out.println(String.format("%d,%d,%d,%d",
+                    document, hits.hits_10[document], hits.hits_100[document], hits.hits_100[document]));
         }
     }
 
     public static List<QueryEngine>
     createQueryEngines(String basename, int numberOfCopies)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
-        String[] basenameWeight = new String[]{basename};
-        final Object2ReferenceLinkedOpenHashMap<String, Index> indexMap = new Object2ReferenceLinkedOpenHashMap<>(Hash.DEFAULT_INITIAL_SIZE, .5f);
-        final Reference2DoubleOpenHashMap<Index> index2Weight = new Reference2DoubleOpenHashMap<>();
-        Query.loadIndicesFromSpec(basenameWeight, true, null, indexMap, index2Weight);
-
-        final Object2ObjectOpenHashMap<String, TermProcessor> termProcessors = new Object2ObjectOpenHashMap<>(indexMap.size());
-        for (String alias : indexMap.keySet()) termProcessors.put(alias, indexMap.get(alias).termProcessor);
-        final SimpleParser simpleParser = new SimpleParser(indexMap.keySet(), indexMap.firstKey(), termProcessors);
-        final Reference2ReferenceMap<Index, Object> index2Parser = new Reference2ReferenceOpenHashMap<>();
 
         List<QueryEngine> engines = new ArrayList<>();
         for (int t = 0; t < numberOfCopies; t++) {
+            String[] basenameWeight = new String[]{basename};
+            final Object2ReferenceLinkedOpenHashMap<String, Index> indexMap = new Object2ReferenceLinkedOpenHashMap<>(Hash.DEFAULT_INITIAL_SIZE, .5f);
+            final Reference2DoubleOpenHashMap<Index> index2Weight = new Reference2DoubleOpenHashMap<>();
+            Query.loadIndicesFromSpec(basenameWeight, true, null, indexMap, index2Weight);
+            final Object2ObjectOpenHashMap<String, TermProcessor> termProcessors = new Object2ObjectOpenHashMap<>(indexMap.size());
+            for (String alias : indexMap.keySet()) termProcessors.put(alias, indexMap.get(alias).termProcessor);
             QueryEngine engine = new QueryEngine(
-                    simpleParser,
-                    new DocumentIteratorBuilderVisitor(indexMap, index2Parser, indexMap.get(indexMap.firstKey()), MAX_STEMMING),
+                    new SimpleParser(indexMap.keySet(), indexMap.firstKey(), termProcessors),
+                    new DocumentIteratorBuilderVisitor(indexMap,
+                            new Reference2ReferenceOpenHashMap<>(),
+                            indexMap.get(indexMap.firstKey()),
+                            MAX_STEMMING),
                     indexMap);
             engine.setWeights(index2Weight);
             engines.add(engine);
         }
-        //engines.add(engine);
-        //IntStream.range(1, numberOfCopies).forEach(i -> engines.add(engine.copy()));
         return engines;
     }
 
@@ -161,11 +200,14 @@ public class ExtractDocHits {
         IntStream.range(0, threads).forEach(i -> results.add(pool.submit(
                 new Extract(engine.get(i), input[i], k, documents))));
 
-        long[] hits = new long[documents];
+        Hits hits = new Hits(new long[documents], new long[documents], new long[documents]);
         for (Future result : results) {
-            long[] partial = (long[]) result.get();
-            for (int idx = 0; idx < documents; ++idx) {
-                hits[idx] += partial[idx];
+            try {
+                Hits partial = (Hits)result.get();
+                hits.add(partial);
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+                result.cancel(true);
             }
         }
         pool.shutdown();
