@@ -139,7 +139,7 @@ public class ExtractDocHits {
         System.out.println("docid,h10,h100,h1000");
         for (int document = 0; document < hits.documentCount; document++) {
             System.out.println(String.format("%d,%d,%d,%d",
-                    document, hits.hits_10[document], hits.hits_100[document], hits.hits_100[document]));
+                    document, hits.hits_10[document], hits.hits_100[document], hits.hits_1000[document]));
         }
     }
 
