@@ -39,7 +39,7 @@ public class ExtractDocHits {
 
     public static void extract(TerminatingQueryEngine<Reference2ObjectMap<Index, SelectedInterval[]>> engine,
                                String inputFile, int k, int documentCount)
-            throws IOException, QueryParserException, QueryBuilderVisitorException {
+            throws IOException {
         try (BufferedReader queryReader = new BufferedReader(new FileReader(inputFile))) {
             String query;
             int queryIdx = 0;
@@ -47,14 +47,18 @@ public class ExtractDocHits {
                 List<String> terms = Utils.extractTerms(query, null);
                 String processedQuery = String.join(" OR ", terms);
                 ObjectArrayList<DocumentScoreInfo<Reference2ObjectMap<Index, SelectedInterval[]>>> r = new ObjectArrayList<>();
-                engine.process(processedQuery, 0, k, r);
-                StringBuilder builder = new StringBuilder();
-                if (!r.isEmpty()) {
-                    builder.append(r.get(0).document);
-                    for (int idx = 1; idx < r.size(); ++idx){
-                        builder.append(' ').append(r.get(idx).document);
+                try {
+                    engine.process(processedQuery, 0, k, r);
+                    StringBuilder builder = new StringBuilder();
+                    if (!r.isEmpty()) {
+                        builder.append(r.get(0).document);
+                        for (int idx = 1; idx < r.size(); ++idx) {
+                            builder.append(' ').append(r.get(idx).document);
+                        }
+                        System.out.println(builder.toString());
                     }
-                    System.out.println(builder.toString());
+                } catch (QueryParserException | QueryBuilderVisitorException e) {
+                    System.err.println(query);
                 }
             }
         }
