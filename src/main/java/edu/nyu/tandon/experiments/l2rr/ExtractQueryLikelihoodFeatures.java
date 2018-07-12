@@ -94,7 +94,7 @@ public class ExtractQueryLikelihoodFeatures {
                         new FlaggedOption("input", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'i', "input", "The input file with queries delimited by new lines."),
                         new FlaggedOption("lambda", JSAP.DOUBLE_PARSER, "0.4", JSAP.REQUIRED, 'l', "lambda", "Lambda in Jelinek-Mercer smoothing."),
                         new FlaggedOption("binSize", JSAP.INTEGER_PARSER, "10", JSAP.REQUIRED, 'b', "bin-size", "Bin size for binned QL."),
-                        new FlaggedOption("shards", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 's', "shards", "Number of shards."),
+                        new FlaggedOption("shards", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 's', "shards", "Number of shards."),
                         new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The basename of the index."),
                 });
 
