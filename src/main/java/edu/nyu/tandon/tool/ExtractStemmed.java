@@ -10,11 +10,13 @@ import it.unimi.dsi.fastutil.io.BinIO;
 import it.unimi.dsi.io.FastBufferedReader;
 import it.unimi.dsi.lang.MutableString;
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.io.Charsets;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 
 /**
  * @author michal.siedlaczek@nyu.edu
@@ -23,10 +25,12 @@ public class ExtractStemmed {
 
     DocumentSequence collection;
     String output;
+    boolean nostem;
 
-    public ExtractStemmed(String collection, String output) throws IOException, ClassNotFoundException {
+    public ExtractStemmed(String collection, String output, boolean nostem) throws IOException, ClassNotFoundException {
         this.collection = (DocumentSequence) BinIO.loadObject(collection);
         this.output = output;
+        this.nostem = nostem;
     }
 
     public void run() throws IOException {
@@ -43,8 +47,9 @@ public class ExtractStemmed {
                 FastBufferedReader reader = (FastBufferedReader) document.content(0);
                 MutableString word = new MutableString();
                 MutableString nonword = new MutableString();
+                Charsets.ISO_8859_1.canEncode();
                 while (reader.next(word, nonword)) {
-                    termProcessor.processTerm(word);
+                    if (!nostem) { termProcessor.processTerm(word); }
                     fileWriter.append(word);
                     fileWriter.append(" ");
                     documentSize++;
@@ -65,6 +70,7 @@ public class ExtractStemmed {
 
         SimpleJSAP jsap = new SimpleJSAP(ExtractStemmed.class.getName(), "",
                 new Parameter[]{
+                        new Switch("nostem", 'n', "no-stem", "Do not stem, only parse."),
                         new UnflaggedOption("collection", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The collection."),
                         new UnflaggedOption("output", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, JSAP.NOT_GREEDY, "The output file."),
                 });
@@ -73,9 +79,9 @@ public class ExtractStemmed {
         if (jsap.messagePrinted()) return;
 
         String collection = jsapResult.getString("collection");
-        String output= jsapResult.getString("output");
+        String output = jsapResult.getString("output");
 
-        ExtractStemmed e = new ExtractStemmed(collection, output);
+        ExtractStemmed e = new ExtractStemmed(collection, output, jsapResult.userSpecified("nostem"));
         e.run();
     }
 
