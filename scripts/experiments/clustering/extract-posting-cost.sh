@@ -32,7 +32,7 @@ starttime=$(date +%s)
 
 set -e
 
-ls ${dir}/*-*terms | sort | while read file;
+ls ${dir}/*-text-*terms | sort | while read file;
 do
         clusterBase=`echo ${file} | sed "s/\.terms//"`
 

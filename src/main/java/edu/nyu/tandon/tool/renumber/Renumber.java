@@ -14,6 +14,7 @@ import it.unimi.dsi.io.InputBitStream;
 import it.unimi.dsi.io.OutputBitStream;
 import it.unimi.dsi.util.Properties;
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.slf4j.Logger;
@@ -75,7 +76,8 @@ public class Renumber {
                         new FlaggedOption("inputBasename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'i', "input-basename", "The basename of the index to be renumbered."),
                         new FlaggedOption("outputBasename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "output-basename", "The basename of the renumbered index."),
                         new FlaggedOption("mapFile", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'm', "map-file", "The file containing mapping between document IDs."),
-                        new Switch("binaryMapping", 'b', "binary-mapping", "When present, provided mapping is a binary list of integers instead of (by default) a text file containing numbers in consecutive lines.")
+                        new Switch("binaryMapping", 'b', "binary-mapping", "When present, provided mapping is a binary list of integers instead of (by default) a text file containing numbers in consecutive lines."),
+                        new Switch("validate", 'v', "validate", "When present, perform validation.")
                 });
 
         JSAPResult jsapResult = jsap.parse(args);
@@ -85,7 +87,7 @@ public class Renumber {
 
         Renumber renumber = new Renumber(jsapResult.getString("inputBasename"), jsapResult.getString("outputBasename"));
         renumber.readMapping(jsapResult.getString("mapFile"), jsapResult.userSpecified("binaryMapping"));
-        renumber.run();
+        renumber.run(jsapResult.userSpecified("validate"));
     }
 
     public void instantiateWriter(String basename) throws IOException, ClassNotFoundException {
@@ -107,13 +109,13 @@ public class Renumber {
         }
     }
 
-    public void run() throws IOException, ConfigurationException {
+    public void run(boolean validate) throws IOException, ConfigurationException, IllegalAccessException, URISyntaxException, InstantiationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
 
         if (mapping == null) throw new IllegalStateException("Mapping file is undefined.");
-        if (index.hasPositions) {
-            // TODO
-            throw new IllegalArgumentException("Indices with positions are currently not supported");
-        }
+        //if (index.hasPositions) {
+        //    // TODO
+        //    throw new IllegalArgumentException("Indices with positions are currently not supported");
+        //}
 
         LOGGER.info("Copying inverted lists");
 
@@ -129,7 +131,7 @@ public class Renumber {
             j += i;
             long elapsed = System.currentTimeMillis() - start;
             long left = (index.numberOfTerms - j) / j * elapsed;
-            LOGGER.debug(String.format("Copied %d terms. Elapsed time: %s. Estimated time left: %s.", j,
+            LOGGER.info(String.format("Copied %d terms. Elapsed time: %s. Estimated time left: %s.", j,
                     DurationFormatUtils.formatDurationHMS(elapsed),
                     DurationFormatUtils.formatDurationHMS(left)));
         }
@@ -142,6 +144,14 @@ public class Renumber {
         writeProperties();
         LOGGER.info("Copying terms");
         copyTerms();
+
+        if (validate) {
+            try {
+                validate();
+            } catch (IllegalArgumentException e) {
+                LOGGER.error(e.getMessage());
+            }
+        }
 
     }
 
@@ -250,9 +260,9 @@ public class Renumber {
             indexWriter.writeDocumentPointer(out, document);
             if (index.hasPayloads) indexWriter.writePayload(out, p.payload);
             if (index.hasCounts) indexWriter.writePositionCount(out, p.positionCount);
-            if (index.hasPositions) {
-                indexWriter.writeDocumentPositions(out, p.positions, 0, p.positionCount, p.documentSize);
-            }
+            //if (index.hasPositions) {
+            //    indexWriter.writeDocumentPositions(out, p.positions, 0, p.positionCount, p.documentSize);
+            //}
         }
     }
 
@@ -266,6 +276,101 @@ public class Renumber {
         } catch (IOException e) {
             throw new RuntimeException("Error while reading mapping", e);
         }
+    }
+
+    private void validate() throws IOException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, URISyntaxException, ConfigurationException, ClassNotFoundException {
+
+        LOGGER.info("Validating...");
+
+        Index renIndex = Index.getInstance(outputBasename);
+
+        Validate.isTrue(
+                index.hasPayloads == renIndex.hasPayloads,
+                "Mismatch in hasPayloads");
+        Validate.isTrue(
+                index.hasCounts == renIndex.hasCounts,
+                "Mismatch in hasCounts");
+        Validate.isTrue(
+                index.hasPositions == renIndex.hasPositions,
+                "Mismatch in hasPositions");
+
+        IndexReader baseReader = index.getReader();
+        IndexReader renReader = renIndex.getReader();
+
+        long termCount = 0;
+        IndexIterator baseIndexIterator;
+        IndexIterator renIndexIterator;
+        while ((baseIndexIterator = baseReader.nextIterator()) != null) {
+
+            renIndexIterator = renReader.nextIterator();
+
+            Validate.notNull(
+                    renIndexIterator,
+                    String.format("Missing inverted list after %s terms.", termCount));
+
+            validatePostings(baseIndexIterator, renIndexIterator);
+
+            termCount++;
+        }
+
+        baseReader.close();
+        renReader.close();
+    }
+
+    private void validatePostings(IndexIterator base, IndexIterator ren) throws IOException {
+
+        Validate.isTrue(
+                base.termNumber() == ren.termNumber(),
+                String.format(
+                        "Mismatch in term numbers: %d != %d",
+                        base.termNumber(), ren.termNumber()
+                ));
+
+        long frequency = base.frequency();
+
+        Validate.isTrue(
+                frequency == ren.frequency(),
+                String.format(
+                        "Mismatch in term %d frequency: %d != %d",
+                        base.termNumber(), frequency, ren.frequency()
+                ));
+
+
+        LongBigArrayBigList baseDocuments = new LongBigArrayBigList(frequency);
+        LongBigArrayBigList renDocuments = new LongBigArrayBigList(frequency);
+        baseDocuments.size(frequency);
+        renDocuments.size(frequency);
+
+        long baseDoc, renDoc;
+        int i = 0;
+        while ((baseDoc = base.nextDocument()) != END_OF_LIST) {
+            renDoc = ren.nextDocument();
+            Validate.isTrue(renDoc != END_OF_LIST, "Not enough postings.");
+
+            baseDocuments.set(i, mapping.getLong(baseDoc));
+            renDocuments.set(i, renDoc);
+            i++;
+
+            //if (index.hasPayloads) posting.payload = indexIterator.payload();
+            //if (index.hasCounts) {
+            //    posting.positionCount = indexIterator.count();
+            //    occurrency += posting.positionCount;
+            //}
+            //if (index.hasPositions) {
+            //    posting.positions = IndexIterators.positionArray(indexIterator);
+            //    sumMaxPos += posting.positions[posting.positions.length - 1];
+            //    // Sizes are copied independently.
+            //    posting.documentSize = -1;
+            //}
+
+            //postings.put(mappedId, posting);
+        }
+        LongBigArrays.quickSort(baseDocuments.elements());
+        LongBigArrays.quickSort(renDocuments.elements());
+        Validate.isTrue(
+                LongBigArrays.equals(baseDocuments.elements(), renDocuments.elements()),
+                "Mismatch in document IDs: \n" + baseDocuments.toString() + "\n!=\n" + renDocuments.toString()
+        );
     }
 
     private static class Posting {

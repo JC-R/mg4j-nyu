@@ -33,15 +33,15 @@ import it.unimi.dsi.fastutil.io.InspectableFileCachedInputStream;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -85,19 +85,32 @@ public class WarcDocumentSequence_NYU extends AbstractDocumentSequence implement
      * The list of WARC files
      */
     protected final String[] warcFile;
+    protected Set<String> spamDocuments;
 
     protected WarcDocumentSequence_NYU(final WarcDocumentSequence_NYU prototype) {
         this.factory = prototype.factory;
         this.warcFile = prototype.warcFile;
         this.useGzip = prototype.useGzip;
         this.bufferSize = prototype.bufferSize;
+        this.spamDocuments = prototype.spamDocuments;
     }
 
-    public WarcDocumentSequence_NYU(final String[] warcFile, final DocumentFactory factory, final boolean useGzip, final int bufferSize) {
+    public WarcDocumentSequence_NYU(final String[] warcFile, final DocumentFactory factory, final boolean useGzip, final int bufferSize, final String spamFile) {
         this.warcFile = warcFile;
         this.useGzip = useGzip;
         this.bufferSize = bufferSize;
         this.factory = factory;
+        if (spamFile != null) {
+            try (BufferedReader lines = new BufferedReader(new FileReader(spamFile))) {
+                this.spamDocuments = new HashSet<>();
+                String doc;
+                while ((doc = lines.readLine()) != null) {
+                    this.spamDocuments.add(doc);
+                }
+            } catch (IOException e) {
+                this.spamDocuments = null;
+            }
+        }
     }
 
     public static void main(String[] args) throws Exception {
@@ -107,6 +120,7 @@ public class WarcDocumentSequence_NYU extends AbstractDocumentSequence implement
                 new FlaggedOption("property", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'p', "property", "A 'key=value' specification, or the name of a property file").setAllowMultipleDeclarations(true),
                 new Switch("gzip", 'z', "gzip", "Expect gzip-ed WARC content (files should end in .warc.gz)."),
                 new FlaggedOption("bufferSize", JSAP.INTSIZE_PARSER, DEFAULT_BUFFER_SIZE, JSAP.NOT_REQUIRED, 'b', "buffer-size", "The size of an I/O buffer."),
+                new FlaggedOption("spamFile", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 's', "spam-file", "A file containing spam coefficients for documents."),
                 new UnflaggedOption("sequence", JSAP.STRING_PARSER, JSAP.REQUIRED, "The filename for the serialized sequence."),
                 new UnflaggedOption("basename", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, JSAP.GREEDY, "A list of basename files that will be indexed. If missing, a list of files will be read from standard input.")});
 
@@ -119,8 +133,9 @@ public class WarcDocumentSequence_NYU extends AbstractDocumentSequence implement
         String[] file = jsapResult.getStringArray("basename");
         if (file.length == 0) file = IOUtils.readLines(System.in).toArray(new String[0]);
         if (file.length == 0) LOGGER.warn("Empty fileset");
+        String spamFile = jsapResult.userSpecified("spamFile") ? jsapResult.getString("spamFile") : null;
 
-        BinIO.storeObject(new WarcDocumentSequence_NYU(file, factory, isGZipped, jsapResult.getInt("bufferSize")), jsapResult.getString("sequence"));
+        BinIO.storeObject(new WarcDocumentSequence_NYU(file, factory, isGZipped, jsapResult.getInt("bufferSize"), spamFile), jsapResult.getString("sequence"));
     }
 
     public DocumentFactory factory() {
@@ -164,7 +179,7 @@ public class WarcDocumentSequence_NYU extends AbstractDocumentSequence implement
         final Header trecId = httpResponse.getWarcHeaders().getFirstHeader("WARC-TREC-ID");
         if (trecId != null) metadata.put(PropertyBasedDocumentFactory.MetadataKeys.TITLE, trecId.getValue());
 
-        metadata.put(PropertyBasedDocumentFactory.MetadataKeys.URI, httpResponse.getWarcTargetURI());
+        metadata.put(PropertyBasedDocumentFactory.MetadataKeys.URI, httpResponse.getWarcTargetURI().toString());
         if (contentTypeHeader != null)
             metadata.put(PropertyBasedDocumentFactory.MetadataKeys.MIMETYPE, contentTypeHeader.getValue());
 
@@ -205,7 +220,11 @@ public class WarcDocumentSequence_NYU extends AbstractDocumentSequence implement
                             break;
                         }
 
-                        if (record.getWarcType() == WarcRecord.Type.RESPONSE) return getCurrentDocument(record);
+                        if (record.getWarcType() == WarcRecord.Type.RESPONSE) {
+                            final Header trecId = record.getWarcHeaders().getFirstHeader("WARC-TREC-ID");
+                            if (trecId != null && spamDocuments.contains(trecId.getValue())) continue;
+                            return getCurrentDocument(record);
+                        }
                     }
                 }
             }

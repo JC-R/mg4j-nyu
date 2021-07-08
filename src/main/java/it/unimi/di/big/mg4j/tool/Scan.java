@@ -1,9 +1,9 @@
 package it.unimi.di.big.mg4j.tool;
 
-/*		 
+/*
  * MG4J: Managing Gigabytes for Java (big)
  *
- * Copyright (C) 2005-2015 Sebastiano Vigna 
+ * Copyright (C) 2005-2015 Sebastiano Vigna
  *
  *  This library is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU Lesser General Public License as published by the Free
@@ -1260,7 +1260,7 @@ public class Scan {
 
                 indexWriter.close();
                 final Properties properties = indexWriter.properties();
-                totPostings += properties.getLong("postings_Global");
+                totPostings += properties.getLong("postings");
                 properties.setProperty(Index.PropertyKeys.TERMPROCESSOR, ObjectParser.toSpec(termProcessor));
                 properties.setProperty(Index.PropertyKeys.OCCURRENCES, numOccurrences);
                 properties.setProperty(Index.PropertyKeys.MAXDOCSIZE, maxDocSize);
@@ -1804,3 +1804,4 @@ public class Scan {
 
     }
 }
+

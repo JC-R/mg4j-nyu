@@ -303,7 +303,7 @@ public class StatisticalShardRepresentation {
         }
     }
 
-    public void write(Iterator<TermStats> terms) throws IOException {
+    public void write(Iterator<TermStats> terms) {
         try (DataOutputStream expectedStream = new DataOutputStream(new FileOutputStream(basename + EXPECTED_V_SUFFIX));
              DataOutputStream varianceStream = new DataOutputStream(new FileOutputStream(basename + VARIANCE_SUFFIX));
              DataOutputStream minScoreStream = new DataOutputStream(new FileOutputStream(basename + MIN_SCORE_SUFFIX))) {
@@ -320,24 +320,31 @@ public class StatisticalShardRepresentation {
             LOGGER.info(String.format("Finished processing %s in %s (%d terms processed)",
                     basename, timerTask.elapsedFormatted(), timerTask.processed));
             timer.cancel();
+        } catch (Exception e) {
+            LOGGER.error(String.format("Error while processing %s", basename), e);
         }
     }
 
     public TermStats queryStats(long[] termIds) throws IOException, IllegalAccessException, URISyntaxException, InstantiationException, ConfigurationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
         LOGGER.debug(String.format("queryStats for termsIds = %s", Arrays.toString(termIds)));
-        Arrays.sort(termIds);
+        termIds = Arrays.stream(termIds).sorted().distinct().filter(id -> id >= 0).toArray();
         double expectedValue = 0;
         double variance = 0;
         double minValue = 0;
         long prev = -1;
         TermIterator it = termIterator();
         for (long termId : termIds) {
-            TermStats term = it.next(termId - prev);
-            expectedValue += term.expectedValue;
-            variance += term.variance;
-            minValue += term.minValue;
-            prev = termId;
-            LOGGER.trace(String.format("Term %d: %s", termId, term));
+            try {
+                TermStats term = it.next(termId - prev);
+                expectedValue += term.expectedValue;
+                variance += term.variance;
+                minValue += term.minValue;
+                prev = termId;
+                LOGGER.trace(String.format("Term %d: %s", termId, term));
+            } catch (IOException e) {
+                LOGGER.error(String.format("Error queryStats(): termId == %d, prev == %d", termId, prev));
+                throw new RuntimeException(e);
+            }
         }
         it.close();
         return new TermStats(expectedValue, variance, minValue);
@@ -366,6 +373,7 @@ public class StatisticalShardRepresentation {
                     double minScore = minScoreStream.readDouble();
                     return new TermStats(expectedValue, variance, minScore);
                 } catch (IOException e) {
+                    LOGGER.error(String.format("Error next(): remainingTerms == %d", remainingTerms));
                     throw new RuntimeException(e);
                 }
             }
@@ -411,6 +419,7 @@ public class StatisticalShardRepresentation {
         if (jsap.messagePrinted()) return;
 
         String basename = jsapResult.getString("basename");
+        LOGGER.info(String.format("Extracting StatisticalShardRepresentation for %s", basename));
         StatisticalShardRepresentation ssr = new StatisticalShardRepresentation(basename);
         ssr.write(ssr.calc());
 

@@ -22,8 +22,8 @@ if [ -z "${input}" ]; then echo "You have to define input file."; exit 1; fi;
 if [ -z "${outputDir}" ]; then echo "You have to define output directory."; exit 1; fi;
 
 inputBase=`basename ${input}`
-base="${dir}/`ls ${dir} | egrep '\.strategy' | sed 's/\.strategy//'`"
-strategy="${dir}/`ls ${dir} | egrep '\.strategy'`"
++base="${dir}/`ls ${dir} | egrep 'text\.strategy' | sed 's/\.strategy//'`"
++strategy="${dir}/`ls ${dir} | egrep 'text\.strategy'`"
 
 starttime=$(date +%s)
 
@@ -32,7 +32,7 @@ set -e
 java edu.nyu.tandon.experiments.cluster.ExtractTailyScores \
     -i ${input} \
     -o "${outputDir}/${inputBase}" \
-    -c `ls ${dir}/*-*terms | wc -l` \
+    -c `ls ${dir}/*-${field}*terms | wc -l` \
     ${base}
 
 endtime=$(date +%s)

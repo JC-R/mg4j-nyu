@@ -42,9 +42,16 @@ public class ClusterGlobalStatisticsTest extends BaseTest {
 
         // Given
         File tmp = temporaryFolder.newFolder();
-        File[] indexFiles = getFileFromResourcePath("clusters").listFiles((dir, name) -> {
+        File[] clusterFiles = getFileFromResourcePath("clusters").listFiles((dir, name) -> {
             return !name.matches(".*\\" + GLOB_FREQ_EXTENSION)
                     && !name.matches(".*\\" + GLOB_STAT_EXTENSION);
+        });
+        for (File f : clusterFiles) {
+            Files.copy(Paths.get(f.getAbsolutePath()),
+                    Paths.get(tmp.getAbsolutePath() + "/" + f.getName()));
+        }
+        File[] indexFiles = getFileFromResourcePath("index").listFiles((dir, name) -> {
+            return true;
         });
         for (File f : indexFiles) {
             Files.copy(Paths.get(f.getAbsolutePath()),
@@ -68,7 +75,8 @@ public class ClusterGlobalStatisticsTest extends BaseTest {
         q.save(tmp.getAbsolutePath() + "/gov2C.properties");
 
         // When
-        ClusterGlobalStatistics.main(new String[] {
+        ClusterGlobalStatistics.main(new String[]{
+                tmp.getAbsoluteFile() + "/gov2-text",
                 tmp.getAbsoluteFile() + "/gov2C"
         });
 
@@ -85,10 +93,10 @@ public class ClusterGlobalStatisticsTest extends BaseTest {
         LongBigArrayBigList[] globalFrequencies = new LongBigArrayBigList[11];
         for (int i = 0; i < globalFrequencies.length; i++) {
             globalFrequencies[i] = new LongBigArrayBigList(
-                    loadLongsBig(tmp.getAbsoluteFile()+ "/gov2C-" + valueOf(i)
+                    loadLongsBig(tmp.getAbsoluteFile() + "/gov2C-" + valueOf(i)
                             + GLOB_FREQ_EXTENSION));
             LineIterator j = FileUtils.lineIterator(
-                    new File(tmp.getAbsoluteFile()+ "/gov2C-" + valueOf(i) + TERMS_EXTENSION));
+                    new File(tmp.getAbsoluteFile() + "/gov2C-" + valueOf(i) + TERMS_EXTENSION));
             IndexReader indexReader = globalIndex.getReader();
             long k = 0;
             while (j.hasNext()) {
@@ -100,7 +108,7 @@ public class ClusterGlobalStatisticsTest extends BaseTest {
         long numberOfDocuments = globalIndex.numberOfDocuments;
         long numberOfOccurrences = globalIndex.numberOfOccurrences;
         for (int i = 0; i < globalFreq.length; i++) {
-            long[] globalStatistics = loadLongs(tmp.getAbsoluteFile()+ "/gov2C-" + valueOf(i) + GLOB_STAT_EXTENSION);
+            long[] globalStatistics = loadLongs(tmp.getAbsoluteFile() + "/gov2C-" + valueOf(i) + GLOB_STAT_EXTENSION);
             assertThat(globalStatistics[0], equalTo(numberOfDocuments));
             assertThat(globalStatistics[1], equalTo(numberOfOccurrences));
         }

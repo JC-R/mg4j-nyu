@@ -28,19 +28,39 @@ java edu.nyu.tandon.index.cluster.SelectiveDocumentalIndexStrategy -a "-c:${clus
 
 # Create the clusters
 java it.unimi.di.big.mg4j.tool.PartitionDocumentally \
-    -c POSITIONS:NONE \
     -s "${workDir}/${outputName}.strategy" \
     "${globalBase}-text" \
-    "${workDir}/${outputName}"
+    "${workDir}/${outputName}-text"
+java it.unimi.di.big.mg4j.tool.PartitionDocumentally \
+    -s "${workDir}/${outputName}.strategy" \
+    "${globalBase}-anchor" \
+    "${workDir}/${outputName}-anchor"
+java it.unimi.di.big.mg4j.tool.PartitionDocumentally \
+    -s "${workDir}/${outputName}.strategy" \
+    "${globalBase}-title" \
+    "${workDir}/${outputName}-title"
+
+produce_term_mappings() {
+	field=$1
+	ls ${workDir}/*-${field}*terms | while read termFile;
+	do
+	        base=`basename ${termFile}`
+	        number=`echo ${base} | sed "s/.*-//" | sed "s/\..*//"`
+	        java it.unimi.dsi.sux4j.mph.MWHCFunction -s 32 \
+				"${workDir}/${outputName}-${field}-${number}.mwhc" \
+				"${workDir}/${outputName}-${field}-${number}.terms"
+	        java it.unimi.dsi.sux4j.util.SignedFunctionStringMap \
+				"${workDir}/${outputName}-${field}-${number}.mwhc" \
+				"${workDir}/${outputName}-${field}-${number}.termmap"
+	done
+}
 
 # Produce term mappings
-ls ${workDir}/*-*terms | while read termFile;
-do
-        base=`basename ${termFile}`
-        number=`echo ${base} | sed "s/.*-//" | sed "s/\..*//"`
-        java it.unimi.dsi.sux4j.mph.MWHCFunction -s 32 "${workDir}/${outputName}-${number}.mwhc" "${workDir}/${outputName}-${number}.terms"
-        java it.unimi.dsi.sux4j.util.SignedFunctionStringMap "${workDir}/${outputName}-${number}.mwhc" "${workDir}/${outputName}-${number}.termmap"
-done
+produce_term_mappings "text"
+produce_term_mappings "anchor"
+produce_term_mappings "title"
 
 # Generate global statistics
-java edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics "${workDir}/${outputName}"
+java edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics "${workDir}/${outputName}-text"
+java edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics "${workDir}/${outputName}-anchor"
+java edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics "${workDir}/${outputName}-title"

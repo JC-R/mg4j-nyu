@@ -1,7 +1,9 @@
 package edu.nyu.tandon.utils;
 
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Splitter;
 import com.google.common.base.Verify;
-import com.google.common.io.Files;
+import com.google.common.collect.Lists;
 import edu.nyu.tandon.query.Query;
 import edu.nyu.tandon.search.score.BM25PrunedScorer;
 import it.unimi.di.big.mg4j.index.Index;
@@ -9,20 +11,20 @@ import it.unimi.di.big.mg4j.index.TermProcessor;
 import it.unimi.di.big.mg4j.query.QueryEngine;
 import it.unimi.di.big.mg4j.query.parser.SimpleParser;
 import it.unimi.di.big.mg4j.search.DocumentIteratorBuilderVisitor;
-import it.unimi.di.big.mg4j.search.score.BM25Scorer;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.longs.LongBigArrayBigList;
 import it.unimi.dsi.fastutil.objects.*;
+import it.unimi.dsi.lang.MutableString;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.io.FileSystemUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static edu.nyu.tandon.query.Query.MAX_STEMMING;
 import static edu.nyu.tandon.tool.cluster.ClusterGlobalStatistics.loadGlobalFrequencies;
@@ -62,7 +64,7 @@ public class Utils {
 
     public static QueryEngine constructQueryEngine(String indexBasename, boolean loadGlobalStats) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, InstantiationException, URISyntaxException, ConfigurationException, ClassNotFoundException {
 
-        String[] basenameWeight = new String[] { indexBasename };
+        String[] basenameWeight = new String[]{indexBasename};
 
         final Object2ReferenceLinkedOpenHashMap<String, Index> indexMap = new Object2ReferenceLinkedOpenHashMap<String, Index>(Hash.DEFAULT_INITIAL_SIZE, .5f);
         final Reference2DoubleOpenHashMap<Index> index2Weight = new Reference2DoubleOpenHashMap<Index>();
@@ -130,5 +132,19 @@ public class Utils {
         File parquet = parquetFiles[0];
         FileUtils.moveFile(parquet, file);
         FileUtils.deleteDirectory(temp);
+    }
+
+    public static List<String> extractTerms(String query, TermProcessor termProcessor) {
+        String cleanedUp = CharMatcher.is(',').replaceFrom(query, "");
+        cleanedUp = CharMatcher.anyOf(".-;&+").replaceFrom(query, " ");
+        cleanedUp = cleanedUp.replaceAll("OR", "");
+        List<String> unprocessedTerms = Lists.newArrayList(
+                Splitter.on(' ').omitEmptyStrings().split(cleanedUp));
+        if (termProcessor == null) return unprocessedTerms;
+        return unprocessedTerms.stream().map(t -> {
+                    MutableString m = new MutableString(t);
+                    termProcessor.processTerm(m);
+                    return m.toString();
+                }).collect(Collectors.toList());
     }
 }

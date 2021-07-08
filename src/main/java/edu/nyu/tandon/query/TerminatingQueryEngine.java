@@ -107,7 +107,7 @@ public class TerminatingQueryEngine<T> extends QueryEngine<T> {
 
         protected long nextDocumentWithoutEarlyTermination() throws IOException {
             if (documentIterator.document() > -1 || documentLowerBound == null) return documentIterator.nextDocument();
-            if (earlyTerminationThreshold != null && documentLowerBound >= earlyTerminationThreshold) {
+            if (earlyTerminationThreshold != null && documentLowerBound > earlyTerminationThreshold) {
                 throw new RuntimeException(String.format(
                         "Document lower bound (%d) has to be lower than early termination threshold (%d).",
                         documentLowerBound,
